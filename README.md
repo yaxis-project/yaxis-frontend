@@ -1,5 +1,3 @@
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/flex-dapps/yaxis-metavault-v2)
-
 ## Available Scripts
 
 In the project directory, you can run:
