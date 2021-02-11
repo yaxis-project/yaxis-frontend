@@ -1,15 +1,15 @@
-import { Languages, Dictionary } from '../../utils/languages'
+import { Dictionary } from '../../utils/languages'
 
 const translations = {
-  "Governance": {
-    'ENG': "Governance"
+  Governance: {
+    ENG: 'Governance',
   },
-  "Community Voting": {
-    'ENG': "Community Voting"
+  'Community Voting': {
+    ENG: 'Community Voting',
   },
-  "Voting Power": {
-    'ENG': "Voting Power"
+  'Voting Power': {
+    ENG: 'Voting Power',
   },
-} as Dictionary;
+} as Dictionary
 
-export default translations;
+export default translations

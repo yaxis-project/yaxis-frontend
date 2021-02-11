@@ -15,9 +15,7 @@ import {useWallet} from "use-wallet";
 import {callApprove, numberToDecimal} from '../../../yaxis/utils';
 import {currentConfig} from '../../../yaxis/configs';
 import useMetaVault from '../../../hooks/useMetaVault';
-import useBlock from "../../../hooks/useBlock";
 import {tokensConfig} from '../../../yaxis/configs'
-import useGlobal from "../../../hooks/useGlobal";
 
 const NavButton = styled.div`
   color: ${(props) => props.theme.color.grey[400]};

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import BigNumber from 'bignumber.js'
 import { useWallet } from 'use-wallet'

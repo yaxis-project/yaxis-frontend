@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext } from 'react'
 import {
-  Row, Col, Typography, Card
+  Typography
 } from 'antd';
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
@@ -9,11 +9,10 @@ import useAccountReturns from '../../../hooks/useAccountReturns';
 import Value from '../../../components/Value';
 import useYaxisStaking from '../../../hooks/useYaxisStaking';
 import { YAX } from '../../../utils/currencies';
-import usePriceMap from '../../../hooks/usePriceMap';
 import BigNumber from 'bignumber.js';
 import useMetaVaultData from '../../../hooks/useMetaVaultData';
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 /**
  * Creates a loadable detail overview for users on the home page, showing financial returns and account balances.

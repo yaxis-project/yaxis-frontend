@@ -1,7 +1,7 @@
 import React from 'react'
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
-import {UseWalletProvider} from 'use-wallet'
+import { UseWalletProvider } from 'use-wallet'
 
 import FarmsProvider from './contexts/Farms'
 import ModalsProvider from './contexts/Modals'
@@ -19,44 +19,44 @@ import { notification } from 'antd';
 import { NETWORK_ID } from "./yaxis/configs";
 
 notification.config({
-	placement: 'topRight',
-	duration: 6,
+  placement: 'topRight',
+  duration: 6,
 });
 
 const App: React.FC = () => {
-	return (
-		<Providers>
-			<Router>
-                <Switch>
-                    <Route path="/" exact>
-                        <Home />
-                    </Route>
-                    <Route path="/investing" exact>
-                        <Investing />
-                    </Route>
-                    <Route path="/savings" exact>
-                        <Savings />
-                    </Route>
-                    <Route path="/liquidity" exact>
-                        <Liquidity />
-                    </Route>
-                </Switch>
-			</Router>
-		</Providers>
-	)
+  return (
+    <Providers>
+      <Router>
+        <Switch>
+          <Route path="/" exact>
+            <Home />
+          </Route>
+          <Route path="/investing" exact>
+            <Investing />
+          </Route>
+          <Route path="/savings" exact>
+            <Savings />
+          </Route>
+          <Route path="/liquidity" exact>
+            <Liquidity />
+          </Route>
+        </Switch>
+      </Router>
+    </Providers>
+  )
 }
 
-const Providers: React.FC = ({children}) => {
-	return (
-		<ThemeProvider theme={theme}>
-			<PriceMapContextComponent>
-				<UseWalletProvider
-					chainId={NETWORK_ID}
-					connectors={{
-						walletconnect: {rpcUrl: 'https://mainnet.eth.aragon.network/'},
-					}}
-				>
-					<YaxisProvider>
+const Providers: React.FC = ({ children }) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <PriceMapContextComponent>
+        <UseWalletProvider
+          chainId={NETWORK_ID}
+          connectors={{
+            walletconnect: { rpcUrl: 'https://mainnet.eth.aragon.network/' },
+          }}
+        >
+          <YaxisProvider>
             <LanguageProvider>
               <TransactionProvider>
                 <FarmsProvider>
@@ -66,11 +66,11 @@ const Providers: React.FC = ({children}) => {
                 </FarmsProvider>
               </TransactionProvider>
             </LanguageProvider>
-					</YaxisProvider>
-				</UseWalletProvider>
-			</PriceMapContextComponent>
-		</ThemeProvider>
-	)
+          </YaxisProvider>
+        </UseWalletProvider>
+      </PriceMapContextComponent>
+    </ThemeProvider>
+  )
 }
 
 export default App

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext } from 'react'
 import {
   Typography, Card, Button
 } from 'antd'
@@ -13,7 +13,7 @@ import { map } from 'lodash';
 import { Transaction } from '../../../contexts/Transactions/types';
 import styled from 'styled-components';
 
-const { Text, Title, Link } = Typography;
+const { Text, Title } = Typography;
 
 const gridStyle = {
   width: '100%',
@@ -45,7 +45,7 @@ const CardTitle = (props: CardTitleProps) => {
   const { language, onClearTransactions, showClear } = props;
   return (<>
     <Title level={4}>{phrases["Recent Transactions"][language]}</Title>
-    { showClear ? <ClearTransactionsButton onClick={() => onClearTransactions()} style={{ float: "right" }}>{phrases["Clear all"][language]} <CloseOutlined /></ClearTransactionsButton> : "" }
+    { showClear ? <ClearTransactionsButton onClick={() => onClearTransactions()} style={{ float: "right" }}>{phrases["Clear all"][language]} <CloseOutlined /></ClearTransactionsButton> : ""}
   </>);
 }
 
@@ -74,10 +74,10 @@ function generateTransactionRow(transaction: Transaction) {
     key={transaction.hash}
     main={type}
     secondary={value}
-    />);
+  />);
 }
 
-export default function RecentTransactionsCard () {
+export default function RecentTransactionsCard() {
 
   const { onClearTransactions, transactions } = useTransactionAdder();
 
@@ -85,11 +85,11 @@ export default function RecentTransactionsCard () {
   const language = languages.state.selected;
   const txCount = map(transactions, (t) => t).length > 0;
 
-  if(!txCount) return null
+  if (!txCount) return null
 
   return <Card
     title={<CardTitle showClear={true} onClearTransactions={onClearTransactions} language={language} />} style={{ marginTop: 10 }}
   >
-    { map(transactions, generateTransactionRow) }
+    {map(transactions, generateTransactionRow)}
   </Card>
 }

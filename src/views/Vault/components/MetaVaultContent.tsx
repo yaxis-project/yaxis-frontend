@@ -1,29 +1,22 @@
-import React, {useCallback, useState, useEffect, useContext} from 'react';
-import {Space, Row, Col, Divider, Button, Spin, Tooltip} from 'antd';
-import {InfoCircleOutlined} from '@ant-design/icons'
-import styled, {ThemeContext} from 'styled-components';
-import {NavLink, useRouteMatch} from 'react-router-dom';
-import {useWallet} from 'use-wallet';
-import {BigNumber} from 'bignumber.js';
+import React, { useState, useEffect, useContext } from 'react';
+import { Row, Col, Divider, Button, Spin, Tooltip } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons'
+import styled, { ThemeContext } from 'styled-components';
+import { NavLink, useRouteMatch } from 'react-router-dom';
+import { BigNumber } from 'bignumber.js';
 
 import Spacer from '../../../components/Spacer';
 import useMetaVaultData from '../../../hooks/useMetaVaultData';
-import BalanceCard, {BalanceTitle} from '../../../components/Card/BalanceCard';
+import BalanceCard, { BalanceTitle } from '../../../components/Card/BalanceCard';
 import Title from './Title';
-import WalletProviderModal from '../../../components/WalletProviderModal';
-import useModal from '../../../hooks/useModal';
 import CurrencyReservePlaceholder from './CurrencyReservePlaceholder';
 import MetaVaultPanel from './MetaVaultPanel';
-import useAllowance from "../../../hooks/useAllowance";
-import useTokenBalances from "../../../hooks/useTokenBalances";
-import {currentConfig} from "../../../yaxis/configs";
-import useAllowances from "../../../hooks/useAllowances";
+import { currentConfig } from "../../../yaxis/configs";
 import useMetaVault from '../../../hooks/useMetaVault';
 import Value from '../../../components/Value';
-import {tokensConfig} from '../../../yaxis/configs'
+import { tokensConfig } from '../../../yaxis/configs'
 import { getCurveApyApi } from '../../../yaxis/utils';
 import useYAxisAPY from '../../../hooks/useYAxisAPY';
-import usePickle from "../../../hooks/usePickle";
 import usePriceMap from '../../../hooks/usePriceMap';
 import { abbrNumber } from '../../../utils/formatBalance';
 
@@ -67,7 +60,7 @@ const CoinIcon = styled.img`
 `;
 
 function MetaVaultContent() {
-	const {params: {id}} = useRouteMatch();
+	const { params: { id } } = useRouteMatch();
 	const {
 		balance, loading, name, currenciesData,
 		tabs, onUpdateAllowances,
@@ -81,7 +74,7 @@ function MetaVaultContent() {
 	const [curveApyIsInitialized, setCurveApyIsInitialized] = useState<boolean>(false);
 	const { color: themeColor } = useContext(ThemeContext)
 	const { yAxisAPY, isInitialized: yAxisAPYIsInitialized } = useYAxisAPY()
-  // const {pickleAPY} = usePickle()
+	// const {pickleAPY} = usePickle()
 	const { YAX: YAXPrice } = usePriceMap()
 	useEffect(() => {
 		const fetchCurveApy = async () => {
@@ -101,7 +94,7 @@ function MetaVaultContent() {
 		}
 	}
 	const yaxApyPercent = new BigNumber(metaVaultData?.apy || 0)
-	const pickleApyPercent =  new BigNumber(0)// new BigNumber(pickleAPY).multipliedBy(0.8)
+	const pickleApyPercent = new BigNumber(0)// new BigNumber(pickleAPY).multipliedBy(0.8)
 	const lpApyPercent = new BigNumber(curveApy).times(100)
 	const threeCrvApyPercent = new BigNumber((yAxisAPY && yAxisAPY['3crv']) || 0).multipliedBy(0.8)
 
@@ -176,7 +169,7 @@ function MetaVaultContent() {
 									{/*<Tooltip title="1crv = $1">*/}
 									{/*	<InfoCircleOutlined style={{fontSize: 12, color: '#43d2ff'}} />*/}
 									{/*</Tooltip>*/}
-									<span style={{padding: '0 2px 0 5px'}}>$</span>
+									<span style={{ padding: '0 2px 0 5px' }}>$</span>
 									<Value
 										inline
 										value={metaVaultData.tvl}
@@ -197,7 +190,7 @@ function MetaVaultContent() {
 					</BalanceCard>
 				</Col>
 			</Row>
-			<Divider/>
+			<Divider />
 			{/*{!account && (*/}
 			{/*  <>*/}
 			{/*    <Row>*/}
@@ -215,10 +208,10 @@ function MetaVaultContent() {
 			{/*  </>*/}
 			{/*)}*/}
 			{(currenciesData.length === 0 && loading) && (
-			  <CurrencyReservePlaceholder />
+				<CurrencyReservePlaceholder />
 			)}
 			{currenciesData.length > 0 && (
-			  <Row gutter={[8, 8]}>
+				<Row gutter={[8, 8]}>
 					<Col xs={12} sm={8}>
 						<BalanceCard
 							title="Total APY"
@@ -229,20 +222,20 @@ function MetaVaultContent() {
 									<Spin spinning={loadingApy} size="small" />
 								</span>
 							) : (
-								<Tooltip title={(
-									<div>
-										<div>{'YAX: '}<b>{yaxApyPercent?.toFixed(1)}%</b></div>
-										{/*<div>{'Pickle: '}<b>{pickleApyPercent?.toFixed(1)}%</b></div>*/}
-										<div>{'CurveLP: '}<b>{lpApyPercent?.toFixed(1)}%</b></div>
-										<div>{'CRV (80%): '}<b>{threeCrvApyPercent?.toFixed(1)}%</b></div>
-										<div>{'APR: '}<b>{totalApr?.toFixed(1)}%</b></div>
-									</div>
-								)}>
-									<Value inline value={totalApy.toNumber()} decimals={1} />
-									<span>{'% '}</span>
-									<InfoCircleOutlined style={{fontSize: 12, color: themeColor.primary.main}} />
-								</Tooltip>
-							)}
+									<Tooltip title={(
+										<div>
+											<div>{'YAX: '}<b>{yaxApyPercent?.toFixed(1)}%</b></div>
+											{/*<div>{'Pickle: '}<b>{pickleApyPercent?.toFixed(1)}%</b></div>*/}
+											<div>{'CurveLP: '}<b>{lpApyPercent?.toFixed(1)}%</b></div>
+											<div>{'CRV (80%): '}<b>{threeCrvApyPercent?.toFixed(1)}%</b></div>
+											<div>{'APR: '}<b>{totalApr?.toFixed(1)}%</b></div>
+										</div>
+									)}>
+										<Value inline value={totalApy.toNumber()} decimals={1} />
+										<span>{'% '}</span>
+										<InfoCircleOutlined style={{ fontSize: 12, color: themeColor.primary.main }} />
+									</Tooltip>
+								)}
 						</BalanceCard>
 					</Col>
 					<Col xs={12} sm={8}>
@@ -261,9 +254,9 @@ function MetaVaultContent() {
 							title={'Your pending reward'}
 							loading={loading}
 						>
-							<div style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between'}}>
+							<div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
 								<div>
-									<div style={{display: 'inline-block'}}>
+									<div style={{ display: 'inline-block' }}>
 										<Value value={pendingReward} />
 									</div>
 									<span>{' YAX'}</span>&nbsp;
@@ -277,7 +270,7 @@ function MetaVaultContent() {
 											<Button
 												ghost type="primary" size="small"
 												loading={isClaiming}
-												style={{padding: '0 15px'}}
+												style={{ padding: '0 15px' }}
 												onClick={handleClaimRewards}
 											>
 												Claim
@@ -288,9 +281,9 @@ function MetaVaultContent() {
 							</div>
 						</BalanceCard>
 					</Col>
-			  </Row>
+				</Row>
 			)}
-			<Spacer/>
+			<Spacer />
 			<Spin spinning={loading} tip="loading...">
 				<MetaVaultPanel
 					key={id}

@@ -1,14 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components';
 import logo from '../../../assets/img/logo-ui.svg'
 import logoEth from '../../../assets/img/currencies/eth.svg'
-import { currentConfig, tokensConfig } from "../../../yaxis/configs";
+import { currentConfig } from "../../../yaxis/configs";
 
 import {
-  Row, Col, Typography, Card, Collapse
+  Row, Col, Typography, Collapse
 } from 'antd';
 
-const { Text, Title, Link } = Typography;
+const { Text,  Link } = Typography;
 
 const { Panel } = Collapse;
 

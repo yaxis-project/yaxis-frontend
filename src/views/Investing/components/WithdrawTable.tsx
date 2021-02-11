@@ -2,7 +2,7 @@ import React, { useState, useContext, useMemo } from 'react'
 import {
   Button, Row, Col, Typography, Divider, Input, Select, notification, Form, Tooltip
 } from 'antd';
-import { Currency, USD, Dai, ETH, CRV3, USDT, USDC } from '../../../utils/currencies';
+import { Currency, USD, Dai, CRV3, USDT, USDC } from '../../../utils/currencies';
 import logo from '../../../assets/img/logo-ui.svg'
 import { find } from 'lodash'
 import { numberToDecimal} from '../../../yaxis/utils'
@@ -16,7 +16,6 @@ import { Transaction } from '../../../contexts/Transactions/types';
 import Value from '../../../components/Value'
 import { ArrowDownOutlined } from '@ant-design/icons'
 import info from "../../../assets/img/info.svg";
-import styled from 'styled-components';
 
 const { Option } = Select;
 

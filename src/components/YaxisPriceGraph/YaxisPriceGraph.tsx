@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { brandBlue } from '../../theme/colors';
 import { Card, Radio } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons'
 import { getYAXPriceData, SelectableDay, dayOptions } from '../../hooks/useYAXPriceData';
@@ -9,7 +8,7 @@ import usePriceMap from '../../hooks/usePriceMap';
 import moment from 'moment';
 
 // @ts-ignore-line
-import { WithTooltip, Sparkline, LineSeries, PointSeries } from '@data-ui/sparkline'; 
+import { WithTooltip, Sparkline, LineSeries, PointSeries } from '@data-ui/sparkline';
 
 const RadioGroup = styled(Radio.Group)`
   .ant-radio-button-wrapper {
@@ -58,12 +57,12 @@ const StyledCard = styled(Card)`
  */
 //const PriceGraph = ({className}) => {
 const PriceGraph: React.FC = () => {
-  
-  const [data, setData] = useState<any>({values: [], max: 0, min: 0 });
+
+  const [data, setData] = useState<any>({ values: [], max: 0, min: 0 });
   const [isLoading, setLoading] = useState(true);
   const [selectedDay, setDate] = useState<SelectableDay>(dayOptions[3]);
 
-  const {YAX: yaxisPrice} = usePriceMap();
+  const { YAX: yaxisPrice } = usePriceMap();
 
   const handleChange = (e: any) => {
     const day = find((day: SelectableDay) => day.name === e.target.value)(dayOptions) || dayOptions[3];
@@ -80,8 +79,8 @@ const PriceGraph: React.FC = () => {
     getData()
   }, [selectedDay]);
 
-  return <StyledCard 
-    title={<span><strong>Yax Price:</strong> ${yaxisPrice}</span>} 
+  return <StyledCard
+    title={<span><strong>Yax Price:</strong> ${yaxisPrice}</span>}
     extra={
       <RadioGroup className="range-selector" value={selectedDay.name} onChange={handleChange}>
         {
@@ -90,40 +89,40 @@ const PriceGraph: React.FC = () => {
           ))
         }
       </RadioGroup>
-    } 
-    className={`price-graph`} 
+    }
+    className={`price-graph`}
     data-is-loading={isLoading}
-    >
-    
-    <WithTooltip 
-      renderTooltip={({index}) => {
+  >
+
+    <WithTooltip
+      renderTooltip={({ index }) => {
         const date = moment(data.dates[index]).format("Do MMM YY @ HH:mm");
         const price = data.values[index].toFixed(2);
 
         return <Fragment><div>{date}</div><div>${price}</div></Fragment>
       }}
       tooltipTimeout={500}
-      >
+    >
       <Sparkline
-          width={734}
-          height={270}
-          data={data.values}
-          margin={{ top: 20, right: 0, bottom: 10, left: 0 }}
-        >
-          <LineSeries
-            strokeWidth={1}
-            stroke='#016EAC'
-          />
-          <PointSeries
-            points={['all']}
-            size={0}
-            stroke="none"
-            
-          />
-        </Sparkline>
-      </WithTooltip>
+        width={734}
+        height={270}
+        data={data.values}
+        margin={{ top: 20, right: 0, bottom: 10, left: 0 }}
+      >
+        <LineSeries
+          strokeWidth={1}
+          stroke='#016EAC'
+        />
+        <PointSeries
+          points={['all']}
+          size={0}
+          stroke="none"
 
-    {isLoading && <LoadingOutlined className={'loading-icon'}/>}
+        />
+      </Sparkline>
+    </WithTooltip>
+
+    {isLoading && <LoadingOutlined className={'loading-icon'} />}
   </StyledCard>;
 }
 

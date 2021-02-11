@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import logo from '../../../assets/img/logo-ui.svg'
 import {
   Row, Col, Typography, Card

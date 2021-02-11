@@ -10,7 +10,6 @@ import Modal, { ModalProps } from '../Modal'
 import ModalActions from '../ModalActions'
 import ModalContent from '../ModalContent'
 import ModalTitle from '../ModalTitle'
-import Spacer from '../Spacer'
 
 import WalletCard from './components/WalletCard'
 import {Col, Row} from "antd";

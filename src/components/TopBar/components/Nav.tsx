@@ -44,6 +44,7 @@ const Nav: React.FC = (props) => {
 	)
 }
 const MenuItem = styled(Menu.Item)`
+height: 38px;
 `
 const StyledMenu = styled(Menu)`
   border-bottom:none;

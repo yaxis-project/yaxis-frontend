@@ -1,4 +1,4 @@
-import { Languages, Dictionary } from '../../../utils/languages'
+import { Dictionary } from '../../../utils/languages'
 
 const translations = {
   "Strategy": {

@@ -7,15 +7,14 @@ import { currentConfig } from '../../../yaxis/configs';
 import usePriceMap from "../../../hooks/usePriceMap";
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations';
-import _, { reduce, mapKeys } from 'lodash';
+import _, { reduce } from 'lodash';
 import {
-  Row, Col, Typography, Button, Divider, notification
+  Row, Col, Typography, Button, notification
 } from 'antd';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components';
 import { getContract } from '../../../utils/erc20';
 import { provider } from 'web3-core';
-import { approve } from '../../../yaxis/utils';
 import { callApprove, numberToDecimal } from '../../../yaxis/utils';
 import { useWallet } from 'use-wallet';
 import useTransactionAdder from '../../../hooks/useTransactionAdder';
@@ -35,7 +34,7 @@ interface CurrencyValues {
   [key: string]: string;
 }
 
-const initialCurrencyValues:CurrencyValues = reduce(InvestingDepositCurrencies, (prev, curr) => ({
+const initialCurrencyValues: CurrencyValues = reduce(InvestingDepositCurrencies, (prev, curr) => ({
   ...prev,
   [curr.tokenId]: '0'
 }), {});
@@ -58,12 +57,12 @@ const handleFormInputChange = (setCurrencyValues: Function) => (key: string, val
  * @param currencyValues Stored currency values data.
  * @param currenciesData Currency data that stores balance.
  */
-const computeInsufficientBalance = (currencyValues: CurrencyValues, currenciesData: any) : boolean => {
+const computeInsufficientBalance = (currencyValues: CurrencyValues, currenciesData: any): boolean => {
   const noValue = !Object.values(currencyValues).find(v => parseFloat(v) > 0)
   const insufficientBalance = !!Object.entries(currencyValues)
     .find(([tokenId, v]) => {
       const value = new BigNumber(v || 0);
-      const currency = currenciesData.find((c:any) => c.tokenId === tokenId);
+      const currency = currenciesData.find((c: any) => c.tokenId === tokenId);
       return !!!currency || value.gt(currency.balance || 0);
     });
   return noValue || insufficientBalance;
@@ -77,11 +76,11 @@ const computeInsufficientBalance = (currencyValues: CurrencyValues, currenciesDa
  */
 const computeTotalDepositing = (currencies: Currency[], currencyValues: CurrencyValues, priceMap: any) =>
   currencies
-    .map(({ tokenId, priceMapKey }) => (new BigNumber(currencyValues[tokenId] || 0)).times((new BigNumber(priceMap[priceMapKey] || 0 ))))
+    .map(({ tokenId, priceMapKey }) => (new BigNumber(currencyValues[tokenId] || 0)).times((new BigNumber(priceMap[priceMapKey] || 0))))
     .reduce((total, current) => total.plus(current), new BigNumber(0))
-    .toFormat(2);  
+    .toFormat(2);
 
- const HeaderRow = styled(Row)`
+const HeaderRow = styled(Row)`
     margin-top: 10px;
   `;
 
@@ -116,13 +115,13 @@ export default function DepositTable() {
       }),
       values,
       flatten
-  )(currencyValues), [currencyValues, currencies, currenciesData]);
+    )(currencyValues), [currencyValues, currencies, currenciesData]);
 
   /**
    * Generates approval transactions for current list of currencies that need approval.
    */
   const handleApprove = async () => {
-		const approvalCalls: Promise<any>[] = currenciesNeededApproval.map(
+    const approvalCalls: Promise<any>[] = currenciesNeededApproval.map(
       (currency) => callApprove(
         getContract(ethereum as provider, currency.address), currentConfig.contractAddresses.yAxisMetaVault, account));
 
@@ -131,10 +130,10 @@ export default function DepositTable() {
     });
     await Promise.all(approvalCalls);
     onUpdateAllowances();
-	}
-  
+  }
+
   const totalDepositing = useMemo(() => computeTotalDepositing(currencies, currencyValues, priceMap), [currencyValues]);
-  
+
   const handleSubmit = async () => {
     const amounts = currencies.map(c => {
       const _v = currencyValues[c.tokenId]
@@ -157,7 +156,7 @@ export default function DepositTable() {
     }
   }
 
- 
+
 
   const languages = useContext(LanguageContext);
   const language = languages.state.selected;
@@ -167,7 +166,7 @@ export default function DepositTable() {
       <TableHeader value={phrases["Wallet Balance"][language]} span={7} />
       <TableHeader value={phrases["Amount"][language]} span={12} />
     </HeaderRow>
-    { currencies.map( currency => (
+    { currencies.map(currency => (
       <DepositAssetRow key={currency.name} currency={currency} onChange={handleFormInputChange(setCurrencyValues)} />
     ))}
     <Row className='total'>
@@ -176,17 +175,17 @@ export default function DepositTable() {
         <Title level={3}>${totalDepositing}</Title>
         <Button
           className="investing-btn"
-          disabled={ disabled || isSubmitting }
+          disabled={disabled || isSubmitting}
           onClick={handleSubmit}
           block
           type="primary">
-            {
-              (currenciesNeededApproval && currenciesNeededApproval.length > 0) ?
-              phrases["Approve"][language] : 
+          {
+            (currenciesNeededApproval && currenciesNeededApproval.length > 0) ?
+              phrases["Approve"][language] :
               phrases["Deposit"][language]
-            }
+          }
         </Button>
-        <Text type="secondary" style={{marginTop: '10px', display: 'block'}}>{phrases["Withdraw Fee"][language]}: 0.1%</Text>
+        <Text type="secondary" style={{ marginTop: '10px', display: 'block' }}>{phrases["Withdraw Fee"][language]}: 0.1%</Text>
       </Col>
     </Row>
   </div>)

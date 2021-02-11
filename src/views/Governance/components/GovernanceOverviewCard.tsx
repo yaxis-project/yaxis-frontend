@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext } from 'react'
 import {
-  Row, Col, Typography, Card
+  Typography
 } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons'
 import { LanguageContext } from '../../../contexts/Language'

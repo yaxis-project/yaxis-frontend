@@ -7,7 +7,7 @@ import Value from '../../../components/Value'
 import BigNumber from 'bignumber.js';
 
 import {
- Row, Col, Typography, Input, Divider, Form, Button, notification
+ Row, Col, Typography, Input, Form, Button
 } from 'antd';
 
 

@@ -1,8 +1,6 @@
 import React, { useState, useContext, useMemo } from 'react'
 import { Typography } from 'antd';
 import { LanguageContext } from '../../../contexts/Language'
-import { provider } from 'web3-core';
-import { useWallet } from 'use-wallet';
 import { YAX } from '../../../utils/currencies'
 import Value from '../../../components/Value';
 import useAccountReturns from '../../../hooks/useAccountReturns';
@@ -12,7 +10,7 @@ import { DetailOverviewCard, DetailOverviewCardRow } from '../../../components/D
 import useYAxisAPY from '../../../hooks/useYAxisAPY';
 import BigNumber from 'bignumber.js';
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 
 export default function () {
