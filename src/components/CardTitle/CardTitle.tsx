@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import {white} from "../../theme/colors";
 
 interface CardTitleProps {
   text?: string

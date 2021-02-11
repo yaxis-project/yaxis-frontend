@@ -5,19 +5,17 @@ import useLeave from "../../../hooks/useLeave"
 import useYaxisStaking from "../../../hooks/useYaxisStaking"
 import Value from '../../../components/Value'
 
-import theme from '../../../theme'
 
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations';
 
 import {
-  Row, Col, Typography, Card, Button, Divider, Input, Form, notification
+  Row, Col, Typography, Card, Button,  Input, Form, notification
 } from 'antd';
 import BigNumber from 'bignumber.js'
-import { getBalanceNumber, getFullDisplayBalance, mulPowNumber } from '../../../utils/formatBalance'
+import { getBalanceNumber } from '../../../utils/formatBalance'
 import useApproveStaking from '../../../hooks/useApproveStaking'
 import useAllowanceStaking from '../../../hooks/useAllowanceStaking'
-import UnstakeXYax from '../../Staking/components/UnstakeXYax'
 
 const { Text } = Typography;
 

@@ -39,7 +39,6 @@
     "start:mainnet": "REACT_APP_NETWORK=mainnet craco start",
     "build": "CI= GENERATE_SOURCEMAP=false REACT_APP_NETWORK=mainnet craco build",
     "build:kovan": "CI= GENERATE_SOURCEMAP=false REACT_APP_NETWORK=kovan craco build",
-    "coverage": "hardhat --network coverage coverage",
     "test": "craco test",
     "eject": "craco eject"
   },

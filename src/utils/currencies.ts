@@ -7,84 +7,84 @@ import usdc from '../assets/img/currencies/usdc.svg'
 import uni_eth_yax_lp from '../assets/img/icons/pool-token.svg'
 import yax from '../assets/img/logo-ui.svg'
 
-import { currentConfig, tokensConfig } from "../yaxis/configs";
+import { currentConfig } from '../yaxis/configs'
 
 export interface Currency {
-  name: string;
-  stakingTokenAddress?: string;
-  address?: string;
-  tokenId?: string;
-  icon: any;
-  decimals: number;
-  priceMapKey?: string;
+  name: string
+  stakingTokenAddress?: string
+  address?: string
+  tokenId?: string
+  icon: any
+  decimals: number
+  priceMapKey?: string
 }
 
 export const Dai: Currency = {
-  name:"DAI",
-  tokenId:"dai",
+  name: 'DAI',
+  tokenId: 'dai',
   icon: dai,
   decimals: 18,
-  priceMapKey: 'DAI'
-};
+  priceMapKey: 'DAI',
+}
 
 export const CRV3: Currency = {
-  name: "3CRV",
-  tokenId: "3crv",
+  name: '3CRV',
+  tokenId: '3crv',
   icon: crv3,
   decimals: 18,
-  priceMapKey: 'YCURVE'
-};
+  priceMapKey: 'YCURVE',
+}
 
 export const USD: Currency = {
-  name: "USD",
-  tokenId: "usd",
+  name: 'USD',
+  tokenId: 'usd',
   icon: dai,
   decimals: 18,
-};
+}
 
 export const ETH: Currency = {
-  name: "ETH",
-  tokenId: "eth",
+  name: 'ETH',
+  tokenId: 'eth',
   icon: eth,
   decimals: 18,
-  priceMapKey: "ethereum"
-};
+  priceMapKey: 'ethereum',
+}
 
 export const YAX: Currency = {
-  name: "YAX",
+  name: 'YAX',
   tokenId: 'yax',
   address: currentConfig.contractAddresses.yaxis,
-  stakingTokenAddress: currentConfig.contractAddresses.xYaxStaking, 
+  stakingTokenAddress: currentConfig.contractAddresses.xYaxStaking,
   icon: yax,
   decimals: 18,
-  priceMapKey: "YAX"
-};
+  priceMapKey: 'YAX',
+}
 
 export const USDT: Currency = {
-  name: "USDT",
+  name: 'USDT',
   tokenId: 'usdt',
   icon: usdt,
   decimals: 18,
-  priceMapKey: "USDT"
-};
+  priceMapKey: 'USDT',
+}
 export const USDC: Currency = {
-  name: "USDC",
+  name: 'USDC',
   tokenId: 'usdc',
   icon: usdc,
   decimals: 18,
-  priceMapKey: "USDC"
-};
+  priceMapKey: 'USDC',
+}
 
 export const PICKLE: Currency = {
-  name: "Pickle",
+  name: 'Pickle',
   tokenId: 'pickle',
   icon: pickle,
   decimals: 18,
-  priceMapKey: "PICKLE"
-};
+  priceMapKey: 'PICKLE',
+}
 
 export const UNI_ETH_YAX_LP: Currency = {
-  name: "YAX/ETH UNI-V2 LP",
+  name: 'YAX/ETH UNI-V2 LP',
   icon: uni_eth_yax_lp,
   decimals: 18,
 }
@@ -92,7 +92,7 @@ export const UNI_ETH_YAX_LP: Currency = {
 /**
  * Settings for currencies used as investment collateral.
  */
-export const InvestingDepositCurrencies = [Dai, CRV3, USDT, USDC];
+export const InvestingDepositCurrencies = [Dai, CRV3, USDT, USDC]
 
 export enum Currencies {
   Dai,
@@ -102,5 +102,5 @@ export enum Currencies {
   YAX,
   PICKLE,
   USDC,
-  USDT
+  USDT,
 }

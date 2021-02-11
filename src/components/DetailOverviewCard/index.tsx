@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
-  Row, Col, Typography, Card
+  Typography, Card
 } from 'antd';
 import './index.less';
 
@@ -42,12 +42,12 @@ interface DetailOverviewCardProps {
  * @param props DetailOverviewCardProps
  * @see DetailOverviewCardRow
  */
-export function DetailOverviewCard (props: DetailOverviewCardProps) {
+export function DetailOverviewCard(props: DetailOverviewCardProps) {
   const { children, title } = props
   return (<Card className="detail-overview-card"
     style={{ padding: 0 }}
     title={<Title level={4}>{title}</Title>}
   >
-    { children }
+    { children}
   </Card>);
 }

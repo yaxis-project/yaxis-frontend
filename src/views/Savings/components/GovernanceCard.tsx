@@ -1,12 +1,12 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext } from 'react'
 import {
-  Row, Col, Typography, Card
+  Typography
 } from 'antd';
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import { DetailOverviewCard, DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
 import { ArrowRightOutlined } from '@ant-design/icons'
-const { Text, Title, Link } = Typography;
+const { Text,  Link } = Typography;
 
 
 export default function () {

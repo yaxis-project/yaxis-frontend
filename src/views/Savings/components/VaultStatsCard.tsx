@@ -1,18 +1,12 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext } from 'react'
 import { LanguageContext } from '../../../contexts/Language'
-import {
-  Typography, Divider
-} from 'antd'
 import phrases from './translations'
 import { ExpandableSidePanel, ExpandableRow } from '../../../components/ExpandableSidePanel';
-import useMetaVaultData from '../../../hooks/useMetaVaultData'
 import CountUp from 'react-countup'
-import {currentConfig} from "../../../yaxis/configs"
 import Value from '../../../components/Value';
 import useComputeAnnualProfits from '../../../hooks/useComputeAnnualProfits';
 import useComputeTVL from '../../../hooks/useComputeTVL';
 import useMetaVault from '../../../hooks/useMetaVault';
-const { Text, Title } = Typography;
 
 
 
@@ -31,14 +25,13 @@ export default function () {
         secondary={strategy}
       />
       <ExpandableRow main={t("Total Value Locked")} secondary={<CountUp
-          start={0}
-          end={stakingTvl.toNumber()}
-          decimals={0}
-          duration={1}
-          prefix="$"
-          separator=","
-        />} />
-      {/*<ExpandableRow main={t("Volume (24h)")} secondary="$[TODO]" />*/}
+        start={0}
+        end={stakingTvl.toNumber()}
+        decimals={0}
+        duration={1}
+        prefix="$"
+        separator=","
+      />} />
       <ExpandableRow
         main={t("Distributed Interest (annually)")}
         secondary={

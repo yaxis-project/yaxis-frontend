@@ -1,14 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Currency, YAX, UNI_ETH_YAX_LP } from '../../../utils/currencies'
+import { UNI_ETH_YAX_LP } from '../../../utils/currencies'
 import useLPContractData from '../../../hooks/useLPContractData'
 
-import theme from '../../../theme'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations';
-import useStakedBalance from '../../../hooks/useStakedBalance'
 
 import {
-  Row, Col, Typography, Card, Button, Divider, Input
+  Row, Col, Typography, Card, Button
 } from 'antd';
 import useStake from '../../../hooks/useStake'
 import useUnstake from '../../../hooks/useUnstake'
@@ -51,7 +49,7 @@ const LiquidityRow = (props: LiquidityRowProps) => {
         <Text>{name}</Text>
       </Col>
       <Col span={15}>
-         <Text>{balance} {symbol}</Text> 
+        <Text>{balance} {symbol}</Text>
       </Col>
     </Row>
   )
@@ -81,7 +79,7 @@ export default function LiquidityCard() {
   const { stakedValues } = useFarms();
   const [userBalances, setUserBalances] = useState({ YAX: "0", ETH: "0" })
 
-  useEffect(() => { 
+  useEffect(() => {
     const stakedValue = stakedValues.find(farm => farm.pid === pid);
     if (stakedValue) {
       setUserBalances(
@@ -110,7 +108,7 @@ export default function LiquidityCard() {
       <TableHeader value={phrases["Asset"][language]} span={9} />
       <TableHeader value={phrases["Balance"][language]} span={15} />
     </Row>
-  
+
     <LiquidityRow
       icon={currency.icon}
       name={'Pool Tokens'}
@@ -136,23 +134,23 @@ export default function LiquidityCard() {
       <Col span={12}>
         <Button
           className="staking-btn"
-            href="https://linkswap.app/#/add/0x514910771af9ca656af840dff83e8264ecf986ca/0xb1dc9124c395c1e97773ab855d66e879f053a289"
-            block
-            target="_blank"
-            type="primary">
-            <span style={{fontSize: '24px'}}>-</span>&nbsp;Remove
+          href="https://linkswap.app/#/add/0x514910771af9ca656af840dff83e8264ecf986ca/0xb1dc9124c395c1e97773ab855d66e879f053a289"
+          block
+          target="_blank"
+          type="primary">
+          <span style={{ fontSize: '24px' }}>-</span>&nbsp;Remove
         </Button>
       </Col>
       <Col span={12}>
-          <Button
-            className="staking-btn"
-            href="https://linkswap.app/#/add/0x514910771af9ca656af840dff83e8264ecf986ca/0xb1dc9124c395c1e97773ab855d66e879f053a289"
-            block
-            target="_blank"
-            type="primary">
-              <span style={{fontSize: '24px'}}>+</span>&nbsp;Add
+        <Button
+          className="staking-btn"
+          href="https://linkswap.app/#/add/0x514910771af9ca656af840dff83e8264ecf986ca/0xb1dc9124c395c1e97773ab855d66e879f053a289"
+          block
+          target="_blank"
+          type="primary">
+          <span style={{ fontSize: '24px' }}>+</span>&nbsp;Add
           </Button>
-        
+
       </Col>
     </Row>
   </Card>)

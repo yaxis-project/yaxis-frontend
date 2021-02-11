@@ -8,7 +8,7 @@ import { DetailOverviewCard, DetailOverviewCardRow } from '../../../components/D
 
 import useComputeAPYs from '../hooks/useComputeAPYs';
 
-const { Title, Text } = Typography;
+const {  Text } = Typography;
 
 const InvestmentDetailOverview: React.FC = () => {
 

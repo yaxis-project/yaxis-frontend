@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Typography, Card, Tabs } from 'antd'
+import {  Card, Tabs } from 'antd'
 import DepositTable from './DepositTable'
 import WithdrawTable from './WithdrawTable'
 
-const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 
 const ContentWrapper = styled.div`

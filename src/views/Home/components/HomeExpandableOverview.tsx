@@ -1,10 +1,9 @@
-import React, { useContext, ReactElement } from 'react'
+import React, { useContext } from 'react'
 import { LanguageContext } from '../../../contexts/Language'
 import useTVL from '../../../hooks/useComputeTVL'
 import useTotalSupply from "../../../hooks/useTotalSupply";
 import BigNumber from 'bignumber.js'
 import Value from '../../../components/Value'
-import phrases from './translations'
 import {getBalanceNumber} from '../../../utils/formatBalance'
 import info from "../../../assets/img/info.svg";
 import { ExpandableSidePanel, ExpandableRow } from '../../../components/ExpandableSidePanel';

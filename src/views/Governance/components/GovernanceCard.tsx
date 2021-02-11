@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, {  useContext } from 'react'
 import { Currency, YAX, PICKLE } from '../../../utils/currencies'
 
 import theme from '../../../theme'

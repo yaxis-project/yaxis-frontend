@@ -1,7 +1,5 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Typography } from 'antd'
-import { LanguageContext } from '../../../contexts/Language'
-import phrases from './translations'
 import { DetailOverviewCard, DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
 import useAccountReturns from '../../../hooks/useAccountReturns';
 import Value from '../../../components/Value';

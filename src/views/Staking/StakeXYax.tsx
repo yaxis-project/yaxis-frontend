@@ -1,30 +1,26 @@
-import React, {useContext, useEffect, useMemo, useState} from 'react'
-import styled, {ThemeContext} from 'styled-components'
-import {useWallet} from 'use-wallet'
-import {provider} from 'web3-core'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
+import styled, { ThemeContext } from 'styled-components'
+import { useWallet } from 'use-wallet'
+import { provider } from 'web3-core'
 import Spacer from '../../components/Spacer'
 import useYax from '../../hooks/useYaxis'
-import {getContract} from '../../utils/erc20'
+import { getContract } from '../../utils/erc20'
 import UnstakeXYax from './components/UnstakeXYax'
 import StakeYaxis from "./components/StakeYaxis";
 
-import {collapseDecimals, getCurveApyApi, getTotalStaking, numberToFloat} from '../../yaxis/utils';
+import { getTotalStaking } from '../../yaxis/utils';
 import BigNumber from "bignumber.js";
-import {getBalanceNumber} from "../../utils/formatBalance";
-import {currentConfig, tokensConfig} from "../../yaxis/configs";
-import {Button, Col, Divider, PageHeader, Row, Spin, Alert, Tooltip} from "antd";
-import Title from "../Vault/components/Title";
-import BalanceCard, {BalanceTitle} from "../../components/Card/BalanceCard";
+import { currentConfig } from "../../yaxis/configs";
+import { Button, Col, PageHeader, Row, Spin, Alert, Tooltip } from "antd";
+import BalanceCard from "../../components/Card/BalanceCard";
 import Value from "../../components/Value";
 import useTokenBalance from "../../hooks/useTokenBalance";
-import useTokenBalanceOf from "../../hooks/useTokenBalanceOf";
 import useBlock from "../../hooks/useBlock";
 import useStaking from '../../hooks/useStaking';
 import usePriceMap from '../../hooks/usePriceMap';
-import usePickle from '../../hooks/usePickle';
 import useMetaVaultData from '../../hooks/useMetaVaultData';
 import useYAxisAPY from '../../hooks/useYAxisAPY';
-import {InfoCircleOutlined} from "@ant-design/icons";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 const StakeXYax: React.FC = () => {
 	const {
@@ -40,9 +36,9 @@ const StakeXYax: React.FC = () => {
 	// const totalYaxInXYax = useTokenBalanceOf(currentConfig.contractAddresses.yaxis,
 	// 	currentConfig.contractAddresses.xYaxStaking)
 	const yaxis = useYax()
-	const {ethereum} = useWallet()
+	const { ethereum } = useWallet()
 	const priceMap = usePriceMap()
-	const {metaVaultData} = useMetaVaultData('v1')
+	const { metaVaultData } = useMetaVaultData('v1')
 	const { yAxisAPY, isInitialized: yAxisAPYIsInitialized } = useYAxisAPY()
 	const threeCrvApyPercent = new BigNumber((yAxisAPY && yAxisAPY['3crv']) || 0)
 	useEffect(() => {
@@ -76,7 +72,7 @@ const StakeXYax: React.FC = () => {
 		return getContract(ethereum as provider, tokenAddress)
 	}, [ethereum, tokenAddress])
 
-	const {stakingData, isExiting, onExit} = useStaking()
+	const { stakingData, isExiting, onExit } = useStaking()
 	const xYaxBalance = useTokenBalance(lpContract.options.address)
 	const totalValueLocked = new BigNumber(totalSupply).div(1e18).times(priceMap?.YAX).toNumber() || 0
 	const sumApy = new BigNumber(threeCrvApyPercent).div(100).multipliedBy(0.2)
@@ -88,7 +84,7 @@ const StakeXYax: React.FC = () => {
 		.times(metaVaultData?.tvl || 0)
 	// total apy
 	let metavaultAPY = new BigNumber(annualProfits).dividedBy(totalValueLocked || 1).multipliedBy(100)
-	console.log('DEBUG_LOG==>>: metavaultAPY', {metavaultAPY: metavaultAPY.toString()});
+	console.log('DEBUG_LOG==>>: metavaultAPY', { metavaultAPY: metavaultAPY.toString() });
 	let yaxAPY = new BigNumber(stakingData?.incentiveApy || 0)
 		.div(pricePerFullShare)
 		.div(100);
@@ -124,7 +120,7 @@ const StakeXYax: React.FC = () => {
 					)}
 					type="success"
 				/>
-				<Spacer size={"md"}/>
+				<Spacer size={"md"} />
 
 				<Row gutter={[8, 8]}>
 					<Col xs={12} md={8}>
@@ -151,20 +147,20 @@ const StakeXYax: React.FC = () => {
 									<Spin spinning={loadingApy} size="small" />
 								</span>
 							) : (
-								<Tooltip title={(
-									<div>
-										<div>{'YAX: '}<b>{yaxAPY?.toFixed(1)}%</b></div>
-										{/*<div>{'Pickle: '}<b>{pickleApyPercent?.toFixed(1)}%</b></div>*/}
-										{/*<div>{'CurveLP: '}<b>{lpApyPercent?.toFixed(1)}%</b></div>*/}
-										<div>{'CRV (20%): '}<b>{metavaultAPY?.toFixed(1)}%</b></div>
-										{/*<div>{'APR: '}<b>{totalApr?.toFixed(1)}%</b></div>*/}
-									</div>
-								)}>
-									<Value inline value={totalApy.toNumber()} decimals={1} />
-									<span>{'% '}</span>
-									<InfoCircleOutlined style={{fontSize: 12, color: themeColor.primary.main}} />
-								</Tooltip>
-							)}
+									<Tooltip title={(
+										<div>
+											<div>{'YAX: '}<b>{yaxAPY?.toFixed(1)}%</b></div>
+											{/*<div>{'Pickle: '}<b>{pickleApyPercent?.toFixed(1)}%</b></div>*/}
+											{/*<div>{'CurveLP: '}<b>{lpApyPercent?.toFixed(1)}%</b></div>*/}
+											<div>{'CRV (20%): '}<b>{metavaultAPY?.toFixed(1)}%</b></div>
+											{/*<div>{'APR: '}<b>{totalApr?.toFixed(1)}%</b></div>*/}
+										</div>
+									)}>
+										<Value inline value={totalApy.toNumber()} decimals={1} />
+										<span>{'% '}</span>
+										<InfoCircleOutlined style={{ fontSize: 12, color: themeColor.primary.main }} />
+									</Tooltip>
+								)}
 						</BalanceCard>
 					</Col>
 					{/*<Col xs={12} md={6}>*/}
@@ -193,15 +189,15 @@ const StakeXYax: React.FC = () => {
 									<Spin spinning={loadingApy} size="small" />
 								</span>
 							) : (
-								<>
-									<span>{ '$' }</span>
-									<Value inline value={annualProfits.toNumber()} decimals={1} />
-								</>
-							)}
+									<>
+										<span>{'$'}</span>
+										<Value inline value={annualProfits.toNumber()} decimals={1} />
+									</>
+								)}
 						</BalanceCard>
 					</Col>
 				</Row>
-				<Spacer size={"lg"}/>
+				<Spacer size={"lg"} />
 				<StyledFarm>
 					<Row gutter={[8, 8]}>
 						<StyledCardsWrapper>
@@ -212,13 +208,13 @@ const StakeXYax: React.FC = () => {
 									rate={pricePerFullShare}
 								/>
 							</StyledCardWrapper>
-							<Spacer/>
+							<Spacer />
 							<StyledCardWrapper>
 								<StakeYaxis />
 							</StyledCardWrapper>
 						</StyledCardsWrapper>
 					</Row>
-					<Spacer size="lg"/>
+					<Spacer size="lg" />
 					<Row gutter={[8, 8]}>
 						<StyledCardsWrapper>
 							{/*<StyledCardWrapper>*/}
@@ -258,7 +254,7 @@ const StakeXYax: React.FC = () => {
 					{/*		</StyledCardWrapper>*/}
 					{/*	</StyledCardsWrapper>*/}
 					{/*</Row>*/}
-					<Spacer size="lg"/>
+					<Spacer size="lg" />
 				</StyledFarm>
 			</PageHeader>
 		</>

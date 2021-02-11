@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState,  useEffect } from 'react'
 import useFarms from './useFarms'
 import BigNumber from 'bignumber.js'
 import useMetaVaultData from './useMetaVaultData'
