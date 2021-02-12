@@ -7,6 +7,7 @@ import Value from '../../../components/Value';
 import useComputeAnnualProfits from '../../../hooks/useComputeAnnualProfits';
 import useComputeTVL from '../../../hooks/useComputeTVL';
 import useMetaVault from '../../../hooks/useMetaVault';
+import BigNumber from 'bignumber.js'
 
 
 
@@ -35,7 +36,7 @@ export default function () {
       <ExpandableRow
         main={t("Distributed Interest (annually)")}
         secondary={
-          <Value value={annualProfits} numberPrefix="$" decimals={0} />
+          <Value value={new BigNumber(annualProfits).toNumber()} numberPrefix="$" decimals={0} />
         }
       />
     </ExpandableSidePanel>
