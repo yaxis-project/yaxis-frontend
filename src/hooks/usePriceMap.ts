@@ -1,13 +1,13 @@
-import {useContext} from 'react';
+import { useContext } from 'react'
 
-import PriceMapContext from '../contexts/PriceMapContext';
+import PriceMapContext from '../contexts/PriceMapContext'
 
 interface IPriceMap {
-	[key: string]: number;
+	[key: string]: number
 }
 
 function usePriceMap(): IPriceMap | null {
-	return useContext(PriceMapContext);
+	return useContext(PriceMapContext)
 }
 
-export default usePriceMap;
+export default usePriceMap

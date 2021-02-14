@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import Button from '../../../components/Button'
 import Card from '../../../components/Card'
@@ -7,24 +7,24 @@ import Label from '../../../components/Label'
 import Value from '../../../components/Value'
 import useEarnings from '../../../hooks/useEarnings'
 import useReward from '../../../hooks/useReward'
-import {getBalanceNumber} from '../../../utils/formatBalance'
+import { getBalanceNumber } from '../../../utils/formatBalance'
 
 interface HarvestProps {
 	pid: number
 }
 
-const Harvest: React.FC<HarvestProps> = ({pid}) => {
+const Harvest: React.FC<HarvestProps> = ({ pid }) => {
 	const earnings = useEarnings(pid)
 	const [pendingTx, setPendingTx] = useState(false)
-	const {onReward} = useReward(pid)
+	const { onReward } = useReward(pid)
 
 	return (
 		<Card>
 			<CardContent>
 				<StyledCardContentInner>
 					<StyledCardHeader>
-						<Value value={getBalanceNumber(earnings)}/>
-						<Label text="YAX Earned"/>
+						<Value value={getBalanceNumber(earnings)} />
+						<Label text="YAX Earned" />
 					</StyledCardHeader>
 					<StyledCardActions>
 						<Button
@@ -44,23 +44,23 @@ const Harvest: React.FC<HarvestProps> = ({pid}) => {
 }
 
 const StyledCardHeader = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
+	align-items: center;
+	display: flex;
+	flex-direction: column;
 `
 const StyledCardActions = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: ${(props) => props.theme.spacing[6]}px;
-  width: 100%;
+	display: flex;
+	justify-content: center;
+	margin-top: ${(props) => props.theme.spacing[6]}px;
+	width: 100%;
 `
 
 const StyledCardContentInner = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: space-between;
+	align-items: center;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: space-between;
 `
 
 export default Harvest

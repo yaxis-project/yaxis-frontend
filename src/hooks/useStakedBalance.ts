@@ -8,24 +8,24 @@ import useYaxis from './useYaxis'
 import useBlock from './useBlock'
 
 const useStakedBalance = (pid: number) => {
-  const [balance, setBalance] = useState(new BigNumber(0))
-  const { account }: { account: string } = useWallet()
-  const yaxis = useYaxis()
-  const yaxisChefContract = getYaxisChefContract(yaxis)
-  const block = useBlock()
+	const [balance, setBalance] = useState(new BigNumber(0))
+	const { account }: { account: string } = useWallet()
+	const yaxis = useYaxis()
+	const yaxisChefContract = getYaxisChefContract(yaxis)
+	const block = useBlock()
 
-  const fetchBalance = useCallback(async () => {
-    const balance = await getStaked(yaxisChefContract, pid, account)
-    setBalance(new BigNumber(balance))
-  }, [account, pid, yaxis])
+	const fetchBalance = useCallback(async () => {
+		const balance = await getStaked(yaxisChefContract, pid, account)
+		setBalance(new BigNumber(balance))
+	}, [account, pid, yaxis])
 
-  useEffect(() => {
-    if (account && yaxis) {
-      fetchBalance()
-    }
-  }, [account, pid, setBalance, block, yaxis])
+	useEffect(() => {
+		if (account && yaxis) {
+			fetchBalance()
+		}
+	}, [account, pid, setBalance, block, yaxis])
 
-  return balance
+	return balance
 }
 
 export default useStakedBalance

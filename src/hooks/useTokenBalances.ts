@@ -1,23 +1,30 @@
-import {useCallback, useEffect, useState} from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import BigNumber from 'bignumber.js'
-import {useWallet} from 'use-wallet'
-import {provider} from 'web3-core'
+import { useWallet } from 'use-wallet'
+import { provider } from 'web3-core'
 
-import {getBalances} from '../utils/erc20'
+import { getBalances } from '../utils/erc20'
 import useBlock from './useBlock'
-import useYaxis from "./useYaxis";
-import {getMutilcallContract} from "../yaxis/utils";
+import useYaxis from './useYaxis'
+import { getMutilcallContract } from '../yaxis/utils'
 
 const useTokenBalances = (tokenAddresses: string[]) => {
-	const [balances, setBalance] = useState<BigNumber[]>([...Array(tokenAddresses.length)])
-	const {account, ethereum} = useWallet<provider>()
+	const [balances, setBalance] = useState<BigNumber[]>([
+		...Array(tokenAddresses.length),
+	])
+	const { account, ethereum } = useWallet<provider>()
 	const block = useBlock()
-	const yaxis = useYaxis();
-	let mutilcallContract = getMutilcallContract(yaxis);
+	const yaxis = useYaxis()
+	let mutilcallContract = getMutilcallContract(yaxis)
 
 	const fetchBalances = useCallback(async () => {
-		const balance = await getBalances(yaxis, mutilcallContract, tokenAddresses, account)
+		const balance = await getBalances(
+			yaxis,
+			mutilcallContract,
+			tokenAddresses,
+			account,
+		)
 		setBalance(balance)
 	}, [account, tokenAddresses, yaxis, mutilcallContract, setBalance])
 

@@ -20,15 +20,23 @@ export const INTEGERS = {
 	INTEREST_RATE_BASE: new BigNumber('1e18'),
 }
 
-export function getApy(tvl: number, price: number, rewardPerBlock: number, poolWeight: number = 1): number {
+export function getApy(
+	tvl: number,
+	price: number,
+	rewardPerBlock: number,
+	poolWeight: number = 1,
+): number {
 	const BLOCKS_PER_YEAR = new BigNumber(2336000)
 
 	if (tvl && price && rewardPerBlock && poolWeight) {
-		return new BigNumber(price)
-			.times(rewardPerBlock)
-			.times(BLOCKS_PER_YEAR)
-			.times(poolWeight)
-			.div(tvl).toNumber() * 100
+		return (
+			new BigNumber(price)
+				.times(rewardPerBlock)
+				.times(BLOCKS_PER_YEAR)
+				.times(poolWeight)
+				.div(tvl)
+				.toNumber() * 100
+		)
 	}
 	return 0
 }

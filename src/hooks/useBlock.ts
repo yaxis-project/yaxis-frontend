@@ -1,7 +1,7 @@
-import useGlobal from "./useGlobal";
+import useGlobal from './useGlobal'
 
 const useBlock = () => {
-	const {block} = useGlobal()
+	const { block } = useGlobal()
 	return block
 }
 

@@ -11,20 +11,20 @@ import useBlock from './useBlock'
  * @param tokenAddress Token Address to fetch amount of tokens in the given wallet.
  */
 export default function useTokenBalance(tokenAddress: string) {
-  const [balance, setBalance] = useState(new BigNumber(0))
-  const {account, ethereum} = useWallet<provider>()
-  const block = useBlock()
+	const [balance, setBalance] = useState(new BigNumber(0))
+	const { account, ethereum } = useWallet<provider>()
+	const block = useBlock()
 
-  const fetchBalance = useCallback(async () => {
-    const balance = await getBalance(ethereum, tokenAddress, account)
-    setBalance(new BigNumber(balance))
-  }, [account, ethereum, tokenAddress])
+	const fetchBalance = useCallback(async () => {
+		const balance = await getBalance(ethereum, tokenAddress, account)
+		setBalance(new BigNumber(balance))
+	}, [account, ethereum, tokenAddress])
 
-  useEffect(() => {
-    if (account && ethereum && tokenAddress) {
-      fetchBalance()
-    }
-  }, [account, ethereum, setBalance, block, tokenAddress])
+	useEffect(() => {
+		if (account && ethereum && tokenAddress) {
+			fetchBalance()
+		}
+	}, [account, ethereum, setBalance, block, tokenAddress])
 
-  return balance;
+	return balance
 }
