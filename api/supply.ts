@@ -1,8 +1,9 @@
+import BigNumber from 'bignumber.js'
+
 const Web3 = require("web3");
 const web3 = new Web3(
-	new Web3.providers.HttpProvider("https://mainnet.eth.aragon.network/")
+	new Web3.providers.HttpProvider(process.env.RPC_URL)
 );
-import BigNumber from 'bignumber.js'
 
 const erc20Abi = require("./erc20.json")
 const yaxAddress = "0xb1dc9124c395c1e97773ab855d66e879f053a289"
