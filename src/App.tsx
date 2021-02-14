@@ -53,7 +53,7 @@ const Providers: React.FC = ({ children }) => {
         <UseWalletProvider
           chainId={NETWORK_ID}
           connectors={{
-            walletconnect: { rpcUrl: 'https://mainnet.eth.aragon.network/' },
+            walletconnect: { rpcUrl: process.env.RPC_URL },
           }}
         >
           <YaxisProvider>
