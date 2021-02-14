@@ -1,4 +1,4 @@
-import {AbiItem} from "web3-utils";
+import { AbiItem } from 'web3-utils'
 
 export const abis = {
 	ERC20Abi: require('./abi/erc20.json') as AbiItem[],

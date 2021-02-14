@@ -1,1 +1,1 @@
-declare module 'react-jazzicon';
+declare module 'react-jazzicon'

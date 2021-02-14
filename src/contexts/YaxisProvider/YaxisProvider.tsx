@@ -1,21 +1,20 @@
-import React, {createContext, useEffect, useState} from 'react'
-import {InjectedConnector} from '@web3-react/injected-connector'
-import {useWallet} from 'use-wallet'
-import {Yaxis} from "../../yaxis/Yaxis";
-import Web3 from "web3";
-import moment, { Moment } from 'moment';
-
+import React, { createContext, useEffect, useState } from 'react'
+import { InjectedConnector } from '@web3-react/injected-connector'
+import { useWallet } from 'use-wallet'
+import { Yaxis } from '../../yaxis/Yaxis'
+import Web3 from 'web3'
+import moment, { Moment } from 'moment'
 
 export interface YaxisContext {
 	yaxis?: Yaxis
-  block: number
-  lastUpdated: Moment
+	block: number
+	lastUpdated: Moment
 }
 
 export const Context = createContext<YaxisContext>({
 	yaxis: undefined,
-  block: 0,
-  lastUpdated: moment()
+	block: 0,
+	lastUpdated: moment(),
 })
 
 declare global {
@@ -24,23 +23,23 @@ declare global {
 	}
 }
 
-const YaxisProvider: React.FC = ({children}) => {
-	const {ethereum, connect}: { ethereum: any, connect: any } = useWallet()
+const YaxisProvider: React.FC = ({ children }) => {
+	const { ethereum, connect }: { ethereum: any; connect: any } = useWallet()
 	const [yaxis, setYaxis] = useState<any>()
 
 	// @ts-ignore
 	window.yaxis = yaxis
 	// @ts-ignore
 	window.eth = ethereum
-  const [block, setBlock] = useState(0);
-  const [lastUpdated, setLastUpdated] = useState<Moment>(moment());
+	const [block, setBlock] = useState(0)
+	const [lastUpdated, setLastUpdated] = useState<Moment>(moment())
 
 	useEffect(() => {
 		if (!ethereum) return
 		const fetchBlockNumber = async function () {
 			const latestBlockNumber = await web3.eth.getBlockNumber()
 			if (block !== latestBlockNumber) {
-        setLastUpdated( moment() );
+				setLastUpdated(moment())
 				setBlock(latestBlockNumber)
 			}
 		}
@@ -67,9 +66,9 @@ const YaxisProvider: React.FC = ({children}) => {
 			window.yaxissauce = yaxisLib
 		} else {
 			const injected = new InjectedConnector({})
-			injected.isAuthorized().then(isAuthorized => {
+			injected.isAuthorized().then((isAuthorized) => {
 				if (isAuthorized) {
-					let isSignOut = localStorage.getItem("signOut");
+					let isSignOut = localStorage.getItem('signOut')
 					if (!isSignOut) {
 						connect('injected')
 					}
@@ -78,7 +77,11 @@ const YaxisProvider: React.FC = ({children}) => {
 		}
 	}, [ethereum])
 
-	return <Context.Provider value={{yaxis, block, lastUpdated}}>{children}</Context.Provider>
+	return (
+		<Context.Provider value={{ yaxis, block, lastUpdated }}>
+			{children}
+		</Context.Provider>
+	)
 }
 
 export default YaxisProvider

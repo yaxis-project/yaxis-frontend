@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js'
-import React, {useEffect, useState} from 'react'
-import Countdown, {CountdownRenderProps} from 'react-countdown'
+import React, { useEffect, useState } from 'react'
+import Countdown, { CountdownRenderProps } from 'react-countdown'
 import NumberFormat from 'react-number-format'
-import styled, {keyframes} from 'styled-components'
-import {useWallet} from 'use-wallet'
+import styled, { keyframes } from 'styled-components'
+import { useWallet } from 'use-wallet'
 import Button from '../../../components/Button'
 import Card from '../../../components/Card'
 import CardContent from '../../../components/CardContent'
@@ -16,45 +16,53 @@ import {
 	getYaxisChefContract,
 	getYaxisPrice,
 } from '../../../yaxis/utils'
-import {bnToDec} from '../../../utils'
+import { bnToDec } from '../../../utils'
 import useRewardPerBlock from '../../../hooks/useRewardPerBlock'
-import {Checkbox, PageHeader, Row, Divider} from "antd";
-import {CheckboxChangeEvent} from "antd/es/checkbox";
-import {getApy} from "../../../utils/number";
-import {StakedValue} from "../../../contexts/Farms/types";
+import { Checkbox, PageHeader, Row, Divider } from 'antd'
+import { CheckboxChangeEvent } from 'antd/es/checkbox'
+import { getApy } from '../../../utils/number'
+import { StakedValue } from '../../../contexts/Farms/types'
 
 interface FarmWithStakedValue extends Farm, StakedValue {
 	apy: BigNumber
 }
 
 function displayRow(rows: FarmWithStakedValue[][]) {
-	return <>
-		{!!rows[0].length &&
-		rows.map((farmRow, i) => (
-			<StyledRow key={i}>
-				{farmRow.map((farm, j) => (
-					<React.Fragment key={j}>
-						<FarmCard farm={farm}/>
-						{(j === 0 || j === 1) && <StyledSpacer/>}
-					</React.Fragment>
+	return (
+		<>
+			{!!rows[0].length &&
+				rows.map((farmRow, i) => (
+					<StyledRow key={i}>
+						{farmRow.map((farm, j) => (
+							<React.Fragment key={j}>
+								<FarmCard farm={farm} />
+								{(j === 0 || j === 1) && <StyledSpacer />}
+							</React.Fragment>
+						))}
+					</StyledRow>
 				))}
-			</StyledRow>
-		))}
-	</>;
+		</>
+	)
 }
 
 const FarmCards: React.FC = () => {
-	const {farms, stakedValues} = useFarms()
+	const { farms, stakedValues } = useFarms()
 	const yaxisPrice = getYaxisPrice(stakedValues, farms)
 	const [showInactiveFarms, setShowInactiveFarms] = useState(false)
 	const rewardPerBlock = useRewardPerBlock()
 	const convertFarms = (items: Farm[]) => {
 		return items.reduce<FarmWithStakedValue[][]>(
 			(farmRows, farm, i) => {
-				let stakedValue = stakedValues.find(value => value.pid == farm.pid);
-				let poolWeight = stakedValue?.poolWeight?.toNumber() ?? 0;
-				let farmApy = getApy(stakedValue?.tvl,
-					yaxisPrice.toNumber(), rewardPerBlock,poolWeight);
+				let stakedValue = stakedValues.find(
+					(value) => value.pid == farm.pid,
+				)
+				let poolWeight = stakedValue?.poolWeight?.toNumber() ?? 0
+				let farmApy = getApy(
+					stakedValue?.tvl,
+					yaxisPrice.toNumber(),
+					rewardPerBlock,
+					poolWeight,
+				)
 				const farmWithStakedValue = {
 					...farm,
 					...stakedValue,
@@ -64,35 +72,42 @@ const FarmCards: React.FC = () => {
 				if (newFarmRows[newFarmRows.length - 1].length === 3) {
 					newFarmRows.push([farmWithStakedValue])
 				} else {
-					newFarmRows[newFarmRows.length - 1].push(farmWithStakedValue)
+					newFarmRows[newFarmRows.length - 1].push(
+						farmWithStakedValue,
+					)
 				}
 				return newFarmRows
 			},
 			[[]],
 		)
 	}
-	const activeRows = convertFarms(farms.filter(value => value.active === true));
-	const inactiveRows = convertFarms(farms.filter(value => value.active === false));
+	const activeRows = convertFarms(
+		farms.filter((value) => value.active === true),
+	)
+	const inactiveRows = convertFarms(
+		farms.filter((value) => value.active === false),
+	)
 	const onShowInactiveFarmsChange = (e: CheckboxChangeEvent) => {
-		setShowInactiveFarms(e.target.checked);
-	};
+		setShowInactiveFarms(e.target.checked)
+	}
 
 	return (
-		<StyledCards title={"Farms"}
-								 extra={[
-									 <Checkbox key="show_inactive_farms" onChange={onShowInactiveFarmsChange}>Show Inactive
-										 Farms</Checkbox>,
-								 ]}
+		<StyledCards
+			title={'Farms'}
+			extra={[
+				<Checkbox
+					key="show_inactive_farms"
+					onChange={onShowInactiveFarmsChange}
+				>
+					Show Inactive Farms
+				</Checkbox>,
+			]}
 		>
-			<Row justify={'center'}>
-				{displayRow(activeRows)}
-			</Row>
+			<Row justify={'center'}>{displayRow(activeRows)}</Row>
 			{showInactiveFarms && (
 				<>
 					<Divider>Inactive</Divider>
-					<Row>
-						{displayRow(inactiveRows)}
-					</Row>
+					<Row>{displayRow(inactiveRows)}</Row>
 				</>
 			)}
 		</StyledCards>
@@ -103,26 +118,26 @@ interface FarmCardProps {
 	farm: FarmWithStakedValue
 }
 
-const FarmCard: React.FC<FarmCardProps> = ({farm}) => {
+const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
 	const [startTime] = useState(0)
 	const [, setHarvestable] = useState(0)
 
-	const {account} = useWallet()
-	const {lpTokenAddress, pid} = farm
+	const { account } = useWallet()
+	const { lpTokenAddress, pid } = farm
 
-	let type = farm.type || "uni";
-	const isBalancerPool = type == "balancer"
+	let type = farm.type || 'uni'
+	const isBalancerPool = type == 'balancer'
 	const yaxis = useYaxis()
 
 	const renderer = (countdownProps: CountdownRenderProps) => {
-		const {hours, minutes, seconds} = countdownProps
+		const { hours, minutes, seconds } = countdownProps
 		const paddedSeconds = seconds < 10 ? `0${seconds}` : seconds
 		const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes
 		const paddedHours = hours < 10 ? `0${hours}` : hours
 		return (
-			<span style={{width: '100%'}}>
-        {paddedHours}:{paddedMinutes}:{paddedSeconds}
-      </span>
+			<span style={{ width: '100%' }}>
+				{paddedHours}:{paddedMinutes}:{paddedSeconds}
+			</span>
 		)
 	}
 
@@ -151,14 +166,16 @@ const FarmCard: React.FC<FarmCardProps> = ({farm}) => {
 					<StyledContent>
 						<StyledTitle>{farm.name}</StyledTitle>
 						<StyledDetails>
-							<StyledDeposit>Deposit {farm.lpToken.toUpperCase()}</StyledDeposit>
+							<StyledDeposit>
+								Deposit {farm.lpToken.toUpperCase()}
+							</StyledDeposit>
 							<StyledInsight>
 								<span>APY</span>
 								<span>
-                  {farm.apy
+									{farm.apy
 										? `${farm.apy.toFormat(1)}%`
 										: 'Loading ...'}
-                </span>
+								</span>
 								{/*<span>*/}
 								{/*  {farm.tokenAmount*/}
 								{/*    ? (farm.tokenAmount.toNumber() || 0).toLocaleString('en-US')*/}
@@ -175,16 +192,21 @@ const FarmCard: React.FC<FarmCardProps> = ({farm}) => {
 							<StyledInsight>
 								<span>TVL:</span>
 								<span>
-                  {farm.tvl
-										? (<NumberFormat value={farm.tvl} displayType={'text'} thousandSeparator={true} decimalScale={0}
-																		 prefix={'$'}/>)
-										: '0'}
-                </span>
-
+									{farm.tvl ? (
+										<NumberFormat
+											value={farm.tvl}
+											displayType={'text'}
+											thousandSeparator={true}
+											decimalScale={0}
+											prefix={'$'}
+										/>
+									) : (
+										'0'
+									)}
+								</span>
 							</StyledInsight>
 						</StyledDetails>
-						<Spacer/>
-
+						<Spacer />
 					</StyledContent>
 					<StyledButtons>
 						<Button
@@ -202,9 +224,12 @@ const FarmCard: React.FC<FarmCardProps> = ({farm}) => {
 						<Spacer></Spacer>
 						<Button
 							text="Get Pair"
-							href={isBalancerPool ? `https://pools.balancer.exchange/#/pool/${lpTokenAddress}` : `https://uniswap.info/pair/${lpTokenAddress}`}
-						>
-						</Button>
+							href={
+								isBalancerPool
+									? `https://pools.balancer.exchange/#/pool/${lpTokenAddress}`
+									: `https://uniswap.info/pair/${lpTokenAddress}`
+							}
+						></Button>
 					</StyledButtons>
 				</CardContent>
 			</Card>
@@ -212,17 +237,17 @@ const FarmCard: React.FC<FarmCardProps> = ({farm}) => {
 	)
 }
 const StyledTabButton = styled.span`
-  display: flex;
-  margin: 20px;
-  width: 200px
+	display: flex;
+	margin: 20px;
+	width: 200px;
 `
 const StyledTabs = styled.div`
-  display: flex;
-  justify-content: center;
+	display: flex;
+	justify-content: center;
 `
 const StyledButtons = styled.div`
-  display: flex;
-  justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 `
 const RainbowLight = keyframes`
 
@@ -239,80 +264,80 @@ const RainbowLight = keyframes`
 
 const StyledCards = styled(PageHeader)`
 	padding: 0;
-  @media (max-width: 768px) {
-    width: 100%;
-  }
+	@media (max-width: 768px) {
+		width: 100%;
+	}
 `
 
 const StyledRow = styled.div`
-  display: flex;
-  margin-bottom: ${(props) => props.theme.spacing[4]}px;
-  flex-flow: row wrap;
-  justify-content: center;
-  @media (max-width: 768px) {
-    width: 100%;
-    flex-flow: column nowrap;
-    align-items: center;
-  }
+	display: flex;
+	margin-bottom: ${(props) => props.theme.spacing[4]}px;
+	flex-flow: row wrap;
+	justify-content: center;
+	@media (max-width: 768px) {
+		width: 100%;
+		flex-flow: column nowrap;
+		align-items: center;
+	}
 `
 
 const StyledCardWrapper = styled.div`
-  display: flex;
-  width: calc((900px - ${(props) => props.theme.spacing[4]}px * 2) / 3);
-  position: relative;
+	display: flex;
+	width: calc((900px - ${(props) => props.theme.spacing[4]}px * 2) / 3);
+	position: relative;
 `
 
 const StyledTitle = styled.h4`
-  color: ${({theme}) => theme.color.primary.main};
-  font-size: 16px;
-  font-weight: 700;
-  margin: ${(props) => props.theme.spacing[2]}px 0 0;
-  padding: 0;
+	color: ${({ theme }) => theme.color.primary.main};
+	font-size: 16px;
+	font-weight: 700;
+	margin: ${(props) => props.theme.spacing[2]}px 0 0;
+	padding: 0;
 `
 
 const StyledContent = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
+	align-items: center;
+	display: flex;
+	flex-direction: column;
 `
 
 const StyledSpacer = styled.div`
-  height: ${(props) => props.theme.spacing[4]}px;
-  width: ${(props) => props.theme.spacing[4]}px;
+	height: ${(props) => props.theme.spacing[4]}px;
+	width: ${(props) => props.theme.spacing[4]}px;
 `
 
 const StyledDetails = styled.div`
-  margin-top: ${(props) => props.theme.spacing[2]}px;
-  text-align: center;
+	margin-top: ${(props) => props.theme.spacing[2]}px;
+	text-align: center;
 `
 const StyledDeposit = styled.div`
-  color: ${(props) => props.theme.color.grey[100]};
-  margin-top: 10px;
-  height: 40px;
-  text-align: center;
-  font-size: 13px;
+	color: ${(props) => props.theme.color.grey[100]};
+	margin-top: 10px;
+	height: 40px;
+	text-align: center;
+	font-size: 13px;
 `
 const StyledDetail = styled.div`
-  color: ${(props) => props.theme.color.grey[100]};
-  margin-top: 10px;
-  text-align: center;
-  font-size: 14px;
+	color: ${(props) => props.theme.color.grey[100]};
+	margin-top: 10px;
+	text-align: center;
+	font-size: 14px;
 `
 
 const StyledInsight = styled.div`
-  max-width: 480px;
-  display: flex;
-  justify-content: space-between;
-  box-sizing: border-box;
-  border-radius: 8px;
-  color: #ffffff;
-  width: 100%;
-  margin-top: 12px;
-  margin-bottom: 12px;
-  line-height: 32px;
-  font-size: 12px;
-  text-align: center;
-  padding: 0 12px;
+	max-width: 480px;
+	display: flex;
+	justify-content: space-between;
+	box-sizing: border-box;
+	border-radius: 8px;
+	color: #ffffff;
+	width: 100%;
+	margin-top: 12px;
+	margin-bottom: 12px;
+	line-height: 32px;
+	font-size: 12px;
+	text-align: center;
+	padding: 0 12px;
 `
 
 export default FarmCards

@@ -10,29 +10,29 @@ import { getAllowance } from '../utils/erc20'
 import { getYaxisChefContract } from '../yaxis/utils'
 
 const useAllowance = (lpContract: Contract) => {
-  const [allowance, setAllowance] = useState(new BigNumber(0))
-  const {account} = useWallet<provider>()
-  const yaxis = useYaxis()
-  const yaxisChefContract = getYaxisChefContract(yaxis)
+	const [allowance, setAllowance] = useState(new BigNumber(0))
+	const { account } = useWallet<provider>()
+	const yaxis = useYaxis()
+	const yaxisChefContract = getYaxisChefContract(yaxis)
 
-  const fetchAllowance = useCallback(async () => {
-    const allowance = await getAllowance(
-      lpContract,
-      yaxisChefContract?.options?.address,
-      account,
-    )
-    setAllowance(new BigNumber(allowance))
-  }, [account, yaxisChefContract, lpContract])
+	const fetchAllowance = useCallback(async () => {
+		const allowance = await getAllowance(
+			lpContract,
+			yaxisChefContract?.options?.address,
+			account,
+		)
+		setAllowance(new BigNumber(allowance))
+	}, [account, yaxisChefContract, lpContract])
 
-  useEffect(() => {
-    if (account && yaxisChefContract && lpContract) {
-      fetchAllowance()
-    }
-    let refreshInterval = setInterval(fetchAllowance, 1000)
-    return () => clearInterval(refreshInterval)
-  }, [account, yaxisChefContract, lpContract])
+	useEffect(() => {
+		if (account && yaxisChefContract && lpContract) {
+			fetchAllowance()
+		}
+		let refreshInterval = setInterval(fetchAllowance, 1000)
+		return () => clearInterval(refreshInterval)
+	}, [account, yaxisChefContract, lpContract])
 
-  return allowance
+	return allowance
 }
 
 export default useAllowance

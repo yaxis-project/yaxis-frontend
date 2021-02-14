@@ -1,125 +1,116 @@
 .investing-view {
-  .investment-account-action-card {
-    .ant-card-body{
-      padding: 0;
-    }
-  }
+	.investment-account-action-card {
+		.ant-card-body {
+			padding: 0;
+		}
+	}
 
-  .ant-layout-content{
-    margin-top: 36px;
-  }
+	.ant-layout-content {
+		margin-top: 36px;
+	}
 
-  .investing-btn{
-    background: #016EAC;
-    border: none;
-    height: 60px;
-    &[disabled] {
-      color: #8c8c8c;
-      background-color: #f0f0f0;
-      border: none;
-    }
-  }
+	.investing-btn {
+		background: #016eac;
+		border: none;
+		height: 60px;
+		&[disabled] {
+			color: #8c8c8c;
+			background-color: #f0f0f0;
+			border: none;
+		}
+	}
 
-  .deposit-table{
-    .deposit-asset-row{
-      border-bottom: 1px solid #ECEFF1;
-      padding: 13px 22px;
+	.deposit-table {
+		.deposit-asset-row {
+			border-bottom: 1px solid #eceff1;
+			padding: 13px 22px;
 
-      .ant-col{
-        &.currency{
-          display:flex;
-          align-items: center;
+			.ant-col {
+				&.currency {
+					display: flex;
+					align-items: center;
 
-          .ant-typography{
-            margin-left: 16px;
-            font-size: 18px;
-            line-height: 1em
-          }
-        }
-      }
-    }
+					.ant-typography {
+						margin-left: 16px;
+						font-size: 18px;
+						line-height: 1em;
+					}
+				}
+			}
+		}
 
-    .deposit-asset-header-row{
-       padding: 7px 22px;
-       border-bottom: 1px solid #ECEFF1;
-    }
+		.deposit-asset-header-row {
+			padding: 7px 22px;
+			border-bottom: 1px solid #eceff1;
+		}
 
-    .total{
-      margin: 22px 0;
-      h3{
-        font-size: 22px;
-        margin: 0 0 18px;
-      }
-      
-    }
-  }
+		.total {
+			margin: 22px 0;
+			h3 {
+				font-size: 22px;
+				margin: 0 0 18px;
+			}
+		}
+	}
 
-  .withdraw-table{
-   
-    .ant-row{
-      margin: 28px 22px;
-      align-items: flex-start;
-      
-      .ant-form-item{
-        margin: 0;
-      }
+	.withdraw-table {
+		.ant-row {
+			margin: 28px 22px;
+			align-items: flex-start;
 
-      &.withdraw-from{
-        .title{
-          display: flex;
-          align-items: center;
-          font-size: 18px;
-           margin-bottom: 20px;
-          img{
-            margin-right: 16px
-          }
-        }
+			.ant-form-item {
+				margin: 0;
+			}
 
-        .available{
+			&.withdraw-from {
+				.title {
+					display: flex;
+					align-items: center;
+					font-size: 18px;
+					margin-bottom: 20px;
+					img {
+						margin-right: 16px;
+					}
+				}
 
-        }
-      }
+				.available {
+				}
+			}
 
-      &.to-wallet{
-        .ant-select{
-          margin-bottom: 20px;
-        }
+			&.to-wallet {
+				.ant-select {
+					margin-bottom: 20px;
+				}
 
-        .title{
-         
-        }
+				.title {
+				}
 
-        .available{
+				.available {
+				}
+			}
+		}
 
-        }
-      }
-    }
+		.divider-group {
+			position: relative;
+			.divider-arrow {
+				position: absolute;
+				top: 0;
+				transform: translateY(-45%);
+				left: 50%;
+				background: white;
+				border: 8px solid white;
+				svg {
+					opacity: 0.3;
+				}
+			}
+		}
+	}
 
-
-    .divider-group{
-      position: relative;
-      .divider-arrow{
-        position: absolute;
-        top: 0;
-        transform: translateY(-45%);
-        left: 50%;
-        background: white;
-        border: 8px solid white;
-        svg{
-          opacity: 0.3;
-        }
-
-      }
-    }
-   
-  }
-  
-
-  .detail-overview-card {
-    .detail-overview-card-row{
-      >.ant-typography{
-        color: rgba(17, 51, 83, 0.6);
-      }
-    }
-  }
+	.detail-overview-card {
+		.detail-overview-card-row {
+			> .ant-typography {
+				color: rgba(17, 51, 83, 0.6);
+			}
+		}
+	}
 }

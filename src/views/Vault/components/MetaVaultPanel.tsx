@@ -1,93 +1,98 @@
-import React, {useState, useEffect, useMemo} from 'react';
-import styled from 'styled-components';
-import {Space, Row, Col, Button, Radio, notification, Alert} from 'antd';
-import {BigNumber} from 'bignumber.js'
-import Countdown, {CountdownRenderProps} from 'react-countdown'
+import React, { useState, useEffect, useMemo } from 'react'
+import styled from 'styled-components'
+import { Space, Row, Col, Button, Radio, notification, Alert } from 'antd'
+import { BigNumber } from 'bignumber.js'
+import Countdown, { CountdownRenderProps } from 'react-countdown'
 import _ from 'lodash'
 
-import Card from '../../../components/Card';
-import Spacer from '../../../components/Spacer';
-import CurrencyInput from './CurrencyInput';
-import {ICurrency, MetaVaultData} from "../../../hooks/useMetaVaultData";
-import {getContract} from '../../../utils/erc20';
-import {provider} from 'web3-core';
-import {useWallet} from "use-wallet";
-import {callApprove, numberToDecimal} from '../../../yaxis/utils';
-import {currentConfig} from '../../../yaxis/configs';
-import useMetaVault from '../../../hooks/useMetaVault';
-import {tokensConfig} from '../../../yaxis/configs'
+import Card from '../../../components/Card'
+import Spacer from '../../../components/Spacer'
+import CurrencyInput from './CurrencyInput'
+import { ICurrency, MetaVaultData } from '../../../hooks/useMetaVaultData'
+import { getContract } from '../../../utils/erc20'
+import { provider } from 'web3-core'
+import { useWallet } from 'use-wallet'
+import { callApprove, numberToDecimal } from '../../../yaxis/utils'
+import { currentConfig } from '../../../yaxis/configs'
+import useMetaVault from '../../../hooks/useMetaVault'
+import { tokensConfig } from '../../../yaxis/configs'
 
 const NavButton = styled.div`
-  color: ${(props) => props.theme.color.grey[400]};
-  cursor: pointer;
-  font-weight: 700;
-  border-radius: 6px;
-  padding-left: ${(props) => props.theme.spacing[3]}px;
-  padding-right: ${(props) => props.theme.spacing[3]}px;
-  text-decoration: none;
-  border: 1px solid transparent;
-  padding: 8px 16px;
-  display: inline-block;
-  &:hover {
-    color: ${(props) => props.theme.color.grey[500]};
-  }
-  &.active {
-    color: ${(props) => props.theme.color.primary.main};
-    border-color: ${(props) => props.theme.color.primary.main};
-  }
-  @media (max-width: 400px) {
-    padding-left: ${(props) => props.theme.spacing[2]}px;
-    padding-right: ${(props) => props.theme.spacing[2]}px;
-  }
-`;
+	color: ${(props) => props.theme.color.grey[400]};
+	cursor: pointer;
+	font-weight: 700;
+	border-radius: 6px;
+	padding-left: ${(props) => props.theme.spacing[3]}px;
+	padding-right: ${(props) => props.theme.spacing[3]}px;
+	text-decoration: none;
+	border: 1px solid transparent;
+	padding: 8px 16px;
+	display: inline-block;
+	&:hover {
+		color: ${(props) => props.theme.color.grey[500]};
+	}
+	&.active {
+		color: ${(props) => props.theme.color.primary.main};
+		border-color: ${(props) => props.theme.color.primary.main};
+	}
+	@media (max-width: 400px) {
+		padding-left: ${(props) => props.theme.spacing[2]}px;
+		padding-right: ${(props) => props.theme.spacing[2]}px;
+	}
+`
 
 const PanelRightTextPrimary = styled.div`
-  color: ${(props) => props.theme.color.primary.main};
-  font-weight: 600;
-  font-size: 16px;
-`;
+	color: ${(props) => props.theme.color.primary.main};
+	font-weight: 600;
+	font-size: 16px;
+`
 
 const PanelRightText = styled.div`
-  font-weight: 600;
-  font-size: 16px;
-`;
-
+	font-weight: 600;
+	font-size: 16px;
+`
 
 type Props = {
-	currencies: Array<ICurrency>;
-	tokenName: string;
-	onUpdateAllowances?: () => void;
-	metaVaultData: MetaVaultData;
-	isEstimating: boolean;
-	callEstimateWithdrawals: (shares: string) => void;
-};
+	currencies: Array<ICurrency>
+	tokenName: string
+	onUpdateAllowances?: () => void
+	metaVaultData: MetaVaultData
+	isEstimating: boolean
+	callEstimateWithdrawals: (shares: string) => void
+}
 
 function MetaVaultPanel({
-	currencies, tokenName, onUpdateAllowances, metaVaultData,
-	isEstimating, callEstimateWithdrawals
+	currencies,
+	tokenName,
+	onUpdateAllowances,
+	metaVaultData,
+	isEstimating,
+	callEstimateWithdrawals,
 }: Props): React.ReactElement {
 	const { account, ethereum } = useWallet()
 	const { onDepositAll, isSubmitting, onWithdraw } = useMetaVault()
 
-	const [currentTab, setCurrentTab] = useState<string>('deposit');
-	const [currencyValues, setCurrencyValues] = useState<{ [key: string]: string | undefined }>({});
+	const [currentTab, setCurrentTab] = useState<string>('deposit')
+	const [currencyValues, setCurrencyValues] = useState<{
+		[key: string]: string | undefined
+	}>({})
 	const [inputValue, setInputValue] = useState<string>('')
-	const [tokenReceived, setTokenReceived] = useState<number>(0);
-	const [areApproved, setApproved] = useState<boolean>(false);
-	const [selectedTokenId, setSelectedTokenId] = useState<string>('3crv');
-	const ratio = 0.5;
-	const isDeposit = currentTab === 'deposit';
-	const isWithdraw = !isDeposit;
+	const [tokenReceived, setTokenReceived] = useState<number>(0)
+	const [areApproved, setApproved] = useState<boolean>(false)
+	const [selectedTokenId, setSelectedTokenId] = useState<string>('3crv')
+	const ratio = 0.5
+	const isDeposit = currentTab === 'deposit'
+	const isWithdraw = !isDeposit
 
 	const selectedCurrency = useMemo((): ICurrency => {
-		return currencies.find(c => c.tokenId === selectedTokenId)
+		return currencies.find((c) => c.tokenId === selectedTokenId)
 	}, [currencies, selectedTokenId])
 
 	const handleInputChange = (key: string, value: string) => {
 		setCurrencyValues((prev) => ({
 			...prev,
 			[key]: value,
-		}));
+		}))
 	}
 
 	const handleInputDebounce = _.debounce((value) => {
@@ -96,7 +101,7 @@ function MetaVaultPanel({
 
 	const handleSubmit = async () => {
 		if (isDeposit) {
-			const amounts = currencies.map(c => {
+			const amounts = currencies.map((c) => {
 				const _v = currencyValues[c.tokenId]
 				if (_v) {
 					return numberToDecimal(_v, c.decimals)
@@ -107,13 +112,13 @@ function MetaVaultPanel({
 		} else {
 			if (!selectedCurrency) {
 				notification.error({
-					message: `[withdraw] Invalid currency`
+					message: `[withdraw] Invalid currency`,
 				})
 				return
 			}
 			const sharesAmount = numberToDecimal(inputValue, 18)
 			notification.info({
-				message: 'Please confirm withdraw transaction'
+				message: 'Please confirm withdraw transaction',
 			})
 			onWithdraw(sharesAmount, selectedCurrency.address)
 		}
@@ -133,8 +138,8 @@ function MetaVaultPanel({
 		setSelectedTokenId(value === selectedTokenId ? '' : value)
 	}
 	const setTab = (key: string) => () => {
-		setCurrentTab(key);
-		setApproved(false);
+		setCurrentTab(key)
+		setApproved(false)
 	}
 
 	useEffect(() => {
@@ -142,52 +147,75 @@ function MetaVaultPanel({
 		// this is sample
 		const received = Object.values(currencyValues)
 			.map((c) => Number(c))
-			.filter(v => !isNaN(v))
-			.reduce((sum, v) => sum += v, 0);
-		setTokenReceived(received);
-	}, [currencyValues]);
+			.filter((v) => !isNaN(v))
+			.reduce((sum, v) => (sum += v), 0)
+		setTokenReceived(received)
+	}, [currencyValues])
 
 	// check currency need approval
 	const currenciesNeededApproval = useMemo((): ICurrency[] => {
 		const _cur: ICurrency[] = []
 		if (isDeposit) {
-			Object.entries(currencyValues)
-				.forEach(([symbol, v]) => {
-					const value = new BigNumber(v || 0)
-					const currency = currencies.find(c => c.tokenId === symbol)
-					if (!value.isNaN() && currency && value.gte(currency.allowance) && value.lte(currency.balance)) {
-						_cur.push(currency)
-					}
-				})
+			Object.entries(currencyValues).forEach(([symbol, v]) => {
+				const value = new BigNumber(v || 0)
+				const currency = currencies.find((c) => c.tokenId === symbol)
+				if (
+					!value.isNaN() &&
+					currency &&
+					value.gte(currency.allowance) &&
+					value.lte(currency.balance)
+				) {
+					_cur.push(currency)
+				}
+			})
 		}
 		return _cur
 	}, [currencyValues, currencies, isDeposit])
 
 	const disabled = useMemo((): boolean => {
 		if (isDeposit) {
-			const noValue = !Object.values(currencyValues).find(v => parseFloat(v) > 0)
-			const insufficientBalance = !!Object.entries(currencyValues)
-				.find(([id, v]) => {
+			const noValue = !Object.values(currencyValues).find(
+				(v) => parseFloat(v) > 0,
+			)
+			const insufficientBalance = !!Object.entries(currencyValues).find(
+				([id, v]) => {
 					const value = new BigNumber(v || 0)
-					const currency = currencies.find(c => c.tokenId === id)
+					const currency = currencies.find((c) => c.tokenId === id)
 					return value.gt(currency.balance || 0)
-				})
+				},
+			)
 			return noValue || insufficientBalance
 		} else {
 			const bvalue = new BigNumber(inputValue || '0')
-			return !selectedTokenId || bvalue.lte(0) || bvalue.gt(metaVaultData.totalBalance || 0)
+			return (
+				!selectedTokenId ||
+				bvalue.lte(0) ||
+				bvalue.gt(metaVaultData.totalBalance || 0)
+			)
 		}
-	}, [currencyValues, selectedTokenId, isDeposit, metaVaultData.totalBalance, currencies]);
+	}, [
+		currencyValues,
+		selectedTokenId,
+		isDeposit,
+		metaVaultData.totalBalance,
+		currencies,
+	])
 
 	const handleApprove = async () => {
 		setApproved(true)
 		const approvalCalls: Promise<any>[] = []
 		currenciesNeededApproval.forEach((currency, index) => {
 			const contract = getContract(ethereum as provider, currency.address)
-			approvalCalls.push(callApprove(contract, currentConfig.contractAddresses.yAxisMetaVault, account))
+			approvalCalls.push(
+				callApprove(
+					contract,
+					currentConfig.contractAddresses.yAxisMetaVault,
+					account,
+				),
+			)
 			setTimeout(() => {
 				notification.info({
-					message: `Please approve ${currency.name} for Meta Vault V1`
+					message: `Please approve ${currency.name} for Meta Vault V1`,
 				})
 			}, 1000 * (index + 1))
 		})
@@ -204,24 +232,26 @@ function MetaVaultPanel({
 
 	if (new Date().getTime() < currentConfig.vault.metaVaultOpenTime) {
 		const renderer = (countdownProps: CountdownRenderProps) => {
-			const {hours, minutes, seconds} = countdownProps
+			const { hours, minutes, seconds } = countdownProps
 			const paddedSeconds = seconds < 10 ? `0${seconds}` : seconds
 			const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes
 			const paddedHours = hours < 10 ? `0${hours}` : hours
 			return (
-				<span style={{width: '100%'}}>
-        {paddedHours}:{paddedMinutes}:{paddedSeconds}
-      </span>
+				<span style={{ width: '100%' }}>
+					{paddedHours}:{paddedMinutes}:{paddedSeconds}
+				</span>
 			)
 		}
 		return (
 			<Card>
-				<div style={{
-					textAlign: 'center',
-					fontSize: '32px',
-					fontWeight: 700
-				}}>
-					<div style={{fontSize: '16px'}}>Open Meta Vault V1</div>
+				<div
+					style={{
+						textAlign: 'center',
+						fontSize: '32px',
+						fontWeight: 700,
+					}}
+				>
+					<div style={{ fontSize: '16px' }}>Open Meta Vault V1</div>
 					<Countdown
 						date={new Date(currentConfig.vault.metaVaultOpenTime)}
 						renderer={renderer}
@@ -254,12 +284,12 @@ function MetaVaultPanel({
 				{/*	<span>{` ${tokensConfig.reward.name}`}</span>*/}
 				{/*</div>*/}
 			</Row>
-			<Spacer/>
+			<Spacer />
 			{isDeposit && (
 				<>
 					{/*<small>You can deposit one or more kind of the stable coins below, and the smart contract will automatically*/}
 					{/*	balance the deposited assets proportionally</small>*/}
-					<Spacer/>
+					<Spacer />
 				</>
 			)}
 			{/*{isWithdraw && <small>Available amount：{new Intl.NumberFormat().format(parseFloat(metaVaultData?.balance))} </small>}*/}
@@ -275,7 +305,7 @@ function MetaVaultPanel({
 				<Col xs={24} sm={12}>
 					{isWithdraw ? (
 						<>
-							<div style={{marginBottom: '0.25rem'}}>
+							<div style={{ marginBottom: '0.25rem' }}>
 								<span>Input</span>
 							</div>
 							<CurrencyInput
@@ -284,22 +314,32 @@ function MetaVaultPanel({
 								max={metaVaultData?.totalBalance}
 								name={tokensConfig.share.name}
 								loading={isEstimating}
-								error={parseFloat(inputValue) < 0 || new BigNumber(inputValue).gt(metaVaultData?.totalBalance)}
+								error={
+									parseFloat(inputValue) < 0 ||
+									new BigNumber(inputValue).gt(
+										metaVaultData?.totalBalance,
+									)
+								}
 								onChange={(id, value) => {
 									setInputValue(value)
 									handleInputDebounce(value)
 								}}
 							/>
 
-							<div style={{marginTop: '1rem', marginBottom: '0.25rem'}}>
+							<div
+								style={{
+									marginTop: '1rem',
+									marginBottom: '0.25rem',
+								}}
+							>
 								<span>Output</span>
 							</div>
 							<Radio.Group
-								style={{width: '100%'}}
+								style={{ width: '100%' }}
 								defaultValue={selectedTokenId}
 								onChange={onSelectCurrency}
 							>
-								{currencies.map(c => {
+								{currencies.map((c) => {
 									return (
 										<CurrencyInput
 											disabled
@@ -310,35 +350,39 @@ function MetaVaultPanel({
 											name={c.name}
 											value={c.withdrawal}
 											showRadioButton={!isDeposit}
-											checked={selectedTokenId === c.tokenId}
+											checked={
+												selectedTokenId === c.tokenId
+											}
 											showMax={false}
 										/>
 									)
 								})}
 							</Radio.Group>
 						</>
-						) : (
-							<React.Fragment>
-								{currencies.map(c => {
-									const bvalue = new BigNumber(currencyValues[c.tokenId])
-									const error = bvalue.lt(0) || bvalue.gt(c.maxDeposit)
-									return (
-										<CurrencyInput
-											key={c.tokenId}
-											id={c.tokenId}
-											value={currencyValues[c.tokenId]}
-											max={c.maxDeposit}
-											icon={c.icon}
-											name={c.name}
-											error={error}
-											onChange={handleInputChange}
-										/>
-									)
-								})}
-							</React.Fragment>
-						)
-					}
-					<Spacer/>
+					) : (
+						<React.Fragment>
+							{currencies.map((c) => {
+								const bvalue = new BigNumber(
+									currencyValues[c.tokenId],
+								)
+								const error =
+									bvalue.lt(0) || bvalue.gt(c.maxDeposit)
+								return (
+									<CurrencyInput
+										key={c.tokenId}
+										id={c.tokenId}
+										value={currencyValues[c.tokenId]}
+										max={c.maxDeposit}
+										icon={c.icon}
+										name={c.name}
+										error={error}
+										onChange={handleInputChange}
+									/>
+								)
+							})}
+						</React.Fragment>
+					)}
+					<Spacer />
 					{/* <div>
             <Checkbox onChange={onGlobalInfiniteApprovalChange}>Global infinite approval</Checkbox>
           </div>
@@ -364,8 +408,11 @@ function MetaVaultPanel({
 					{/*</Row>*/}
 					{isDeposit ? (
 						<>
-							<Row style={{marginBottom: '0.5rem'}}>
-								<Alert type={"info"} message={`MetaVault implements a 0.1% withdrawal fee`}></Alert>
+							<Row style={{ marginBottom: '0.5rem' }}>
+								<Alert
+									type={'info'}
+									message={`MetaVault implements a 0.1% withdrawal fee`}
+								></Alert>
 							</Row>
 							{/*<Row>*/}
 							{/*<Col flex="auto">*/}
@@ -387,47 +434,60 @@ function MetaVaultPanel({
 						</>
 					) : (
 						<>
-							<div style={{height: '22px'}}/>
+							<div style={{ height: '22px' }} />
 							{/*<Row style={{marginBottom: '0.5rem'}}>*/}
 							{/*	<Alert type={"info"}*/}
 							{/*				 message={`Note: current strategy (pickle) includes a ${ratio}% withdraw fee`}></Alert>*/}
 							{/*</Row>*/}
-							<Row style={{marginBottom: '0.5rem'}}>
-								<Alert type={"info"} message={`MetaVault implements a 0.1% withdrawal fee`}></Alert>
+							<Row style={{ marginBottom: '0.5rem' }}>
+								<Alert
+									type={'info'}
+									message={`MetaVault implements a 0.1% withdrawal fee`}
+								></Alert>
 							</Row>
-							<Row style={{marginBottom: '0.5rem'}}>
-								<Alert type={"info"} message={`Slippage for 3CRV-Stable swap is ~0.1%`}>\
-								</Alert></Row>
-							{
-								parseFloat(selectedCurrency.withdrawal || '0') > 0 ? (
-									<Row>
-										<Col flex="auto">
-											<PanelRightTextPrimary>You will receive at least</PanelRightTextPrimary>
-										</Col>
-										<Col>
-											<Row gutter={4}>
-												<Col flex="auto">
-													<PanelRightTextPrimary>
-														{new Intl.NumberFormat().format(parseFloat(selectedCurrency.withdrawal))}
-													</PanelRightTextPrimary>
-												</Col>
-												<Col>
-													<PanelRightText>
-														{selectedCurrency.name}
-													</PanelRightText>
-												</Col>
-											</Row>
-										</Col>
-									</Row>
-								) : null
-							}
+							<Row style={{ marginBottom: '0.5rem' }}>
+								<Alert
+									type={'info'}
+									message={`Slippage for 3CRV-Stable swap is ~0.1%`}
+								>
+									\
+								</Alert>
+							</Row>
+							{parseFloat(selectedCurrency.withdrawal || '0') >
+							0 ? (
+								<Row>
+									<Col flex="auto">
+										<PanelRightTextPrimary>
+											You will receive at least
+										</PanelRightTextPrimary>
+									</Col>
+									<Col>
+										<Row gutter={4}>
+											<Col flex="auto">
+												<PanelRightTextPrimary>
+													{new Intl.NumberFormat().format(
+														parseFloat(
+															selectedCurrency.withdrawal,
+														),
+													)}
+												</PanelRightTextPrimary>
+											</Col>
+											<Col>
+												<PanelRightText>
+													{selectedCurrency.name}
+												</PanelRightText>
+											</Col>
+										</Row>
+									</Col>
+								</Row>
+							) : null}
 						</>
 					)}
 				</Col>
 			</Row>
-			<Spacer/>
+			<Spacer />
 			<Row>
-				<Col flex="auto"/>
+				<Col flex="auto" />
 				<Col>
 					<Space>
 						{/*{*/}
@@ -441,34 +501,33 @@ function MetaVaultPanel({
 						{/*		</Button>*/}
 						{/*	) : null*/}
 						{/*}*/}
-						{
-							currenciesNeededApproval.length ? (
-								<Button
-									type="primary" size="large"
-									disabled={areApproved}
-									loading={areApproved}
-									onClick={handleApprove}
-								>
-									{areApproved ? 'Approving' : 'Approve'}
-								</Button>
-							) : (
-								<Button
-									type="primary"
-									size="large"
-									disabled={disabled || isSubmitting}
-									loading={isSubmitting}
-									onClick={handleSubmit}
-									danger
-								>
-									{isDeposit ? 'Deposit' : 'Withdraw'}
-								</Button>
-							)
-						}
+						{currenciesNeededApproval.length ? (
+							<Button
+								type="primary"
+								size="large"
+								disabled={areApproved}
+								loading={areApproved}
+								onClick={handleApprove}
+							>
+								{areApproved ? 'Approving' : 'Approve'}
+							</Button>
+						) : (
+							<Button
+								type="primary"
+								size="large"
+								disabled={disabled || isSubmitting}
+								loading={isSubmitting}
+								onClick={handleSubmit}
+								danger
+							>
+								{isDeposit ? 'Deposit' : 'Withdraw'}
+							</Button>
+						)}
 					</Space>
 				</Col>
 			</Row>
 		</Card>
-	);
+	)
 }
 
-export default MetaVaultPanel;
+export default MetaVaultPanel

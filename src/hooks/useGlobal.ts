@@ -1,5 +1,5 @@
-import {useContext} from 'react'
-import {Context} from '../contexts/YaxisProvider'
+import { useContext } from 'react'
+import { Context } from '../contexts/YaxisProvider'
 
 const useGlobal = () => {
 	return useContext(Context)

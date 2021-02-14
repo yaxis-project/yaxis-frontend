@@ -1,13 +1,13 @@
-export type Language = string;
+export type Language = string
 
 export enum Languages {
-  ENG = 'ENG',
+	ENG = 'ENG',
 }
 
 export type Translations = {
-  [K in Languages]: string
-};
+	[K in Languages]: string
+}
 
 export type Dictionary = {
-  [key: string]: Translations
+	[key: string]: Translations
 }

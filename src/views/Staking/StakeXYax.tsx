@@ -6,31 +6,31 @@ import Spacer from '../../components/Spacer'
 import useYax from '../../hooks/useYaxis'
 import { getContract } from '../../utils/erc20'
 import UnstakeXYax from './components/UnstakeXYax'
-import StakeYaxis from "./components/StakeYaxis";
+import StakeYaxis from './components/StakeYaxis'
 
-import { getTotalStaking } from '../../yaxis/utils';
-import BigNumber from "bignumber.js";
-import { currentConfig } from "../../yaxis/configs";
-import { Button, Col, PageHeader, Row, Spin, Alert, Tooltip } from "antd";
-import BalanceCard from "../../components/Card/BalanceCard";
-import Value from "../../components/Value";
-import useTokenBalance from "../../hooks/useTokenBalance";
-import useBlock from "../../hooks/useBlock";
-import useStaking from '../../hooks/useStaking';
-import usePriceMap from '../../hooks/usePriceMap';
-import useMetaVaultData from '../../hooks/useMetaVaultData';
-import useYAxisAPY from '../../hooks/useYAxisAPY';
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { getTotalStaking } from '../../yaxis/utils'
+import BigNumber from 'bignumber.js'
+import { currentConfig } from '../../yaxis/configs'
+import { Button, Col, PageHeader, Row, Spin, Alert, Tooltip } from 'antd'
+import BalanceCard from '../../components/Card/BalanceCard'
+import Value from '../../components/Value'
+import useTokenBalance from '../../hooks/useTokenBalance'
+import useBlock from '../../hooks/useBlock'
+import useStaking from '../../hooks/useStaking'
+import usePriceMap from '../../hooks/usePriceMap'
+import useMetaVaultData from '../../hooks/useMetaVaultData'
+import useYAxisAPY from '../../hooks/useYAxisAPY'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 const StakeXYax: React.FC = () => {
-	const {
-		tokenAddress,
-	} = {
+	const { tokenAddress } = {
 		tokenAddress: currentConfig.contractAddresses.xYaxStaking,
 	}
 
 	const [totalSupply, setTotalStaking] = useState<BigNumber>(new BigNumber(0))
-	const [pricePerFullShare, setPricePerFullShare] = useState<BigNumber>(new BigNumber(0))
+	const [pricePerFullShare, setPricePerFullShare] = useState<BigNumber>(
+		new BigNumber(0),
+	)
 
 	const block = useBlock()
 	// const totalYaxInXYax = useTokenBalanceOf(currentConfig.contractAddresses.yaxis,
@@ -40,7 +40,9 @@ const StakeXYax: React.FC = () => {
 	const priceMap = usePriceMap()
 	const { metaVaultData } = useMetaVaultData('v1')
 	const { yAxisAPY, isInitialized: yAxisAPYIsInitialized } = useYAxisAPY()
-	const threeCrvApyPercent = new BigNumber((yAxisAPY && yAxisAPY['3crv']) || 0)
+	const threeCrvApyPercent = new BigNumber(
+		(yAxisAPY && yAxisAPY['3crv']) || 0,
+	)
 	useEffect(() => {
 		window.scrollTo(0, 0)
 	}, [])
@@ -52,12 +54,12 @@ const StakeXYax: React.FC = () => {
 		}
 		async function fetchPricePerFullShare() {
 			try {
-				const value = await yaxis.contracts.xYaxStaking.methods.getPricePerFullShare().call()
+				const value = await yaxis.contracts.xYaxStaking.methods
+					.getPricePerFullShare()
+					.call()
 				setPricePerFullShare(new BigNumber(value).div(1e18))
-			} catch (e) {
-			}
+			} catch (e) {}
 		}
-
 
 		if (yaxis) {
 			fetchTotalStakinga()
@@ -65,7 +67,7 @@ const StakeXYax: React.FC = () => {
 		}
 	}, [yaxis, setTotalStaking, block])
 
-	const loading = false;
+	const loading = false
 	// const rate = (totalSupply && totalYaxInXYax) ? new BigNumber(totalYaxInXYax ?? 0).dividedBy(totalSupply ?? 0).toNumber() : 0
 	const rate = pricePerFullShare.toNumber()
 	const lpContract = useMemo(() => {
@@ -74,7 +76,9 @@ const StakeXYax: React.FC = () => {
 
 	const { stakingData, isExiting, onExit } = useStaking()
 	const xYaxBalance = useTokenBalance(lpContract.options.address)
-	const totalValueLocked = new BigNumber(totalSupply).div(1e18).times(priceMap?.YAX).toNumber() || 0
+	const totalValueLocked =
+		new BigNumber(totalSupply).div(1e18).times(priceMap?.YAX).toNumber() ||
+		0
 	const sumApy = new BigNumber(threeCrvApyPercent).div(100).multipliedBy(0.2)
 	const annualProfits = sumApy
 		.div(365)
@@ -83,15 +87,22 @@ const StakeXYax: React.FC = () => {
 		.minus(1)
 		.times(metaVaultData?.tvl || 0)
 	// total apy
-	let metavaultAPY = new BigNumber(annualProfits).dividedBy(totalValueLocked || 1).multipliedBy(100)
-	console.log('DEBUG_LOG==>>: metavaultAPY', { metavaultAPY: metavaultAPY.toString() });
+	let metavaultAPY = new BigNumber(annualProfits)
+		.dividedBy(totalValueLocked || 1)
+		.multipliedBy(100)
+	console.log('DEBUG_LOG==>>: metavaultAPY', {
+		metavaultAPY: metavaultAPY.toString(),
+	})
 	let yaxAPY = new BigNumber(stakingData?.incentiveApy || 0)
 		.div(pricePerFullShare)
-		.div(100);
+		.div(100)
 	const totalApy = yaxAPY.plus(metavaultAPY)
 	const sYAXPrice = new BigNumber(rate).multipliedBy(priceMap?.YAX).toNumber()
 	const { color: themeColor } = useContext(ThemeContext)
-	const loadingAnnualProfits = loading || !yAxisAPYIsInitialized || typeof metaVaultData?.initialized === 'undefined'
+	const loadingAnnualProfits =
+		loading ||
+		!yAxisAPYIsInitialized ||
+		typeof metaVaultData?.initialized === 'undefined'
 	const loadingApy = loadingAnnualProfits || !stakingData?.initialized
 
 	return (
@@ -99,7 +110,7 @@ const StakeXYax: React.FC = () => {
 			<PageHeader
 				title="Stake YAX to Earn Rewards"
 				// subTitle="Receive 20% of MetaVault farming profits"
-				subTitle={(
+				subTitle={
 					<a
 						href={`https://etherscan.io/address/${currentConfig.contractAddresses.xYaxStaking}`}
 						target={'_blank'}
@@ -107,20 +118,23 @@ const StakeXYax: React.FC = () => {
 					>
 						View Contract
 					</a>
-				)}
+				}
 			>
 				{/* eslint-disable-next-line react/jsx-no-undef */}
 				<Alert
-					message={(
+					message={
 						<div>
-							<div>Staking earns 20% of MetaVault farming rewards (sold to YAX and distributed to stakers)</div>
+							<div>
+								Staking earns 20% of MetaVault farming rewards
+								(sold to YAX and distributed to stakers)
+							</div>
 							<div>Staking also earns additional YAX rewards</div>
 							<div>All rewards are auto-compounded.</div>
 						</div>
-					)}
+					}
 					type="success"
 				/>
-				<Spacer size={"md"} />
+				<Spacer size={'md'} />
 
 				<Row gutter={[8, 8]}>
 					<Col xs={12} md={8}>
@@ -138,29 +152,45 @@ const StakeXYax: React.FC = () => {
 						{/*	symbol={'%'}*/}
 						{/*	loading={loading}*/}
 						{/*/>*/}
-						<BalanceCard
-							title="Total APY"
-							loading={loading}
-						>
+						<BalanceCard title="Total APY" loading={loading}>
 							{loadingApy ? (
 								<span>
 									<Spin spinning={loadingApy} size="small" />
 								</span>
 							) : (
-									<Tooltip title={(
+								<Tooltip
+									title={
 										<div>
-											<div>{'YAX: '}<b>{yaxAPY?.toFixed(1)}%</b></div>
+											<div>
+												{'YAX: '}
+												<b>{yaxAPY?.toFixed(1)}%</b>
+											</div>
 											{/*<div>{'Pickle: '}<b>{pickleApyPercent?.toFixed(1)}%</b></div>*/}
 											{/*<div>{'CurveLP: '}<b>{lpApyPercent?.toFixed(1)}%</b></div>*/}
-											<div>{'CRV (20%): '}<b>{metavaultAPY?.toFixed(1)}%</b></div>
+											<div>
+												{'CRV (20%): '}
+												<b>
+													{metavaultAPY?.toFixed(1)}%
+												</b>
+											</div>
 											{/*<div>{'APR: '}<b>{totalApr?.toFixed(1)}%</b></div>*/}
 										</div>
-									)}>
-										<Value inline value={totalApy.toNumber()} decimals={1} />
-										<span>{'% '}</span>
-										<InfoCircleOutlined style={{ fontSize: 12, color: themeColor.primary.main }} />
-									</Tooltip>
-								)}
+									}
+								>
+									<Value
+										inline
+										value={totalApy.toNumber()}
+										decimals={1}
+									/>
+									<span>{'% '}</span>
+									<InfoCircleOutlined
+										style={{
+											fontSize: 12,
+											color: themeColor.primary.main,
+										}}
+									/>
+								</Tooltip>
+							)}
 						</BalanceCard>
 					</Col>
 					{/*<Col xs={12} md={6}>*/}
@@ -181,23 +211,25 @@ const StakeXYax: React.FC = () => {
 					{/*	/>*/}
 					{/*</Col>*/}
 					<Col xs={12} md={8}>
-						<BalanceCard
-							title="Annual profits from MetaVault"
-						>
+						<BalanceCard title="Annual profits from MetaVault">
 							{loadingAnnualProfits ? (
 								<span>
 									<Spin spinning={loadingApy} size="small" />
 								</span>
 							) : (
-									<>
-										<span>{'$'}</span>
-										<Value inline value={annualProfits.toNumber()} decimals={1} />
-									</>
-								)}
+								<>
+									<span>{'$'}</span>
+									<Value
+										inline
+										value={annualProfits.toNumber()}
+										decimals={1}
+									/>
+								</>
+							)}
 						</BalanceCard>
 					</Col>
 				</Row>
-				<Spacer size={"lg"} />
+				<Spacer size={'lg'} />
 				<StyledFarm>
 					<Row gutter={[8, 8]}>
 						<StyledCardsWrapper>
@@ -232,10 +264,14 @@ const StakeXYax: React.FC = () => {
 								<Button
 									disabled={xYaxBalance.lte(0) || isExiting}
 									loading={isExiting}
-									ghost type="primary" size="large"
+									ghost
+									type="primary"
+									size="large"
 									onClick={onExit}
 								>
-									{isExiting ? 'Exiting' : 'Exit: Claim and Unstake'}
+									{isExiting
+										? 'Exiting'
+										: 'Exit: Claim and Unstake'}
 								</Button>
 							</StyledCardWrapper>
 						</StyledCardsWrapper>
@@ -262,40 +298,40 @@ const StakeXYax: React.FC = () => {
 }
 
 const StyledFarm = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  @media (max-width: 768px) {
-    width: 100%;
-  }
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	@media (max-width: 768px) {
+		width: 100%;
+	}
 `
 
 const StyledCardsWrapper = styled.div`
-  display: flex;
-  width: 600px;
-  @media (max-width: 768px) {
-    width: 100vw;
-    flex-flow: column nowrap;
-    align-items: center;
-  }
+	display: flex;
+	width: 600px;
+	@media (max-width: 768px) {
+		width: 100vw;
+		flex-flow: column nowrap;
+		align-items: center;
+	}
 `
 
 const StyledCardWrapper = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  @media (max-width: 768px) {
-    width: 80%;
-  }
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	@media (max-width: 768px) {
+		width: 80%;
+	}
 `
 
 const StyledInfo = styled.h3`
-  color: ${(props) => props.theme.color.grey[400]};
-  font-size: 16px;
-  font-weight: 400;
-  margin: 0;
-  padding: 0;
-  text-align: center;
+	color: ${(props) => props.theme.color.grey[400]};
+	font-size: 16px;
+	font-weight: 400;
+	margin: 0;
+	padding: 0;
+	text-align: center;
 `
 
 export default StakeXYax

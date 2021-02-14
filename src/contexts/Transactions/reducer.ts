@@ -7,87 +7,101 @@ const SET_TRANSACTIONS = 'SET_TRANSACTIONS'
 const CLEAR_TRANSACTIONS = 'CLEAR_TRANSACTIONS'
 
 interface ClearTransactionsAction {
-  type: typeof CLEAR_TRANSACTIONS
+	type: typeof CLEAR_TRANSACTIONS
 }
 
 interface AddTransactionAction {
-  type: typeof ADD_TRANSACTION,
-  transaction: Transaction
+	type: typeof ADD_TRANSACTION
+	transaction: Transaction
 }
 
 interface ReceiveTxReceiptAction {
-  type: typeof RECEIVE_TX_RECEIPT,
-  txHash: string,
-  receipt: TransactionReceipt
+	type: typeof RECEIVE_TX_RECEIPT
+	txHash: string
+	receipt: TransactionReceipt
 }
 
 interface SetTransactionsAction {
-  type: typeof SET_TRANSACTIONS,
-  transactions: TransactionsMap
+	type: typeof SET_TRANSACTIONS
+	transactions: TransactionsMap
 }
 
-type TransactionsActions = AddTransactionAction | ReceiveTxReceiptAction | ClearTransactionsAction | SetTransactionsAction
+type TransactionsActions =
+	| AddTransactionAction
+	| ReceiveTxReceiptAction
+	| ClearTransactionsAction
+	| SetTransactionsAction
 
 export interface TransactionsState {
-  initialized: boolean,
-  transactions: TransactionsMap
+	initialized: boolean
+	transactions: TransactionsMap
 }
 
 export const clearTransactions = (): ClearTransactionsAction => ({
-  type: CLEAR_TRANSACTIONS,
+	type: CLEAR_TRANSACTIONS,
 })
 
-export const addTransaction = (transaction: Transaction): AddTransactionAction => ({
-  type: ADD_TRANSACTION,
-  transaction,
+export const addTransaction = (
+	transaction: Transaction,
+): AddTransactionAction => ({
+	type: ADD_TRANSACTION,
+	transaction,
 })
 
-export const receiveTxReceipt = (txHash: string, receipt: TransactionReceipt): ReceiveTxReceiptAction => ({
-  type: RECEIVE_TX_RECEIPT,
-  txHash,
-  receipt,
+export const receiveTxReceipt = (
+	txHash: string,
+	receipt: TransactionReceipt,
+): ReceiveTxReceiptAction => ({
+	type: RECEIVE_TX_RECEIPT,
+	txHash,
+	receipt,
 })
 
-export const setTransactions = (transactions: TransactionsMap): SetTransactionsAction => ({
-  type: SET_TRANSACTIONS,
-  transactions,
+export const setTransactions = (
+	transactions: TransactionsMap,
+): SetTransactionsAction => ({
+	type: SET_TRANSACTIONS,
+	transactions,
 })
 
 export const initialState: TransactionsState = {
-  initialized: false,
-  transactions: {}
+	initialized: false,
+	transactions: {},
 }
 
-const reducer = (state: TransactionsState, action: TransactionsActions): TransactionsState => {
-  switch (action.type) {
-    case ADD_TRANSACTION:
-      return {
-        ...state,
-        transactions: {
-          ...state.transactions,
-          [action.transaction.hash]: action.transaction,
-        }
-      }
-    case RECEIVE_TX_RECEIPT:
-      return {
-        ...state,
-        transactions: {
-          ...state.transactions,
-          [action.txHash]: {
-            ...state.transactions[action.txHash],
-            receipt: action.receipt,
-          }
-        }
-      }
-    case SET_TRANSACTIONS:
-      return {
-        ...state,
-        transactions: action.transactions,
-        initialized: true,
-      }
-    default:
-      return state
-  }
+const reducer = (
+	state: TransactionsState,
+	action: TransactionsActions,
+): TransactionsState => {
+	switch (action.type) {
+		case ADD_TRANSACTION:
+			return {
+				...state,
+				transactions: {
+					...state.transactions,
+					[action.transaction.hash]: action.transaction,
+				},
+			}
+		case RECEIVE_TX_RECEIPT:
+			return {
+				...state,
+				transactions: {
+					...state.transactions,
+					[action.txHash]: {
+						...state.transactions[action.txHash],
+						receipt: action.receipt,
+					},
+				},
+			}
+		case SET_TRANSACTIONS:
+			return {
+				...state,
+				transactions: action.transactions,
+				initialized: true,
+			}
+		default:
+			return state
+	}
 }
 
 export default reducer

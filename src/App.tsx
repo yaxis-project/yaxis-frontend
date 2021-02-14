@@ -15,62 +15,60 @@ import Home from './views/Home'
 import Investing from './views/Investing'
 import Savings from './views/Savings'
 import Liquidity from './views/Liquidity'
-import { notification } from 'antd';
-import { NETWORK_ID } from "./yaxis/configs";
+import { notification } from 'antd'
+import { NETWORK_ID } from './yaxis/configs'
 
 notification.config({
-  placement: 'topRight',
-  duration: 6,
-});
+	placement: 'topRight',
+	duration: 6,
+})
 
 const App: React.FC = () => {
-  return (
-    <Providers>
-      <Router>
-        <Switch>
-          <Route path="/" exact>
-            <Home />
-          </Route>
-          <Route path="/investing" exact>
-            <Investing />
-          </Route>
-          <Route path="/savings" exact>
-            <Savings />
-          </Route>
-          <Route path="/liquidity" exact>
-            <Liquidity />
-          </Route>
-        </Switch>
-      </Router>
-    </Providers>
-  )
+	return (
+		<Providers>
+			<Router>
+				<Switch>
+					<Route path="/" exact>
+						<Home />
+					</Route>
+					<Route path="/investing" exact>
+						<Investing />
+					</Route>
+					<Route path="/savings" exact>
+						<Savings />
+					</Route>
+					<Route path="/liquidity" exact>
+						<Liquidity />
+					</Route>
+				</Switch>
+			</Router>
+		</Providers>
+	)
 }
 
 const Providers: React.FC = ({ children }) => {
-  return (
-    <ThemeProvider theme={theme}>
-      <PriceMapContextComponent>
-        <UseWalletProvider
-          chainId={NETWORK_ID}
-          connectors={{
-            walletconnect: { rpcUrl: process.env.RPC_URL },
-          }}
-        >
-          <YaxisProvider>
-            <LanguageProvider>
-              <TransactionProvider>
-                <FarmsProvider>
-                  <ModalsProvider>
-                    {children}
-                  </ModalsProvider>
-                </FarmsProvider>
-              </TransactionProvider>
-            </LanguageProvider>
-          </YaxisProvider>
-        </UseWalletProvider>
-      </PriceMapContextComponent>
-    </ThemeProvider>
-  )
+	return (
+		<ThemeProvider theme={theme}>
+			<PriceMapContextComponent>
+				<UseWalletProvider
+					chainId={NETWORK_ID}
+					connectors={{
+						walletconnect: { rpcUrl: process.env.RPC_URL },
+					}}
+				>
+					<YaxisProvider>
+						<LanguageProvider>
+							<TransactionProvider>
+								<FarmsProvider>
+									<ModalsProvider>{children}</ModalsProvider>
+								</FarmsProvider>
+							</TransactionProvider>
+						</LanguageProvider>
+					</YaxisProvider>
+				</UseWalletProvider>
+			</PriceMapContextComponent>
+		</ThemeProvider>
+	)
 }
 
 export default App
