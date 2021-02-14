@@ -39,7 +39,7 @@ const Nav: React.FC = () => {
             >
                 <img src={blog} height="20" alt="Blog Link" />
             </StyledLink>
-            <StyledLink target="_blank" href="https://discord.gg/cuK2QzE">
+            <StyledLink target="_blank" href="https://discord.gg/u8KZPCMJ6x">
                 <img src={discord} height="20" alt="Discord Link" />
             </StyledLink>
             <StyledLink target="_blank" href="https://github.com/yaxis-project">
