@@ -4,7 +4,7 @@ import eth from '../assets/img/currencies/eth.svg'
 import pickle from '../assets/img/currencies/pickle.svg'
 import usdt from '../assets/img/currencies/usdt.svg'
 import usdc from '../assets/img/currencies/usdc.svg'
-import uni_eth_yax_lp from '../assets/img/icons/pool-token.svg'
+import pool from '../assets/img/icons/pool-token.svg'
 import yax from '../assets/img/logo-ui.svg'
 
 import { currentConfig } from '../yaxis/configs'
@@ -85,7 +85,7 @@ export const PICKLE: Currency = {
 
 export const UNI_ETH_YAX_LP: Currency = {
 	name: 'YAX/ETH UNI-V2 LP',
-	icon: uni_eth_yax_lp,
+	icon: pool,
 	decimals: 18,
 }
 

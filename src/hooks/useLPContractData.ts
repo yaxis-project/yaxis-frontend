@@ -11,16 +11,7 @@ import { currencyMap } from '../utils/currencies'
  */
 export default function useLPContractData(farmId: string) {
 	const { ethereum } = useWallet()
-	const farmData = useFarm(farmId) || {
-		liquidId: 0,
-		type: '',
-		pid: 0,
-		lpToken: '',
-		lpTokenAddress: '',
-		lpUrl: '',
-		name: '',
-		symbol: '',
-	}
+	const farmData = useFarm(farmId)
 	const currency = currencyMap[farmData.symbol]
 	const stakedBalance = useStakedBalance(farmData.pid)
 	const lpContract = useMemo(() => {

@@ -7,9 +7,9 @@ import phrases from './translations'
 
 import { CheckOutlined } from '@ant-design/icons'
 
-import { Row, Col, Typography, Card, Button, Divider, Input, Radio } from 'antd'
+import { Row, Col, Typography, Card, Button, Divider, Radio } from 'antd'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 
 const TableHeader = (props: any) => (
 	<Col span={props.span}>
@@ -24,7 +24,7 @@ interface StrategyRowProps {
 }
 
 const StrategyRow = (props: StrategyRowProps) => {
-	const { strategy, current, gutter } = props
+	const { strategy, gutter } = props
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 	return (
