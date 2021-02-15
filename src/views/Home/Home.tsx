@@ -3,13 +3,12 @@ import { HomePage } from '../../components/Page'
 import YaxisPriceGraph from '../../components/YaxisPriceGraph'
 import AccountOverviewCard from './components/AccountOverviewCard'
 import HomeOverviewCard from './components/HomeOverviewCard'
-import AdvancedNavigation from './components/AdvancedNavigation'
+// import AdvancedNavigation from './components/AdvancedNavigation'
 import HomeExpandableOverview from './components/HomeExpandableOverview'
 import { Row, Col } from 'antd'
 import useMetaVaultData from '../../hooks/useMetaVaultData'
 import BigNumber from 'bignumber.js'
 import useYaxisStaking from '../../hooks/useYaxisStaking'
-import usePriceMap from '../../hooks/usePriceMap'
 import { YAX } from '../../utils/currencies'
 import useGlobal from '../../hooks/useGlobal'
 
@@ -22,7 +21,7 @@ const Home: React.FC = () => {
 						<YaxisPriceGraph />
 						<InvestmentAccountOverview />
 						<SavingsAccountOverview />
-						<AdvancedNavigation />
+						{/* <AdvancedNavigation /> */}
 					</Col>
 					<Col span={8}>
 						<HomeOverviewCard />
@@ -39,7 +38,6 @@ const Home: React.FC = () => {
  */
 const SavingsAccountOverview: React.FC = () => {
 	const { stakedBalanceUSD } = useYaxisStaking(YAX)
-	const { YAX: YAXPrice } = usePriceMap()
 	const { lastUpdated } = useGlobal()
 
 	return (
