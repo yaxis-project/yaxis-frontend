@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Typography } from 'antd'
-import { UNI_ETH_YAX_LP } from '../../../utils/currencies'
 import {
 	DetailOverviewCard,
 	DetailOverviewCardRow,
@@ -14,18 +13,22 @@ import { defaultStakedValue, StakedValue } from '../../../contexts/Farms/types'
 
 const { Text } = Typography
 
+type Props = {
+	farmID: string
+}
+
 /**
  * Shows details of the liquidity pools locked in the system.
  */
-export default function LiquidityOverviewCard() {
-	const props = useFarm('YAX')
+const LiquidityOverviewCard: React.FC<Props> = ({ farmID }) => {
+	const props = useFarm(farmID)
 
 	const [stakedValue, setStakedValue] = useState<StakedValue>(
 		defaultStakedValue,
 	)
 	const {
 		farmData: { pid },
-	} = useLPContractData('YAX', UNI_ETH_YAX_LP)
+	} = useLPContractData(farmID)
 
 	const { stakedValues } = useFarms()
 
@@ -46,10 +49,11 @@ export default function LiquidityOverviewCard() {
 					decimals={2}
 				/>
 			</DetailOverviewCardRow>
-			<DetailOverviewCardRow>
+			{/* TODO: Volume */}
+			{/* <DetailOverviewCardRow>
 				<Text>Volume (24h)</Text>
 				<Value value={'[TBD]'} numberPrefix="$" decimals={2} />
-			</DetailOverviewCardRow>
+			</DetailOverviewCardRow> */}
 			<DetailOverviewCardRow>
 				<Text>Pooled Tokens</Text>
 				{props?.lpTokens[0] && (
@@ -70,3 +74,5 @@ export default function LiquidityOverviewCard() {
 		</DetailOverviewCard>
 	)
 }
+
+export default LiquidityOverviewCard

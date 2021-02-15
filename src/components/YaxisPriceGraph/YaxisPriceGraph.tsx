@@ -134,6 +134,7 @@ const PriceGraph: React.FC = () => {
 					height={270}
 					data={data.values}
 					margin={{ top: 20, right: 0, bottom: 10, left: 0 }}
+					ariaLabel="yAxis price graph"
 				>
 					<LineSeries strokeWidth={1} stroke="#016EAC" />
 					<PointSeries points={['all']} size={0} stroke="none" />

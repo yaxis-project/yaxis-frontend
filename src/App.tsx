@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 import { UseWalletProvider } from 'use-wallet'
 
@@ -15,8 +15,11 @@ import Home from './views/Home'
 import Investing from './views/Investing'
 import Savings from './views/Savings'
 import Liquidity from './views/Liquidity'
+import LiquidityPool from './views/LiquidityPool'
 import { notification } from 'antd'
 import { NETWORK_ID } from './yaxis/configs'
+import { currentConfig } from './yaxis/configs'
+
 
 notification.config({
 	placement: 'topRight',
@@ -24,6 +27,7 @@ notification.config({
 })
 
 const App: React.FC = () => {
+	const activePools = currentConfig.pools.filter(pool => pool.active)
 	return (
 		<Providers>
 			<Router>
@@ -40,6 +44,13 @@ const App: React.FC = () => {
 					<Route path="/liquidity" exact>
 						<Liquidity />
 					</Route>
+					{activePools.map(pool => {
+						const key = `/liquidity/${pool.lpAddress}`
+						return <Route key={key} path={key} exact>
+							<LiquidityPool pool={pool} />
+						</Route>
+					})}
+					<Redirect to='/' />
 				</Switch>
 			</Router>
 		</Providers>

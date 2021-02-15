@@ -9,7 +9,7 @@ import Value from '../../../components/Value'
 import useLPFarmAPY from '../hooks/useLPFarmAPY'
 import useMyLiquidity from '../../../hooks/useMyLiquidity'
 
-const { Text, Title } = Typography
+const { Text } = Typography
 
 interface LiquidityOverviewCardProps {
 	farmID: string
@@ -24,7 +24,7 @@ export default function LiquidityOverviewCard(
 	const { farmID } = props
 	const { yaxReturns } = useAccountReturns()
 
-	const lpFarmAPY = useLPFarmAPY()
+	const lpFarmAPY = useLPFarmAPY(farmID)
 	const farmAPY = lpFarmAPY.div(53).toFixed(2)
 
 	const { userPoolShare } = useMyLiquidity(farmID)
