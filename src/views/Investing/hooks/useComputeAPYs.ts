@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react'
-import { provider } from 'web3-core'
+import { useEffect, useState, useCallback } from 'react'
 import useYaxis from '../../../hooks/useYaxis'
 import usePriceMap from '../../../hooks/usePriceMap'
-import { useWallet } from 'use-wallet'
 import useStaking from '../../../hooks/useStaking'
 import useYAxisAPY from '../../../hooks/useYAxisAPY'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
@@ -16,12 +14,11 @@ export default function useComputeAPYs() {
 	const [totalApy, setTotalAPY] = useState<BigNumber>(new BigNumber(0))
 	const yaxis = useYaxis()
 	const priceMap = usePriceMap()
-	const { account } = useWallet<provider>()
 	const { stakingData } = useStaking()
 	const { yAxisAPY } = useYAxisAPY()
 	const { metaVaultData } = useMetaVaultData('v1')
 
-	const setAPY = async () => {
+	const setAPY = useCallback(async () => {
 		try {
 			const totalSupply = await getTotalStaking(yaxis)
 			const threeCrvApyPercent = new BigNumber(
@@ -53,11 +50,11 @@ export default function useComputeAPYs() {
 				.div(100)
 			setTotalAPY(yaxAPY.plus(metavaultAPY))
 		} catch (e) {}
-	}
+	}, [metaVaultData, priceMap, stakingData, yAxisAPY, yaxis])
 
 	useEffect(() => {
 		setAPY()
-	}, [yaxis])
+	}, [setAPY])
 
 	return totalApy
 }
