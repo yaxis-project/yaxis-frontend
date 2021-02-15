@@ -158,6 +158,7 @@ const useYAxisAPY = () => {
 					},
 				)
 				const apys: any = {}
+				console.log(decodedWeights)
 				decodedWeights.forEach((w: any, i: number) => {
 					// @ts-ignore
 					let pool: string = Object.values(poolInfo).find(
@@ -184,6 +185,7 @@ const useYAxisAPY = () => {
 						(v: any) => v.name === pool,
 					).gauge_relative_weight = w[1]
 					apys[pool] = apy
+					console.log('apys', apys)
 				})
 				setYAxisAPY(apys)
 				setIsInitialized(true)

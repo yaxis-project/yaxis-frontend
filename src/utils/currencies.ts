@@ -89,6 +89,10 @@ export const UNI_ETH_YAX_LP: Currency = {
 	decimals: 18,
 }
 
+export const currencyMap = {
+	'YAX/ETH UNI-V2 LP': UNI_ETH_YAX_LP,
+}
+
 /**
  * Settings for currencies used as investment collateral.
  */

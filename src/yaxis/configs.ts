@@ -300,7 +300,8 @@ export const configs: Record<number, Config> = {
 				type: 'link',
 				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
 				lpAddress: '0x21dee38170F1e1F26baFf2C30C0fc8F8362b6961',
-				lpUrl: '',
+				lpUrl:
+					'https://linkswap.app/#/add/0x514910771af9ca656af840dff83e8264ecf986ca/0xb1dc9124c395c1e97773ab855d66e879f053a289',
 				lpTokens: [
 					{
 						symbol: 'YAX',

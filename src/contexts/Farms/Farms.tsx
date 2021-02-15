@@ -19,7 +19,6 @@ const Farms: React.FC = ({ children }) => {
 	const yaxis = useYaxis()
 
 	const farms = getFarms(yaxis)
-	console.log('//////////////', farms, '1')
 	const [stakedValues, setBalance] = useState([] as Array<StakedValue>)
 	const yaxisChefContract = getYaxisChefContract(yaxis)
 	const wethContact = getWethContract(yaxis)
@@ -38,7 +37,7 @@ const Farms: React.FC = ({ children }) => {
 					),
 				)
 				setBalance(balances)
-			} catch {}
+			} catch { }
 		}
 	}, [wethContact, yaxisChefContract, setBalance, priceMap])
 

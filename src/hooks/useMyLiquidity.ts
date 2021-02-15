@@ -29,10 +29,11 @@ export default function useMyLiquidity(farmId: string): LiquidityData {
 		new BigNumber(0),
 	)
 
-	const userBalance = useTokenBalance(farm?.lpContract?.options?.address)
+	const lpContract = farm?.lpContract
+	const userBalance = useTokenBalance(lpContract?.options?.address)
 
 	useEffect(() => {
-		if (!(farm && farm.lpContract)) return
+		if (!(farm && lpContract)) return
 		const getSupplyValue = async () => {
 			const { lpContract } = farm
 			const supplyValue: BigNumber = await lpContract.methods
@@ -44,7 +45,7 @@ export default function useMyLiquidity(farmId: string): LiquidityData {
 				setUserPoolShare(userBalance.div(supplyValue))
 		}
 		getSupplyValue()
-	}, [farm, farm?.lpContract, tokenBalance])
+	}, [farm, lpContract, tokenBalance, userBalance])
 
 	return { tokenBalance, totalSupply, userPoolShare, userBalance }
 }

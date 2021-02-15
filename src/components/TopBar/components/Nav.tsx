@@ -1,15 +1,21 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { Menu, Dropdown, Typography } from 'antd'
+import { Menu, Typography } from 'antd'
 import styled from 'styled-components'
+import useFarms from '../../../hooks/useFarms'
+import { CaretDownFilled } from '@ant-design/icons';
 
 const { Text } = Typography
+
 
 /**
  * Horizontal top navigation bar for the application.
  * @param props any
  */
+
 const Nav: React.FC = (props) => {
+	const { farms } = useFarms()
+	const activeFarms = farms.filter(farm => farm.active)
 	return (
 		<StyledMenu
 			mode="horizontal"
@@ -33,21 +39,49 @@ const Nav: React.FC = (props) => {
 				</StyledLink>
 			</MenuItem>
 
-			<MenuItem key={'/liquidity'}>
-				<Dropdown overlay={advancedMenu} placement="bottomLeft">
-					<StyledDropdown>Advanced</StyledDropdown>
-				</Dropdown>
-			</MenuItem>
+			<StyledSubMenu
+				key={'/liquidity'}
+				title={
+					// TODO: to: /liquidity
+					<StyledLink activeClassName="active" to="#" style={{ pointerEvents: "none" }}>
+						Advanced <CaretDownFilled style={{ margin: 0 }} />
+					</StyledLink>
+				}
+			>
+				<ItemGroup title="Provide Liquidity" />
+				{activeFarms.map(
+					(farm) =>
+						<Menu.Item key={`/liquidity/${farm.lpAddress}`}>
+							<StyledLink activeClassName="active" to={`/liquidity/${farm.lpAddress}`}>
+								<MenuText>{farm.name}</MenuText>
+							</StyledLink>
+						</Menu.Item  >
+				)}
+			</StyledSubMenu>
 		</StyledMenu>
 	)
 }
-const MenuItem = styled(Menu.Item)`
-	height: 38px;
-`
+
 const StyledMenu = styled(Menu)`
 	border-bottom: none;
 	background: none;
 	display: inline-block;
+`
+
+const StyledSubMenu = styled(Menu.SubMenu)`
+	height: 38px;
+`
+
+const MenuText = styled(Text)`
+	display: block;
+`
+
+const MenuItem = styled(Menu.Item)`
+	height: 38px;
+`
+
+const ItemGroup = styled(Menu.ItemGroup)`
+	height: 30px;
 `
 
 const StyledLink = styled(NavLink)`
@@ -58,31 +92,6 @@ const StyledLink = styled(NavLink)`
 	@media (max-width: 400px) {
 	}
 `
-
-const StyledMenuLink = styled(NavLink)`
-	color: ${(props) => props.theme.color.white} !important;
-	text-decoration: none;
-	@media (max-width: 400px) {
-	}
-`
-
-const MenuText = styled(Text)`
-	display: block;
-`
-
-const advancedMenu = (
-	<Menu>
-		<Menu.Item>
-			<StyledMenuLink activeClassName="active" to="/liquidity">
-				<>
-					<MenuText type="secondary">Provide Liquidity</MenuText>
-					<MenuText strong>YAX + ETH LINKSWAP LP</MenuText>
-					<MenuText strong>YAX + ETH LINKSWAP LP</MenuText>
-				</>
-			</StyledMenuLink>
-		</Menu.Item>
-	</Menu>
-)
 
 const StyledDropdown = styled.a`
 	color: ${(props) => props.theme.color.white} !important;

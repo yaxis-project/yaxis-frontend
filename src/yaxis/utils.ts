@@ -117,17 +117,16 @@ export interface Farm extends StakePool {
 
 export const getFarms = (yaxis: Yaxis): Farm[] => {
 	return yaxis
-		? yaxis.contracts.pools.map(
-				(pool) =>
-					<Farm>{
-						...pool,
-						id: pool.symbol,
-						lpToken: pool.symbol,
-						lpTokenAddress: pool.lpAddress,
-						earnToken: 'YAX',
-						earnTokenAddress: yaxis.contracts.yaxis.options.address,
-					},
-		  )
+		? yaxis.contracts.pools.map((pool) => {
+				return {
+					...pool,
+					id: pool.symbol,
+					lpToken: pool.symbol,
+					lpTokenAddress: pool.lpAddress,
+					earnToken: 'YAX',
+					earnTokenAddress: yaxis.contracts.yaxis.options.address,
+				}
+		  })
 		: []
 }
 
@@ -156,6 +155,53 @@ export const getEarned = async (
 	account: string,
 ) => {
 	return yaxisChefContract.methods.pendingYaxis(pid, account).call()
+}
+
+async function getLinkPoolInfo(
+	yaxisChefContract: Contract,
+	priceMap: any,
+	farm: Farm,
+): Promise<StakedValue> {
+	// const lpContract = farm.lpContract
+	// const reserveTokens = farm.lpTokens
+	const pid = farm.pid
+	// const {
+	// 	_reserve0,
+	// 	_reserve1,
+	// } = await lpContract.methods.getReserves().call()
+	// const reserve = [
+	// 	numberToFloat(_reserve0, reserveTokens[0].decimals),
+	// 	numberToFloat(_reserve1, reserveTokens[1].decimals),
+	// ]
+	// let totalSupply = numberToFloat(
+	// 	await lpContract.methods.totalSupply().call(),
+	// )
+
+	// // const balance = numberToFloat(await lpContract.methods
+	// // 	.balanceOf(yaxisChefContract.options.address)
+	// // 	.call())
+	// const prices = [
+	// 	priceMap[reserveTokens[0].symbol],
+	// 	priceMap[reserveTokens[1].symbol],
+	// ]
+	// if (prices[1]) {
+	// 	prices[0] = (prices[1] * reserve[1]) / reserve[0]
+	// } else if (prices[0]) {
+	// 	prices[1] = (prices[0] * reserve[0]) / reserve[1]
+	// }
+	// const totalLpValue = reserve[0] * prices[0] + reserve[1] * prices[1]
+	// const lpPrice = new BigNumber(totalLpValue).div(totalSupply).toNumber()
+	// const tvl = totalLpValue
+	return {
+		pid,
+		totalSupply: 1,
+		reserve: [1, 1],
+		balance: 0,
+		prices: [1],
+		lpPrice: 1,
+		tvl: 1,
+		poolWeight: new BigNumber(1),
+	}
 }
 
 async function getUniPoolInfo(
@@ -289,7 +335,6 @@ export const getTotalLPWethValue = async (
 	if (type === 'link') {
 		return await getLinkPoolInfo(yaxisChefContract, priceMap, farm)
 	}
-	console.log(farm)
 	return await getUniPoolInfo(yaxisChefContract, priceMap, farm)
 }
 

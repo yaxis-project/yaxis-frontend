@@ -44,7 +44,6 @@ export async function getYAXPriceData(
 	try {
 		const data = await fetch(api)
 		const converted = await data.json()
-		console.log(4444, converted)
 		const prices = converted?.prices
 		const dates = map((p) => p[0], prices)
 		const values = map((p) => p[1], prices)
