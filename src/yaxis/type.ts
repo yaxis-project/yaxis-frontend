@@ -19,6 +19,7 @@ export interface StakePool {
 	symbol: string
 	tokenSymbol: string
 	icon: string
+	lpUrl: string
 }
 
 export interface Config {

@@ -32,6 +32,7 @@ export const configs: Record<number, Config> = {
 				type: 'uni',
 				liquidId: '0x29a0d41ad9069861976aFA6F3e6B0b5eC2381096/ETH',
 				lpAddress: '0xe1D13c665FFb8eB104c3dDa0c66341F22d336b1B',
+				lpUrl: '',
 				lpTokens: [
 					{
 						symbol: 'YAX',
@@ -82,6 +83,8 @@ export const configs: Record<number, Config> = {
 				type: 'uni',
 				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
 				lpAddress: '0x1107b6081231d7f256269ad014bf92e041cb08df',
+				lpUrl:
+					'https://app.uniswap.org/#/add/0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
 				lpTokens: [
 					{
 						symbol: 'YAX',
@@ -104,6 +107,7 @@ export const configs: Record<number, Config> = {
 				type: 'balancer',
 				liquidId: '0x7134263ef1e6a04f1a49aa03f8b939b97dbcba62',
 				lpAddress: '0x7134263ef1e6a04f1a49aa03f8b939b97dbcba62',
+				lpUrl: '',
 				lpTokens: [
 					{
 						symbol: 'YAX',
@@ -130,6 +134,7 @@ export const configs: Record<number, Config> = {
 				type: 'uni',
 				liquidId: 'ETH/0xe1237aa7f535b0cc33fd973d66cbf830354d16c7',
 				lpAddress: '0x29c356881D538e6Ebe32e28fA3d29e7233AE6347',
+				lpUrl: '',
 				lpTokens: [
 					{
 						symbol: 'ETH',
@@ -153,6 +158,7 @@ export const configs: Record<number, Config> = {
 				liquidId:
 					'0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e/0xba2e7fed597fd0e3e70f5130bcdbbfe06bb94fe1',
 				lpAddress: '0x8f3496BCEaBA7E935550C8BBB526fc433Faa68B0',
+				lpUrl: '',
 				lpTokens: [
 					{
 						symbol: 'YFI',
@@ -176,6 +182,7 @@ export const configs: Record<number, Config> = {
 				liquidId:
 					'0x5dbcf33d8c2e976c6b560249878e6f1491bca25c/0xdf5e0e81dff6faf3a7e52ba697820c5e32d806a8',
 				lpAddress: '0x247103dE3B8b256560799b8F9b582C616b6b8B14',
+				lpUrl: '',
 				lpTokens: [
 					{
 						symbol: 'yCRV',
@@ -199,6 +206,7 @@ export const configs: Record<number, Config> = {
 				liquidId:
 					'0x075b1bb99792c9e1041ba13afef80c91a1e70fb3/0x7ff566e1d69deff32a7b244ae7276b9f90e9d0f6',
 				lpAddress: '0xb608595A1e190174363BC800860E44b0799d6D2C',
+				lpUrl: '',
 				lpTokens: [
 					{
 						symbol: 'crvRenWSBTC',
@@ -222,6 +230,7 @@ export const configs: Record<number, Config> = {
 				liquidId:
 					'0x6b175474e89094c44da98b954eedeac495271d0f/0xacd43e627e64355f1861cec6d3a6688b31a6f952',
 				lpAddress: '0x94cDd18F53a8f3EC9A3Ec0CBE897aED5ea009c43',
+				lpUrl: '',
 				lpTokens: [
 					{
 						symbol: 'DAI',
@@ -245,6 +254,7 @@ export const configs: Record<number, Config> = {
 				liquidId:
 					'0x29E240CFD7946BA20895a7a02eDb25C210f9f324/0xA64BD6C70Cb9051F6A9ba1F163Fdc07E0DfB5F84',
 				lpAddress: '0x321d87E1757C8c9B57e7af5aa3fE13d2ae774445',
+				lpUrl: '',
 				lpTokens: [
 					{
 						symbol: 'aLINK',
@@ -267,6 +277,7 @@ export const configs: Record<number, Config> = {
 				type: 'uni',
 				liquidId: '0x28cb7e841ee97947a86b06fa4090c8451f64c0be/ETH',
 				lpAddress: '0x1d6432aefeae2c0ff1393120541863822a4e6fa7',
+				lpUrl: '',
 				lpTokens: [
 					{
 						symbol: 'YFL',
@@ -284,11 +295,12 @@ export const configs: Record<number, Config> = {
 				icon: '',
 			},
 			{
-				pid: 6,
+				pid: 10,
 				active: false,
 				type: 'link',
 				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
 				lpAddress: '0x21dee38170F1e1F26baFf2C30C0fc8F8362b6961',
+				lpUrl: '',
 				lpTokens: [
 					{
 						symbol: 'YAX',
@@ -311,6 +323,7 @@ export const configs: Record<number, Config> = {
 				active: false,
 				liquidId: '0x45f24baeef268bb6d63aee5129015d69702bcdfa/ETH',
 				lpAddress: '0xcb4f983e705caeb7217c5c3785001cb138115f0b',
+				lpUrl: '',
 				lpTokens: [
 					{
 						symbol: 'YFV',
