@@ -3,7 +3,7 @@ import { HomePage } from '../../components/Page'
 import YaxisPriceGraph from '../../components/YaxisPriceGraph'
 import AccountOverviewCard from './components/AccountOverviewCard'
 import HomeOverviewCard from './components/HomeOverviewCard'
-// import AdvancedNavigation from './components/AdvancedNavigation'
+import AdvancedNavigation from './components/AdvancedNavigation'
 import HomeExpandableOverview from './components/HomeExpandableOverview'
 import { Row, Col } from 'antd'
 import useMetaVaultData from '../../hooks/useMetaVaultData'
@@ -21,7 +21,7 @@ const Home: React.FC = () => {
 						<YaxisPriceGraph />
 						<InvestmentAccountOverview />
 						<SavingsAccountOverview />
-						{/* <AdvancedNavigation /> */}
+						<AdvancedNavigation />
 					</Col>
 					<Col span={8}>
 						<HomeOverviewCard />

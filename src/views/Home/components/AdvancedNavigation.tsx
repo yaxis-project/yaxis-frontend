@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import logo from '../../../assets/img/logo-ui.svg'
-import logoEth from '../../../assets/img/currencies/eth.svg'
 import { currentConfig } from '../../../yaxis/configs'
-
+import { StakePool } from "../../../yaxis/type"
 import { Row, Col, Typography, Collapse } from 'antd'
+import * as currencies from '../../../utils/currencies'
+import { brandBlue } from "../../../theme/colors"
 
 const { Text, Link } = Typography
 
@@ -12,7 +12,7 @@ const { Panel } = Collapse
 
 interface AdvancedNavigationRowProps {
 	contextType: string
-	value: string
+	data: StakePool
 	to: string
 }
 
@@ -34,12 +34,13 @@ const StyledRiskBadge = styled.div`
  * @param props AdvancedNavigationRowProps
  */
 function AdvancedNavigationRow(props: AdvancedNavigationRowProps) {
-	const { contextType, value, to } = props
+	const { contextType, data, to } = props
+	const [token1, token2] = data.lpTokens
 	return (
 		<Row className="lp-row">
 			<Col span={2}>
-				<img src={logo} height="24" alt="logo" />
-				<img src={logoEth} height="24" alt="logo" />
+				<img src={currencies[token1.symbol]?.icon} height="24" alt="logo" />
+				<img src={currencies[token2.symbol]?.icon} height="24" alt="logo" />
 			</Col>
 			<Col span={20}>
 				<Row>
@@ -47,7 +48,9 @@ function AdvancedNavigationRow(props: AdvancedNavigationRowProps) {
 					<StyledRiskBadge>HIGHER RISK</StyledRiskBadge>
 				</Row>
 				<Row>
-					<Link href={to}>{value}</Link>
+					<Link href={to} style={{ color: brandBlue }}>
+						{data.name} →
+					</Link>
 				</Row>
 			</Col>
 		</Row>
@@ -64,9 +67,9 @@ const StyledCollapse = styled(Collapse)`
  * @see AdvancedNavigationRow
  */
 export default function AdvancedNavigation() {
-	// todo: read from config
+	const activePools = currentConfig?.pools.filter(pool => pool?.active)
 
-	return currentConfig?.pools.length > 0 ? (
+	return activePools.length > 0 ? (
 		<StyledCollapse
 			expandIconPosition="right"
 			className="advanced-navigation"
@@ -74,14 +77,13 @@ export default function AdvancedNavigation() {
 			<Panel
 				header={'Advanced'}
 				key="1"
-				//style={{ padding: 12 }}
 			>
-				{currentConfig?.pools.map((pool) => (
+				{activePools.map((pool) => (
 					<AdvancedNavigationRow
 						key={pool.name}
 						contextType="Provide Liquidity"
-						value={pool.name}
-						to="/liquidity"
+						data={pool}
+						to={`/liquidity/${pool.lpAddress}`}
 					/>
 				))}
 			</Panel>

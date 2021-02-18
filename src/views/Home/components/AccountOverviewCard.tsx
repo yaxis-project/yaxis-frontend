@@ -55,7 +55,7 @@ export default function AccountOverviewCard(props: AccountOverviewCardProps) {
 						<StyledTitle style={{ margin: 0 }}>
 							{mainTitle}
 						</StyledTitle>
-						{/* <StyledRiskBadge>LOWER RISK</StyledRiskBadge> */}
+						<StyledRiskBadge>LOWER RISK</StyledRiskBadge>
 					</Row>
 					<Row>
 						<Text type="secondary">{secondaryText}</Text>
