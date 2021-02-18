@@ -9,20 +9,14 @@ const { Content } = Layout
 
 export const HomePage: React.FC = ({ children }) => (
 	<StyledLayout>
+		<BGHomeUnderlay />
 		<TopBar home />
 		<StyledContent>
-			<StyledPage>
-				<StyledMain>{children}</StyledMain>
-			</StyledPage>
+			<StyledMain>{children}</StyledMain>
 		</StyledContent>
 		<Footer />
 	</StyledLayout>
 )
-
-const StyledPage = styled.div`
-	position: relative;
-	top: -310px;
-`
 
 const StyledMain = styled.div`
 	max-width: ${(props) => props.theme.siteWidth}px;
@@ -34,8 +28,18 @@ const StyledLayout = styled(Layout)`
 `
 
 const StyledContent = styled(Content)`
-	//min-height: 450px;
-	//margin-top: 25px;
+	padding: 10px;
+`
+
+const BGUnderlay = styled.div`
+	width: 100%;
+	height: 80px;
+	background: linear-gradient(180deg, #016eac 20.17%, #52b2dc 100%);
+	position: absolute;
+`
+
+const BGHomeUnderlay = styled(BGUnderlay)`
+	height: 400px;
 `
 
 interface PageProps {
@@ -49,9 +53,10 @@ interface PageProps {
 
 const Page = ({ children, ...props }: PageProps) => (
 	<StyledLayout>
+		<BGUnderlay />
 		<TopBar />
 		<PageLeadBar {...props} />
-		<StyledContent style={{}}>
+		<StyledContent>
 			<StyledMain>{children}</StyledMain>
 		</StyledContent>
 		<Footer />

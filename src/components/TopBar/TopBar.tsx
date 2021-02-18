@@ -8,9 +8,10 @@ import Nav from './components/Nav'
 
 const { Header } = Layout
 
+
 const TopBar = ({ home }: any) => {
 	return (
-		<Background home={home}>
+		<StyledHeader >
 			<StyledTopBar>
 				<Row gutter={4} style={{ width: '100%' }} align="middle">
 					<Col style={{ padding: '0px 13px 13px 2px' }}>
@@ -26,29 +27,14 @@ const TopBar = ({ home }: any) => {
 					</StyledAccountButtonWrapper>
 				</Row>
 			</StyledTopBar>
-		</Background>
+		</StyledHeader>
 	)
 }
 
-const Background = ({ home, children }: any) => {
-	return home ? (
-		<BGHomeUnderlay>{children}</BGHomeUnderlay>
-	) : (
-		<BGUnderlay>{children}</BGUnderlay>
-	)
-}
-
-const BGUnderlay = styled(Header)`
-	width: 100%;
+const StyledHeader = styled(Header)`
 	height: 80px;
-	background: linear-gradient(180deg, #016eac 20.17%, #52b2dc 100%);
 `
 
-const BGHomeUnderlay = styled(Header)`
-	width: 100%;
-	height: 400px;
-	background: linear-gradient(180deg, #016eac 20.17%, #52b2dc 100%);
-`
 
 const StyledLogoWrapper = styled.div`
 	img {
