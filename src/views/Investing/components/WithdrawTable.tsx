@@ -11,7 +11,7 @@ import {
 	Form,
 	Tooltip,
 } from 'antd'
-import { Currency, USD, Dai, CRV3, USDT, USDC } from '../../../utils/currencies'
+import { Currency, USD, DAI, CRV3, USDT, USDC } from '../../../utils/currencies'
 import logo from '../../../assets/img/logo-ui.svg'
 import { find } from 'lodash'
 import { numberToDecimal } from '../../../yaxis/utils'
@@ -51,7 +51,7 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 	const { onWithdraw } = useMetaVault()
 	const [withdrawalCurrency, setWithdrawCurrency] = useState<
 		Currency | undefined
-	>(Dai)
+	>(DAI)
 	const { currenciesData, metaVaultData } = useMetaVaultData('v1')
 	const withdrawTokenAmount = useMemo(() => {
 		if (metaVaultData && metaVaultData.mvltPrice) {
@@ -99,7 +99,7 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 			</Col>
 			<Col span={14}>
 				<Select
-					defaultValue={Dai.name}
+					defaultValue={DAI.name}
 					onSelect={(selected) =>
 						setWithdrawCurrency(
 							find(
@@ -246,7 +246,7 @@ export default function WithdrawTable() {
 				withdrawValueShares={withdrawValueShares}
 				withdrawValueUSD={withdrawValueUSD}
 				withdrawDisabled={withdrawDisabled}
-				availableCurrencies={[Dai, CRV3, USDT, USDC]}
+				availableCurrencies={[DAI, CRV3, USDT, USDC]}
 			/>
 		</div>
 	)

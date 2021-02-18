@@ -33,7 +33,7 @@ const data: any = {
 				maxDeposit: 10000,
 				maxWithdrawal: 1000,
 				icon: '/images/tokens/dai.png',
-				currency: Currencies.Dai,
+				currency: Currencies.DAI,
 			},
 			usdc: {
 				name: 'USDC',

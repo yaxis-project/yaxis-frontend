@@ -19,7 +19,7 @@ export interface Currency {
 	priceMapKey?: string
 }
 
-export const Dai: Currency = {
+export const DAI: Currency = {
 	name: 'DAI',
 	tokenId: 'dai',
 	icon: dai,
@@ -96,10 +96,10 @@ export const currencyMap = {
 /**
  * Settings for currencies used as investment collateral.
  */
-export const InvestingDepositCurrencies = [Dai, CRV3, USDT, USDC]
+export const InvestingDepositCurrencies = [DAI, CRV3, USDT, USDC]
 
 export enum Currencies {
-	Dai,
+	DAI,
 	CRV3,
 	USD,
 	ETH,
