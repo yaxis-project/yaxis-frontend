@@ -1,31 +1,40 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Layout, Row, Col } from 'antd'
+import { Layout, Row, Col, Grid } from 'antd'
 import Logo from '../Logo'
 
 import AccountButton from './components/AccountButton'
 import Nav from './components/Nav'
+import NavTablet from './components/Nav_Tablet'
 
 const { Header } = Layout
+const { useBreakpoint } = Grid;
 
 
 const TopBar = ({ home }: any) => {
+	const { lg } = useBreakpoint();
 	return (
-		<StyledHeader >
-			<StyledTopBar>
-				<Row gutter={4} style={{ width: '100%' }} align="middle">
-					<Col style={{ padding: '0px 13px 13px 2px' }}>
-						<StyledLogoWrapper>
-							<Logo />
-						</StyledLogoWrapper>
+		<StyledHeader>
+			<StyledTopBar gutter={4} align="middle">
+				<Col style={{ padding: '0px 13px 13px 2px' }}>
+					<StyledLogoWrapper>
+						<Logo />
+					</StyledLogoWrapper>
+				</Col>
+				{lg ?
+					<>
+						<Col flex="auto" style={{ color: 'white' }}>
+							<Nav />
+						</Col>
+						<StyledAccountButtonWrapper>
+							<AccountButton />
+						</StyledAccountButtonWrapper>
+					</>
+					:
+					<Col style={{ display: "flex", alignItems: "center" }}>
+						<NavTablet />
 					</Col>
-					<Col flex="auto" style={{ color: 'white' }}>
-						<Nav />
-					</Col>
-					<StyledAccountButtonWrapper>
-						<AccountButton />
-					</StyledAccountButtonWrapper>
-				</Row>
+				}
 			</StyledTopBar>
 		</StyledHeader>
 	)
@@ -33,6 +42,13 @@ const TopBar = ({ home }: any) => {
 
 const StyledHeader = styled(Header)`
 	height: 80px;
+	padding: 0 10%;
+	display: flex;
+	justify-content: center;
+
+	@media only screen and (max-width: 600px) {
+		padding: 0;
+	}
 `
 
 
@@ -46,13 +62,12 @@ const StyledLogoWrapper = styled.div`
 	}
 `
 
-const StyledTopBar = styled.div`
+const StyledTopBar = styled(Row)`
+	width: 100%;
 	align-items: center;
 	display: flex;
 	justify-content: space-between;
-	padding: 10px 0 0 0;
 	max-width: ${(props) => props.theme.siteWidth}px;
-	margin: 0 auto;
 	@media (max-width: ${(props) => props.theme.siteWidth}px) {
 		padding-left: 16px;
 		padding-right: 16px;

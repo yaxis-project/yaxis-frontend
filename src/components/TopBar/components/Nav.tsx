@@ -5,9 +5,6 @@ import styled from 'styled-components'
 import useFarms from '../../../hooks/useFarms'
 import { CaretDownFilled } from '@ant-design/icons';
 
-const { Text } = Typography
-
-
 /**
  * Horizontal top navigation bar for the application.
  * @param props any
@@ -72,7 +69,7 @@ const StyledSubMenu = styled(Menu.SubMenu)`
 	height: 38px;
 `
 
-const MenuText = styled(Text)`
+const MenuText = styled(Typography.Text)`
 	display: block;
 `
 
@@ -89,8 +86,6 @@ const StyledLink = styled(NavLink)`
 	font-weight: 400;
 	font-size: 18px;
 	text-decoration: none;
-	@media (max-width: 400px) {
-	}
 `
 
 const StyledDropdown = styled.a`
