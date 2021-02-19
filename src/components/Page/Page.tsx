@@ -28,7 +28,7 @@ const StyledLayout = styled(Layout)`
 `
 
 const StyledContent = styled(Content)`
-	padding: 10px;
+
 `
 
 const BGUnderlay = styled.div`

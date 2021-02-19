@@ -9,13 +9,11 @@ import { CaretDownOutlined } from '@ant-design/icons'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon' // @ts-ignore
 
 import WalletProviderModal from '../../WalletProviderModal'
-import AccountModal from './AccountModal'
 import BigNumber from 'bignumber.js'
 
-interface AccountButtonProps {}
+interface AccountButtonProps { }
 
 const AccountButton: React.FC<AccountButtonProps> = (props) => {
-	const [onPresentAccountModal] = useModal(<AccountModal />)
 	const [onPresentWalletProviderModal] = useModal(
 		<WalletProviderModal />,
 		'provider',
@@ -30,10 +28,10 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 
 	return (
 		<StyledAccountButton>
-			<span className="yax-price">
+			<StyledSpan>
 				<span>YAX</span>
 				<span>${new BigNumber(yaxisPrice).toFixed(2)}</span>
-			</span>
+			</StyledSpan>
 			{!account ? (
 				<Button
 					onClick={handleUnlockClick}
@@ -46,46 +44,46 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 					Connect
 				</Button>
 			) : (
-				<Fragment>
-					<Jazzicon
-						diameter={36}
-						seed={jsNumberForAddress(account)}
-					/>
-					<Dropdown
-						placement="bottomRight"
-						overlay={
-							<Menu>
-								<Menu.Item onClick={() => reset()}>
-									Logout
+					<Fragment>
+						<Jazzicon
+							diameter={36}
+							seed={jsNumberForAddress(account)}
+						/>
+						<Dropdown
+							placement="bottomRight"
+							overlay={
+								<Menu>
+									<Menu.Item onClick={() => reset()}>
+										Logout
 								</Menu.Item>
-							</Menu>
-						}
-					>
-						<CaretDownOutlined />
-					</Dropdown>
-				</Fragment>
-			)}
+								</Menu>
+							}
+						>
+							<CaretDownOutlined />
+						</Dropdown>
+					</Fragment>
+				)}
 		</StyledAccountButton>
 	)
 }
 
+const StyledSpan = styled.span`
+	color: white;
+	padding: 8px 12px;
+	border: 1px solid white;
+	font-size: 18px;
+	line-height: 1em;
+	border-radius: 12px;
+	font-weight: 700;
+	margin-right: 18px;
+	> span:first-child {
+		margin-right: 15px;
+}
+`
+
 const StyledAccountButton = styled.div`
 	display: flex;
 	align-items: center;
-
-	.yax-price {
-		color: white;
-		padding: 8px 12px;
-		border: 1px solid white;
-		font-size: 18px;
-		line-height: 1em;
-		border-radius: 12px;
-		font-weight: 700;
-		margin-right: 18px;
-		> span:first-child {
-			margin-right: 41px;
-		}
-	}
 
 	.ant-dropdown-trigger {
 		margin-left: 6px;
