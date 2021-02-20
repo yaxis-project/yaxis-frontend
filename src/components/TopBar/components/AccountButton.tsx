@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { useWallet } from 'use-wallet'
 import useModal from '../../../hooks/useModal'
@@ -40,24 +40,24 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 						Connect
 					</StyledButton>
 				) : (
-						<Fragment>
-							<Jazzicon
-								diameter={36}
-								seed={jsNumberForAddress(account)}
-							/>
-							<Dropdown
-								placement="bottomRight"
-								overlay={
-									<Menu>
-										<Menu.Item onClick={() => reset()}>
-											Logout
+						<Dropdown
+							placement="bottomRight"
+							overlay={
+								<Menu>
+									<Menu.Item onClick={() => reset()}>
+										Logout
 								</Menu.Item>
-									</Menu>
-								}
-							>
-								<CaretDownOutlined />
-							</Dropdown>
-						</Fragment>
+								</Menu>
+							}
+						>
+							<div style={{ display: "flex", alignItems: "center" }} >
+								<Jazzicon
+									diameter={36}
+									seed={jsNumberForAddress(account)}
+								/>
+								<CaretDownOutlined style={{ paddingLeft: "5px" }} />
+							</div>
+						</Dropdown>
 					)}
 			</Col>
 		</StyledAccountButton>
