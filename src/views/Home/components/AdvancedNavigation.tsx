@@ -37,12 +37,12 @@ function AdvancedNavigationRow(props: AdvancedNavigationRowProps) {
 	const { contextType, data, to } = props
 	const [token1, token2] = data.lpTokens
 	return (
-		<Row className="lp-row">
-			<Col span={2}>
+		<Row className="lp-row" justify="center">
+			<Col xs={24} sm={3} style={{ margin: "10px" }}>
 				<img src={currencies[token1.symbol]?.icon} height="24" alt="logo" />
 				<img src={currencies[token2.symbol]?.icon} height="24" alt="logo" />
 			</Col>
-			<Col span={20}>
+			<Col xs={24} sm={20}>
 				<Row>
 					<Text type="secondary">{contextType}</Text>
 					<StyledRiskBadge>HIGHER RISK</StyledRiskBadge>

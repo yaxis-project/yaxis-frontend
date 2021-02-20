@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import styled from 'styled-components'
 import { Typography } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
@@ -45,13 +46,20 @@ export default function HomeOverviewCard() {
 				<Value numberPrefix="$" value={yaxReturnsUSD} decimals={2} />
 			</DetailOverviewCardRow>
 			<DetailOverviewCardRow inline>
-				<Text>MetaVault Account</Text>
+				<StyledText>MetaVault Account</StyledText>
 				<Value numberPrefix="$" value={investingBalance} decimals={2} />
 			</DetailOverviewCardRow>
 			<DetailOverviewCardRow inline>
-				<Text>Savings Account</Text>
+				<StyledText>Savings Account</StyledText>
 				<Value numberPrefix="$" value={savingsBalance} decimals={2} />
 			</DetailOverviewCardRow>
 		</DetailOverviewCard>
 	)
 }
+
+
+const StyledText = styled(Text)`
+	@media only screen and (max-width: 600px) {
+		margin-right: 55px;
+	}
+`

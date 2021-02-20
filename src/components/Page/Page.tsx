@@ -28,7 +28,10 @@ const StyledLayout = styled(Layout)`
 `
 
 const StyledContent = styled(Content)`
-
+	padding: 0 100px;
+	@media only screen and (max-width: 725px) {
+		padding: 0;
+	}
 `
 
 const BGUnderlay = styled.div`

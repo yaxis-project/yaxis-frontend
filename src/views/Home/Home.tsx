@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from 'styled-components'
 import { HomePage } from '../../components/Page'
 import YaxisPriceGraph from '../../components/YaxisPriceGraph'
 import AccountOverviewCard from './components/AccountOverviewCard'
@@ -12,21 +13,27 @@ import useYaxisStaking from '../../hooks/useYaxisStaking'
 import { YAX } from '../../utils/currencies'
 import useGlobal from '../../hooks/useGlobal'
 
+const StyledCol = styled(Col)`
+	@media only screen and (max-width: 991px) {
+		margin-top: 16px;
+	}
+`
+
 const Home: React.FC = () => {
 	return (
 		<div className="home-view">
 			<HomePage>
 				<Row gutter={16}>
-					<Col span={16} className={'home-left'}>
+					<Col md={24} lg={16} className={'home-left'}>
 						<YaxisPriceGraph />
 						<InvestmentAccountOverview />
 						<SavingsAccountOverview />
 						<AdvancedNavigation />
 					</Col>
-					<Col span={8}>
+					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<HomeOverviewCard />
 						<HomeExpandableOverview />
-					</Col>
+					</StyledCol>
 				</Row>
 			</HomePage>
 		</div>
