@@ -22,6 +22,14 @@ const StyledRiskBadge = styled.div`
 	padding: 3px 4px;
 	font-size: 12px;
 	margin-left: 16px;
+	@media only screen and (max-width: 575px) {
+		margin-left: 0;
+	}
+`
+const StyledImage = styled.img`
+@media only screen and (max-width: 575px) {
+	margin-left: 50px;
+}
 `
 
 const StyledCard = styled(Card)`
@@ -46,22 +54,26 @@ export default function AccountOverviewCard(props: AccountOverviewCardProps) {
 	return (
 		<StyledCard>
 			<Row gutter={16}>
-				<Col span={2}>
-					<img src={logo} height="36" style={{}} alt="logo" />
+				<Col xs={6} sm={2} md={2} lg={3} >
+					<StyledImage src={logo} height="36" alt="logo" />
 				</Col>
 
-				<Col span={14}>
+				<Col xs={24} sm={21} md={14}>
 					<Row style={{ display: 'flex', alignItems: 'center' }}>
-						<StyledTitle style={{ margin: 0 }}>
-							{mainTitle}
-						</StyledTitle>
-						<StyledRiskBadge>LOWER RISK</StyledRiskBadge>
+						<Col>
+							<StyledTitle style={{ margin: 0 }}>
+								{mainTitle}
+							</StyledTitle>
+						</Col>
+						<Col xs={24} sm={9}>
+							<StyledRiskBadge>LOWER RISK</StyledRiskBadge>
+						</Col>
 					</Row>
 					<Row>
 						<Text type="secondary">{secondaryText}</Text>
 					</Row>
 				</Col>
-				<Col span={8}>
+				<Col xs={24} sm={24} md={7}>
 					<Row>
 						<Text style={{ marginLeft: 'auto' }} type="secondary">
 							{time}
