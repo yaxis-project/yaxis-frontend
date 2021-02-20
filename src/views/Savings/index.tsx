@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import styled from 'styled-components'
 import Page from '../../components/Page/Page'
 import YaxisPriceGraph from '../../components/YaxisPriceGraph'
 import { Row, Col } from 'antd'
@@ -12,6 +13,13 @@ import { YAX } from '../../utils/currencies'
 import useYaxisStaking from '../../hooks/useYaxisStaking'
 import usePriceMap from '../../hooks/usePriceMap'
 import BigNumber from 'bignumber.js'
+
+const StyledCol = styled(Col)`
+	@media only screen and (max-width: 991px) {
+		margin-top: 16px;
+	}
+`
+
 
 const Savings: React.FC = () => {
 	const { stakedBalance } = useYaxisStaking(YAX)
@@ -33,18 +41,18 @@ const Savings: React.FC = () => {
 				valueInfo={phrases['Balance'][language]}
 			>
 				<Row gutter={16}>
-					<Col span={16}>
+					<Col md={24} lg={16} >
 						<YaxisPriceGraph />
 						<StakingCard />
 					</Col>
-					<Col span={8}>
+					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<Row>
 							<SavingsOverviewCard />
 						</Row>
 						<Row style={{ marginTop: 15 }}>
 							<VaultStatsCard />
 						</Row>
-					</Col>
+					</StyledCol>
 				</Row>
 			</Page>
 		</div>
