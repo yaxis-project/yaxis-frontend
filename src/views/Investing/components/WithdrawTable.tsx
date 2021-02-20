@@ -94,10 +94,10 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 
 	return (
 		<Row className="to-wallet">
-			<Col span={8}>
+			<Col xs={24} sm={8}>
 				<Title level={5}>{t('To Wallet')}</Title>
 			</Col>
-			<Col span={14}>
+			<Col xs={24} sm={14}>
 				<Select
 					defaultValue={DAI.name}
 					onSelect={(selected) =>
@@ -198,10 +198,10 @@ export default function WithdrawTable() {
 	return (
 		<div className="withdraw-table">
 			<Row className="withdraw-from">
-				<Col span={8}>
+				<Col xs={24} sm={8}>
 					<Title level={5}>{phrases['From'][language]}</Title>
 				</Col>
-				<Col span={14}>
+				<Col xs={24} sm={14}>
 					<Text className="title">
 						<img src={logo} height="36" alt="logo" />
 						{phrases['Investment Account'][language]}
