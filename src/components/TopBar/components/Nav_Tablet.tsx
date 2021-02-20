@@ -6,7 +6,6 @@ import { NavLink } from 'react-router-dom'
 import useFarms from '../../../hooks/useFarms'
 import { Menu, Dropdown, Button, Typography } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
-import { CaretDownFilled } from '@ant-design/icons';
 
 
 interface NavTabletProps { }
@@ -16,13 +15,14 @@ const StyledMenu = styled(Menu)`
 `
 const StyledLink = styled(NavLink)`
 	font-weight: 400;
-	font-size: 18px;
 	text-decoration: none;
-	@media (max-width: 400px) {
-	}
 `
 const MenuItem = styled(Menu.Item)`
 	height: 38px;
+    font-size: 18px;
+`
+const StyledSpan = styled.span`
+    font-size: 18px;
 `
 
 const StyledSubMenu = styled(Menu.SubMenu)`
@@ -66,19 +66,19 @@ const NavTablet: React.FC<NavTabletProps> = () => {
                 key={'/liquidity'}
                 title={
                     // TODO: to: /liquidity
-                    <StyledLink activeClassName="active" to="#" style={{ pointerEvents: "none" }}>
-                        Advanced <CaretDownFilled style={{ margin: 0 }} />
-                    </StyledLink>
+                    <StyledSpan>
+                        Advanced
+                    </StyledSpan>
                 }
             >
                 <ItemGroup title="Provide Liquidity" />
                 {activeFarms.map(
                     (farm) =>
-                        <Menu.Item key={`/liquidity/${farm.lpAddress}`}>
+                        <MenuItem key={`/liquidity/${farm.lpAddress}`}>
                             <StyledLink activeClassName="active" to={`/liquidity/${farm.lpAddress}`}>
                                 <MenuText>{farm.name}</MenuText>
                             </StyledLink>
-                        </Menu.Item  >
+                        </MenuItem>
                 )}
             </StyledSubMenu>
 
