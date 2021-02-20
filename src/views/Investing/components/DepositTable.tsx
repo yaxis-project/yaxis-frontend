@@ -8,7 +8,7 @@ import usePriceMap from '../../../hooks/usePriceMap'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import _, { reduce } from 'lodash'
-import { Row, Col, Typography, Button, notification } from 'antd'
+import { Row, Col, Grid, Typography, Button, notification } from 'antd'
 import { BigNumber } from 'bignumber.js'
 import styled from 'styled-components'
 import { getContract } from '../../../utils/erc20'
@@ -20,12 +20,8 @@ import { Transaction } from '../../../contexts/Transactions/types'
 import { mapObjIndexed, pipe, values, flatten } from 'ramda'
 
 const { Title, Text } = Typography
+const { useBreakpoint } = Grid;
 
-const TableHeader = (props: any) => (
-	<Col span={props.span}>
-		<Text type="secondary">{props.value}</Text>
-	</Col>
-)
 
 /**
  * Object to store the list of depositing values by currency.
@@ -107,10 +103,18 @@ const HeaderRow = styled(Row)`
 	margin-top: 10px;
 `
 
+const StyledCol = styled(Col)`
+	@media only screen and (max-width: 400px) {
+		padding-left: 16px;
+	}
+`
+
 /**
  * Creates a deposit table for the savings account.
  */
 export default function DepositTable() {
+	const { md } = useBreakpoint();
+
 	const currencies = InvestingDepositCurrencies
 	const { onDepositAll, isSubmitting } = useMetaVault()
 	const { onAddTransaction } = useTransactionAdder()
@@ -210,12 +214,15 @@ export default function DepositTable() {
 	return (
 		<div className="deposit-table">
 			<HeaderRow className="deposit-asset-header-row">
-				<TableHeader value={phrases['Asset'][language]} span={5} />
-				<TableHeader
-					value={phrases['Wallet Balance'][language]}
-					span={7}
-				/>
-				<TableHeader value={phrases['Amount'][language]} span={12} />
+				<Col xs={6} sm={6} md={5}>
+					<Text type="secondary">{phrases['Asset'][language]}</Text>
+				</Col>
+				<Col xs={8} sm={8} md={7}>
+					<Text type="secondary">{phrases['Wallet Balance'][language]}</Text>
+				</Col>
+				<StyledCol xs={10} sm={10} md={12}>
+					<Text type="secondary">{phrases['Amount'][language]}</Text>
+				</StyledCol>
 			</HeaderRow>
 			{currencies.map((currency) => (
 				<DepositAssetRow
@@ -224,8 +231,8 @@ export default function DepositTable() {
 					onChange={handleFormInputChange(setCurrencyValues)}
 				/>
 			))}
-			<Row className="total">
-				<Col offset={12} span={11}>
+			<Row className="total" style={md ? {} : { padding: "0 10%" }}>
+				<Col offset={md ? 12 : 0} xs={24} sm={24} md={11}>
 					<Text type="secondary">{phrases['Total'][language]}</Text>
 					<Title level={3}>${totalDepositing}</Title>
 					<Button
@@ -236,7 +243,7 @@ export default function DepositTable() {
 						type="primary"
 					>
 						{currenciesNeededApproval &&
-						currenciesNeededApproval.length > 0
+							currenciesNeededApproval.length > 0
 							? phrases['Approve'][language]
 							: phrases['Deposit'][language]}
 					</Button>
