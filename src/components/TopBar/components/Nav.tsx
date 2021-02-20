@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { Menu, Typography } from 'antd'
 import styled from 'styled-components'
-import useFarms from '../../../hooks/useFarms'
+import { currentConfig } from '../../../yaxis/configs'
 import { CaretDownFilled } from '@ant-design/icons';
 
 /**
@@ -11,8 +11,7 @@ import { CaretDownFilled } from '@ant-design/icons';
  */
 
 const Nav: React.FC = (props) => {
-	const { farms } = useFarms()
-	const activeFarms = farms.filter(farm => farm.active)
+	const activePools = currentConfig.pools.filter(pool => pool.active)
 	return (
 		<StyledMenu
 			mode="horizontal"
@@ -46,7 +45,7 @@ const Nav: React.FC = (props) => {
 				}
 			>
 				<ItemGroup title="Provide Liquidity" />
-				{activeFarms.map(
+				{activePools.map(
 					(farm) =>
 						<Menu.Item key={`/liquidity/${farm.lpAddress}`}>
 							<StyledLink activeClassName="active" to={`/liquidity/${farm.lpAddress}`}>
@@ -86,27 +85,6 @@ const StyledLink = styled(NavLink)`
 	font-weight: 400;
 	font-size: 18px;
 	text-decoration: none;
-`
-
-const StyledDropdown = styled.a`
-	color: ${(props) => props.theme.color.white} !important;
-	font-weight: 400;
-	text-decoration: none;
-	font-size: 18px;
-	@media (max-width: 400px) {
-	}
-`
-
-const StyledAbsoluteLink = styled.a`
-	color: ${(props) => props.theme.color.white};
-	font-weight: 700;
-	padding-left: ${(props) => props.theme.spacing[3]}px;
-	padding-right: ${(props) => props.theme.spacing[3]}px;
-	text-decoration: none;
-	@media (max-width: 400px) {
-		padding-left: ${(props) => props.theme.spacing[2]}px;
-		padding-right: ${(props) => props.theme.spacing[2]}px;
-	}
 `
 
 export default Nav
