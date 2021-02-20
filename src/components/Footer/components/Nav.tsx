@@ -7,30 +7,31 @@ import discord from '../../../assets/img/icons/discord.svg'
 import github from '../../../assets/img/icons/github.svg'
 import twitter from '../../../assets/img/icons/twitter.svg'
 
-const menu = (
-	<Menu>
-		<Menu.Item>
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
-				href="https://etherscan.io/address/0xc330e7e73717cd13fb6ba068ee871584cf8a194f#code"
-			>
-				yAxis Chef
-			</a>
-		</Menu.Item>
-	</Menu>
-)
+// const menu = (
+// 	<Menu>
+// 		<Menu.Item>
+// 			<a
+// 				target="_blank"
+// 				rel="noopener noreferrer"
+// 				href="https://etherscan.io/address/0xc330e7e73717cd13fb6ba068ee871584cf8a194f#code"
+// 			>
+// 				yAxis Chef
+// 			</a>
+// 		</Menu.Item>
+// 	</Menu>
+// )
 
 const Nav: React.FC = () => {
 	return (
 		<StyledRow>
 			<StyledCol xs={24} sm={12}>
 				<StyledNavLink to="/">Home</StyledNavLink>
-				<StyledWrapper>
+				{/* <StyledWrapper>
 					<Dropdown overlay={menu} placement="topLeft">
 						<StyledLink>Contracts</StyledLink>
 					</Dropdown>
-				</StyledWrapper>
+				</StyledWrapper> */}
+				<StyledLink target="_blank" href="https://immunefi.com/bounty/yaxis/">Security</StyledLink>
 			</StyledCol>
 
 			<StyledCol2 xs={24} sm={12}>
