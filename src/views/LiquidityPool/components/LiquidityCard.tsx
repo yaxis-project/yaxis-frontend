@@ -47,9 +47,19 @@ const LiquidityRow = (props: LiquidityRowProps) => {
 				<Text>{name}</Text>
 			</Col>
 			<Col span={15}>
-				<Text>
-					{balance} {symbol}
-				</Text>
+				<Row>
+					<Col style={{ marginRight: "10px" }}>
+						<Text>
+							{balance}
+						</Text>
+					</Col>
+					<Col>
+
+						<Text>
+							{symbol}
+						</Text>
+					</Col>
+				</Row>
 			</Col>
 		</Row>
 	)
