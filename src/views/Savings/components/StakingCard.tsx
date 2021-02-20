@@ -112,7 +112,7 @@ export default function StakingCard() {
 				message: t('Please approve staking transaction.'),
 			})
 			await onEnter(depositAmount)
-		} catch (err) {}
+		} catch (err) { }
 	}
 
 	const unstakeYAX = async () => {
@@ -140,7 +140,7 @@ export default function StakingCard() {
 	)
 	const depositDisabled = useMemo(
 		() => new BigNumber(depositAmount).eq(new BigNumber(0)) || errorDeposit,
-		[depositAmount],
+		[depositAmount, errorDeposit],
 	)
 
 	const [withdrawAmount, setWithdraw] = useState<string>('0')
@@ -153,7 +153,7 @@ export default function StakingCard() {
 	const withdrawDisabled = useMemo(
 		() =>
 			new BigNumber(withdrawAmount).eq(new BigNumber(0)) || errorWithdraw,
-		[withdrawAmount],
+		[withdrawAmount, errorWithdraw],
 	)
 
 	return (
@@ -201,16 +201,16 @@ export default function StakingCard() {
 							{t('Approve')}
 						</Button>
 					) : (
-						<Button
-							className="staking-btn"
-							disabled={depositDisabled}
-							onClick={stakeYAX}
-							block
-							type="primary"
-						>
-							{t('Deposit')}
-						</Button>
-					)}
+							<Button
+								className="staking-btn"
+								disabled={depositDisabled}
+								onClick={stakeYAX}
+								block
+								type="primary"
+							>
+								{t('Deposit')}
+							</Button>
+						)}
 				</Col>
 				<Col span={12}>
 					<Form.Item validateStatus={errorWithdraw && 'error'}>
