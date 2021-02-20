@@ -2,8 +2,7 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { useWallet } from 'use-wallet'
 import { NavLink } from 'react-router-dom'
-
-import useFarms from '../../../hooks/useFarms'
+import { currentConfig } from '../../../yaxis/configs'
 import { Menu, Dropdown, Button, Typography } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 
@@ -39,8 +38,7 @@ const ItemGroup = styled(Menu.ItemGroup)`
 
 
 const NavTablet: React.FC<NavTabletProps> = () => {
-    const { farms } = useFarms()
-    const activeFarms = farms.filter(farm => farm.active)
+    const activePools = currentConfig.pools.filter(pool => pool.active)
 
     const menu = useMemo(
         () => <StyledMenu>
@@ -72,7 +70,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
                 }
             >
                 <ItemGroup title="Provide Liquidity" />
-                {activeFarms.map(
+                {activePools.map(
                     (farm) =>
                         <MenuItem key={`/liquidity/${farm.lpAddress}`}>
                             <StyledLink activeClassName="active" to={`/liquidity/${farm.lpAddress}`}>
@@ -88,7 +86,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
                 Logout
             </MenuItem>
         </StyledMenu>
-        , [activeFarms])
+        , [activePools])
     return (
         <Dropdown overlay={menu} trigger={['click']}>
             <Button size="large" type="default" ghost style={{ border: "none" }} icon={<MenuOutlined style={{ fontSize: '30px' }} />} />
