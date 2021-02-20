@@ -24,16 +24,16 @@ const menu = (
 const Nav: React.FC = () => {
 	return (
 		<StyledRow>
-			<Col span={12}>
+			<StyledCol xs={24} sm={12}>
 				<StyledNavLink to="/">Home</StyledNavLink>
 				<StyledWrapper>
 					<Dropdown overlay={menu} placement="topLeft">
 						<StyledLink>Contracts</StyledLink>
 					</Dropdown>
 				</StyledWrapper>
-			</Col>
+			</StyledCol>
 
-			<Col span={12} style={{ textAlign: 'right' }}>
+			<StyledCol2 xs={24} sm={12}>
 				<StyledLink target="_blank" href="https://yaxis.ghost.io">
 					<img src={blog} height="20" alt="Blog Link" />
 				</StyledLink>
@@ -55,7 +55,7 @@ const Nav: React.FC = () => {
 				>
 					<img src={twitter} height="20" alt="Twitter Link" />
 				</StyledLink>
-			</Col>
+			</StyledCol2>
 		</StyledRow>
 	)
 }
@@ -63,6 +63,19 @@ const Nav: React.FC = () => {
 const StyledRow = styled(Row)`
 	max-width: 1146px;
 	margin: auto;
+`
+const StyledCol = styled(Col)`
+	@media only screen and (max-width: 575px) {
+		text-align: center;
+	}
+`
+
+const StyledCol2 = styled(StyledCol)`
+	text-align: right;
+
+	@media only screen and (max-width: 575px) {
+		margin-top: 26px;
+	}
 `
 
 const StyledNavLink = styled(NavLink)`
