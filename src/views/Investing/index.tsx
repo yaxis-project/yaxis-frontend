@@ -23,7 +23,7 @@ const Investing: React.FC = () => {
 		<div className="investing-view">
 			<Page
 				loading={false}
-				mainTitle="Vault Account"
+				mainTitle="MetaVault Account"
 				secondaryText="MetaVault 2.0"
 				value={'$' + totalUSDBalance}
 				valueInfo="Balance"
