@@ -132,7 +132,8 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 			</Row>
 
 			<LiquidityRow
-				icon={currencies.currencyMap[pool.symbol]?.icon}
+				// TODO: Make a dynamic currency icon component with fallback
+				icon={currencies.currencyMap[pool.symbol]?.icon || currencies.UNI_ETH_YAX_LP.icon}
 				name={'Pool Tokens'}
 				balance={stakedBalance.toFixed(2)}
 				symbol={pool.symbol}
