@@ -1,17 +1,18 @@
-import React, { Fragment, useState, useEffect } from 'react'
-import { Card, Radio } from 'antd'
+import React, { Fragment, useState, useEffect, useMemo, useCallback } from 'react'
+import { Card, Radio, Row, Col } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 import {
 	getYAXPriceData,
 	SelectableDay,
 	dayOptions,
 } from '../../hooks/useYAXPriceData'
+import useWindowWidth from '../../hooks/useWindowWidth'
 import { find } from 'ramda'
 import styled from 'styled-components'
 import usePriceMap from '../../hooks/usePriceMap'
 import moment from 'moment'
+import theme from "../../theme"
 
-// @ts-ignore-line
 import {
 	WithTooltip,
 	Sparkline,
@@ -28,8 +29,6 @@ const RadioGroup = styled(Radio.Group)`
 		order-color: #2eabd9 !important;
 	}
 	.ant-radio-button-wrapper-checked {
-		//border: 0px;
-		//border-radius: 0px;
 		opacity: 1;
 	}
 	.ant-radio-button-wrapper:not(:first-child)::before {
@@ -72,6 +71,18 @@ const PriceGraph: React.FC = () => {
 
 	const { YAX: yaxisPrice } = usePriceMap()
 
+	const windowWidth = useWindowWidth();
+	const chartWidth = useMemo(() => {
+		if (windowWidth < 725)
+			return windowWidth
+		if (windowWidth < 992)
+			return Math.round(windowWidth * 0.74)
+		if (windowWidth < theme.siteWidth + 300)
+			return Math.round(windowWidth * 0.53)
+
+		return 733
+	}, [windowWidth])
+
 	const handleChange = (e: any) => {
 		const day =
 			find((day: SelectableDay) => day.name === e.target.value)(
@@ -80,22 +91,27 @@ const PriceGraph: React.FC = () => {
 		if (day) setDate(day)
 	}
 
-	const getData = async () => {
+	const getData = useCallback(async () => {
 		setLoading(true)
 		await getYAXPriceData(selectedDay, setData)
 		setLoading(false)
-	}
+	}, [selectedDay])
 
 	useEffect(() => {
 		getData()
-	}, [selectedDay])
+	}, [selectedDay, getData])
 
 	return (
 		<StyledCard
 			title={
-				<span>
-					<strong>Yax Price:</strong> ${yaxisPrice}
-				</span>
+				<Row>
+					<Col style={{ paddingRight: "10px" }}>
+						<strong>Yax Price:</strong>
+					</Col>
+					<Col>
+						${yaxisPrice}
+					</Col>
+				</Row>
 			}
 			extra={
 				<RadioGroup
@@ -130,10 +146,9 @@ const PriceGraph: React.FC = () => {
 				tooltipTimeout={500}
 			>
 				<Sparkline
-					width={734}
+					width={chartWidth}
 					height={270}
 					data={data.values}
-					margin={{ top: 20, right: 0, bottom: 10, left: 0 }}
 					ariaLabel="yAxis price graph"
 				>
 					<LineSeries strokeWidth={1} stroke="#016EAC" />
