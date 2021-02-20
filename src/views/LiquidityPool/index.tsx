@@ -1,6 +1,6 @@
 import React from 'react'
+import styled from 'styled-components'
 import Page from '../../components/Page/Page'
-import YaxisPriceGraph from '../../components/YaxisPriceGraph'
 import { Row, Col } from 'antd'
 import LiquidityCard from './components/LiquidityCard'
 import LiquidityOverviewCard from './components/LiquidityOverviewCard'
@@ -13,6 +13,12 @@ import { StakePool } from '../../yaxis/type'
 type Props = {
 	pool: StakePool
 }
+
+const StyledCol = styled(Col)`
+	@media only screen and (max-width: 991px) {
+		margin-top: 16px;
+	}
+`
 
 const Liqudity: React.FC<Props> = ({ pool }) => {
 	// should use this method to get 'stakedBalance' rather than 'userBalance' below
@@ -28,17 +34,17 @@ const Liqudity: React.FC<Props> = ({ pool }) => {
 				valueInfo="Your Position"
 			>
 				<Row gutter={16}>
-					<Col span={16}>
+					<Col xs={24} sm={24} md={24} lg={16}>
 						{/* TODO: Graph */}
 						{/* <YaxisPriceGraph /> */}
 						<LiquidityCard pool={pool} />
 					</Col>
-					<Col span={8}>
+					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<Row>
 							<LiquidityOverviewCard farmID={pool.symbol} />
 							<PairStatsCard farmID={pool.symbol} />
 						</Row>
-					</Col>
+					</StyledCol>
 				</Row>
 			</Page>
 		</div>
