@@ -8,11 +8,17 @@ import { Row, Col, Typography, Divider } from 'antd'
 const { Title, Text } = Typography
 
 const StyledMain = styled.div`
-	padding: 40px;
+	padding: 40px 10%;
 	width: 100%;
 	margin: auto;
 	height: 100%;
 	background: #eff9ff;
+
+	font-size: 1rem;
+
+	@media only screen and (max-width: 600px) {
+		padding: 20px 3%;
+	}
 `
 
 interface PageLeadBarProps {
@@ -35,34 +41,44 @@ const PageLeadBar = (props: PageLeadBarProps) => {
 				style={{ maxWidth: theme.siteWidth, margin: 'auto', alignItems: "center" }}
 				justify="space-between"
 			>
-				<Col xs={2} sm={2} md={2} >
+				<Col xs={3} sm={2} md={2} >
 					<NavLink to="/">
 						<img src={arrow} height="24" alt="logo" style={{ marginLeft: "8px" }} />
 					</NavLink>
 				</Col>
-				<Col xs={4} sm={4} md={2}>
+				<Col xs={6} sm={4} md={2}>
 					<img src={logo} height="51" alt="logo" />
 				</Col>
-				<Col xs={18} sm={18} md={7} >
+				<Col xs={15} sm={18} md={7} >
 					<Title
-						style={{ margin: 0, fontWeight: 700, fontSize: 32 }}
+						style={{ margin: 0, fontWeight: 700, fontSize: "1.7em", paddingLeft: "15px" }}
 						level={5}
 					>
 						{mainTitle}
 					</Title>
-					<Text type="secondary">{secondaryText}</Text>
+					<Text
+						type="secondary"
+						style={{ fontSize: "0.8em", paddingLeft: "15px" }}
+					>
+						{secondaryText}
+					</Text>
 				</Col>
 				<Col xs={2} sm={2} md={1} style={{ marginTop: "8px" }}>
 					<Divider type={'vertical'} style={{ height: '80px' }} />
 				</Col>
 				<Col xs={22} sm={22} md={12} style={{ marginTop: "8px" }}>
 					<Title
-						style={{ margin: 0, fontWeight: 700, fontSize: 32 }}
+						style={{ margin: 0, fontWeight: 700, fontSize: "1.7em" }}
 						level={5}
 					>
 						{value}
 					</Title>
-					<Text type="secondary">{valueInfo}</Text>
+					<Text
+						type="secondary"
+						style={{ fontSize: "0.8em" }}
+					>
+						{valueInfo}
+					</Text>
 				</Col>
 			</Row>
 		</StyledMain>

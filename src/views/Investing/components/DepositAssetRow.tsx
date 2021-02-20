@@ -49,11 +49,11 @@ export default function DepositAssetRow(props: DepositAssetRowProps) {
 	return (
 		<>
 			<Row className="deposit-asset-row">
-				<Col span={5} className="currency">
+				<Col xs={12} sm={6} md={5} className="currency">
 					<img src={currency.icon} height="36" alt="logo" />
 					<Text>{currency.name}</Text>
 				</Col>
-				<Col span={7} className="balance">
+				<Col xs={12} sm={8} md={7} className="balance">
 					<Value
 						value={balance.toNumber()}
 						numberPrefix="$"
@@ -63,7 +63,7 @@ export default function DepositAssetRow(props: DepositAssetRowProps) {
 						{value} {currency.name}
 					</Text>
 				</Col>
-				<Col span={12} className="amount">
+				<Col xs={24} sm={24} md={12} className="amount">
 					<Form.Item
 						validateStatus={inputError && 'error'}
 						style={{ marginBottom: 0 }}
