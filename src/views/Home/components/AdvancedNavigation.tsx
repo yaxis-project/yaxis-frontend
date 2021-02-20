@@ -38,7 +38,7 @@ function AdvancedNavigationRow(props: AdvancedNavigationRowProps) {
 	const [token1, token2] = data.lpTokens
 	return (
 		<Row className="lp-row" justify="center">
-			<Col xs={24} sm={3} style={{ margin: "10px" }}>
+			<Col xs={24} sm={3} style={{ margin: "8px" }}>
 				<img src={currencies[token1.symbol]?.icon} height="24" alt="logo" />
 				<img src={currencies[token2.symbol]?.icon} height="24" alt="logo" />
 			</Col>

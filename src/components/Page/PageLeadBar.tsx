@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import logo from '../../assets/img/logo-ui.svg'
 import arrow from '../../assets/img/arrow-ui.svg'
 import { NavLink } from 'react-router-dom'
+import theme from "../../theme"
 import { Row, Col, Typography, Divider } from 'antd'
 const { Title, Text } = Typography
 
@@ -10,7 +11,7 @@ const StyledMain = styled.div`
 	padding: 40px;
 	width: 100%;
 	margin: auto;
-	height: 165px;
+	height: 100%;
 	background: #eff9ff;
 `
 
@@ -31,17 +32,18 @@ const PageLeadBar = (props: PageLeadBarProps) => {
 	return (
 		<StyledMain>
 			<Row
-				style={{ maxWidth: 1116, margin: 'auto', alignItems: 'center' }}
+				style={{ maxWidth: theme.siteWidth, margin: 'auto', alignItems: "center" }}
+				justify="space-between"
 			>
-				<Col style={{ marginRight: '80px' }}>
+				<Col xs={2} sm={2} md={2} >
 					<NavLink to="/">
-						<img src={arrow} height="24" alt="logo" />
+						<img src={arrow} height="24" alt="logo" style={{ marginLeft: "8px" }} />
 					</NavLink>
 				</Col>
-				<Col style={{ marginRight: '24px' }}>
+				<Col xs={4} sm={4} md={2}>
 					<img src={logo} height="51" alt="logo" />
 				</Col>
-				<Col style={{ marginRight: '43px' }}>
+				<Col xs={18} sm={18} md={7} >
 					<Title
 						style={{ margin: 0, fontWeight: 700, fontSize: 32 }}
 						level={5}
@@ -50,8 +52,10 @@ const PageLeadBar = (props: PageLeadBarProps) => {
 					</Title>
 					<Text type="secondary">{secondaryText}</Text>
 				</Col>
-				<Divider type={'vertical'} style={{ height: '80px' }} />
-				<Col style={{ marginLeft: '40px' }}>
+				<Col xs={2} sm={2} md={1} style={{ marginTop: "8px" }}>
+					<Divider type={'vertical'} style={{ height: '80px' }} />
+				</Col>
+				<Col xs={22} sm={22} md={12} style={{ marginTop: "8px" }}>
 					<Title
 						style={{ margin: 0, fontWeight: 700, fontSize: 32 }}
 						level={5}
