@@ -152,27 +152,23 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 				<Col span={12}>
 					<Button
 						className="staking-btn"
-						href={lpUrl}
 						block
-						target="_blank"
 						type="primary"
 						disabled={!lpUrl || !hasBalance}
 						icon={<MinusOutlined />}
 					>
-						Remove
+						<a rel="noopener noreferrer" target="_blank" href={lpUrl}> Remove </a>
 					</Button>
 				</Col>
 				<Col span={12}>
 					<Button
 						className="staking-btn"
-						href={lpUrl}
 						block
-						target="_blank"
 						type="primary"
 						disabled={!lpUrl}
 						icon={<PlusOutlined />}
 					>
-						Add
+						<a rel="noopener noreferrer" target="_blank" href={lpUrl}> Add </a>
 					</Button>
 				</Col>
 			</Row>

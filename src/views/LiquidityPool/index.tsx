@@ -9,6 +9,8 @@ import './index.less'
 import useLPContractData from '../../hooks/useLPContractData'
 import { numberToFloat } from '../../yaxis/utils'
 import { StakePool } from '../../yaxis/type'
+import Harvest from "./components/Harvest"
+import Stake from "./components/Stake"
 
 type Props = {
 	pool: StakePool
@@ -23,7 +25,7 @@ const StyledCol = styled(Col)`
 const Liqudity: React.FC<Props> = ({ pool }) => {
 	// should use this method to get 'stakedBalance' rather than 'userBalance' below
 	// as it's hooked up to block updates & other internal data
-	const { stakedBalance } = useLPContractData(pool.symbol)
+	const { stakedBalance, lpContract } = useLPContractData(pool.symbol)
 	return (
 		<div className="liquidity-view">
 			<Page
@@ -38,6 +40,18 @@ const Liqudity: React.FC<Props> = ({ pool }) => {
 						{/* TODO: Graph */}
 						{/* <YaxisPriceGraph /> */}
 						<LiquidityCard pool={pool} />
+						<Row gutter={16} style={{ marginTop: "16px" }} >
+							<Col xs={24} sm={24} md={24} lg={12}>
+								<Harvest pid={pool.pid} />
+							</Col>
+							<StyledCol xs={24} sm={24} md={24} lg={12}>
+								<Stake
+									lpContract={lpContract}
+									pid={pool.pid}
+									tokenName={pool.symbol.toUpperCase()}
+								/>
+							</StyledCol>
+						</Row>
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<Row>
