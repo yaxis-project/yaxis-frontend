@@ -51,7 +51,8 @@ const YaxisProvider: React.FC = ({ children }) => {
 		}, 5000)
 
 		return () => clearInterval(interval)
-	}, [ethereum])
+	}, [ethereum, block])
+
 	useEffect(() => {
 		if (ethereum) {
 			const chainId = Number(ethereum.chainId)
@@ -75,7 +76,7 @@ const YaxisProvider: React.FC = ({ children }) => {
 				}
 			})
 		}
-	}, [ethereum])
+	}, [ethereum, connect])
 
 	return (
 		<Context.Provider value={{ yaxis, block, lastUpdated }}>

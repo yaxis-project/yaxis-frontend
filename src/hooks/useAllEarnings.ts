@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import { provider } from 'web3-core'
 
 import BigNumber from 'bignumber.js'
@@ -21,7 +21,7 @@ const useAllEarnings = (): {
 	})
 	const { account } = useWallet<provider>()
 	const yaxis = useYaxis()
-	const farms = getFarms(yaxis)
+	const farms = useMemo(() => getFarms(yaxis), [yaxis])
 	const yaxisChefContract = getYaxisChefContract(yaxis)
 	const block = useBlock()
 
@@ -41,13 +41,13 @@ const useAllEarnings = (): {
 				totalAmount: sumEarning,
 			})
 		} catch {}
-	}, [account, yaxisChefContract, block, yaxis])
+	}, [account, yaxisChefContract, farms])
 
 	useEffect(() => {
 		try {
 			if (account && yaxisChefContract && yaxis) fetchAllBalances()
 		} catch {}
-	}, [account, block, yaxisChefContract, setBalance, yaxis])
+	}, [account, block, yaxisChefContract, setBalance, yaxis, fetchAllBalances])
 
 	return allEarning
 }

@@ -16,13 +16,13 @@ const useEarnings = (pid: number) => {
 	const fetchBalance = useCallback(async () => {
 		const balance = await getEarned(yaxisChefContract, pid, account)
 		setBalance(new BigNumber(balance))
-	}, [account, yaxisChefContract, yaxis])
+	}, [account, yaxisChefContract, pid])
 
 	useEffect(() => {
 		if (account && yaxisChefContract && yaxis) {
 			fetchBalance()
 		}
-	}, [account, block, yaxisChefContract, setBalance, yaxis])
+	}, [account, block, yaxisChefContract, setBalance, yaxis, fetchBalance])
 
 	return balance
 }

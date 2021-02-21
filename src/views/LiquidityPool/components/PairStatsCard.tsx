@@ -22,22 +22,17 @@ type Props = {
  */
 const LiquidityOverviewCard: React.FC<Props> = ({ farmID }) => {
 	const props = useFarm(farmID)
-
 	const [stakedValue, setStakedValue] = useState<StakedValue>(
 		defaultStakedValue,
 	)
-	const {
-		farmData: { pid },
-	} = useLPContractData(farmID)
-
 	const { stakedValues } = useFarms()
 
 	useEffect(() => {
-		const stakedValue = stakedValues.find((farm) => farm.pid === pid)
+		const stakedValue = stakedValues.find((farm) => farm.id === farmID)
 		if (stakedValue) {
 			setStakedValue(stakedValue)
 		}
-	}, [stakedValues, pid])
+	}, [stakedValues, farmID])
 
 	return (
 		<DetailOverviewCard title="Pair Stats">

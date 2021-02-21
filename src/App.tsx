@@ -71,14 +71,16 @@ const Providers: React.FC = ({ children }) => {
 						<LanguageProvider>
 							<TransactionProvider>
 								<FarmsProvider>
-									<ModalsProvider>{children}</ModalsProvider>
+									<ModalsProvider>
+										{children}
+									</ModalsProvider>
 								</FarmsProvider>
 							</TransactionProvider>
-						</LanguageProvider>
-					</YaxisProvider>
+						</LanguageProvider >
+					</YaxisProvider >
 				</UseWalletProvider>
-			</PriceMapContextComponent>
-		</ThemeProvider>
+			</PriceMapContextComponent >
+		</ThemeProvider >
 	)
 }
 

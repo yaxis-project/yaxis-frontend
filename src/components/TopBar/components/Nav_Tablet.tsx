@@ -124,7 +124,6 @@ const NavTablet: React.FC<NavTabletProps> = () => {
                             </div>
                         </a>
                     }
-                        onClick={() => console.log("hi")}
                     >
                         <MenuItem key="logout" onClick={handleSignOutClick}>
                             Logout
