@@ -1,4 +1,4 @@
-import { brandBlue, black, green, grey, white } from './colors'
+import { brandBlue, hoverBlue, black, green, grey, white } from './colors'
 
 const theme = {
 	borderRadius: 12,
@@ -12,6 +12,7 @@ const theme = {
 		primary: {
 			light: brandBlue[200],
 			main: brandBlue,
+			hover: hoverBlue,
 		},
 		secondary: {
 			main: green[500],

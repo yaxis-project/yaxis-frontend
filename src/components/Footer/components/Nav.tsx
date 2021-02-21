@@ -1,11 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Menu, Dropdown, Row, Col } from 'antd'
+import { Row, Col } from 'antd'
 import { NavLink } from 'react-router-dom'
 import blog from '../../../assets/img/icons/ghost.svg'
 import discord from '../../../assets/img/icons/discord.svg'
 import github from '../../../assets/img/icons/github.svg'
 import twitter from '../../../assets/img/icons/twitter.svg'
+import quantstamp from '../../../assets/img/icons/quantstamp.svg'
 
 // const menu = (
 // 	<Menu>
@@ -24,7 +25,7 @@ import twitter from '../../../assets/img/icons/twitter.svg'
 const Nav: React.FC = () => {
 	return (
 		<StyledRow>
-			<StyledCol xs={24} sm={12}>
+			<StyledCol xs={24} sm={24} md={8}>
 				<StyledNavLink to="/">Home</StyledNavLink>
 				{/* <StyledWrapper>
 					<Dropdown overlay={menu} placement="topLeft">
@@ -34,7 +35,13 @@ const Nav: React.FC = () => {
 				<StyledLink target="_blank" href="https://immunefi.com/bounty/yaxis/">Security</StyledLink>
 			</StyledCol>
 
-			<StyledCol2 xs={24} sm={12}>
+			<StyledCol2 xs={24} sm={24} md={8}>
+				<StyledLinkButton target="_blank" href="https://certificate.quantstamp.com/full/meta-vault-v-2">
+					Secured by <img src={quantstamp} height="17" alt="Quantstamp Audit Link" />
+				</StyledLinkButton>
+			</StyledCol2>
+
+			<StyledCol3 xs={24} sm={24} md={8}>
 				<StyledLink target="_blank" href="https://yaxis.ghost.io">
 					<img src={blog} height="20" alt="Blog Link" />
 				</StyledLink>
@@ -56,7 +63,7 @@ const Nav: React.FC = () => {
 				>
 					<img src={twitter} height="20" alt="Twitter Link" />
 				</StyledLink>
-			</StyledCol2>
+			</StyledCol3>
 		</StyledRow>
 	)
 }
@@ -66,15 +73,23 @@ const StyledRow = styled(Row)`
 	margin: auto;
 `
 const StyledCol = styled(Col)`
-	@media only screen and (max-width: 575px) {
+	@media only screen and (max-width: 767px) {
 		text-align: center;
 	}
 `
 
 const StyledCol2 = styled(StyledCol)`
+	text-align: center;
+
+	@media only screen and (max-width: 767px) {
+		margin-top: 26px;
+	}
+`
+
+const StyledCol3 = styled(StyledCol)`
 	text-align: right;
 
-	@media only screen and (max-width: 575px) {
+	@media only screen and (max-width: 767px) {
 		margin-top: 26px;
 	}
 `
@@ -97,13 +112,18 @@ const StyledLink = styled.a`
 	font-size: 18px;
 `
 
-const StyledWrapper = styled.span`
-	display: inline-block;
-	color: ${(props) => props.theme.color.primary.main};
-	padding-left: ${(props) => props.theme.spacing[3]}px;
-	padding-right: ${(props) => props.theme.spacing[3]}px;
+const StyledLinkButton = styled.a`
+	padding: 10px ${(props) => props.theme.spacing[3]}px;
 	text-decoration: none;
-	font-size: 18px;
+	font-size: 12px;
+	width: 100%;
+	border: 1px solid grey;
+	border-radius: 18px;
+	text-align: center;
+
+	&:hover{
+		border: 1px solid ${(props) => props.theme.color.primary.hover};
+	}
 `
 
 export default Nav
