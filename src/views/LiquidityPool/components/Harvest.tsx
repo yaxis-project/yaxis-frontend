@@ -17,15 +17,12 @@ const Harvest: React.FC<HarvestProps> = ({ pid }) => {
     const { onReward } = useReward(pid)
 
     return (
-        <Card
-            className="liquidity-card"
-        >
+        <Card className="liquidity-card">
             <Row>
                 <CardContents>
                     <Value value={getBalanceNumber(earnings)} />
                     <Label text="YAX Earned" />
                     <Divider />
-
                     <Button
                         className="staking-btn"
                         block
@@ -41,7 +38,6 @@ const Harvest: React.FC<HarvestProps> = ({ pid }) => {
                     </Button>
                 </CardContents>
             </Row>
-
         </Card>
     )
 }

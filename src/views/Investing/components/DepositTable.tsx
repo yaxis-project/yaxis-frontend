@@ -128,7 +128,7 @@ export default function DepositTable() {
 
 	const disabled = useMemo(
 		() => computeInsufficientBalance(currencyValues, currenciesData),
-		[currencyValues],
+		[currencyValues, currenciesData],
 	)
 
 	/**
@@ -159,7 +159,7 @@ export default function DepositTable() {
 				values,
 				flatten,
 			)(currencyValues),
-		[currencyValues, currencies, currenciesData],
+		[currencyValues, currenciesData],
 	)
 
 	/**
@@ -184,7 +184,7 @@ export default function DepositTable() {
 
 	const totalDepositing = useMemo(
 		() => computeTotalDepositing(currencies, currencyValues, priceMap),
-		[currencyValues],
+		[currencyValues, priceMap, currencies],
 	)
 
 	const handleSubmit = async () => {

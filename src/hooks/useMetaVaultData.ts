@@ -187,7 +187,7 @@ function useMetaVaultData(id: string): IHookReturn {
 		threeCrvWithdrawal,
 	] = estimatedWithdrawals
 
-	const getMetaVaultData = async () => {
+	const getMetaVaultData = useCallback(async () => {
 		return {
 			name: 'MetaVault v1',
 			image: '',
@@ -248,7 +248,25 @@ function useMetaVaultData(id: string): IHookReturn {
 				},
 			},
 		}
-	}
+	}, [
+		daiApprove,
+		daiBalance,
+		daiWithdrawal,
+		threeCrvApprove,
+		threeCrvBalance,
+		threeCrvWithdrawal,
+		usdcApprove,
+		usdcBalance,
+		usdcWithdrawal,
+		usdtApprove,
+		usdtBalance,
+		usdtWithdrawal,
+		vaultConfig.dai,
+		vaultConfig.threeCrv,
+		vaultConfig.usdc,
+		vaultConfig.usdt,
+	])
+
 	const nomalizeData = (input?: ICurrencyResponse) => {
 		const balance = input?.totalBalance ?? 0
 		const name = input?.name
@@ -295,7 +313,7 @@ function useMetaVaultData(id: string): IHookReturn {
 				setLoading(false)
 			}
 		})()
-	}, [id, balances, allowances, estimatedWithdrawals])
+	}, [id, balances, allowances, estimatedWithdrawals, getMetaVaultData])
 
 	const fetchMetaVaultData = useCallback(async () => {
 		try {
@@ -359,7 +377,15 @@ function useMetaVaultData(id: string): IHookReturn {
 			console.error(e)
 			return {} as MetaVaultData
 		}
-	}, [yaxis, account, setMetaVaultData, yaxPrice, cure3CrvPrice, block])
+	}, [
+		yaxis,
+		account,
+		setMetaVaultData,
+		yaxPrice,
+		cure3CrvPrice,
+		block,
+		strategy,
+	])
 
 	const callEstimateWithdrawals = useCallback(
 		async (balanceShares) => {
@@ -415,7 +441,10 @@ function useMetaVaultData(id: string): IHookReturn {
 			slippage,
 			setEstimatedWithdrawals,
 			tokenAddresses,
-			metaVaultData.totalBalance,
+			metaVaultData.totalStaked,
+			metaVaultData.totalSupply,
+			pickleWithdrawFee,
+			vaultWithdrawFee,
 		],
 	)
 
