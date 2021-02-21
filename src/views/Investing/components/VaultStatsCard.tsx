@@ -13,7 +13,7 @@ import useMetaVault from '../../../hooks/useMetaVault'
  * Generates investing vault stats card for the current signed in user.
  */
 export default function () {
-	const { tvl } = useTVL()
+	const { metavaultTvl } = useTVL()
 	const { metaVaultData } = useMetaVaultData('v1')
 	const { strategy } = useMetaVault()
 	return (
@@ -24,7 +24,7 @@ export default function () {
 					main="Total Value Locked"
 					secondary={
 						<Value
-							value={tvl.toNumber()}
+							value={metavaultTvl.toNumber()}
 							numberPrefix="$"
 							decimals={2}
 						/>

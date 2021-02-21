@@ -1,8 +1,8 @@
+import { useCallback, useState, useMemo, useEffect } from 'react'
 import { useWallet } from 'use-wallet'
 import { BigNumber } from 'bignumber.js'
 import useYaxis from './useYaxis'
 import { depositAll, getYaxisMetaVault, withdraw } from '../yaxis/utils'
-import { useCallback, useState, useMemo, useEffect } from 'react'
 import { notification } from 'antd'
 import Web3 from 'web3'
 import { provider } from 'web3-core'
@@ -24,25 +24,28 @@ const useMetaVault = () => {
 
 	const web3 = useMemo(() => ethereum && new Web3(ethereum), [ethereum])
 
-	const calcMinTokenAmount = async (amounts: string[]) => {
-		// metaVaut.calc_token_amount_deposit([dai,usdc,usdt]) * (1 - slippage) + 3crv
-		try {
-			const contract: any = getYaxisMetaVault(yaxis)
-			if (contract) {
-				const params = amounts.slice(0, 3)
-				const tokensDeposit = await contract.methods
-					.calc_token_amount_deposit(params)
-					.call()
-				const threeCrvDeposit = amounts[3] || '0'
-				return new BigNumber(tokensDeposit)
-					.plus(threeCrvDeposit)
-					.times(1 - defaultSlippage)
-					.integerValue(BigNumber.ROUND_DOWN)
-					.toFixed()
-			}
-		} catch (e) {}
-		return '0'
-	}
+	const calcMinTokenAmount = useCallback(
+		async (amounts: string[]) => {
+			// metaVaut.calc_token_amount_deposit([dai,usdc,usdt]) * (1 - slippage) + 3crv
+			try {
+				const contract: any = getYaxisMetaVault(yaxis)
+				if (contract) {
+					const params = amounts.slice(0, 3)
+					const tokensDeposit = await contract.methods
+						.calc_token_amount_deposit(params)
+						.call()
+					const threeCrvDeposit = amounts[3] || '0'
+					return new BigNumber(tokensDeposit)
+						.plus(threeCrvDeposit)
+						.times(1 - defaultSlippage)
+						.integerValue(BigNumber.ROUND_DOWN)
+						.toFixed()
+				}
+			} catch (e) {}
+			return '0'
+		},
+		[yaxis],
+	)
 
 	const onDepositAll = useCallback(
 		async (amounts, isStake = true) => {
@@ -64,7 +67,7 @@ const useMetaVault = () => {
 			}
 			setSubmitting(false)
 		},
-		[account, yaxis],
+		[account, yaxis, calcMinTokenAmount],
 	)
 
 	const onWithdraw = useCallback(
@@ -106,7 +109,7 @@ const useMetaVault = () => {
 		setClaiming(false)
 	}, [account, yaxis])
 
-	const fetchMetaVaultStrategy = async () => {
+	const fetchMetaVaultStrategy = useCallback(async () => {
 		try {
 			const contract = getYaxisMetaVault(yaxis)
 			const tokenAddress = await contract.methods.token().call()
@@ -114,11 +117,11 @@ const useMetaVault = () => {
 			const currentStrategy = await tokenContract.methods.name().call()
 			setStrategy(currentStrategy)
 		} catch (err) {}
-	}
+	}, [web3, yaxis])
 
 	useEffect(() => {
 		if (yaxis && web3) fetchMetaVaultStrategy()
-	}, [yaxis, web3])
+	}, [yaxis, web3, fetchMetaVaultStrategy])
 
 	return {
 		isSubmitting,
