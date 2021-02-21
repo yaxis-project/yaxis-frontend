@@ -7,6 +7,8 @@ import { StakePool } from './type'
 import { getApy } from '../utils/number'
 import { StakedValue } from '../contexts/Farms/types'
 
+import { NETWORK_NAME } from './configs'
+
 BigNumber.config({
 	EXPONENTIAL_AT: 1000,
 	DECIMAL_PLACES: 80,
@@ -554,4 +556,10 @@ export const getPickle3CrvAPY = async (
 		.toNumber()
 	let farmApy = getApy(tvl, picklePrice, rewardPerBlock, poolWeight)
 	return farmApy
+}
+
+export function etherscanUrl(url: string) {
+	const baseUrl = 'etherscan.io'
+	const network = NETWORK_NAME === 'mainnet' ? '' : `${NETWORK_NAME}.`
+	return `https://${network}${baseUrl}${url}`
 }

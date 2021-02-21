@@ -13,6 +13,8 @@ import { YAX } from '../../utils/currencies'
 import useYaxisStaking from '../../hooks/useYaxisStaking'
 import usePriceMap from '../../hooks/usePriceMap'
 import BigNumber from 'bignumber.js'
+import { currentConfig } from '../../yaxis/configs'
+import { etherscanUrl } from '../../yaxis/utils'
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -31,12 +33,15 @@ const Savings: React.FC = () => {
 
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
+	const address = currentConfig.contractAddresses['xYaxStaking']
+
 	return (
 		<div className="savings-view">
 			<Page
 				loading={false}
 				mainTitle={phrases['Staking Account'][language]}
 				secondaryText={phrases['YAX Staking'][language]}
+				secondaryTextLink={address && etherscanUrl(`/address/${address}#code`)}
 				value={'$' + totalUSDBalance}
 				valueInfo={phrases['Balance'][language]}
 			>

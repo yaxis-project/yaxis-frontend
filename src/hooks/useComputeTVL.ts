@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import useFarms from './useFarms'
 import BigNumber from 'bignumber.js'
 import useMetaVaultData from './useMetaVaultData'
@@ -27,7 +27,7 @@ export default function useComputeTVL() {
 	const yaxis = useYaxis()
 	const { YAX: yaxisPrice } = usePriceMap()
 
-	async function fetchData() {
+	const fetchData = useCallback(async () => {
 		const stakedSupply = await getTotalStaking(yaxis)
 		const stakingTvl = new BigNumber(stakedSupply)
 			.div(1e18)
@@ -54,10 +54,11 @@ export default function useComputeTVL() {
 			yaxisPrice: new BigNumber(yaxisPrice),
 			tvl: stakingTvl.plus(liquidityTvl).plus(metavaultTvl),
 		})
-	}
+	}, [farms, metaVaultData, stakedValues, totalValues, yaxis, yaxisPrice])
+
 	useEffect(() => {
 		if (yaxis && stakedValues && farms) fetchData()
-	}, [metaVaultData, yaxisPrice, stakedValues, farms, block])
+	}, [stakedValues, farms, yaxis, fetchData])
 
 	return totalValues
 }

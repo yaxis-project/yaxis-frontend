@@ -10,6 +10,8 @@ import RecentTransactionsCard from './components/RecentTransactionsCard'
 import useMetaVaultData from '../../hooks/useMetaVaultData'
 import './index.less'
 import BigNumber from 'bignumber.js'
+import { currentConfig } from '../../yaxis/configs'
+import { etherscanUrl } from '../../yaxis/utils'
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -26,12 +28,15 @@ const Investing: React.FC = () => {
 		.multipliedBy(mvltPrice || '0')
 		.toFixed(2)
 
+	const address = currentConfig.contractAddresses['yAxisMetaVault']
+
 	return (
 		<div className="investing-view">
 			<Page
 				loading={false}
 				mainTitle="MetaVault Account"
 				secondaryText="MetaVault 2.0"
+				secondaryTextLink={address && etherscanUrl(`/address/${address}#code`)}
 				value={'$' + totalUSDBalance}
 				valueInfo="Balance"
 			>

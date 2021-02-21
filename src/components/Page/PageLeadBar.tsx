@@ -5,6 +5,7 @@ import arrow from '../../assets/img/arrow-ui.svg'
 import { NavLink } from 'react-router-dom'
 import theme from "../../theme"
 import { Row, Col, Typography, Divider } from 'antd'
+import { RightSquareOutlined } from '@ant-design/icons'
 const { Title, Text } = Typography
 
 const StyledMain = styled.div`
@@ -21,10 +22,18 @@ const StyledMain = styled.div`
 	}
 `
 
+const StyledLink = styled.a`
+	color: grey;
+	font-size: 1rem;
+	font-size: 0.8em;
+	 padding-left: 15px;
+`
+
 interface PageLeadBarProps {
 	loading: boolean
 	mainTitle: string
 	secondaryText: string
+	secondaryTextLink?: string
 	value: string
 	valueInfo: string
 }
@@ -34,7 +43,7 @@ interface PageLeadBarProps {
  * @param props PageLeadBarProps
  */
 const PageLeadBar = (props: PageLeadBarProps) => {
-	const { mainTitle, secondaryText, value, valueInfo } = props
+	const { mainTitle, secondaryText, secondaryTextLink, value, valueInfo } = props
 	return (
 		<StyledMain>
 			<Row
@@ -56,12 +65,22 @@ const PageLeadBar = (props: PageLeadBarProps) => {
 					>
 						{mainTitle}
 					</Title>
-					<Text
-						type="secondary"
-						style={{ fontSize: "0.8em", paddingLeft: "15px" }}
-					>
-						{secondaryText}
-					</Text>
+
+					{secondaryTextLink ?
+						(<StyledLink href={secondaryTextLink} target="_blank" >
+							<RightSquareOutlined />
+							<span style={{ padding: "0 6px" }}>
+								{secondaryText}
+							</span>
+						</StyledLink>)
+						:
+						(<Text
+							type="secondary"
+							style={{ fontSize: "0.8em", paddingLeft: "15px" }}
+						>
+							{secondaryText}
+						</Text>)
+					}
 				</Col>
 				<Col xs={2} sm={2} md={1} style={{ marginTop: "8px" }}>
 					<Divider type={'vertical'} style={{ height: '80px' }} />
