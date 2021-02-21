@@ -36,6 +36,7 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 								<img
 									src={metamaskLogo}
 									style={{ height: 32 }}
+									alt="MetaMask fox logo"
 								/>
 							}
 							onConnect={() => {
@@ -51,6 +52,7 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 								<img
 									src={walletConnectLogo}
 									style={{ height: 24 }}
+									alt="Wallet Connect logo"
 								/>
 							}
 							onConnect={() => {

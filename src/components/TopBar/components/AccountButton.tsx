@@ -6,7 +6,7 @@ import useTVL from '../../../hooks/useComputeTVL'
 import { Button, Menu, Dropdown, Row, Col } from 'antd'
 import { CaretDownOutlined } from '@ant-design/icons'
 
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon' // @ts-ignore
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 import WalletProviderModal from '../../WalletProviderModal'
 import BigNumber from 'bignumber.js'
@@ -26,6 +26,11 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 		onPresentWalletProviderModal()
 	}, [onPresentWalletProviderModal])
 
+	const handleSignOutClick = useCallback(() => {
+		localStorage.setItem('signOut', account)
+		reset()
+	}, [reset, account])
+
 	return (
 		<StyledAccountButton>
 			<StyledCol>
@@ -44,9 +49,25 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 							placement="bottomRight"
 							overlay={
 								<Menu>
-									<Menu.Item onClick={() => reset()}>
+									<Menu.ItemGroup
+										title={
+											<>
+												<div style={{ textAlign: "center" }} >Your Account</div>
+												<Button
+													href={`https://etherscan.io/address/${account}`}
+													target={'_blank'}
+													rel="noopener noreferrer"
+													block
+													type="primary"
+													ghost
+												>
+													<span style={{ margin: "0 5px" }} >{account.slice(0, 4)} ... {account.slice(-2)}</span>
+												</Button>
+											</>
+										} />
+									<Menu.Item onClick={handleSignOutClick}>
 										Logout
-								</Menu.Item>
+									</Menu.Item>
 								</Menu>
 							}
 						>
