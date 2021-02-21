@@ -11,6 +11,7 @@ export const blue = {
 }
 
 export const brandBlue = '#016EAC'
+export const hoverBlue = 'rgb(67, 210, 255)'
 
 export const grey = {
 	100: '#fafafa',
