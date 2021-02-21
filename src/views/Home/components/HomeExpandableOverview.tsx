@@ -20,10 +20,18 @@ interface TooltipRowProps {
 
 const TooltipRow = ({ main, value }: TooltipRowProps) => (
 	<>
-		<div>{main}</div>
+		<div style={{ textDecoration: "underline", textUnderlineOffset: "4px" }}>{main}</div>
 		<div>{value}</div>
 	</>
 )
+
+const formatBN = (BN: BigNumber, places = 2) =>
+	Number(BN.toFixed(places)).toLocaleString(
+		undefined, // leave undefined to use the browser's locale,
+		// or use a string like 'en-US' to override it.
+		{ minimumFractionDigits: places }
+	)
+
 
 /**
  * Generates an expandable side panel that shows basic overview data for the home page.
@@ -47,16 +55,16 @@ export default function HomeExpandableOverview() {
 							title={
 								<>
 									<TooltipRow
-										main="MetaVault 2.0"
-										value={'$' + metavaultTvl.toFixed(2)}
+										main="Total MetaVault 2.0 value"
+										value={'$' + formatBN(metavaultTvl)}
 									/>
 									<TooltipRow
-										main="YAX Staking"
-										value={'$' + stakingTvl.toFixed(2)}
+										main="Total YAX Staking value"
+										value={'$' + formatBN(stakingTvl)}
 									/>
 									<TooltipRow
-										main="YAX + ETH LINKSWAP LP"
-										value={'$' + liquidityTvl.toFixed(2)}
+										main="Total Liqudity Pool value"
+										value={'$' + formatBN(liquidityTvl)}
 									/>
 								</>
 							}
