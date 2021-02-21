@@ -1,11 +1,9 @@
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import { Contract } from 'web3-eth-contract'
-
 import { Yaxis } from './Yaxis'
-import { StakePool } from './type'
 import { getApy } from '../utils/number'
-import { StakedValue } from '../contexts/Farms/types'
+import { Farm, StakedValue, stakedValueFactory } from '../contexts/Farms/types'
 
 import { NETWORK_NAME } from './configs'
 
@@ -109,14 +107,6 @@ export const getYaxisMetaVaultConverter = (yaxis: Yaxis) => {
 	return yaxis && yaxis.contracts && yaxis.contracts.vaultConverter
 }
 
-export interface Farm extends StakePool {
-	id: string
-	lpToken: string
-	lpTokenAddress: string
-	earnToken: string
-	earnTokenAddress: string
-}
-
 export const getFarms = (yaxis: Yaxis): Farm[] => {
 	return yaxis
 		? yaxis.contracts.pools.map((pool) => {
@@ -156,6 +146,7 @@ export const getEarned = async (
 	pid: number,
 	account: string,
 ) => {
+	if (pid === null) return 0
 	return yaxisChefContract.methods.pendingYaxis(pid, account).call()
 }
 
@@ -164,44 +155,43 @@ async function getLinkPoolInfo(
 	priceMap: any,
 	farm: Farm,
 ): Promise<StakedValue> {
-	// const lpContract = farm.lpContract
-	// const reserveTokens = farm.lpTokens
-	const pid = farm.pid
-	// const {
-	// 	_reserve0,
-	// 	_reserve1,
-	// } = await lpContract.methods.getReserves().call()
-	// const reserve = [
-	// 	numberToFloat(_reserve0, reserveTokens[0].decimals),
-	// 	numberToFloat(_reserve1, reserveTokens[1].decimals),
-	// ]
-	// let totalSupply = numberToFloat(
-	// 	await lpContract.methods.totalSupply().call(),
-	// )
+	const lpContract = farm.lpContract
+	const reserveTokens = farm.lpTokens
+	const {
+		_reserve0,
+		_reserve1,
+	} = await lpContract.methods.getReserves().call()
+	const reserve = [
+		numberToFloat(_reserve0, reserveTokens[0].decimals),
+		numberToFloat(_reserve1, reserveTokens[1].decimals),
+	]
+	let totalSupply = numberToFloat(
+		await lpContract.methods.totalSupply().call(),
+	)
 
 	// // const balance = numberToFloat(await lpContract.methods
 	// // 	.balanceOf(yaxisChefContract.options.address)
 	// // 	.call())
-	// const prices = [
-	// 	priceMap[reserveTokens[0].symbol],
-	// 	priceMap[reserveTokens[1].symbol],
-	// ]
-	// if (prices[1]) {
-	// 	prices[0] = (prices[1] * reserve[1]) / reserve[0]
-	// } else if (prices[0]) {
-	// 	prices[1] = (prices[0] * reserve[0]) / reserve[1]
-	// }
-	// const totalLpValue = reserve[0] * prices[0] + reserve[1] * prices[1]
-	// const lpPrice = new BigNumber(totalLpValue).div(totalSupply).toNumber()
-	// const tvl = totalLpValue
+	const prices = [
+		priceMap[reserveTokens[0].symbol],
+		priceMap[reserveTokens[1].symbol],
+	]
+	if (prices[1]) {
+		prices[0] = (prices[1] * reserve[1]) / reserve[0]
+	} else if (prices[0]) {
+		prices[1] = (prices[0] * reserve[0]) / reserve[1]
+	}
+	const totalLpValue = reserve[0] * prices[0] + reserve[1] * prices[1]
+	const lpPrice = new BigNumber(totalLpValue).div(totalSupply).toNumber()
+	const tvl = totalLpValue
 	return {
-		pid,
-		totalSupply: 1,
-		reserve: [1, 1],
+		...farm,
+		totalSupply,
+		reserve,
 		balance: 0,
-		prices: [1],
-		lpPrice: 1,
-		tvl: 1,
+		prices,
+		lpPrice,
+		tvl,
 		poolWeight: new BigNumber(1),
 	}
 }
@@ -244,7 +234,7 @@ async function getUniPoolInfo(
 	const lpPrice = new BigNumber(totalLpValue).div(totalSupply).toNumber()
 	const tvl = balance * lpPrice
 	return {
-		pid,
+		...farm,
 		totalSupply,
 		reserve,
 		balance,
@@ -301,7 +291,7 @@ async function getBalPoolInfo(
 	const lpPrice = new BigNumber(totalLpValue).div(totalSupply).toNumber()
 	const tvl = balance * lpPrice
 	return {
-		pid,
+		...farm,
 		totalSupply,
 		reserve,
 		balance,
@@ -318,18 +308,8 @@ export const getTotalLPWethValue = async (
 	priceMap: any,
 	farm: Farm,
 ): Promise<StakedValue> => {
-	if (!farm.active) {
-		return {
-			pid: farm.pid,
-			totalSupply: 0,
-			reserve: [0, 0],
-			balance: 0,
-			prices: [0, 0],
-			tvl: 0,
-			lpPrice: 0,
-			poolWeight: new BigNumber(0),
-		}
-	}
+	if (!farm.active) return stakedValueFactory()
+
 	let type = farm.type || 'uni'
 	if (type === 'balancer') {
 		return await getBalPoolInfo(yaxisChefContract, priceMap, farm)

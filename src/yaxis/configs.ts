@@ -295,8 +295,8 @@ export const configs: Record<number, Config> = {
 				icon: '',
 			},
 			{
-				pid: 10,
-				active: false,
+				pid: null,
+				active: true,
 				type: 'link',
 				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
 				lpAddress: '0x21dee38170F1e1F26baFf2C30C0fc8F8362b6961',

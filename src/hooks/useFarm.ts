@@ -1,35 +1,10 @@
 import { useContext } from 'react'
 import { Context as FarmsContext } from '../contexts/Farms'
-import { Farm } from '../yaxis/utils'
+import { farmFactory, Farm } from '../contexts/Farms/types'
 
 const useFarm = (id: string): Farm => {
 	const { farms } = useContext(FarmsContext)
-	return (
-		farms.find((farm) => farm.id === id) || {
-			id: '',
-			lpToken: '',
-			lpTokenAddress: '',
-			earnToken: '',
-			earnTokenAddress: '',
-			pid: 0,
-			active: false,
-			type: '',
-			liquidId: '',
-			lpAddress: '',
-			lpTokens: [
-				{
-					symbol: '',
-					decimals: 0,
-				},
-			],
-			tokenAddress: '',
-			name: '',
-			symbol: '',
-			tokenSymbol: '',
-			icon: '',
-			lpUrl: '',
-		}
-	)
+	return farms.find((farm) => farm.id === id) || farmFactory()
 }
 
 export default useFarm

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useMemo } from 'react'
 
 import useYaxis from '../../hooks/useYaxis'
 
@@ -17,12 +17,17 @@ const Farms: React.FC = ({ children }) => {
 	const [unharvested, setUnharvested] = useState(0)
 
 	const yaxis = useYaxis()
+	const farms = useMemo(() => getFarms(yaxis), [yaxis])
 
-	const farms = getFarms(yaxis)
 	const [stakedValues, setBalance] = useState([] as Array<StakedValue>)
-	const yaxisChefContract = getYaxisChefContract(yaxis)
-	const wethContact = getWethContract(yaxis)
+
+	const [yaxisChefContract, wethContact] = useMemo(() =>
+		[getYaxisChefContract(yaxis), getWethContract(yaxis)]
+		, [yaxis])
+
+
 	const priceMap = usePriceMap()
+
 	const fetchStakedValue = useCallback(async () => {
 		if (priceMap) {
 			try {
@@ -39,13 +44,19 @@ const Farms: React.FC = ({ children }) => {
 				setBalance(balances)
 			} catch { }
 		}
-	}, [wethContact, yaxisChefContract, setBalance, priceMap])
+	}, [
+		wethContact, yaxisChefContract,
+		farms,
+		setBalance,
+		priceMap,
+	])
 
 	useEffect(() => {
 		if (wethContact && yaxisChefContract) {
 			fetchStakedValue()
 		}
-	}, [wethContact, yaxisChefContract, setBalance, priceMap])
+	}, [wethContact, yaxisChefContract, fetchStakedValue])
+
 	return (
 		<Context.Provider
 			value={{
