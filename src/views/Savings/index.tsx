@@ -42,7 +42,11 @@ const Savings: React.FC = () => {
 				mainTitle={phrases['Staking Account'][language]}
 				secondaryText={phrases['YAX Staking'][language]}
 				secondaryTextLink={address && etherscanUrl(`/address/${address}#code`)}
-				value={'$' + totalUSDBalance}
+				value={'$' + Number(totalUSDBalance).toLocaleString(
+					undefined, // leave undefined to use the browser's locale,
+					// or use a string like 'en-US' to override it.
+					{ minimumFractionDigits: 2 },
+				)}
 				valueInfo={phrases['Balance'][language]}
 			>
 				<Row gutter={16}>

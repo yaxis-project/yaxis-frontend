@@ -105,9 +105,9 @@ interface StyledButtonProps {
 
 const StyledButton = styled.button<StyledButtonProps>`
 	align-items: center;
-	background-color: rgba(21, 61, 111, 0.44);
+	background-color: ${(props) => props.theme.color.primary.main};
 	border: 1px solid transparent;
-	color: rgb(67, 210, 255);
+	color:  ${(props) => props.theme.color.white};
 	cursor: pointer;
 	display: flex;
 	font-size: ${(props) => props.fontSize}px;
@@ -121,12 +121,12 @@ const StyledButton = styled.button<StyledButtonProps>`
 	pointer-events: ${(props) => (!props.disabled ? undefined : 'none')};
 	width: 100%;
 	&:hover {
-		color: rgb(67, 210, 255);
+		color: #0186d3;
 		cursor: pointer;
 		background-color: rgba(55, 107, 173, 0.44);
 	}
 	&:active {
-		color: rgb(67, 210, 255);
+		color: #0186d3;
 		cursor: pointer;
 		box-shadow: rgba(55, 107, 173, 0.44) 0px 0px 0px 1pt;
 		background-color: rgba(55, 107, 173, 0.44);

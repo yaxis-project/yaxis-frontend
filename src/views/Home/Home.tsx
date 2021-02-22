@@ -74,7 +74,7 @@ const InvestmentAccountOverview: React.FC = () => {
 	return (
 		<AccountOverviewCard
 			loading={false}
-			mainTitle={'Vault Account'}
+			mainTitle={'MetaVault Account'}
 			secondaryText={'Metavault 2.0'}
 			value={'$' + totalInvestingBalance.toFixed(2)}
 			time={lastUpdated.fromNow()}

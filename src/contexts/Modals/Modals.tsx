@@ -9,8 +9,8 @@ interface ModalsContext {
 }
 
 export const Context = createContext<ModalsContext>({
-	onPresent: () => {},
-	onDismiss: () => {},
+	onPresent: () => { },
+	onDismiss: () => { },
 })
 
 const Modals: React.FC = ({ children }) => {
@@ -30,7 +30,7 @@ const Modals: React.FC = ({ children }) => {
 	const handleDismiss = useCallback(() => {
 		setContent(undefined)
 		setIsOpen(false)
-	}, [setContent, setIsOpen, modalKey])
+	}, [setContent, setIsOpen])
 
 	return (
 		<Context.Provider
@@ -65,6 +65,7 @@ const StyledModalWrapper = styled.div`
 	right: 0;
 	bottom: 0;
 	left: 0;
+	z-index: 2;
 `
 
 const StyledModalBackdrop = styled.div`
@@ -75,6 +76,7 @@ const StyledModalBackdrop = styled.div`
 	right: 0;
 	bottom: 0;
 	left: 0;
+	z-index: 2;
 `
 
 export default Modals
