@@ -8,6 +8,7 @@ import { MenuOutlined } from '@ant-design/icons';
 import WalletProviderModal from '../../WalletProviderModal'
 import useModal from '../../../hooks/useModal'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
+import { etherscanUrl } from '../../../yaxis/utils'
 
 interface NavTabletProps { }
 
@@ -110,7 +111,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 
                     <Menu.ItemGroup title={
                         <a
-                            href={`https://etherscan.io/address/${account}`}
+                            href={etherscanUrl(`/address/${account}`)}
                             target={'_blank'}
                             rel="noopener noreferrer"
                         >

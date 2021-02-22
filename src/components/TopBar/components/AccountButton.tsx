@@ -7,7 +7,7 @@ import { Button, Menu, Dropdown, Row, Col } from 'antd'
 import { CaretDownOutlined } from '@ant-design/icons'
 
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
-
+import { etherscanUrl } from '../../../yaxis/utils'
 import WalletProviderModal from '../../WalletProviderModal'
 import BigNumber from 'bignumber.js'
 
@@ -54,7 +54,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 											<>
 												<div style={{ textAlign: "center" }} >Your Account</div>
 												<Button
-													href={`https://etherscan.io/address/${account}`}
+													href={etherscanUrl(`/address/${account}`)}
 													target={'_blank'}
 													rel="noopener noreferrer"
 													block
