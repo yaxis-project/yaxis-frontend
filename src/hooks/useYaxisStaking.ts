@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 
 import BigNumber from 'bignumber.js'
 import { useWallet } from 'use-wallet'
@@ -32,32 +32,33 @@ export default function useYaxisStaking(currency: Currency) {
 		stakedBalanceUSD: new BigNumber(0),
 		rate: new BigNumber(0),
 		walletBalance,
+		yaxBalance: walletBalance.div(1e18),
 	})
 
-	const getData = async () => {
+	const getData = useCallback(async () => {
 		try {
 			const rate = await yaxis.contracts.xYaxStaking.methods
 				.getPricePerFullShare()
 				.call()
 			const data = {
-				...balances,
-				walletBalance,
 				sYaxBalance: sBalance,
 				stakedBalance: sBalance.div(1e18).multipliedBy(rate).div(1e18),
+				walletBalance,
 				rate: new BigNumber(rate),
 				stakedBalanceUSD: new BigNumber(rate)
 					.div(1e18)
 					.multipliedBy(priceMap?.YAX)
 					.times(sBalance)
 					.div(1e18),
+				yaxBalance: walletBalance.div(1e18),
 			}
 			setBalances(data)
 		} catch (err) {}
-	}
+	}, [priceMap, sBalance, walletBalance, yaxis])
 
 	useEffect(() => {
 		if (yaxis && ethereum && stakingTokenAddress) getData()
-	}, [yaxis, block, ethereum, sBalance])
+	}, [yaxis, block, ethereum, sBalance, stakingTokenAddress, getData])
 
 	return balances
 }

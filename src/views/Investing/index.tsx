@@ -37,12 +37,16 @@ const Investing: React.FC = () => {
 				mainTitle="MetaVault Account"
 				secondaryText="MetaVault 2.0"
 				secondaryTextLink={address && etherscanUrl(`/address/${address}#code`)}
-				value={'$' + totalUSDBalance}
+				value={'$' + Number(totalUSDBalance).toLocaleString(
+					undefined, // leave undefined to use the browser's locale,
+					// or use a string like 'en-US' to override it.
+					{ minimumFractionDigits: 2 },
+				)}
 				valueInfo="Balance"
 			>
 				<Row gutter={16}>
 					<Col md={24} lg={16} >
-						<YaxisPriceGraph />
+						{/* <YaxisPriceGraph /> */}
 						<InvestmentAccountActionCard />
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>

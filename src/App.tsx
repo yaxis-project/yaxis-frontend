@@ -14,7 +14,7 @@ import theme from './theme'
 import Home from './views/Home'
 import Investing from './views/Investing'
 import Savings from './views/Savings'
-import Liquidity from './views/Liquidity'
+// import Liquidity from './views/Liquidity'
 import LiquidityPool from './views/LiquidityPool'
 import { notification } from 'antd'
 import { NETWORK_ID } from './yaxis/configs'
@@ -35,15 +35,20 @@ const App: React.FC = () => {
 					<Route path="/" exact>
 						<Home />
 					</Route>
-					<Route path="/investing" exact>
+					<Route path="/vault" exact>
 						<Investing />
 					</Route>
-					<Route path="/savings" exact>
+					<Route path="/staking" exact>
 						<Savings />
 					</Route>
-					<Route path="/liquidity" exact>
+					{/* <Route path="/liquidity" exact>
 						<Liquidity />
-					</Route>
+					</Route> */}
+					{activePools.length &&
+						<Route key={`/liquidity/${activePools[0].lpAddress}`} path={`/liquidity/${activePools[0].lpAddress}`} exact>
+							<LiquidityPool pool={activePools[0]} />
+						</Route>
+					}
 					{activePools.map(pool => {
 						const key = `/liquidity/${pool.lpAddress}`
 						return <Route key={key} path={key} exact>
@@ -64,7 +69,7 @@ const Providers: React.FC = ({ children }) => {
 				<UseWalletProvider
 					chainId={NETWORK_ID}
 					connectors={{
-						walletconnect: { rpcUrl: process.env.RPC_URL },
+						walletconnect: { rpcUrl: process.env[`REACT_RPC_URL_${NETWORK_ID}`] },
 					}}
 				>
 					<YaxisProvider>

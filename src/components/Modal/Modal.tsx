@@ -1,5 +1,7 @@
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
+import { Card } from 'antd'
+
 
 export interface ModalProps {
 	onDismiss?: () => void
@@ -30,6 +32,7 @@ const StyledResponsiveWrapper = styled.div`
 	position: relative;
 	width: 100%;
 	max-width: 512px;
+	z-index: 2;
 	@media (max-width: ${(props) => props.theme.breakpoints.mobile}px) {
 		flex: 1;
 		position: absolute;
@@ -41,19 +44,8 @@ const StyledResponsiveWrapper = styled.div`
 	}
 `
 
-const StyledModal = styled.div`
-	padding: 0 20px;
-	background: #202635;
-	border-radius: 12px;
-	border: 2px solid #373e50;
-	box-shadow: 0px 2px 4px 2px #151923;
-	display: flex;
-	flex-direction: column;
-	position: relative;
-	width: 100%;
-	min-height: 0;
-`
+const StyledModal = styled(Card)`
 
-const StyledModalContent = styled.div``
+`
 
 export default Modal

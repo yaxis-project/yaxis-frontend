@@ -1,9 +1,10 @@
 import React, { useContext, useState, useMemo } from 'react'
-import { Currency, YAX } from '../../../utils/currencies'
+import { YAX } from '../../../utils/currencies'
 import useEnter from '../../../hooks/useEnter'
 import useLeave from '../../../hooks/useLeave'
 import useYaxisStaking from '../../../hooks/useYaxisStaking'
 import Value from '../../../components/Value'
+import { useWallet } from 'use-wallet'
 
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
@@ -37,50 +38,17 @@ const TableHeader = (props: any) => (
 	</Col>
 )
 
-interface StakingRowProps {
-	currency: Currency
-	gutter: number
-}
-
-/**
- * Generate a staking information row for the given currency.
- * @param props StakingRowProps
- */
-const StakingRow = (props: StakingRowProps) => {
-	const { currency, gutter } = props
-	const { stakedBalance, walletBalance } = useYaxisStaking(currency)
-	return (
-		<>
-			<Row gutter={gutter}>
-				<Col span={6}>
-					<Value
-						value={getBalanceNumber(walletBalance)}
-						decimals={2}
-						numberSuffix=" YAX"
-					/>
-				</Col>
-				<Col span={12}>
-					<Value
-						value={getBalanceNumber(stakedBalance)}
-						decimals={2}
-						numberSuffix=" YAX"
-					/>
-				</Col>
-			</Row>
-		</>
-	)
-}
-
 /**
  * Generate the main YAX staking card for the vault.
  */
 export default function StakingCard() {
+	const { account } = useWallet()
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 	const t = (s: string) => phrases[s][language]
 	const { onEnter } = useEnter()
 	const { onLeave } = useLeave()
-	const { stakedBalance, walletBalance, rate, sYaxBalance } = useYaxisStaking(
+	const { stakedBalance, walletBalance, rate, yaxBalance, sYaxBalance } = useYaxisStaking(
 		YAX,
 	)
 
@@ -111,7 +79,9 @@ export default function StakingCard() {
 			notification.info({
 				message: t('Please approve staking transaction.'),
 			})
-			await onEnter(depositAmount)
+			const yax = depositAmount
+			setDeposit('0')
+			await onEnter(yax)
 		} catch (err) { }
 	}
 
@@ -121,6 +91,7 @@ export default function StakingCard() {
 				message: t('Please approve YAX unstaking transaction.'),
 			})
 			const sYax = new BigNumber(withdrawAmount).times(1e18).div(rate)
+			setWithdraw('0')
 			onLeave(sYax.toString())
 		} catch {
 			notification.info({
@@ -131,30 +102,34 @@ export default function StakingCard() {
 		}
 	}
 
-	const [depositAmount, setDeposit] = useState<string>('0')
-	const updateDeposit = (value: string) =>
-		setDeposit(value == '' ? '0' : value)
+	const [depositAmount, setDeposit] = useState<string>('')
+	const updateDeposit = (value: string) => setDeposit(value.replace(/\D/g, ''))
+
 	const errorDeposit = useMemo(
 		() => new BigNumber(depositAmount).gt(walletBalance.div(1e18)),
 		[walletBalance, depositAmount],
 	)
 	const depositDisabled = useMemo(
-		() => new BigNumber(depositAmount).eq(new BigNumber(0)) || errorDeposit,
+		() => depositAmount === '' || new BigNumber(depositAmount).eq(new BigNumber(0)) || errorDeposit,
 		[depositAmount, errorDeposit],
 	)
+	const maxDeposit = () => setDeposit(yaxBalance.toString() || '0')
 
-	const [withdrawAmount, setWithdraw] = useState<string>('0')
+
+	const [withdrawAmount, setWithdraw] = useState<string>('')
 	const updateWithdraw = (value: string) =>
-		setWithdraw(value == '' ? '0' : value)
+		setWithdraw(value.replace(/\D/g, ''))
 	const errorWithdraw = useMemo(
 		() => new BigNumber(withdrawAmount).gt(stakedBalance),
 		[stakedBalance, withdrawAmount],
 	)
 	const withdrawDisabled = useMemo(
 		() =>
-			new BigNumber(withdrawAmount).eq(new BigNumber(0)) || errorWithdraw,
+			withdrawAmount === '' || new BigNumber(withdrawAmount).eq(new BigNumber(0)) || errorWithdraw,
 		[withdrawAmount, errorWithdraw],
 	)
+
+	const maxWithdraw = () => setWithdraw(stakedBalance.toString() || '0')
 
 	return (
 		<Card className="staking-card" title={<strong>{t('Staking')}</strong>}>
@@ -177,7 +152,7 @@ export default function StakingCard() {
 					<Value
 						value={stakedBalance.toNumber()}
 						decimals={2}
-						numberSuffix=" YAX"
+						numberSuffix=" sYAX"
 					/>
 				</Col>
 			</Row>
@@ -187,12 +162,29 @@ export default function StakingCard() {
 					<Form.Item validateStatus={errorDeposit && 'error'}>
 						<Input
 							onChange={(e) => updateDeposit(e.target.value)}
+							value={depositAmount}
+							min={"0"}
 							placeholder="0"
-							suffix={YAX.name}
+							suffix={
+								<>
+									<Text type="secondary">
+										{YAX.name}
+									</Text>
+								&nbsp;
+								<Button
+										block
+										size="small"
+										onClick={maxDeposit}
+									>
+										MAX
+								</Button>
+								</>
+							}
 						/>
 					</Form.Item>
 					{!allowance.toNumber() ? (
 						<Button
+							disabled={!account}
 							className="staking-btn"
 							onClick={approveYAX}
 							block
@@ -216,8 +208,24 @@ export default function StakingCard() {
 					<Form.Item validateStatus={errorWithdraw && 'error'}>
 						<Input
 							onChange={(e) => updateWithdraw(e.target.value)}
+							value={withdrawAmount}
+							min={"0"}
 							placeholder="0"
-							suffix={YAX.name}
+							suffix={
+								<>
+									<Text type="secondary">
+										sYAX
+									</Text>
+							&nbsp;
+							<Button
+										block
+										size="small"
+										onClick={maxWithdraw}
+									>
+										MAX
+							</Button>
+								</>
+							}
 						/>
 					</Form.Item>
 					<Button

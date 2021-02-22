@@ -543,3 +543,10 @@ export function etherscanUrl(url: string) {
 	const network = NETWORK_NAME === 'mainnet' ? '' : `${NETWORK_NAME}.`
 	return `https://${network}${baseUrl}${url}`
 }
+
+export const formatBN = (BN: BigNumber, places = 2) =>
+	Number(BN.toFixed(places)).toLocaleString(
+		undefined, // leave undefined to use the browser's locale,
+		// or use a string like 'en-US' to override it.
+		{ minimumFractionDigits: places },
+	)

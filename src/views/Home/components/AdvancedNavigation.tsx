@@ -45,7 +45,7 @@ function AdvancedNavigationRow(props: AdvancedNavigationRowProps) {
 			<Col xs={24} sm={20}>
 				<Row>
 					<Text type="secondary">{contextType}</Text>
-					<StyledRiskBadge>HIGHER RISK</StyledRiskBadge>
+					{/* <StyledRiskBadge>HIGHER RISK</StyledRiskBadge> */}
 				</Row>
 				<Row>
 					<Link href={to} style={{ color: brandBlue }}>

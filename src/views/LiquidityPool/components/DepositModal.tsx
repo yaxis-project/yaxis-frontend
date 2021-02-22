@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import React, { useCallback, useMemo, useState } from 'react'
-import Button from '../../../components/Button'
+import { Button } from 'antd'
+import styled from 'styled-components'
 import Modal, { ModalProps } from '../../../components/Modal'
 import ModalActions from '../../../components/ModalActions'
 import ModalTitle from '../../../components/ModalTitle'
@@ -39,7 +40,7 @@ const DepositModal: React.FC<DepositModalProps> = ({
 
     return (
         <Modal>
-            <ModalTitle text={`Deposit ${tokenName} Tokens`} />
+            <ModalTitle text={`Deposit LP Tokens`} />
             <TokenInput
                 value={val}
                 onSelectMax={handleSelectMax}
@@ -48,20 +49,45 @@ const DepositModal: React.FC<DepositModalProps> = ({
                 symbol={tokenName}
             />
             <ModalActions>
-                <Button text="Cancel" variant="secondary" onClick={onDismiss} />
-                <Button
-                    disabled={pendingTx}
-                    text={pendingTx ? 'Pending Confirmation' : 'Confirm'}
+                <StyledButton
+                    onClick={onDismiss}
+                    block
+                    type="primary"
+                >
+                    Cancel
+                </StyledButton>
+                <StyledButton
+                    block
+                    type="primary"
+                    disabled={val === '' || new BigNumber(val).toNumber() === 0 || new BigNumber(val).gt(fullBalance) || pendingTx}
                     onClick={async () => {
                         setPendingTx(true)
                         await onConfirm(val)
                         setPendingTx(false)
                         onDismiss()
                     }}
-                />
+                >
+                    {pendingTx ? 'Pending Confirmation' : 'Confirm'}
+                </StyledButton>
             </ModalActions>
         </Modal>
     )
 }
+
+const StyledButton = styled(Button)`
+    background: #016eac;
+    border: none;
+    height: 60px;
+    color: white;
+    margin-bottom: 26px;
+    &:hover {
+        background-color: #0186d3;
+    }
+    &[disabled] {
+        color: #8c8c8c;
+        background-color: #f0f0f0;
+        border: none;
+    }
+`
 
 export default DepositModal

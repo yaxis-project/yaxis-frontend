@@ -23,14 +23,14 @@ const Nav: React.FC = (props) => {
 				</StyledLink>
 			</MenuItem>
 
-			<MenuItem key={'/investing'}>
-				<StyledLink activeClassName="active" to="/investing">
+			<MenuItem key={'/vault'}>
+				<StyledLink activeClassName="active" to="/vault">
 					MetaVault
 				</StyledLink>
 			</MenuItem>
 
-			<MenuItem key={'/savings'}>
-				<StyledLink activeClassName="active" to="/savings">
+			<MenuItem key={'/staking'}>
+				<StyledLink activeClassName="active" to="/staking">
 					Staking
 				</StyledLink>
 			</MenuItem>

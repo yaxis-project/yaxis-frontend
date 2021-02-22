@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import useMetaVaultData from './useMetaVaultData'
 import usePriceMap from './usePriceMap'
 import useYaxis from './useYaxis'
-// import useBlock from './useBlock'
+import useBlock from './useBlock'
 import { getTotalStaking } from '../yaxis/utils'
 
 /**
@@ -23,7 +23,7 @@ export default function useComputeTVL() {
 	})
 
 	const { farms, stakedValues } = useFarms()
-	// const block = useBlock()
+	const block = useBlock()
 	const yaxis = useYaxis()
 	const { YAX: yaxisPrice } = usePriceMap()
 
@@ -55,7 +55,7 @@ export default function useComputeTVL() {
 
 	useEffect(() => {
 		if (yaxis && stakedValues && farms) fetchData()
-	}, [stakedValues, farms, yaxis, fetchData])
+	}, [stakedValues, farms, yaxis, fetchData, block])
 
 	return totalValues
 }

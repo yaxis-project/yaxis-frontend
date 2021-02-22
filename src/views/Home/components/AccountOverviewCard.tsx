@@ -66,7 +66,7 @@ export default function AccountOverviewCard(props: AccountOverviewCardProps) {
 							</StyledTitle>
 						</Col>
 						<Col xs={24} sm={9}>
-							<StyledRiskBadge>LOWER RISK</StyledRiskBadge>
+							{/* <StyledRiskBadge>LOWER RISK</StyledRiskBadge> */}
 						</Col>
 					</Row>
 					<Row>

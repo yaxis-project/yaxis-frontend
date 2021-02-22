@@ -12,6 +12,7 @@ import {
 } from '../../../components/ExpandableSidePanel'
 import { Tooltip } from 'antd'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
+import { formatBN } from "../../../yaxis/utils"
 
 interface TooltipRowProps {
 	main: string
@@ -24,14 +25,6 @@ const TooltipRow = ({ main, value }: TooltipRowProps) => (
 		<div>{value}</div>
 	</>
 )
-
-const formatBN = (BN: BigNumber, places = 2) =>
-	Number(BN.toFixed(places)).toLocaleString(
-		undefined, // leave undefined to use the browser's locale,
-		// or use a string like 'en-US' to override it.
-		{ minimumFractionDigits: places }
-	)
-
 
 /**
  * Generates an expandable side panel that shows basic overview data for the home page.

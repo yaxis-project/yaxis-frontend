@@ -142,14 +142,13 @@ export default function DepositTable() {
 						(c) => c.tokenId === symbol,
 					)
 					if (!currency) return []
-					const value = new BigNumber(v || 0).times(
-						new BigNumber(10).pow(currency.decimals),
-					)
+					const value = new BigNumber(v || 0)
 					if (
 						value &&
 						!value.isNaN() &&
+						value.gt(0) &&
 						currency &&
-						value.gt(currency.allowance) &&
+						value.gte(currency.allowance) &&
 						value.lte(currency.balance)
 					) {
 						return [currency]
@@ -172,9 +171,8 @@ export default function DepositTable() {
 					getContract(ethereum as provider, currency.address),
 					currentConfig.contractAddresses.yAxisMetaVault,
 					account,
-				),
+				)
 		)
-
 		notification.info({
 			message: `Please approve ${approvalCalls.length} tokens for deposit.`,
 		})
@@ -196,8 +194,9 @@ export default function DepositTable() {
 			return '0'
 		})
 		try {
-			await handleApprove()
+			currenciesNeededApproval.length && await handleApprove()
 			const receipt = await onDepositAll(amounts)
+			setCurrencyValues(initialCurrencyValues)
 			onAddTransaction({
 				hash: receipt.transactionHash,
 				description: 'Deposit|$' + totalDepositing,
@@ -224,13 +223,16 @@ export default function DepositTable() {
 					<Text type="secondary">{phrases['Amount'][language]}</Text>
 				</StyledCol>
 			</HeaderRow>
-			{currencies.map((currency) => (
+			{currencies.map((currency) =>
+			(
 				<DepositAssetRow
 					key={currency.name}
 					currency={currency}
 					onChange={handleFormInputChange(setCurrencyValues)}
+					value={currencyValues[currency.tokenId]}
 				/>
-			))}
+			)
+			)}
 			<Row className="total" style={md ? {} : { padding: "0 10%" }}>
 				<Col offset={md ? 12 : 0} xs={24} sm={24} md={11}>
 					<Text type="secondary">{phrases['Total'][language]}</Text>

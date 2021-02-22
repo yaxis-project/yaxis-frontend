@@ -24,7 +24,7 @@ export default function useTokenBalance(tokenAddress: string) {
 		if (account && ethereum && tokenAddress) {
 			fetchBalance()
 		}
-	}, [account, ethereum, setBalance, block, tokenAddress])
+	}, [account, ethereum, setBalance, block, tokenAddress, fetchBalance])
 
 	return balance
 }

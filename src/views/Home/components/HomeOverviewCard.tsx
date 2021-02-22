@@ -50,7 +50,7 @@ export default function HomeOverviewCard() {
 				<Value numberPrefix="$" value={investingBalance} decimals={2} />
 			</DetailOverviewCardRow>
 			<DetailOverviewCardRow inline>
-				<StyledText>Savings Account</StyledText>
+				<StyledText>Staking Account</StyledText>
 				<Value numberPrefix="$" value={savingsBalance} decimals={2} />
 			</DetailOverviewCardRow>
 		</DetailOverviewCard>

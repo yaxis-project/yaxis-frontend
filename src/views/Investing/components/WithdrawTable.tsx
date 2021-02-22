@@ -35,6 +35,7 @@ interface WithdrawalSelectorProps {
 	withdrawValueUSD: BigNumber
 	withdrawDisabled: boolean
 	availableCurrencies: Currency[]
+	setWithdrawValueUSD: any,
 }
 
 const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
@@ -43,6 +44,7 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 		withdrawValueUSD,
 		withdrawValueShares,
 		withdrawDisabled,
+		setWithdrawValueUSD
 	} = props
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
@@ -81,6 +83,7 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 				sharesAmount,
 				selectedCurrency.address,
 			)
+			setWithdrawValueUSD('')
 			onAddTransaction({
 				hash: receipt.transactionHash,
 				description: 'Withdraw|$' + withdrawValueUSD,
@@ -149,14 +152,14 @@ const useWithdrawValueHandler = () => {
 		metaVaultData: { totalBalance, mvltPrice },
 	} = useMetaVaultData('v1')
 
-	const [withdrawValueUSD, setWithdrawValueUSD] = useState(new BigNumber(0))
+	const [withdrawValueUSD, setWithdrawValueUSD] = useState('')
 
 	const totalAvailableInUSD = useMemo(
 		() => new BigNumber(totalBalance || '0').multipliedBy(mvltPrice || '0'),
-		[totalBalance],
+		[totalBalance, mvltPrice],
 	)
 
-	const withdrawValueShares = useMemo(() => withdrawValueUSD.div(mvltPrice), [
+	const withdrawValueShares = useMemo(() => new BigNumber(withdrawValueUSD).div(mvltPrice), [
 		withdrawValueUSD,
 		mvltPrice,
 	])
@@ -187,12 +190,11 @@ export default function WithdrawTable() {
 
 	const updateWithdraw = (value: string) =>
 		setWithdrawValueUSD(
-			value == '' ? new BigNumber(0) : new BigNumber(value),
+			value
 		)
-
-	const withdrawalError = withdrawValueUSD.gt(totalAvailableInUSD)
+	const withdrawalError = new BigNumber(withdrawValueUSD).gt(totalAvailableInUSD)
 	const withdrawDisabled =
-		withdrawValueUSD.isLessThanOrEqualTo(new BigNumber(0)) ||
+		withdrawValueUSD === '' || new BigNumber(withdrawValueUSD).isLessThanOrEqualTo(new BigNumber(0)) ||
 		withdrawalError
 
 	return (
@@ -230,8 +232,21 @@ export default function WithdrawTable() {
 					<Form.Item validateStatus={withdrawalError && 'error'}>
 						<Input
 							placeholder="0"
+							min={"0"}
 							type="number"
-							suffix={<Text type="secondary">{USD.name}</Text>}
+							value={withdrawValueUSD}
+							suffix={
+								<>
+									<Text type="secondary">{USD.name}</Text>
+									&nbsp;
+								<Button
+										block
+										size="small"
+										onClick={() => updateWithdraw(totalAvailableInUSD.toFixed(2))}
+									>
+										MAX
+								</Button>
+								</>}
 							onChange={(e) => updateWithdraw(e.target.value)}
 						/>
 					</Form.Item>
@@ -244,9 +259,10 @@ export default function WithdrawTable() {
 
 			<WithdrawalSelector
 				withdrawValueShares={withdrawValueShares}
-				withdrawValueUSD={withdrawValueUSD}
+				withdrawValueUSD={withdrawValueUSD === '' ? new BigNumber(0) : new BigNumber(withdrawValueUSD)}
 				withdrawDisabled={withdrawDisabled}
 				availableCurrencies={[DAI, CRV3, USDT, USDC]}
+				setWithdrawValueUSD={setWithdrawValueUSD}
 			/>
 		</div>
 	)

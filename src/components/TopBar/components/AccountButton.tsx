@@ -7,9 +7,8 @@ import { Button, Menu, Dropdown, Row, Col } from 'antd'
 import { CaretDownOutlined } from '@ant-design/icons'
 
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
-
+import { etherscanUrl } from '../../../yaxis/utils'
 import WalletProviderModal from '../../WalletProviderModal'
-import BigNumber from 'bignumber.js'
 
 interface AccountButtonProps { }
 
@@ -20,7 +19,6 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 	)
 
 	const { account, reset } = useWallet()
-	const { yaxisPrice } = useTVL()
 
 	const handleUnlockClick = useCallback(() => {
 		onPresentWalletProviderModal()
@@ -33,10 +31,6 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 
 	return (
 		<StyledAccountButton>
-			<StyledCol>
-				<span>YAX</span>
-				<span>${new BigNumber(yaxisPrice).toFixed(2)}</span>
-			</StyledCol>
 			<Col>
 				{!account ? (
 					<StyledButton
@@ -54,7 +48,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 											<>
 												<div style={{ textAlign: "center" }} >Your Account</div>
 												<Button
-													href={`https://etherscan.io/address/${account}`}
+													href={etherscanUrl(`/address/${account}`)}
 													target={'_blank'}
 													rel="noopener noreferrer"
 													block

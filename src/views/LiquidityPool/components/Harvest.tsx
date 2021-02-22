@@ -23,19 +23,21 @@ const Harvest: React.FC<HarvestProps> = ({ pid }) => {
                     <Value value={getBalanceNumber(earnings)} />
                     <Label text="YAX Earned" />
                     <Divider />
-                    <Button
-                        className="staking-btn"
-                        block
-                        type="primary"
-                        disabled={!earnings.toNumber() || pendingTx}
-                        onClick={async () => {
-                            setPendingTx(true)
-                            await onReward()
-                            setPendingTx(false)
-                        }}
-                    >
-                        {pendingTx ? 'Collecting YAX' : 'Harvest'}
-                    </Button>
+                    <Row style={{ width: "100%", padding: 0 }}>
+                        <Button
+                            className="staking-btn"
+                            block
+                            type="primary"
+                            disabled={!earnings.toNumber() || pendingTx}
+                            onClick={async () => {
+                                setPendingTx(true)
+                                await onReward()
+                                setPendingTx(false)
+                            }}
+                        >
+                            {pendingTx ? 'Collecting YAX' : 'Harvest'}
+                        </Button>
+                    </Row>
                 </CardContents>
             </Row>
         </Card>

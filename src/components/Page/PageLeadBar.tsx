@@ -5,7 +5,7 @@ import arrow from '../../assets/img/arrow-ui.svg'
 import { NavLink } from 'react-router-dom'
 import theme from "../../theme"
 import { Row, Col, Typography, Divider } from 'antd'
-import { RightSquareOutlined } from '@ant-design/icons'
+import { LinkOutlined } from '@ant-design/icons'
 const { Title, Text } = Typography
 
 const StyledMain = styled.div`
@@ -68,7 +68,7 @@ const PageLeadBar = (props: PageLeadBarProps) => {
 
 					{secondaryTextLink ?
 						(<StyledLink href={secondaryTextLink} target="_blank" >
-							<RightSquareOutlined />
+							<LinkOutlined />
 							<span style={{ padding: "0 6px" }}>
 								{secondaryText}
 							</span>

@@ -12,6 +12,7 @@ import BigNumber from 'bignumber.js'
 import useYaxisStaking from '../../hooks/useYaxisStaking'
 import { YAX } from '../../utils/currencies'
 import useGlobal from '../../hooks/useGlobal'
+import { formatBN } from "../../yaxis/utils"
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -52,7 +53,7 @@ const SavingsAccountOverview: React.FC = () => {
 			loading={false}
 			mainTitle={'Staking Account'}
 			secondaryText={'YAX Staking'}
-			value={'$' + stakedBalanceUSD.toFixed(2)}
+			value={'$' + formatBN(stakedBalanceUSD)}
 			time={lastUpdated.fromNow()}
 		/>
 	)
@@ -74,9 +75,9 @@ const InvestmentAccountOverview: React.FC = () => {
 	return (
 		<AccountOverviewCard
 			loading={false}
-			mainTitle={'Vault Account'}
+			mainTitle={'MetaVault Account'}
 			secondaryText={'Metavault 2.0'}
-			value={'$' + totalInvestingBalance.toFixed(2)}
+			value={'$' + formatBN(totalInvestingBalance)}
 			time={lastUpdated.fromNow()}
 		/>
 	)
