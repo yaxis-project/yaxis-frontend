@@ -43,15 +43,21 @@ export default function HomeOverviewCard() {
 				<Text>
 					<strong>Total</strong>
 				</Text>
-				<Value numberPrefix="$" value={yaxReturnsUSD} decimals={2} />
+				<Value
+					// numberPrefix="$"
+					value={"TBD"} decimals={2} />
 			</DetailOverviewCardRow>
 			<DetailOverviewCardRow inline>
 				<StyledText>MetaVault Account</StyledText>
-				<Value numberPrefix="$" value={investingBalance} decimals={2} />
+				<Value
+					// numberPrefix="$"
+					value={"TBD"} decimals={2} />
 			</DetailOverviewCardRow>
 			<DetailOverviewCardRow inline>
 				<StyledText>Staking Account</StyledText>
-				<Value numberPrefix="$" value={savingsBalance} decimals={2} />
+				<Value
+					// numberPrefix="$"
+					value={"TBD"} decimals={2} />
 			</DetailOverviewCardRow>
 		</DetailOverviewCard>
 	)

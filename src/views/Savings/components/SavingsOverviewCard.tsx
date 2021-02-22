@@ -36,9 +36,9 @@ export default function () {
 			<DetailOverviewCardRow>
 				<Text>Returns</Text>
 				<Value
-					numberPrefix="$"
-					value={yaxReturnsUSD}
-					extra={`${yaxReturns} YAX`}
+					// numberPrefix="$"
+					value={"TBD"}
+					// extra={`${yaxReturns} YAX`}
 					decimals={2}
 				/>
 			</DetailOverviewCardRow>
