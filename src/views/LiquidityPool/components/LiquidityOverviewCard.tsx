@@ -33,7 +33,10 @@ export default function LiquidityOverviewCard(
 		<DetailOverviewCard title="Overview">
 			<DetailOverviewCardRow>
 				<Text>Returns</Text>
-				<Value value={yaxReturns} numberSuffix=" YAX" decimals={2} />
+				<Value
+					value={"TBD"}
+					// value={yaxReturns} 
+					numberSuffix=" YAX" decimals={2} />
 			</DetailOverviewCardRow>
 			<DetailOverviewCardRow>
 				<Text>Share of Pool</Text>

@@ -27,9 +27,11 @@ const InvestmentDetailOverview: React.FC = () => {
 			<DetailOverviewCardRow>
 				<Text>Return</Text>
 				<Value
-					numberPrefix="$"
-					value={yaxReturnsUSD}
-					numberSuffix={`${yaxReturns} YAX`}
+					// numberPrefix="$"
+					// value={yaxReturnsUSD}
+					value={"TBD"}
+					// numberSuffix={`${yaxReturns} YAX`}
+					numberSuffix={` YAX`}
 					decimals={2}
 				/>
 			</DetailOverviewCardRow>
