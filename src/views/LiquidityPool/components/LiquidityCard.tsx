@@ -47,7 +47,7 @@ const LiquidityRow = (props: LiquidityRowProps) => {
 				<Text>{name}</Text>
 			</Col>
 			<Col span={15}>
-				<Row>
+				<Row style={{ borderBottom: "none" }}>
 					<Col style={{ marginRight: "10px" }}>
 						<Text>
 							{balance}

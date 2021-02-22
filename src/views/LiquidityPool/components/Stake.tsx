@@ -14,6 +14,7 @@ import useUnstake from '../../../hooks/useUnstake'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import DepositModal from './DepositModal'
 import WithdrawModal from './WithdrawModal'
+import { useWallet } from 'use-wallet'
 
 interface StakeProps {
     lpContract: Contract
@@ -22,6 +23,8 @@ interface StakeProps {
 }
 
 const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
+    const { account } = useWallet()
+
     const [requestedApproval, setRequestedApproval] = useState(false)
 
     const allowance = useAllowance(lpContract)
@@ -74,7 +77,7 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
                             className="staking-btn"
                             block
                             type="primary"
-                            disabled={requestedApproval}
+                            disabled={!account || requestedApproval}
                             onClick={handleApprove}
                         >
                             Approve {tokenName}

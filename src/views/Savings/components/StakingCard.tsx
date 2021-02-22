@@ -4,6 +4,7 @@ import useEnter from '../../../hooks/useEnter'
 import useLeave from '../../../hooks/useLeave'
 import useYaxisStaking from '../../../hooks/useYaxisStaking'
 import Value from '../../../components/Value'
+import { useWallet } from 'use-wallet'
 
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
@@ -41,6 +42,7 @@ const TableHeader = (props: any) => (
  * Generate the main YAX staking card for the vault.
  */
 export default function StakingCard() {
+	const { account } = useWallet()
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 	const t = (s: string) => phrases[s][language]
@@ -182,6 +184,7 @@ export default function StakingCard() {
 					</Form.Item>
 					{!allowance.toNumber() ? (
 						<Button
+							disabled={!account}
 							className="staking-btn"
 							onClick={approveYAX}
 							block

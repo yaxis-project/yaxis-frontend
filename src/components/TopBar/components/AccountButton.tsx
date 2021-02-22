@@ -9,7 +9,6 @@ import { CaretDownOutlined } from '@ant-design/icons'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import { etherscanUrl } from '../../../yaxis/utils'
 import WalletProviderModal from '../../WalletProviderModal'
-import BigNumber from 'bignumber.js'
 
 interface AccountButtonProps { }
 
@@ -20,7 +19,6 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 	)
 
 	const { account, reset } = useWallet()
-	const { yaxisPrice } = useTVL()
 
 	const handleUnlockClick = useCallback(() => {
 		onPresentWalletProviderModal()
