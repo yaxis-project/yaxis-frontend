@@ -27,14 +27,16 @@ const useMetaVault = () => {
 	const calcMinTokenAmount = useCallback(
 		async (amounts: string[]) => {
 			// metaVaut.calc_token_amount_deposit([dai,usdc,usdt]) * (1 - slippage) + 3crv
+			const threeCrvIndex = 3 // Index from InvestingDepositCurrencies that DepositAll expects
 			try {
 				const contract: any = getYaxisMetaVault(yaxis)
 				if (contract) {
-					const params = amounts.slice(0, 3)
+					const params = [...amounts]
+					params.splice(threeCrvIndex, 1)
 					const tokensDeposit = await contract.methods
 						.calc_token_amount_deposit(params)
 						.call()
-					const threeCrvDeposit = amounts[3] || '0'
+					const threeCrvDeposit = amounts[threeCrvIndex] || '0'
 					return new BigNumber(tokensDeposit)
 						.plus(threeCrvDeposit)
 						.times(1 - defaultSlippage)
@@ -51,10 +53,12 @@ const useMetaVault = () => {
 		async (amounts, isStake = true) => {
 			setSubmitting(true)
 			const minMintAmount = await calcMinTokenAmount(amounts)
+			console.log(minMintAmount)
 			notification.info({
 				message: 'Please confirm deposit transaction',
 			})
 			const params = [amounts, minMintAmount, isStake]
+			console.log('PARAMS', params)
 			try {
 				const receipt = await depositAll(
 					getYaxisMetaVault(yaxis),
