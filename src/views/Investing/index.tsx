@@ -46,7 +46,7 @@ const Investing: React.FC = () => {
 			>
 				<Row gutter={16}>
 					<Col md={24} lg={16} >
-						<YaxisPriceGraph />
+						{/* <YaxisPriceGraph /> */}
 						<InvestmentAccountActionCard />
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>

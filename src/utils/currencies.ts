@@ -1,10 +1,11 @@
-import dai from '../assets/img/currencies/dai.svg'
 import crv3 from '../assets/img/currencies/3crv.svg'
+import dai from '../assets/img/currencies/dai.svg'
 import eth from '../assets/img/currencies/eth.svg'
 import pickle from '../assets/img/currencies/pickle.svg'
-import usdt from '../assets/img/currencies/usdt.svg'
+import uni from '../assets/img/currencies/uni.svg'
 import usdc from '../assets/img/currencies/usdc.svg'
-import pool from '../assets/img/icons/pool-token.svg'
+import usdt from '../assets/img/currencies/usdt.svg'
+import linkswap from '../assets/img/icons/pool-token.svg'
 import yax from '../assets/img/logo-ui.svg'
 
 import { currentConfig } from '../yaxis/configs'
@@ -85,12 +86,19 @@ export const PICKLE: Currency = {
 
 export const UNI_ETH_YAX_LP: Currency = {
 	name: 'YAX/ETH UNI-V2 LP',
-	icon: pool,
+	icon: uni,
+	decimals: 18,
+}
+
+export const LINKSWAP_ETH_YAX_LP: Currency = {
+	name: 'YAX/ETH LINKSWAP LP',
+	icon: linkswap,
 	decimals: 18,
 }
 
 export const currencyMap = {
 	'YAX/ETH UNI-V2 LP': UNI_ETH_YAX_LP,
+	'YAX/ETH LINKSWAP LP': LINKSWAP_ETH_YAX_LP,
 }
 
 /**
