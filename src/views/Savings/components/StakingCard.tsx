@@ -161,6 +161,7 @@ export default function StakingCard() {
 						<Input
 							onChange={(e) => updateDeposit(e.target.value)}
 							value={depositAmount}
+							min={"0"}
 							placeholder="0"
 							suffix={
 								<>
@@ -205,6 +206,7 @@ export default function StakingCard() {
 						<Input
 							onChange={(e) => updateWithdraw(e.target.value)}
 							value={withdrawAmount}
+							min={"0"}
 							placeholder="0"
 							suffix={
 								<>

@@ -64,14 +64,14 @@ export const USDT: Currency = {
 	name: 'USDT',
 	tokenId: 'usdt',
 	icon: usdt,
-	decimals: 18,
+	decimals: 6,
 	priceMapKey: 'USDT',
 }
 export const USDC: Currency = {
 	name: 'USDC',
 	tokenId: 'usdc',
 	icon: usdc,
-	decimals: 18,
+	decimals: 6,
 	priceMapKey: 'USDC',
 }
 

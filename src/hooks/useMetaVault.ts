@@ -61,11 +61,12 @@ const useMetaVault = () => {
 					params,
 					account,
 				)
+				setSubmitting(false)
 				return receipt
 			} catch (e) {
+				setSubmitting(false)
 				console.error(e)
 			}
-			setSubmitting(false)
 		},
 		[account, yaxis, calcMinTokenAmount],
 	)
@@ -83,11 +84,12 @@ const useMetaVault = () => {
 					params,
 					account,
 				)
+				setSubmitting(false)
 				return receipt
 			} catch (e) {
+				setSubmitting(false)
 				console.error(e)
 			}
-			setSubmitting(false)
 		},
 		[account, yaxis],
 	)

@@ -230,6 +230,7 @@ export default function WithdrawTable() {
 					<Form.Item validateStatus={withdrawalError && 'error'}>
 						<Input
 							placeholder="0"
+							min={"0"}
 							type="number"
 							suffix={<Text type="secondary">{USD.name}</Text>}
 							onChange={(e) => updateWithdraw(e.target.value)}

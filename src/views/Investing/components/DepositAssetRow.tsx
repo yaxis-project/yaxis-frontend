@@ -13,6 +13,7 @@ const { Text } = Typography
 interface DepositAssetRowProps {
 	currency: Currency
 	onChange: Function
+	value: string
 }
 
 /**
@@ -21,7 +22,7 @@ interface DepositAssetRowProps {
  * @param props DepositAssetRowProps
  */
 export default function DepositAssetRow(props: DepositAssetRowProps) {
-	const { currency, onChange } = props
+	const { currency, onChange, value } = props
 	const { currenciesData } = useMetaVaultData('v1')
 
 	const currencyData = find(
@@ -34,7 +35,7 @@ export default function DepositAssetRow(props: DepositAssetRowProps) {
 
 	const { [currency.priceMapKey]: price } = usePriceMap()
 
-	const value = new BigNumber(price).times(balance).toFixed(2)
+	const balanceUSD = new BigNumber(price).times(balance).toFixed(2)
 
 	const [currentInput, setCurrentInput] = useState<string>('')
 	const [inputError, setInputError] = useState<boolean>(false)
@@ -55,12 +56,12 @@ export default function DepositAssetRow(props: DepositAssetRowProps) {
 				</Col>
 				<Col xs={12} sm={8} md={7} className="balance">
 					<Value
-						value={balance.toNumber()}
+						value={balanceUSD}
 						numberPrefix="$"
 						decimals={2}
 					/>
 					<Text type="secondary">
-						{value} {currency.name}
+						{balance.toFixed(2)} {currency.name}
 					</Text>
 				</Col>
 				<Col xs={24} sm={24} md={12} className="amount">
@@ -72,6 +73,8 @@ export default function DepositAssetRow(props: DepositAssetRowProps) {
 							placeholder="0"
 							size="large"
 							type="number"
+							value={value}
+							min={"0"}
 							suffix={
 								<>
 									<Text type="secondary">
