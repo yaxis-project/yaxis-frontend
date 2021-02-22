@@ -33,10 +33,6 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 
 	return (
 		<StyledAccountButton>
-			<StyledCol>
-				<span>YAX</span>
-				<span>${new BigNumber(yaxisPrice).toFixed(2)}</span>
-			</StyledCol>
 			<Col>
 				{!account ? (
 					<StyledButton
