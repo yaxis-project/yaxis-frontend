@@ -79,7 +79,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 	// const gutter = 10
 
 	const {
-		farmData: { pid, lpUrl },
+		farmData: { pid, lpUrl, id },
 		stakedBalance,
 		// lpContract,
 	} = useLPContractData(pool.symbol)
@@ -94,8 +94,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 	pool.lpTokens.forEach(token => defaultUserBalances[token.symbol] = 0)
 	const [userBalances, setUserBalances] = useState(defaultUserBalances)
 	useEffect(() => {
-		const stakedValue = stakedValues.find((farm) => farm.pid === pid)
-		// TODO: currently only handles 'uni' type
+		const stakedValue = stakedValues.find((farm) => farm.id === id)
 		if (stakedValue) {
 			const nextState = {}
 			pool.lpTokens.forEach(
@@ -105,7 +104,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 						.toFixed(2))
 			setUserBalances(nextState)
 		}
-	}, [stakedValues, pid, userPoolShare, pool])
+	}, [stakedValues, pid, userPoolShare, pool, id])
 
 	const hasBalance = Object.values(userBalances).some(val => Number(val)) || Number(stakedBalance.toFixed(2))
 

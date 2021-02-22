@@ -1,10 +1,7 @@
-import BigNumber from 'bignumber.js'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { Contract } from 'web3-eth-contract'
-import { Row, Card, Button, Divider } from 'antd'
-import IconButton from '../../../components/IconButton'
-import { AddIcon } from '../../../components/icons'
+import { Row, Col, Card, Button, Divider } from 'antd'
 import Label from '../../../components/Label'
 import Value from '../../../components/Value'
 import useAllowance from '../../../hooks/useAllowance'
@@ -83,29 +80,34 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
                             Approve {tokenName}
                         </Button>
                     ) : (
-                            <>
-                                <Button
-                                    disabled={stakedBalance.eq(new BigNumber(0))}
-                                    onClick={onPresentWithdraw}
-                                >
-                                    Unstake
+                            <Row style={{ width: "100%", justifyContent: "space-between", padding: 0 }}>
+                                <Col span={10}>
+                                    <Button
+                                        className="staking-btn"
+                                        // disabled={tokenBalance.eq(new BigNumber(0))}
+                                        onClick={onPresentDeposit}
+                                        block
+                                    >
+                                        Stake
                                     </Button>
-                                <StyledActionSpacer />
-                                <IconButton onClick={onPresentDeposit}>
-                                    <AddIcon />
-                                </IconButton>
-                            </>
+                                </Col>
+                                <Col span={10}>
+                                    <Button
+                                        className="staking-btn"
+                                        // disabled={stakedBalance.eq(new BigNumber(0))}
+                                        onClick={onPresentWithdraw}
+                                        block
+                                    >
+                                        Unstake
+                                    </Button>
+                                </Col>
+                            </Row>
                         )}
                 </CardContents>
             </Row>
         </Card>
     )
 }
-
-const StyledActionSpacer = styled.div`
-  height: ${(props) => props.theme.spacing[4]}px;
-  width: ${(props) => props.theme.spacing[4]}px;
-`
 
 const CardContents = styled.div`
   align-items: center;

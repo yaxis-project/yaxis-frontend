@@ -20,7 +20,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
 	return (
 		<StyledTokenInput>
 			<StyledMaxText>
-				{max.toLocaleString()} {symbol} Available
+				{max.toLocaleString()} Available
 			</StyledMaxText>
 			<Input
 				endAdornment={
@@ -50,7 +50,9 @@ const TokenInput: React.FC<TokenInputProps> = ({
 			</div>
 */
 
-const StyledTokenInput = styled.div``
+const StyledTokenInput = styled.div`
+	margin-bottom: 10px
+`
 
 const StyledSpacer = styled.div`
 	width: ${(props) => props.theme.spacing[3]}px;

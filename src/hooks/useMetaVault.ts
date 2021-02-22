@@ -53,12 +53,12 @@ const useMetaVault = () => {
 		async (amounts, isStake = true) => {
 			setSubmitting(true)
 			const minMintAmount = await calcMinTokenAmount(amounts)
-			console.log(minMintAmount)
+
 			notification.info({
 				message: 'Please confirm deposit transaction',
 			})
 			const params = [amounts, minMintAmount, isStake]
-			console.log('PARAMS', params)
+
 			try {
 				const receipt = await depositAll(
 					getYaxisMetaVault(yaxis),
