@@ -35,15 +35,20 @@ const App: React.FC = () => {
 					<Route path="/" exact>
 						<Home />
 					</Route>
-					<Route path="/investing" exact>
+					<Route path="/vault" exact>
 						<Investing />
 					</Route>
-					<Route path="/savings" exact>
+					<Route path="/staking" exact>
 						<Savings />
 					</Route>
-					<Route path="/liquidity" exact>
+					{/* <Route path="/liquidity" exact>
 						<Liquidity />
-					</Route>
+					</Route> */}
+					{activePools.length &&
+						<Route key={`/liquidity/${activePools[0].lpAddress}`} path={`/liquidity/${activePools[0].lpAddress}`} exact>
+							<LiquidityPool pool={activePools[0]} />
+						</Route>
+					}
 					{activePools.map(pool => {
 						const key = `/liquidity/${pool.lpAddress}`
 						return <Route key={key} path={key} exact>
