@@ -58,13 +58,16 @@ const App: React.FC = () => {
 }
 
 const Providers: React.FC = ({ children }) => {
+	console.log({ rpcUrl: process.env.REACT_APP_RPC_URL_1 })
+	console.log({ nid: NETWORK_ID })
+
 	return (
 		<ThemeProvider theme={theme}>
 			<PriceMapContextComponent>
 				<UseWalletProvider
 					chainId={NETWORK_ID}
 					connectors={{
-						walletconnect: { rpcUrl: process.env.RPC_URL },
+						walletconnect: { rpcUrl: process.env[`REACT_RPC_URL_${NETWORK_ID}`] },
 					}}
 				>
 					<YaxisProvider>
