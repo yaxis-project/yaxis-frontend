@@ -104,7 +104,7 @@ export const currencyMap = {
 /**
  * Settings for currencies used as investment collateral.
  */
-export const InvestingDepositCurrencies = [DAI, USDT, USDC, CRV3]
+export const InvestingDepositCurrencies = [DAI, USDC, USDT, CRV3]
 
 export enum Currencies {
 	DAI,
