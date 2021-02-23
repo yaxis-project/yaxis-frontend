@@ -152,7 +152,7 @@ export default function StakingCard() {
 					<Value
 						value={stakedBalance.toNumber()}
 						decimals={2}
-						numberSuffix=" sYAX"
+						numberSuffix=" YAX"
 					/>
 				</Col>
 			</Row>
@@ -214,7 +214,7 @@ export default function StakingCard() {
 							suffix={
 								<>
 									<Text type="secondary">
-										sYAX
+										YAX
 									</Text>
 							&nbsp;
 							<Button
