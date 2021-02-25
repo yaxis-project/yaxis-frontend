@@ -151,7 +151,6 @@ export const getEarned = async (
 }
 
 async function getLinkPoolInfo(
-	yaxisChefContract: Contract,
 	priceMap: any,
 	farm: Farm,
 ): Promise<StakedValue> {
@@ -315,7 +314,7 @@ export const getTotalLPWethValue = async (
 		return await getBalPoolInfo(yaxisChefContract, priceMap, farm)
 	}
 	if (type === 'link') {
-		return await getLinkPoolInfo(yaxisChefContract, priceMap, farm)
+		return await getLinkPoolInfo(priceMap, farm)
 	}
 	return await getUniPoolInfo(yaxisChefContract, priceMap, farm)
 }
