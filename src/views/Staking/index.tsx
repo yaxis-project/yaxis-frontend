@@ -23,7 +23,7 @@ const StyledCol = styled(Col)`
 `
 
 
-const Savings: React.FC = () => {
+const Staking: React.FC = () => {
 	const { stakedBalance } = useYaxisStaking(YAX)
 	const { YAX: YAXPrice } = usePriceMap()
 
@@ -68,4 +68,4 @@ const Savings: React.FC = () => {
 	)
 }
 
-export default Savings
+export default Staking

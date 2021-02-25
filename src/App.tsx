@@ -12,8 +12,8 @@ import { PriceMapContextComponent } from './contexts/PriceMapContext'
 
 import theme from './theme'
 import Home from './views/Home'
-import Investing from './views/Investing'
-import Savings from './views/Savings'
+import MetaVault from './views/MetaVault'
+import Staking from './views/Staking'
 // import Liquidity from './views/Liquidity'
 import LiquidityPool from './views/LiquidityPool'
 import { notification } from 'antd'
@@ -36,16 +36,16 @@ const App: React.FC = () => {
 						<Home />
 					</Route>
 					<Route path="/vault" exact>
-						<Investing />
+						<MetaVault />
 					</Route>
 					<Route path="/staking" exact>
-						<Savings />
+						<Staking />
 					</Route>
 					{/* <Route path="/liquidity" exact>
 						<Liquidity />
 					</Route> */}
 					{activePools.length &&
-						<Route key={`/liquidity/${activePools[0].lpAddress}`} path={`/liquidity/${activePools[0].lpAddress}`} exact>
+						<Route key={`/liquidity`} path={`/liquidity`} exact>
 							<LiquidityPool pool={activePools[0]} />
 						</Route>
 					}
