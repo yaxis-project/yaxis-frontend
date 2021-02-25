@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import Page from '../../components/Page/Page'
-import YaxisPriceGraph from '../../components/YaxisPriceGraph'
 import { Row, Col } from 'antd'
 import InvestmentDetailOverview from './components/InvestmentDetailOverview'
 import InvestmentAccountActionCard from './components/InvestmentAccountActionCard'
@@ -45,8 +44,7 @@ const MetaVault: React.FC = () => {
 				valueInfo="Balance"
 			>
 				<Row gutter={16}>
-					<Col md={24} lg={16} >
-						{/* <YaxisPriceGraph /> */}
+					<Col xs={24} sm={24} md={24} lg={16} >
 						<InvestmentAccountActionCard />
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>

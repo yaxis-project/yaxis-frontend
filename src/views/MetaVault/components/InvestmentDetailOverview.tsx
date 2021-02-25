@@ -1,7 +1,11 @@
 import React, { useContext } from 'react'
-import { Typography } from 'antd'
+import styled from 'styled-components'
+import { Row, Col, Typography, Button } from 'antd'
 import Value from '../../../components/Value'
-import useAccountReturns from '../../../hooks/useAccountReturns'
+// import useAccountReturns from '../../../hooks/useAccountReturns'
+import useMetaVault from '../../../hooks/useMetaVault';
+import useMetaVaultData from '../../../hooks/useMetaVaultData';
+
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import {
@@ -19,22 +23,55 @@ const InvestmentDetailOverview: React.FC = () => {
 
 	const t = (s: string) => phrases[s][language]
 
-	const { yaxReturns, yaxReturnsUSD } = useAccountReturns()
+	// const { yaxReturns, yaxReturnsUSD } = useAccountReturns()
 	const totalAPY = useComputeAPYs()
+
+	const { isClaiming, onGetRewards } = useMetaVault()
+
+
+	const {
+		onFetchMetaVaultData,
+		metaVaultData
+	} = useMetaVaultData('V2');
+
+
+	const handleClaimRewards = async () => {
+		try {
+			await onGetRewards()
+			onFetchMetaVaultData()
+		} catch (e) {
+			console.error(e)
+		}
+	}
+
+	const pendingYax = parseFloat(metaVaultData?.pendingYax || '0')
 
 	return (
 		<DetailOverviewCard title={t('Account Overview')}>
-			<DetailOverviewCardRow>
-				<Text>Return</Text>
-				<Value
-					// numberPrefix="$"
-					// value={yaxReturnsUSD}
-					value={"TBD"}
-					// numberSuffix={`${yaxReturns} YAX`}
-					numberSuffix={` YAX`}
-					decimals={2}
-				/>
-			</DetailOverviewCardRow>
+			<StyledRow justify="space-between">
+				<Col xs={6} sm={10} md={10}>
+					<Text>Return</Text>
+					<Value
+						// numberPrefix="$"
+						// value={yaxReturnsUSD}
+						value={pendingYax}
+						// numberSuffix={`${yaxReturns} YAX`}
+						numberSuffix={` YAX`}
+						decimals={2}
+					/>
+				</Col>
+				<Col xs={12} sm={12} md={12}>
+					<HarvestButton
+						type="primary"
+						disabled={!pendingYax}
+						block
+						loading={isClaiming}
+						onClick={handleClaimRewards}
+					>
+						Claim
+					</HarvestButton>
+				</Col>
+			</StyledRow>
 			<DetailOverviewCardRow>
 				<Text>Total APY</Text>
 				<Value
@@ -46,5 +83,44 @@ const InvestmentDetailOverview: React.FC = () => {
 		</DetailOverviewCard>
 	)
 }
+
+const StyledRow = styled(Row)`
+	font-size: 18px;
+	padding: 22px;
+	border-top: 1px solid #eceff1;
+
+	 .ant-typography {
+		font-size: 14px;
+		color: #333333;
+	}
+
+	&[data-inline='true'] {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		> .ant-typography {
+			font-size: 18px;
+		}
+	}
+`
+
+const HarvestButton = styled(Button)`
+	background: ${props => props.theme.color.green[600]};
+	border: none;
+	height: 60px;
+	font-weight: 600;
+	&:hover {
+		background-color: ${props => props.theme.color.green[500]};
+	}
+	&:active {
+		background-color: ${props => props.theme.color.green[500]};
+	}
+	&[disabled] {
+		color: #8c8c8c;
+		background-color: #f0f0f0;
+		border: none;
+	}
+`
+
 
 export default InvestmentDetailOverview
