@@ -19,7 +19,7 @@ const StyledCol = styled(Col)`
 	}
 `
 
-const Investing: React.FC = () => {
+const MetaVault: React.FC = () => {
 	const {
 		metaVaultData: { totalBalance, mvltPrice },
 	} = useMetaVaultData('v1')
@@ -60,4 +60,4 @@ const Investing: React.FC = () => {
 	)
 }
 
-export default Investing
+export default MetaVault
