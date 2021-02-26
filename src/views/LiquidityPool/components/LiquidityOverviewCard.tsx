@@ -8,11 +8,12 @@ import useAccountReturns from '../../../hooks/useAccountReturns'
 import Value from '../../../components/Value'
 import useLPFarmAPY from '../hooks/useLPFarmAPY'
 import useMyLiquidity from '../../../hooks/useMyLiquidity'
+import { StakePool } from '../../../yaxis/type'
 
 const { Text } = Typography
 
 interface LiquidityOverviewCardProps {
-	farmID: string
+	pool: StakePool
 }
 
 /**
@@ -21,13 +22,13 @@ interface LiquidityOverviewCardProps {
 export default function LiquidityOverviewCard(
 	props: LiquidityOverviewCardProps,
 ) {
-	const { farmID } = props
+	const { pool } = props
 	const { yaxReturns } = useAccountReturns()
 
-	const lpFarmAPY = useLPFarmAPY(farmID)
+	const lpFarmAPY = useLPFarmAPY(pool.symbol)
 	const farmAPY = lpFarmAPY.div(53).toFixed(2)
 
-	const { userPoolShare } = useMyLiquidity(farmID)
+	const { userPoolShare } = useMyLiquidity(pool)
 
 	return (
 		<DetailOverviewCard title="Overview">

@@ -55,7 +55,7 @@ const Liqudity: React.FC<Props> = ({ pool }) => {
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<Row>
-							<LiquidityOverviewCard farmID={pool.symbol} />
+							<LiquidityOverviewCard pool={pool} />
 							<PairStatsCard farmID={pool.symbol} />
 						</Row>
 					</StyledCol>

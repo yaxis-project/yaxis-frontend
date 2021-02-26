@@ -88,7 +88,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 	// const { onUnstake } = useUnstake(pid)
 	// const allowance = useAllowance(lpContract)
 	// const { onApprove } = useApprove(lpContract)
-	const { userPoolShare } = useMyLiquidity(pool.symbol)
+	const { userPoolShare } = useMyLiquidity(pool)
 	const { stakedValues } = useFarms()
 	const defaultUserBalances = {}
 	pool.lpTokens.forEach(token => defaultUserBalances[token.symbol] = 0)
