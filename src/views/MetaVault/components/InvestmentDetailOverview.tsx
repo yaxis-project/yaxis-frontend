@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
-import { Row, Col, Typography, Button } from 'antd'
+import { Row, Col, Typography, Button, Tooltip } from 'antd'
 import Value from '../../../components/Value'
 // import useAccountReturns from '../../../hooks/useAccountReturns'
 import useMetaVault from '../../../hooks/useMetaVault';
@@ -12,6 +12,7 @@ import {
 	DetailOverviewCard,
 	DetailOverviewCardRow,
 } from '../../../components/DetailOverviewCard'
+import info from '../../../assets/img/info.svg'
 
 import useComputeAPYs from '../hooks/useComputeAPYs'
 
@@ -24,7 +25,7 @@ const InvestmentDetailOverview: React.FC = () => {
 	const t = (s: string) => phrases[s][language]
 
 	// const { yaxReturns, yaxReturnsUSD } = useAccountReturns()
-	const totalAPY = useComputeAPYs()
+	const { threeCrvApyPercent, yaxApyPercent, lpApyPercent, totalAPY } = useComputeAPYs()
 
 	const { isClaiming, onGetRewards } = useMetaVault()
 
@@ -73,7 +74,26 @@ const InvestmentDetailOverview: React.FC = () => {
 				</Col>
 			</StyledRow>
 			<DetailOverviewCardRow>
-				<Text>Total APY</Text>
+				<Tooltip
+					title={
+						<>
+							<Row>YAX APY:</Row>
+							<Row>{yaxApyPercent?.toFixed(2)}%</Row>
+							<Row>Curve LP APY:</Row>
+							<Row>{lpApyPercent?.toFixed(2)}%</Row>
+							<Row>CRV APY (80%):</Row>
+							<Row>{threeCrvApyPercent?.toFixed(2)}%</Row>
+						</>
+					}
+				>
+					<Text>Total APY{' '}</Text>
+					<img
+						style={{ position: 'relative', top: -1 }}
+						src={info}
+						height="15"
+						alt="YAX Supply Rewards"
+					/>
+				</Tooltip>
 				<Value
 					value={totalAPY.toFixed(2)}
 					numberSuffix={'%'}
