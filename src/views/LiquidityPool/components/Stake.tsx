@@ -15,6 +15,7 @@ import { getBalanceNumber } from '../../../utils/formatBalance'
 import DepositModal from './DepositModal'
 import WithdrawModal from './WithdrawModal'
 import { useWallet } from 'use-wallet'
+import BigNumber from "bignumber.js";
 
 interface StakeProps {
     lpContract: Contract
@@ -87,7 +88,7 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
                                 <Col span={10}>
                                     <Button
                                         className="staking-btn"
-                                        // disabled={tokenBalance.eq(new BigNumber(0))}
+                                        disabled={tokenBalance.eq(new BigNumber(0))}
                                         onClick={onPresentDeposit}
                                         block
                                     >
@@ -97,7 +98,7 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
                                 <Col span={10}>
                                     <Button
                                         className="staking-btn"
-                                        // disabled={stakedBalance.eq(new BigNumber(0))}
+                                        disabled={stakedBalance.eq(new BigNumber(0))}
                                         onClick={onPresentWithdraw}
                                         block
                                     >

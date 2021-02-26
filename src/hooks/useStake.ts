@@ -11,13 +11,7 @@ const useStake = (pid: number) => {
 
 	const handleStake = useCallback(
 		async (amount: string) => {
-			const txHash = await stake(
-				getYaxisChefContract(yaxis),
-				pid,
-				amount,
-				account,
-			)
-			console.log(txHash)
+			await stake(getYaxisChefContract(yaxis), pid, amount, account)
 		},
 		[account, pid, yaxis],
 	)
