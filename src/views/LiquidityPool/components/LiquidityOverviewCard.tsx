@@ -1,14 +1,18 @@
-import React from 'react'
-import { Typography } from 'antd'
+import React, { useState } from 'react'
+import { Typography, Row, Col, Button } from 'antd'
+import styled from 'styled-components'
 import {
 	DetailOverviewCard,
 	DetailOverviewCardRow,
 } from '../../../components/DetailOverviewCard'
-import useAccountReturns from '../../../hooks/useAccountReturns'
+// import useAccountReturns from '../../../hooks/useAccountReturns'
 import Value from '../../../components/Value'
 import useLPFarmAPY from '../hooks/useLPFarmAPY'
 import useMyLiquidity from '../../../hooks/useMyLiquidity'
 import { StakePool } from '../../../yaxis/type'
+import useEarnings from '../../../hooks/useEarnings'
+import useReward from '../../../hooks/useReward'
+import { getBalanceNumber } from '../../../utils/formatBalance'
 
 const { Text } = Typography
 
@@ -23,22 +27,46 @@ export default function LiquidityOverviewCard(
 	props: LiquidityOverviewCardProps,
 ) {
 	const { pool } = props
-	const { yaxReturns } = useAccountReturns()
+	// const { yaxReturns } = useAccountReturns()
 
 	const lpFarmAPY = useLPFarmAPY(pool.symbol)
 	const farmAPY = lpFarmAPY.div(53).toFixed(2)
 
 	const { userPoolShare } = useMyLiquidity(pool)
 
+	const earnings = useEarnings(pool.pid)
+	const [pendingTx, setPendingTx] = useState(false)
+	const { onReward } = useReward(pool.pid)
+
 	return (
 		<DetailOverviewCard title="Overview">
-			<DetailOverviewCardRow>
-				<Text>Returns</Text>
-				<Value
-					value={"TBD"}
-					// value={yaxReturns} 
-					numberSuffix=" YAX" decimals={2} />
-			</DetailOverviewCardRow>
+			<StyledRow justify="space-between">
+				<Col xs={6} sm={10} md={10}>
+
+					<Text>Return</Text>
+					<Value
+						value={getBalanceNumber(earnings)}
+						numberSuffix=" YAX"
+						decimals={2}
+					/>
+				</Col>
+				<Col xs={12} sm={12} md={12}>
+					<HarvestButton
+						type="primary"
+						disabled={!earnings.toNumber() || pendingTx}
+						onClick={async () => {
+							setPendingTx(true)
+							await onReward()
+							setPendingTx(false)
+						}}
+						block
+						loading={pendingTx}
+					>
+						Claim
+					</HarvestButton>
+				</Col>
+
+			</StyledRow>
 			<DetailOverviewCardRow>
 				<Text>Share of Pool</Text>
 				<Value
@@ -54,3 +82,41 @@ export default function LiquidityOverviewCard(
 		</DetailOverviewCard>
 	)
 }
+
+const StyledRow = styled(Row)`
+	font-size: 18px;
+	padding: 22px;
+	border-top: 1px solid #eceff1;
+
+	 .ant-typography {
+		font-size: 14px;
+		color: #333333;
+	}
+
+	&[data-inline='true'] {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		> .ant-typography {
+			font-size: 18px;
+		}
+	}
+`
+
+const HarvestButton = styled(Button)`
+	background: ${props => props.theme.color.green[600]};
+	border: none;
+	height: 60px;
+	font-weight: 600;
+	&:hover {
+		background-color: ${props => props.theme.color.green[500]};
+	}
+	&:active {
+		background-color: ${props => props.theme.color.green[500]};
+	}
+	&[disabled] {
+		color: #8c8c8c;
+		background-color: #f0f0f0;
+		border: none;
+	}
+`

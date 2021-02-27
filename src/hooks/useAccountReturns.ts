@@ -7,10 +7,11 @@ import usePriceMap from './usePriceMap'
  */
 export default function useAccountReturns() {
 	const { YAX: yaxisPrice } = usePriceMap()
-	const { totalAmount } = useAllEarnings()
+	const { balances, totalAmount } = useAllEarnings()
 
 	const yaxReturns = getBalanceNumber(totalAmount)
 	return {
+		balances,
 		yaxReturns,
 		yaxReturnsUSD: totalAmount.times(yaxisPrice).toNumber(),
 	}

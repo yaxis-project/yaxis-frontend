@@ -40,17 +40,12 @@ const Liqudity: React.FC<Props> = ({ pool }) => {
 						{/* TODO: Graph */}
 						{/* <YaxisPriceGraph /> */}
 						<LiquidityCard pool={pool} />
-						{pool.pid !== null && <Row gutter={16} style={{ marginTop: "16px" }} >
-							<Col xs={24} sm={24} md={24} lg={12}>
-								<Harvest pid={pool.pid} />
-							</Col>
-							<StyledCol xs={24} sm={24} md={24} lg={12}>
-								<Stake
-									lpContract={lpContract}
-									pid={pool.pid}
-									tokenName={pool.symbol.toUpperCase()}
-								/>
-							</StyledCol>
+						{pool.pid !== null && <Row style={{ marginTop: "16px" }} >
+							<Stake
+								lpContract={lpContract}
+								pid={pool.pid}
+								tokenName={pool.symbol.toUpperCase()}
+							/>
 						</Row>}
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
