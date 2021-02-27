@@ -1,22 +1,15 @@
-import React, { useState, useContext, useEffect } from 'react'
-import useLPContractData from '../../../hooks/useLPContractData'
-
+import React, { useState, useContext, useEffect, useMemo } from 'react'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
-
 import { Row, Col, Typography, Card, Button } from 'antd'
-// import useStake from '../../../hooks/useStake'
-// import useUnstake from '../../../hooks/useUnstake'
 import BigNumber from 'bignumber.js'
-// import useAllowance from '../../../hooks/useAllowance'
-// import useApprove from '../../../hooks/useApprove'
-// import useTokenBalance from '../../../hooks/useTokenBalance'
-// import { getFullDisplayBalance } from '../../../utils/formatBalance'
-import useMyLiquidity from '../../../hooks/useMyLiquidity'
+import Value from '../../../components/Value'
+import useLP from '../../../hooks/useMyLiquidity'
 import useFarms from '../../../hooks/useFarms'
 import { StakePool } from '../../../yaxis/type'
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
 import * as currencies from '../../../utils/currencies'
+import { getFullDisplayBalance } from "../../../utils/formatBalance"
 
 const { Text } = Typography
 
@@ -31,7 +24,6 @@ interface LiquidityRowProps {
 	name: string
 	balance: string
 	symbol: string
-	//gutter: number;
 }
 
 /**
@@ -49,9 +41,11 @@ const LiquidityRow = (props: LiquidityRowProps) => {
 			<Col span={15}>
 				<Row style={{ borderBottom: "none" }}>
 					<Col style={{ marginRight: "10px" }}>
-						<Text>
-							{balance}
-						</Text>
+						<Value
+							value={Number(balance)}
+							decimals={2}
+							secondary
+						/>
 					</Col>
 					<Col>
 
@@ -76,23 +70,23 @@ type Props = {
 const LiquidityCard: React.FC<Props> = ({ pool }) => {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
-	// const gutter = 10
 
 	const {
-		farmData: { pid, lpUrl, id },
-		stakedBalance,
-		// lpContract,
-	} = useLPContractData(pool.symbol)
-	// const tokenBalance = useTokenBalance(lpContract?.options?.address)
-	// const { onStake } = useStake(pid)
-	// const { onUnstake } = useUnstake(pid)
-	// const allowance = useAllowance(lpContract)
-	// const { onApprove } = useApprove(lpContract)
-	const { userPoolShare } = useMyLiquidity(pool)
-	const { stakedValues } = useFarms()
-	const defaultUserBalances = {}
-	pool.lpTokens.forEach(token => defaultUserBalances[token.symbol] = 0)
+		farm: { lpUrl, id },
+		userBalance,
+		userPoolShare,
+		stakedBalance
+	} = useLP(pool)
+	const totalBalance = userBalance.plus(stakedBalance)
+
+	const defaultUserBalances = useMemo(() => {
+		const output = {}
+		pool.lpTokens.forEach(token => output[token.symbol] = 0)
+		return output
+	}, [pool])
 	const [userBalances, setUserBalances] = useState(defaultUserBalances)
+
+	const { stakedValues } = useFarms()
 	useEffect(() => {
 		const stakedValue = stakedValues.find((farm) => farm.id === id)
 		if (stakedValue) {
@@ -104,21 +98,9 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 						.toFixed(2))
 			setUserBalances(nextState)
 		}
-	}, [stakedValues, pid, userPoolShare, pool, id])
+	}, [stakedValues, userPoolShare, pool, id])
 
-	const hasBalance = Object.values(userBalances).some(val => Number(val)) || Number(stakedBalance.toFixed(2))
-
-	// const onDeposit = async () => {
-	// 	await onStake(getFullDisplayBalance(tokenBalance))
-	// }
-
-	// const onWithdraw = async () => {
-	// 	await onUnstake(getFullDisplayBalance(stakedBalance))
-	// }
-
-	// const approve = async () => {
-	// 	await onApprove()
-	// }
+	// const hasBalance = Object.values(userBalances).some(val => Number(val)) || Number(stakedBalance.toFixed(2))
 
 	return (
 		<Card
@@ -134,7 +116,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 				// TODO: Make a dynamic currency icon component with fallback
 				icon={currencies.currencyMap[pool.symbol]?.icon || currencies.UNI_ETH_YAX_LP.icon}
 				name={'Pool Tokens'}
-				balance={stakedBalance.toFixed(2)}
+				balance={getFullDisplayBalance(totalBalance)}
 				symbol={pool.symbol}
 			/>
 			{pool.lpTokens.map(({ symbol }, i) =>
@@ -153,7 +135,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 						className="staking-btn-link"
 						block
 						type="primary"
-						disabled={!lpUrl || !hasBalance}
+						disabled={!lpUrl || !userBalance.toNumber()}
 						icon={<MinusOutlined />}
 						href={lpUrl}
 						target="_blank"
