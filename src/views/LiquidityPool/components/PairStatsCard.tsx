@@ -6,7 +6,7 @@ import {
 } from '../../../components/DetailOverviewCard'
 import useFarm from '../../../hooks/useFarm'
 import Value from '../../../components/Value'
-import useLPContractData from '../../../hooks/useLPContractData'
+// import useLPContractData from '../../../hooks/useLPContractData'
 import useFarms from '../../../hooks/useFarms'
 import { BigNumber } from 'bignumber.js'
 import { defaultStakedValue, StakedValue } from '../../../contexts/Farms/types'
@@ -35,7 +35,7 @@ const LiquidityOverviewCard: React.FC<Props> = ({ farmID }) => {
 	}, [stakedValues, farmID])
 
 	return (
-		<DetailOverviewCard title="Pair Stats">
+		<DetailOverviewCard title="Pool Stats">
 			<DetailOverviewCardRow>
 				<Text>Total Value Locked</Text>
 				<Value

@@ -1,27 +1,29 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import useFarm from './useFarm'
 import useTokenBalance from './useTokenBalance'
 import useStakedBalance from './useStakedBalance'
 import BigNumber from 'bignumber.js'
 import { StakePool } from '../yaxis/type'
+import { Farm } from '../contexts/Farms/types'
 
 /**
  * Liquidity Data object.
  */
-export interface LiquidityData {
-	tokenBalance: BigNumber
+export interface LiquidityPoolData {
+	farm: Farm
 	userPoolShare: BigNumber
 	totalSupply: BigNumber
 	userBalance: BigNumber
+	stakedBalance: BigNumber
 }
 
 /**
  * Returns details about the logged in user's liquidity pool stats.
  * @param pool StakePool passed to fetch contract data.
- * @returns {LiquidityData}
+ * @returns {LiquidityPoolData}
  * @see useFarm
  */
-export default function useMyLiquidity(pool: StakePool): LiquidityData {
+export default function useLP(pool: StakePool): LiquidityPoolData {
 	const farm = useFarm(pool.symbol)
 	const [userPoolShare, setUserPoolShare] = useState<BigNumber>(
 		new BigNumber(0),
@@ -31,25 +33,32 @@ export default function useMyLiquidity(pool: StakePool): LiquidityData {
 		new BigNumber(0),
 	)
 
-	const lpContract = farm?.lpContract
-	const userBalance = useTokenBalance(lpContract?.options?.address)
+	const userBalance = useTokenBalance(farm?.lpContract?.options?.address)
 	const stakedBalance = useStakedBalance(pool.pid)
-	const totalBalance = userBalance.plus(stakedBalance)
+
+	const getData = useCallback(async () => {
+		if (!(farm && farm.lpContract)) return
+
+		const totalBalance = userBalance.plus(stakedBalance)
+		const { lpContract } = farm
+		const supplyValue: BigNumber = await lpContract.methods
+			.totalSupply()
+			.call()
+		if (new BigNumber(supplyValue).gt(new BigNumber(0)))
+			setUserPoolShare(totalBalance.div(supplyValue))
+		setTokenBalance(userBalance)
+		setTotalSupply(supplyValue)
+	}, [farm, stakedBalance, userBalance])
 
 	useEffect(() => {
-		if (!(farm && lpContract)) return
-		const getSupplyValue = async () => {
-			const { lpContract } = farm
-			const supplyValue: BigNumber = await lpContract.methods
-				.totalSupply()
-				.call()
-			setTokenBalance(userBalance)
-			setTotalSupply(supplyValue)
-			if (new BigNumber(supplyValue).gt(new BigNumber(0)))
-				setUserPoolShare(totalBalance.div(supplyValue))
-		}
-		getSupplyValue()
-	}, [farm, lpContract, tokenBalance, userBalance, totalBalance])
+		getData()
+	}, [getData])
 
-	return { tokenBalance, totalSupply, userPoolShare, userBalance }
+	return {
+		farm,
+		userPoolShare,
+		totalSupply,
+		stakedBalance,
+		userBalance: tokenBalance,
+	}
 }

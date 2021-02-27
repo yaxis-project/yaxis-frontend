@@ -27,13 +27,9 @@ export default function LiquidityOverviewCard(
 	props: LiquidityOverviewCardProps,
 ) {
 	const { pool } = props
-	// const { yaxReturns } = useAccountReturns()
 
 	const lpFarmAPY = useLPFarmAPY(pool.symbol)
-	const farmAPY = lpFarmAPY.div(53).toFixed(2)
-
 	const { userPoolShare } = useMyLiquidity(pool)
-
 	const earnings = useEarnings(pool.pid)
 	const [pendingTx, setPendingTx] = useState(false)
 	const { onReward } = useReward(pool.pid)
@@ -76,8 +72,8 @@ export default function LiquidityOverviewCard(
 				/>
 			</DetailOverviewCardRow>
 			<DetailOverviewCardRow>
-				<Text>Weekly Average APY</Text>
-				<Value value={farmAPY} numberSuffix="%" decimals={2} />
+				<Text>Average APY</Text>
+				<Value value={lpFarmAPY.toNumber()} numberSuffix="%" decimals={2} />
 			</DetailOverviewCardRow>
 		</DetailOverviewCard>
 	)
