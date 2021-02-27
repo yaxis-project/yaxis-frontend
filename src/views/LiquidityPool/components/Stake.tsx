@@ -67,25 +67,30 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
     }, [onApprove, setRequestedApproval])
 
     return (
-        <Card className="liquidity-card">
+        <Card
+            className="liquidity-card"
+            title={<strong>Staking</strong>}
+        >
             <Row>
                 <CardContents>
                     <Value value={getBalanceNumber(stakedBalance)} />
                     <Label text={`${tokenName} Tokens Staked`} />
                     <Divider />
                     {!allowance.toNumber() ? (
-                        <Button
-                            className="staking-btn"
-                            block
-                            type="primary"
-                            disabled={!account || requestedApproval}
-                            onClick={handleApprove}
-                        >
-                            Approve {tokenName}
-                        </Button>
+                        <Col span={12}>
+                            <Button
+                                className="staking-btn"
+                                block
+                                type="primary"
+                                disabled={!account || requestedApproval}
+                                onClick={handleApprove}
+                            >
+                                Approve {tokenName}
+                            </Button>
+                        </Col>
                     ) : (
-                            <Row style={{ width: "100%", justifyContent: "space-between", padding: 0 }}>
-                                <Col span={10}>
+                            <Row gutter={18} style={{ width: "100%", justifyContent: "space-between", padding: 0 }}>
+                                <Col span={12}>
                                     <Button
                                         className="staking-btn"
                                         disabled={tokenBalance.eq(new BigNumber(0))}
@@ -95,7 +100,7 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
                                         Stake
                                     </Button>
                                 </Col>
-                                <Col span={10}>
+                                <Col span={12}>
                                     <Button
                                         className="staking-btn"
                                         disabled={stakedBalance.eq(new BigNumber(0))}
