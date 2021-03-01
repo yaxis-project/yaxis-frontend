@@ -5,13 +5,13 @@ import logo from '../../assets/img/logo.svg'
 
 const Logo: React.FC = () => {
 	return (
-		<StyledLogo to="/">
+		<StyledLogo href="https://yaxis.io">
 			<img src={logo} height="32" alt="logo" />
 		</StyledLogo>
 	)
 }
 
-const StyledLogo = styled(Link)`
+const StyledLogo = styled.a`
 	align-items: center;
 	display: flex;
 	justify-content: center;

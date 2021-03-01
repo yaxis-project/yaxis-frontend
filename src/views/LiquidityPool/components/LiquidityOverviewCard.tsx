@@ -66,7 +66,7 @@ export default function LiquidityOverviewCard(
 			<DetailOverviewCardRow>
 				<Text>Share of Pool</Text>
 				<Value
-					value={userPoolShare.toNumber()}
+					value={userPoolShare.times(100).toNumber()}
 					numberSuffix="%"
 					decimals={2}
 				/>
