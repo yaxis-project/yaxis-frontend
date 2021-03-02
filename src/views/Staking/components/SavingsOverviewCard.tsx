@@ -81,7 +81,7 @@ export default function () {
 
 	return (
 		<DetailOverviewCard title={t('Account Overview')}>
-			<DetailOverviewCardRow>
+			{/* <DetailOverviewCardRow>
 				<Text>Returns</Text>
 				<Value
 					// numberPrefix="$"
@@ -89,7 +89,7 @@ export default function () {
 					// extra={`${yaxReturns} YAX`}
 					decimals={2}
 				/>
-			</DetailOverviewCardRow>
+			</DetailOverviewCardRow> */}
 			<DetailOverviewCardRow>
 				<Text>YAX Staked</Text>
 				<Value value={stakedBalance.toFixed(3)} numberSuffix=" YAX" />

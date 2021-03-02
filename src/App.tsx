@@ -69,7 +69,7 @@ const Providers: React.FC = ({ children }) => {
 				<UseWalletProvider
 					chainId={NETWORK_ID}
 					connectors={{
-						walletconnect: { rpcUrl: process.env[`REACT_RPC_URL_${NETWORK_ID}`] },
+						walletconnect: { rpcUrl: process.env[`REACT_APP_RPC_URL_${NETWORK_ID}`] },
 					}}
 				>
 					<YaxisProvider>
