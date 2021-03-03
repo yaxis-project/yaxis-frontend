@@ -25,6 +25,7 @@ import { Transaction } from '../../../contexts/Transactions/types'
 import Value from '../../../components/Value'
 import { ArrowDownOutlined } from '@ant-design/icons'
 import info from '../../../assets/img/info.svg'
+import usePriceMap from '../../../hooks/usePriceMap'
 
 const { Option } = Select
 
@@ -54,14 +55,16 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 	const [withdrawalCurrency, setWithdrawCurrency] = useState<
 		Currency | undefined
 	>(DAI)
-	const { currenciesData, metaVaultData } = useMetaVaultData('v1')
+	const { currenciesData } = useMetaVaultData('v1')
+	const prices = usePriceMap()
+
 	const withdrawTokenAmount = useMemo(() => {
-		if (metaVaultData && metaVaultData.mvltPrice) {
-			const mvltPrice = new BigNumber(metaVaultData.mvltPrice)
-			return withdrawValueUSD.div(mvltPrice)
+		const price = prices[withdrawalCurrency.priceMapKey]
+		if (price) {
+			return withdrawValueUSD.div(price)
 		}
 		return new BigNumber(0)
-	}, [withdrawalCurrency, withdrawValueShares])
+	}, [withdrawalCurrency, withdrawValueUSD, prices])
 
 	const handleSubmit = async () => {
 		if (!withdrawalCurrency) {
@@ -259,7 +262,7 @@ export default function WithdrawTable() {
 
 			<WithdrawalSelector
 				withdrawValueShares={withdrawValueShares}
-				withdrawValueUSD={withdrawValueUSD === '' ? new BigNumber(0) : new BigNumber(withdrawValueUSD)}
+				withdrawValueUSD={withdrawValueUSD === '' ? new BigNumber(0) : new BigNumber(withdrawValueUSD).times(0.999)}
 				withdrawDisabled={withdrawDisabled}
 				availableCurrencies={[DAI, CRV3, USDT, USDC]}
 				setWithdrawValueUSD={setWithdrawValueUSD}
