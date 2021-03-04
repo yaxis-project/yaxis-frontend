@@ -73,7 +73,7 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 			})
 			return
 		}
-		const sharesAmount = numberToDecimal(withdrawTokenAmount, 18)
+		const sharesAmount = numberToDecimal(withdrawValueShares, 18)
 		notification.info({
 			message: t('Please confirm withdraw transaction.'),
 		})
@@ -127,9 +127,9 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 					{t("You'll receive an estimate of")}
 				</Text>
 				<Value
-					value={withdrawTokenAmount.toFixed(2)}
+					value={withdrawTokenAmount.times(0.999).toFixed(2)}
 					numberSuffix={` ${withdrawalCurrency.name}`}
-					extra={'$' + withdrawValueUSD.toFixed(2)}
+					extra={'$' + withdrawValueUSD.times(0.999).toFixed(2)}
 				/>
 				<br />
 				<Button
@@ -245,7 +245,7 @@ export default function WithdrawTable() {
 								<Button
 										block
 										size="small"
-										onClick={() => updateWithdraw(totalAvailableInUSD.toFixed(2))}
+										onClick={() => updateWithdraw(totalAvailableInUSD.toString())}
 									>
 										MAX
 								</Button>
@@ -262,7 +262,7 @@ export default function WithdrawTable() {
 
 			<WithdrawalSelector
 				withdrawValueShares={withdrawValueShares}
-				withdrawValueUSD={withdrawValueUSD === '' ? new BigNumber(0) : new BigNumber(withdrawValueUSD).times(0.999)}
+				withdrawValueUSD={withdrawValueUSD === '' ? new BigNumber(0) : new BigNumber(withdrawValueUSD)}
 				withdrawDisabled={withdrawDisabled}
 				availableCurrencies={[DAI, CRV3, USDT, USDC]}
 				setWithdrawValueUSD={setWithdrawValueUSD}
