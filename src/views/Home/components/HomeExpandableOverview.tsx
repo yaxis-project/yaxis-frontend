@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { Row, Col, Button } from "antd"
 import { LanguageContext } from '../../../contexts/Language'
 import useTVL from '../../../hooks/useComputeTVL'
 import useTotalSupply from '../../../hooks/useTotalSupply'
@@ -79,12 +80,29 @@ export default function HomeExpandableOverview() {
 						/>
 					}
 				/>
-				<ExpandableRow
-					main="Price of YAX"
-					secondary={
-						<Value value={hrPrice} numberPrefix="$" decimals={2} />
-					}
-				/>
+				<Row gutter={20}>
+					<Col span={12}>
+						<ExpandableRow
+							main="Price of YAX"
+							secondary={
+								<Value value={hrPrice} numberPrefix="$" decimals={2} />
+							}
+						/>
+					</Col>
+					<Col style={{
+						display: "flex", alignItems: "center"
+					}}>
+						{/* TODO: Faucet on Kovan */}
+						<Button
+							type="primary"
+							href="https://app.uniswap.org/#/swap?outputCurrency=0xb1dc9124c395c1e97773ab855d66e879f053a289"
+							target="_blank"
+							style={{ fontWeight: 900 }}
+						>
+							Get YAX
+						</Button>
+					</Col>
+				</Row>
 
 				<ExpandableRow
 					main={
