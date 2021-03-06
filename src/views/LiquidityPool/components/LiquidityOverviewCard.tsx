@@ -110,6 +110,9 @@ const HarvestButton = styled(Button)`
 	&:active {
 		background-color: ${props => props.theme.color.green[500]};
 	}
+	&:focus {
+		background-color: ${props => props.theme.color.green[500]};
+	}
 	&[disabled] {
 		color: #8c8c8c;
 		background-color: #f0f0f0;

@@ -131,6 +131,12 @@ const StyledButton = styled.button<StyledButtonProps>`
 		box-shadow: rgba(55, 107, 173, 0.44) 0px 0px 0px 1pt;
 		background-color: rgba(55, 107, 173, 0.44);
 	}
+	&:focus {
+		color: #0186d3;
+		cursor: pointer;
+		box-shadow: rgba(55, 107, 173, 0.44) 0px 0px 0px 1pt;
+		background-color: rgba(55, 107, 173, 0.44);
+	}
 	&:disabled {
 		background-color: rgba(21, 61, 111, 0.44);
 		opacity: 0.5;
@@ -159,6 +165,12 @@ const StyledLink = styled(Link)`
 		box-shadow: rgba(55, 107, 173, 0.44) 0px 0px 0px 1pt;
 		background-color: rgba(55, 107, 173, 0.44);
 	}
+	&:focus {
+		color: rgb(67, 210, 255);
+		cursor: pointer;
+		box-shadow: rgba(55, 107, 173, 0.44) 0px 0px 0px 1pt;
+		background-color: rgba(55, 107, 173, 0.44);
+	}
 	&:disabled {
 		background-color: rgba(21, 61, 111, 0.44);
 		opacity: 0.5;
@@ -182,6 +194,12 @@ const StyledExternalLink = styled.a`
 		background-color: rgba(55, 107, 173, 0.44);
 	}
 	&:active {
+		color: rgb(67, 210, 255);
+		cursor: pointer;
+		box-shadow: rgba(55, 107, 173, 0.44) 0px 0px 0px 1pt;
+		background-color: rgba(55, 107, 173, 0.44);
+	}
+	&:focus {
 		color: rgb(67, 210, 255);
 		cursor: pointer;
 		box-shadow: rgba(55, 107, 173, 0.44) 0px 0px 0px 1pt;
