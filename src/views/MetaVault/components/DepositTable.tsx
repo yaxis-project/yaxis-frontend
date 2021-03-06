@@ -34,7 +34,7 @@ const initialCurrencyValues: CurrencyValues = reduce(
 	InvestingDepositCurrencies,
 	(prev, curr) => ({
 		...prev,
-		[curr.tokenId]: '0',
+		[curr.tokenId]: '',
 	}),
 	{},
 )
@@ -108,7 +108,6 @@ const StyledCol = styled(Col)`
 		padding-left: 16px;
 	}
 `
-
 /**
  * Creates a deposit table for the savings account.
  */
@@ -130,6 +129,8 @@ export default function DepositTable() {
 		() => computeInsufficientBalance(currencyValues, currenciesData),
 		[currencyValues, currenciesData],
 	)
+
+	const [submitting, setSubmitting] = useState(false)
 
 	/**
 	 * Memoized list of currencies that need approval.
@@ -165,6 +166,7 @@ export default function DepositTable() {
 	 * Generates approval transactions for current list of currencies that need approval.
 	 */
 	const handleApprove = async () => {
+		setSubmitting(true)
 		const approvalCalls: Promise<any>[] = currenciesNeededApproval.map(
 			(currency) =>
 				callApprove(
@@ -178,6 +180,7 @@ export default function DepositTable() {
 		})
 		await Promise.all(approvalCalls)
 		onUpdateAllowances()
+		setSubmitting(false)
 	}
 
 	const totalDepositing = useMemo(
@@ -205,6 +208,7 @@ export default function DepositTable() {
 			notification.info({
 				message: `An error has occurred for this deposit. Please try again.`,
 			})
+			setSubmitting(false)
 		}
 	}
 
@@ -230,6 +234,7 @@ export default function DepositTable() {
 					currency={currency}
 					onChange={handleFormInputChange(setCurrencyValues)}
 					value={currencyValues[currency.tokenId]}
+					disabled={isSubmitting || submitting}
 				/>
 			)
 			)}
@@ -239,7 +244,8 @@ export default function DepositTable() {
 					<Title level={3}>${totalDepositing}</Title>
 					<Button
 						className="investing-btn"
-						disabled={disabled || isSubmitting}
+						disabled={disabled}
+						loading={isSubmitting || submitting}
 						onClick={handleSubmit}
 						block
 						type="primary"

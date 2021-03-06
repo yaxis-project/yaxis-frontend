@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { find } from 'lodash'
 import { Currency } from '../../../utils/currencies'
 import usePriceMap from '../../../hooks/usePriceMap'
@@ -14,6 +14,7 @@ interface DepositAssetRowProps {
 	currency: Currency
 	onChange: Function
 	value: string
+	disabled: boolean
 }
 
 /**
@@ -22,7 +23,7 @@ interface DepositAssetRowProps {
  * @param props DepositAssetRowProps
  */
 export default function DepositAssetRow(props: DepositAssetRowProps) {
-	const { currency, onChange, value } = props
+	const { currency, onChange, value, disabled } = props
 	const { currenciesData } = useMetaVaultData('v1')
 
 	const currencyData = find(
@@ -37,15 +38,7 @@ export default function DepositAssetRow(props: DepositAssetRowProps) {
 
 	const balanceUSD = new BigNumber(price).times(balance).toFixed(2)
 
-	const [currentInput, setCurrentInput] = useState<string>('')
 	const [inputError, setInputError] = useState<boolean>(false)
-
-	useEffect(() => {
-		onChange(currency.tokenId, currentInput)
-		setInputError(new BigNumber(currentInput).gt(new BigNumber(balance)))
-	}, [currentInput])
-
-	const maxAmount = () => setCurrentInput(currencyData.maxDeposit || '0')
 
 	return (
 		<>
@@ -84,13 +77,20 @@ export default function DepositAssetRow(props: DepositAssetRowProps) {
 									<Button
 										block
 										size="small"
-										onClick={maxAmount}
+										onClick={
+											() => onChange(currency.tokenId, currencyData?.maxDeposit || '0')
+										}
 									>
 										MAX
 									</Button>
 								</>
 							}
-							onChange={(e) => setCurrentInput(e.target.value)}
+							onChange={(e) => {
+								onChange(currency.tokenId, e.target.value)
+								setInputError(new BigNumber(e.target.value).gt(new BigNumber(balance)))
+							}
+							}
+							disabled={disabled}
 						/>
 					</Form.Item>
 				</Col>
