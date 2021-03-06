@@ -64,6 +64,9 @@ const translations = {
 	'An error occurred during YAX staking approval. Please try again.': {
 		ENG: 'An error occurred during YAX staking approval. Please try again.',
 	},
+	'An error occurred during YAX staking. Please try again.': {
+		ENG: 'An error occurred during YAX staking. Please try again.',
+	},
 	'An error occurred during YAX unstaking. Please try again.': {
 		ENG: 'An error occurred during YAX unstaking. Please try again.',
 	},

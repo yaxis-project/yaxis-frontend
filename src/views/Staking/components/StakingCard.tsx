@@ -48,26 +48,31 @@ export default function StakingCard() {
 	const t = (s: string) => phrases[s][language]
 	const { onEnter } = useEnter()
 	const { onLeave } = useLeave()
-	const { stakedBalance, walletBalance, rate, yaxBalance, sYaxBalance } = useYaxisStaking(
+	const { stakedBalance, walletBalance, rate, yaxBalance } = useYaxisStaking(
 		YAX,
 	)
+
+	const [loading, setLoading] = useState(false)
 
 	const { onApprove } = useApproveStaking()
 	const allowance = useAllowanceStaking()
 
 	const approveYAX = async () => {
 		try {
+			setLoading(true)
 			notification.info({
 				message: t('Please approve YAX staking amount.'),
 			})
 			const txHash = await onApprove()
 			if (!txHash) throw new Error('Approval transaction failed.')
+			setLoading(false)
 		} catch (err) {
 			notification.info({
 				message: t(
 					'An error occurred during YAX staking approval. Please try again.',
 				),
 			})
+			setLoading(false)
 		}
 	}
 
@@ -76,34 +81,46 @@ export default function StakingCard() {
 	 */
 	const stakeYAX = async () => {
 		try {
+			setLoading(true)
 			notification.info({
 				message: t('Please approve staking transaction.'),
 			})
 			const yax = depositAmount
-			setDeposit('0')
 			await onEnter(yax)
-		} catch (err) { }
+			setDeposit('0')
+			setLoading(false)
+		} catch (err) {
+			notification.info({
+				message: t(
+					'An error occurred during YAX staking. Please try again.',
+				),
+			})
+			setLoading(false)
+		}
 	}
 
 	const unstakeYAX = async () => {
 		try {
+			setLoading(true)
 			notification.info({
 				message: t('Please approve YAX unstaking transaction.'),
 			})
 			const sYax = new BigNumber(withdrawAmount).times(1e18).div(rate)
+			await onLeave(sYax.toString())
 			setWithdraw('0')
-			onLeave(sYax.toString())
+			setLoading(false)
 		} catch {
 			notification.info({
 				message: t(
 					'An error occurred during YAX unstaking. Please try again.',
 				),
 			})
+			setLoading(false)
 		}
 	}
 
 	const [depositAmount, setDeposit] = useState<string>('')
-	const updateDeposit = (value: string) => setDeposit(value.replace(/\D/g, ''))
+	const updateDeposit = (value: string) => !isNaN(Number(value)) && setDeposit(value)
 
 	const errorDeposit = useMemo(
 		() => new BigNumber(depositAmount).gt(walletBalance.div(1e18)),
@@ -118,7 +135,7 @@ export default function StakingCard() {
 
 	const [withdrawAmount, setWithdraw] = useState<string>('')
 	const updateWithdraw = (value: string) =>
-		setWithdraw(value.replace(/\D/g, ''))
+		!isNaN(Number(value)) && setWithdraw(value)
 	const errorWithdraw = useMemo(
 		() => new BigNumber(withdrawAmount).gt(stakedBalance),
 		[stakedBalance, withdrawAmount],
@@ -165,6 +182,7 @@ export default function StakingCard() {
 							value={depositAmount}
 							min={"0"}
 							placeholder="0"
+							disabled={loading}
 							suffix={
 								<>
 									<Text type="secondary">
@@ -189,6 +207,7 @@ export default function StakingCard() {
 							onClick={approveYAX}
 							block
 							type="primary"
+							loading={loading}
 						>
 							{t('Approve')}
 						</Button>
@@ -199,6 +218,7 @@ export default function StakingCard() {
 								onClick={stakeYAX}
 								block
 								type="primary"
+								loading={loading}
 							>
 								{t('Deposit')}
 							</Button>
@@ -211,6 +231,7 @@ export default function StakingCard() {
 							value={withdrawAmount}
 							min={"0"}
 							placeholder="0"
+							disabled={loading}
 							suffix={
 								<>
 									<Text type="secondary">
@@ -234,6 +255,7 @@ export default function StakingCard() {
 						onClick={unstakeYAX}
 						block
 						type="primary"
+						loading={loading}
 					>
 						{phrases['Withdraw'][language]}
 					</Button>

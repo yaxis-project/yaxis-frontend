@@ -11,12 +11,7 @@ const useLeave = () => {
 
 	const handle = useCallback(
 		async (amount: string) => {
-			const txHash = await leave(
-				getXSushiStakingContract(yaxis),
-				amount,
-				account,
-			)
-			console.log(txHash)
+			await leave(getXSushiStakingContract(yaxis), amount, account)
 		},
 		[account, yaxis],
 	)
