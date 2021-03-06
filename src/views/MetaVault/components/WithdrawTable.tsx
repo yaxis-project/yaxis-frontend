@@ -32,30 +32,29 @@ const { Option } = Select
 const { Title, Text } = Typography
 
 interface WithdrawalSelectorProps {
-	withdrawValueShares: BigNumber
 	withdrawValueUSD: BigNumber
 	withdrawDisabled: boolean
 	availableCurrencies: Currency[]
-	setWithdrawValueUSD: any,
+	handleSubmit: any,
+	setWithdrawCurrency: any,
+	withdrawalCurrency: any,
+	submitting: any,
 }
 
 const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 	const {
 		availableCurrencies,
 		withdrawValueUSD,
-		withdrawValueShares,
 		withdrawDisabled,
-		setWithdrawValueUSD
+		handleSubmit,
+		withdrawalCurrency,
+		setWithdrawCurrency,
+		submitting,
 	} = props
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 	const t = (s: string) => phrases[s][language]
-	const { onAddTransaction } = useTransactionAdder()
-	const { onWithdraw } = useMetaVault()
-	const [withdrawalCurrency, setWithdrawCurrency] = useState<
-		Currency | undefined
-	>(DAI)
-	const { currenciesData } = useMetaVaultData('v1')
+
 	const prices = usePriceMap()
 
 	const withdrawTokenAmount = useMemo(() => {
@@ -66,38 +65,6 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 		return new BigNumber(0)
 	}, [withdrawalCurrency, withdrawValueUSD, prices])
 
-	const handleSubmit = async () => {
-		if (!withdrawalCurrency) {
-			notification.error({
-				message: `[withdraw] Invalid currency`,
-			})
-			return
-		}
-		const sharesAmount = numberToDecimal(withdrawValueShares, 18)
-		notification.info({
-			message: t('Please confirm withdraw transaction.'),
-		})
-		const selectedCurrency = find(
-			currenciesData,
-			(c) => c.tokenId === withdrawalCurrency.tokenId,
-		)
-		try {
-			const receipt = await onWithdraw(
-				sharesAmount,
-				selectedCurrency.address,
-			)
-			setWithdrawValueUSD('')
-			onAddTransaction({
-				hash: receipt.transactionHash,
-				description: 'Withdraw|$' + withdrawValueUSD,
-			} as Transaction)
-		} catch (error) {
-			notification.info({
-				message: t('An error has occured. Please try again.'),
-			})
-		}
-	}
-
 	return (
 		<Row className="to-wallet">
 			<Col xs={24} sm={8}>
@@ -106,6 +73,7 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 			<Col xs={24} sm={14}>
 				<Select
 					defaultValue={DAI.name}
+					disabled={submitting}
 					onSelect={(selected) =>
 						setWithdrawCurrency(
 							find(
@@ -135,6 +103,7 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 				<Button
 					className="investing-btn"
 					disabled={withdrawDisabled}
+					loading={submitting}
 					onClick={handleSubmit}
 					block
 					type="primary"
@@ -153,6 +122,7 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 const useWithdrawValueHandler = () => {
 	const {
 		metaVaultData: { totalBalance, mvltPrice },
+		currenciesData
 	} = useMetaVaultData('v1')
 
 	const [withdrawValueUSD, setWithdrawValueUSD] = useState('')
@@ -173,6 +143,7 @@ const useWithdrawValueHandler = () => {
 		withdrawValueShares,
 		totalAvailableInUSD,
 		totalBalance,
+		currenciesData
 	}
 }
 
@@ -189,6 +160,7 @@ export default function WithdrawTable() {
 		withdrawValueShares,
 		totalAvailableInUSD,
 		totalBalance,
+		currenciesData
 	} = useWithdrawValueHandler()
 
 	const updateWithdraw = (value: string) =>
@@ -199,6 +171,51 @@ export default function WithdrawTable() {
 	const withdrawDisabled =
 		withdrawValueUSD === '' || new BigNumber(withdrawValueUSD).isLessThanOrEqualTo(new BigNumber(0)) ||
 		withdrawalError
+
+	const [submitting, setSubmitting] = useState(false)
+	const [withdrawalCurrency, setWithdrawCurrency] = useState<
+		Currency | undefined
+	>(DAI)
+
+	const t = (s: string) => phrases[s][language]
+	const { onAddTransaction } = useTransactionAdder()
+	const { onWithdraw } = useMetaVault()
+
+	const handleSubmit = async () => {
+		if (!withdrawalCurrency) {
+			notification.error({
+				message: `[withdraw] Invalid currency`,
+			})
+			return
+		}
+		const sharesAmount = numberToDecimal(withdrawValueShares, 18)
+		notification.info({
+			message: t('Please confirm withdraw transaction.'),
+		})
+		const selectedCurrency = find(
+			currenciesData,
+			(c) => c.tokenId === withdrawalCurrency.tokenId,
+		)
+		try {
+			setSubmitting(true)
+			const receipt = await onWithdraw(
+				sharesAmount,
+				selectedCurrency.address,
+			)
+			setWithdrawValueUSD('')
+			onAddTransaction({
+				hash: receipt.transactionHash,
+				description: 'Withdraw|$' + withdrawValueUSD,
+			} as Transaction)
+			setSubmitting(false)
+
+		} catch (error) {
+			notification.info({
+				message: t('An error has occured. Please try again.'),
+			})
+			setSubmitting(false)
+		}
+	}
 
 	return (
 		<div className="withdraw-table">
@@ -251,6 +268,7 @@ export default function WithdrawTable() {
 								</Button>
 								</>}
 							onChange={(e) => updateWithdraw(e.target.value)}
+							disabled={submitting}
 						/>
 					</Form.Item>
 				</Col>
@@ -261,11 +279,13 @@ export default function WithdrawTable() {
 			</div>
 
 			<WithdrawalSelector
-				withdrawValueShares={withdrawValueShares}
+				handleSubmit={handleSubmit}
 				withdrawValueUSD={withdrawValueUSD === '' ? new BigNumber(0) : new BigNumber(withdrawValueUSD)}
 				withdrawDisabled={withdrawDisabled}
 				availableCurrencies={[DAI, CRV3, USDT, USDC]}
-				setWithdrawValueUSD={setWithdrawValueUSD}
+				withdrawalCurrency={withdrawalCurrency}
+				setWithdrawCurrency={setWithdrawCurrency}
+				submitting={submitting}
 			/>
 		</div>
 	)
