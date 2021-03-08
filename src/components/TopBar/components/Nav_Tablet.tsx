@@ -41,7 +41,7 @@ const ItemGroup = styled(Menu.ItemGroup)`
 
 
 const NavTablet: React.FC<NavTabletProps> = () => {
-    const { account, reset } = useWallet()
+    const { account, reset, chainId } = useWallet()
 
     const [onPresentWalletProviderModal] = useModal(
         <WalletProviderModal />,
@@ -116,7 +116,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
                             rel="noopener noreferrer"
                         >
                             <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-
+                                <div>{chainId === 1 ? "Mainnet" : "Kovan"}</div>
                                 <Jazzicon
                                     diameter={36}
                                     seed={jsNumberForAddress(account)}
