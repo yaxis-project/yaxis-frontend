@@ -6,17 +6,24 @@ import Spacer from '../../Spacer'
 
 interface WalletCardProps {
 	icon: React.ReactNode
-	onConnect: () => void
+	onConnect: () => Promise<boolean>
 	title: string
+	setError: (message: string) => void
 }
 
-const WalletCard: React.FC<WalletCardProps> = ({ icon, onConnect, title }) => (
-	<>
+const WalletCard: React.FC<WalletCardProps> = ({ icon, onConnect, title, setError }) => {
+	return (<>
 		<CardIcon>{icon}</CardIcon>
 		<CardTitle text={title} />
 		<Spacer />
-		<Button onClick={onConnect} text="Connect" />
-	</>
-)
+		<Button onClick={async () => {
+			const error = await onConnect()
+			if (error)
+				setError(`${title} not found. Ensure that the extension is installed or that you are using the ${title} in-app browser.`)
+		}}
+			text="Connect"
+		/>
+	</>)
+}
 
 export default WalletCard

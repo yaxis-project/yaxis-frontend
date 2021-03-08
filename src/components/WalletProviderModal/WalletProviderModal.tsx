@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useWallet } from 'use-wallet'
 
@@ -14,8 +14,13 @@ import ModalTitle from '../ModalTitle'
 import WalletCard from './components/WalletCard'
 import { Col, Row } from 'antd'
 
+
+import { injected } from "../../connectors"
+
 const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
-	const { account, connect } = useWallet()
+	const { account, connect, error } = useWallet()
+
+	const [walletError, setWalletError] = useState("")
 
 	useEffect(() => {
 		if (account) {
@@ -26,6 +31,8 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 	return (
 		<Modal>
 			<ModalTitle text="Select a wallet provider." />
+			<ErrorText>{walletError}</ErrorText>
+			<ErrorText>{error?.message}</ErrorText>
 			<ModalContent>
 				<StyledWalletsWrapper
 					gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
@@ -39,11 +46,19 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 									alt="MetaMask fox logo"
 								/>
 							}
-							onConnect={() => {
+							onConnect={async () => {
 								localStorage.removeItem('signOut')
-								return connect('injected')
+								try {
+									const con = await injected.activate()
+									console.log(111, con)
+								} catch {
+									return true
+								}
+								await connect('injected')
+								return false
 							}}
 							title="Metamask"
+							setError={setWalletError}
 						/>
 					</StyledWalletCard>
 					<StyledWalletCard className="gutter-row" span={12}>
@@ -55,11 +70,13 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 									alt="Wallet Connect logo"
 								/>
 							}
-							onConnect={() => {
+							onConnect={async () => {
 								localStorage.removeItem('signOut')
-								return connect('walletconnect')
+								await connect('walletconnect')
+								return false
 							}}
 							title="WalletConnect"
+							setError={setWalletError}
 						/>
 					</StyledWalletCard>
 				</StyledWalletsWrapper>
@@ -75,5 +92,12 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 const StyledWalletsWrapper = styled(Row)``
 
 const StyledWalletCard = styled(Col)``
+
+const ErrorText = styled.div`
+color: red;
+font-weight: 600;
+text-align: center;
+`
+
 
 export default WalletProviderModal
