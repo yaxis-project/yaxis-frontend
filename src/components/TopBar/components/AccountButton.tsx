@@ -2,8 +2,7 @@ import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { useWallet } from 'use-wallet'
 import useModal from '../../../hooks/useModal'
-import useTVL from '../../../hooks/useComputeTVL'
-import { Button, Menu, Dropdown, Row, Col } from 'antd'
+import { Button, Menu, Dropdown, Row, Col, Tag } from 'antd'
 import { CaretDownOutlined } from '@ant-design/icons'
 
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
@@ -18,7 +17,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 		'provider',
 	)
 
-	const { account, reset } = useWallet()
+	const { account, reset, chainId } = useWallet()
 
 	const handleUnlockClick = useCallback(() => {
 		onPresentWalletProviderModal()
@@ -45,8 +44,11 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 								<Menu>
 									<Menu.ItemGroup
 										title={
-											<>
+											<Col>
 												<div style={{ textAlign: "center" }} >Your Account</div>
+												<NetworkText>
+													{chainId === 1 ? "Mainnet" : "Kovan"}
+												</NetworkText>
 												<Button
 													href={etherscanUrl(`/address/${account}`)}
 													target={'_blank'}
@@ -57,7 +59,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 												>
 													<span style={{ margin: "0 5px" }} >{account.slice(0, 4)} ... {account.slice(-2)}</span>
 												</Button>
-											</>
+											</Col>
 										} />
 									<Menu.Item onClick={handleSignOutClick}>
 										Logout
@@ -124,5 +126,11 @@ const StyledAccountButton = styled(Row)`
 		font-size: 0.8rem;
 	}
 `
+
+const NetworkText = styled.div`
+	text-align: center;
+	font-size: 0.9em;
+`
+
 
 export default AccountButton
