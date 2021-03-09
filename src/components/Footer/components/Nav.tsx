@@ -26,13 +26,14 @@ const Nav: React.FC = () => {
 	return (
 		<StyledRow>
 			<StyledCol xs={24} sm={24} md={8}>
-				<StyledNavLink to="/">Home</StyledNavLink>
+				{/* <StyledNavLink to="/">Home</StyledNavLink> */}
 				{/* <StyledWrapper>
 					<Dropdown overlay={menu} placement="topLeft">
 						<StyledLink>Contracts</StyledLink>
 					</Dropdown>
 				</StyledWrapper> */}
 				<StyledLink target="_blank" href="https://immunefi.com/bounty/yaxis/">Security</StyledLink>
+				<StyledLink target="_blank" href="https://gov.yaxis.io">Governance</StyledLink>
 			</StyledCol>
 
 			<StyledCol2 xs={24} sm={24} md={8}>
