@@ -1,3 +1,6 @@
+import { useMemo } from 'react'
+import { useWeb3React } from '@web3-react/core'
+
 import crv3 from '../assets/img/currencies/3crv.svg'
 import dai from '../assets/img/currencies/dai.svg'
 import eth from '../assets/img/currencies/eth.svg'
@@ -51,14 +54,18 @@ export const ETH: Currency = {
 	priceMapKey: 'ethereum',
 }
 
-export const YAX: Currency = {
-	name: 'YAX',
-	tokenId: 'yax',
-	address: currentConfig.contractAddresses.yaxis,
-	stakingTokenAddress: currentConfig.contractAddresses.xYaxStaking,
-	icon: yax,
-	decimals: 18,
-	priceMapKey: 'YAX',
+export const YAX = (): Currency => {
+	const { chainId } = useWeb3React()
+	return {
+		name: 'YAX',
+		tokenId: 'yax',
+		address: currentConfig(chainId).contractAddresses.yaxis,
+		stakingTokenAddress: currentConfig(chainId).contractAddresses
+			.xYaxStaking,
+		icon: yax,
+		decimals: 18,
+		priceMapKey: 'YAX',
+	}
 }
 
 export const USDT: Currency = {

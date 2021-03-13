@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
 
 import BigNumber from 'bignumber.js'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 import { provider } from 'web3-core'
 
 import useBlock from './useBlock'
@@ -19,11 +19,11 @@ export default function useYaxisStaking(currency: Currency) {
 	const walletBalance = useTokenBalance(address)
 	const block = useBlock()
 	const yaxis = useYax()
-	const { ethereum } = useWallet()
+	const { library } = useWeb3React()
 	const priceMap = usePriceMap()
 	const lpContract = useMemo(() => {
-		return getContract(ethereum as provider, stakingTokenAddress)
-	}, [ethereum, stakingTokenAddress])
+		return getContract(library as provider, stakingTokenAddress)
+	}, [library, stakingTokenAddress])
 	const sBalance = useTokenBalance(lpContract.options.address)
 
 	const [balances, setBalances] = useState({
@@ -57,8 +57,8 @@ export default function useYaxisStaking(currency: Currency) {
 	}, [priceMap, sBalance, walletBalance, yaxis])
 
 	useEffect(() => {
-		if (yaxis && ethereum && stakingTokenAddress) getData()
-	}, [yaxis, block, ethereum, sBalance, stakingTokenAddress, getData])
+		if (yaxis && library && stakingTokenAddress) getData()
+	}, [yaxis, block, library, sBalance, stakingTokenAddress, getData])
 
 	return balances
 }

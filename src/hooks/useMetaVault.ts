@@ -1,18 +1,14 @@
 import { useCallback, useState, useMemo, useEffect } from 'react'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 import { BigNumber } from 'bignumber.js'
 import useYaxis from './useYaxis'
 import { depositAll, getYaxisMetaVault, withdraw } from '../yaxis/utils'
 import { notification } from 'antd'
 import Web3 from 'web3'
-import { provider } from 'web3-core'
 const erc20 = require('./../yaxis/abi/erc20.json')
 
 const useMetaVault = () => {
-	const {
-		account,
-		ethereum,
-	}: { ethereum: provider; account: any } = useWallet()
+	const { account, library } = useWeb3React()
 	const yaxis = useYaxis()
 	const defaultSlippage = 0.001 // 0.1%
 	const vaultWithdrawFee = 0.001 // 0.1%
@@ -22,7 +18,7 @@ const useMetaVault = () => {
 	const [isClaiming, setClaiming] = useState<boolean>(false)
 	const [strategy, setStrategy] = useState<string>('')
 
-	const web3 = useMemo(() => ethereum && new Web3(ethereum), [ethereum])
+	const web3 = useMemo(() => library && new Web3(library), [library])
 
 	const calcMinTokenAmount = useCallback(
 		async (amounts: string[]) => {

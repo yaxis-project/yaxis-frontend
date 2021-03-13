@@ -44,7 +44,7 @@ const StrategyRow = (props: StrategyRowProps) => {
 						+{' '}
 					</Text>
 					<img
-						src={YAX.icon}
+						src={YAX().icon}
 						height="32"
 						style={{ marginTop: -4 }}
 						alt="logo"

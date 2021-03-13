@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { InjectedConnector } from '@web3-react/injected-connector'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 import { Yaxis } from '../../yaxis/Yaxis'
 import Web3 from 'web3'
 import moment, { Moment } from 'moment'
@@ -24,59 +23,46 @@ declare global {
 }
 
 const YaxisProvider: React.FC = ({ children }) => {
-	const { ethereum, connect }: { ethereum: any; connect: any } = useWallet()
+	const { account, library, chainId } = useWeb3React()
 	const [yaxis, setYaxis] = useState<any>()
 
 	// @ts-ignore
 	window.yaxis = yaxis
 	// @ts-ignore
-	window.eth = ethereum
+	window.eth = library
 	const [block, setBlock] = useState(0)
 	const [lastUpdated, setLastUpdated] = useState<Moment>(moment())
 
 	useEffect(() => {
-		if (!ethereum) return
+		if (!library) return
 		const fetchBlockNumber = async function () {
-			const latestBlockNumber = await web3.eth.getBlockNumber()
+			const latestBlockNumber = await library.eth.getBlockNumber()
 			if (block !== latestBlockNumber) {
 				setLastUpdated(moment())
 				setBlock(latestBlockNumber)
 			}
 		}
-		const web3 = new Web3(ethereum)
-
 		fetchBlockNumber()
 		const interval = setInterval(async () => {
 			await fetchBlockNumber()
 		}, 5000)
 
 		return () => clearInterval(interval)
-	}, [ethereum, block])
+	}, [library, block])
 
 	useEffect(() => {
-		if (ethereum) {
-			const chainId = Number(ethereum.chainId)
-			const yaxisLib = new Yaxis(ethereum, chainId, {
-				defaultAccount: ethereum.selectedAddress,
+		if (library) {
+			const yaxisLib = new Yaxis(library, chainId, {
+				defaultAccount: account,
 				defaultConfirmations: 1,
 				autoGasMultiplier: 1.5,
 				accounts: [],
-				ethereumNodeTimeout: 10000,
+				libraryNodeTimeout: 10000,
 			})
 			setYaxis(yaxisLib)
 			window.yaxissauce = yaxisLib
-		} else {
-			const injected = new InjectedConnector({})
-			injected.isAuthorized().then((isAuthorized) => {
-				if (isAuthorized) {
-					let isSignOut = localStorage.getItem('signOut')
-					if (!isSignOut) {
-						connect('injected')
-					}
-				}
-			})
 		}
-	}, [ethereum, connect])
+	}, [library, account, chainId])
 
 	return (
 		<Context.Provider value={{ yaxis, block, lastUpdated }}>

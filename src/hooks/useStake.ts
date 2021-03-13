@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 
 import useYaxis from './useYaxis'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 
 import { stake, getYaxisChefContract } from '../yaxis/utils'
 
 const useStake = (pid: number) => {
-	const { account } = useWallet()
+	const { account } = useWeb3React()
 	const yaxis = useYaxis()
 
 	const handleStake = useCallback(

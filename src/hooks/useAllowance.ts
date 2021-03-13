@@ -2,8 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import BigNumber from 'bignumber.js'
 import useYaxis from './useYaxis'
-import { useWallet } from 'use-wallet'
-import { provider } from 'web3-core'
+import { useWeb3React } from '@web3-react/core'
 import { Contract } from 'web3-eth-contract'
 
 import { getAllowance } from '../utils/erc20'
@@ -11,7 +10,7 @@ import { getYaxisChefContract } from '../yaxis/utils'
 
 const useAllowance = (lpContract: Contract) => {
 	const [allowance, setAllowance] = useState(new BigNumber(0))
-	const { account } = useWallet<provider>()
+	const { account } = useWeb3React()
 	const yaxis = useYaxis()
 	const yaxisChefContract = getYaxisChefContract(yaxis)
 

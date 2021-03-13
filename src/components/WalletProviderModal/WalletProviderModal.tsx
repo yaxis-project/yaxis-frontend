@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 
 import metamaskLogo from '../../assets/img/metamask-fox.svg'
 import walletConnectLogo from '../../assets/img/wallet-connect.svg'
@@ -14,12 +14,11 @@ import ModalTitle from '../ModalTitle'
 import WalletCard from './components/WalletCard'
 import { Col, Row } from 'antd'
 
-
-import { injected } from "../../connectors"
+import { connectorsByName } from "../../connectors"
+import { getErrorMessage } from "../../connectors/errors"
 
 const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
-	const { account, connect, error } = useWallet()
-
+	const { account, activate, error } = useWeb3React()
 	const [walletError, setWalletError] = useState("")
 
 	useEffect(() => {
@@ -32,7 +31,7 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 		<Modal>
 			<ModalTitle text="Select a wallet provider." />
 			<ErrorText>{walletError}</ErrorText>
-			<ErrorText>{error?.message}</ErrorText>
+			{error && <ErrorText>{getErrorMessage(error)}</ErrorText>}
 			<ModalContent>
 				<StyledWalletsWrapper
 					gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
@@ -48,13 +47,7 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 							}
 							onConnect={async () => {
 								localStorage.removeItem('signOut')
-								try {
-									const con = await injected.activate()
-									console.log(111, con)
-								} catch {
-									return true
-								}
-								await connect('injected')
+								await activate(connectorsByName['Injected'])
 								return false
 							}}
 							title="Metamask"
@@ -72,7 +65,7 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 							}
 							onConnect={async () => {
 								localStorage.removeItem('signOut')
-								await connect('walletconnect')
+								await activate(connectorsByName['WalletConnect'])
 								return false
 							}}
 							title="WalletConnect"

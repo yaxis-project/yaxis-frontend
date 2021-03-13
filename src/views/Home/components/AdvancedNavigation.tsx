@@ -5,6 +5,7 @@ import { StakePool } from "../../../yaxis/type"
 import { Row, Col, Typography, Collapse } from 'antd'
 import * as currencies from '../../../utils/currencies'
 import { brandBlue } from "../../../theme/colors"
+import { useWeb3React } from '@web3-react/core'
 
 const { Text, Link } = Typography
 
@@ -39,8 +40,8 @@ function AdvancedNavigationRow(props: AdvancedNavigationRowProps) {
 	return (
 		<Row className="lp-row" justify="center">
 			<Col xs={24} sm={3} style={{ margin: "8px" }}>
-				<img src={currencies[token1.symbol]?.icon} height="24" alt="logo" />
-				<img src={currencies[token2.symbol]?.icon} height="24" alt="logo" />
+				<img src={typeof currencies[token1.symbol] === 'function' ? (currencies[token1.symbol]()?.icon) : currencies[token1.symbol]?.icon} height="24" alt="logo" />
+				<img src={typeof currencies[token2.symbol] === 'function' ? (currencies[token2.symbol]()?.icon) : currencies[token2.symbol]?.icon} height="24" alt="logo" />
 			</Col>
 			<Col xs={24} sm={20}>
 				<Row>
@@ -57,22 +58,18 @@ function AdvancedNavigationRow(props: AdvancedNavigationRowProps) {
 	)
 }
 
-const StyledCollapse = styled(Collapse)`
-	background-color: #ffffff;
-	margin-top: 10px;
-`
-
 /**
  * Styled component to contain a collapsable navigation segment.
  * @see AdvancedNavigationRow
  */
 export default function AdvancedNavigation() {
-	const activePools = currentConfig?.pools.filter(pool => pool?.active)
+	const { chainId } = useWeb3React()
+
+	const activePools = currentConfig(chainId)?.pools.filter(pool => pool?.active)
 
 	return activePools.length > 0 ? (
-		<StyledCollapse
+		<Collapse
 			expandIconPosition="right"
-			className="advanced-navigation"
 		>
 			<Panel
 				header={'Advanced'}
@@ -87,6 +84,6 @@ export default function AdvancedNavigation() {
 					/>
 				))}
 			</Panel>
-		</StyledCollapse>
+		</Collapse>
 	) : null
 }

@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { provider } from 'web3-core'
-
-import { useWallet } from 'use-wallet'
-
+import { useWeb3React } from '@web3-react/core'
 import { getYaxisChefContract, numberToFloat } from '../yaxis/utils'
 import useYaxis from './useYaxis'
 import useBlock from './useBlock'
@@ -10,7 +7,7 @@ import BigNumber from 'bignumber.js'
 
 const useRewardPerBlock = () => {
 	const [rewardPerBlock, setRewardPerBlock] = useState(0)
-	const { account }: { account: string; ethereum: provider } = useWallet()
+	const { account } = useWeb3React()
 	const yaxis = useYaxis()
 	const yaxisChefContract = getYaxisChefContract(yaxis)
 	const block = useBlock()

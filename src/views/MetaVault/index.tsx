@@ -11,6 +11,7 @@ import './index.less'
 import BigNumber from 'bignumber.js'
 import { currentConfig } from '../../yaxis/configs'
 import { etherscanUrl } from '../../yaxis/utils'
+import { useWeb3React } from '@web3-react/core'
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -27,7 +28,8 @@ const MetaVault: React.FC = () => {
 		.multipliedBy(mvltPrice || '0')
 		.toFixed(2)
 
-	const address = currentConfig.contractAddresses['yAxisMetaVault']
+	const { chainId } = useWeb3React()
+	const address = currentConfig(chainId).contractAddresses['yAxisMetaVault']
 
 	return (
 		<div className="investing-view">

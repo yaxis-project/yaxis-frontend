@@ -1,8 +1,7 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
-import { ThemeProvider } from 'styled-components'
-import { UseWalletProvider } from 'use-wallet'
 
+import { ThemeProvider } from 'styled-components'
 import FarmsProvider from './contexts/Farms'
 import ModalsProvider from './contexts/Modals'
 import LanguageProvider from './contexts/Language'
@@ -17,76 +16,77 @@ import Staking from './views/Staking'
 // import Liquidity from './views/Liquidity'
 import LiquidityPool from './views/LiquidityPool'
 import { notification } from 'antd'
-import { NETWORK_ID } from './yaxis/configs'
 import { currentConfig } from './yaxis/configs'
 
+import { Web3ReactProvider, useWeb3React } from '@web3-react/core'
+import { useEagerConnect } from "./hooks/useEagerConnect"
+import { useInactiveListener } from "./hooks/useInactiveListener"
+import { getLibrary } from "./connectors"
 
 notification.config({
 	placement: 'topRight',
 	duration: 6,
 })
 
-const App: React.FC = () => {
-	const activePools = currentConfig.pools.filter(pool => pool.active)
+const Routes: React.FC = () => {
+	const triedEager = useEagerConnect()
+	useInactiveListener(!triedEager)
+	const { chainId } = useWeb3React()
+	const activePools = useMemo(() => currentConfig(chainId).pools.filter(pool => pool.active), [chainId])
 	return (
-		<Providers>
-			<Router>
-				<Switch>
-					<Route path="/" exact>
-						<Home />
-					</Route>
-					<Route path="/vault" exact>
-						<MetaVault />
-					</Route>
-					<Route path="/staking" exact>
-						<Staking />
-					</Route>
-					{/* <Route path="/liquidity" exact>
+		<Router>
+			<Switch>
+				<Route path="/" exact>
+					<Home />
+				</Route>
+				<Route path="/vault" exact>
+					<MetaVault />
+				</Route>
+				<Route path="/staking" exact>
+					<Staking />
+				</Route>
+				{/* <Route path="/liquidity" exact>
 						<Liquidity />
 					</Route> */}
-					{activePools.length &&
-						<Route key={`/liquidity`} path={`/liquidity`} exact>
-							<LiquidityPool pool={activePools[0]} />
-						</Route>
-					}
-					{activePools.map(pool => {
-						const key = `/liquidity/${pool.lpAddress}`
-						return <Route key={key} path={key} exact>
-							<LiquidityPool pool={pool} />
-						</Route>
-					})}
-					<Redirect to='/' />
-				</Switch>
-			</Router>
-		</Providers>
+				{activePools.length &&
+					<Route key={`/liquidity`} path={`/liquidity`} exact>
+						<LiquidityPool pool={activePools[0]} />
+					</Route>
+				}
+				{activePools.map(pool => {
+					const key = `/liquidity/${pool.lpAddress}`
+					return <Route key={key} path={key} exact>
+						<LiquidityPool pool={pool} />
+					</Route>
+				})}
+				<Redirect to='/' />
+			</Switch>
+		</Router>
 	)
 }
 
-const Providers: React.FC = ({ children }) => {
-	return (
+const Providers: React.FC = ({ children }) =>
+	<Web3ReactProvider getLibrary={getLibrary}>
 		<ThemeProvider theme={theme}>
 			<PriceMapContextComponent>
-				<UseWalletProvider
-					chainId={NETWORK_ID}
-					connectors={{
-						walletconnect: { rpcUrl: process.env[`REACT_APP_RPC_URL_${NETWORK_ID}`] },
-					}}
-				>
-					<YaxisProvider>
-						<LanguageProvider>
-							<TransactionProvider>
-								<FarmsProvider>
-									<ModalsProvider>
-										{children}
-									</ModalsProvider>
-								</FarmsProvider>
-							</TransactionProvider>
-						</LanguageProvider >
-					</YaxisProvider >
-				</UseWalletProvider>
+				<YaxisProvider>
+					<LanguageProvider>
+						<TransactionProvider>
+							<FarmsProvider>
+								<ModalsProvider>
+									{children}
+								</ModalsProvider>
+							</FarmsProvider>
+						</TransactionProvider>
+					</LanguageProvider >
+				</YaxisProvider >
 			</PriceMapContextComponent >
 		</ThemeProvider >
-	)
-}
+	</Web3ReactProvider >
 
+const App = () => (
+	<Providers>
+		<Routes />
+	</Providers>
+)
 export default App

@@ -27,7 +27,7 @@ export default function HomeOverviewCard() {
 
 	const { yaxReturnsUSD } = useAccountReturns()
 
-	const { stakedBalanceUSD } = useYaxisStaking(YAX)
+	const { stakedBalanceUSD } = useYaxisStaking(YAX())
 	const {
 		metaVaultData: { totalBalance, mvltPrice },
 	} = useMetaVaultData('v1')

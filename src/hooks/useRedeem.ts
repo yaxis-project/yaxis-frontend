@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 import { Contract } from 'web3-eth-contract'
 import { redeem } from '../yaxis/utils'
 
 const useRedeem = (yaxisChefContract: Contract) => {
-	const { account } = useWallet()
+	const { account } = useWeb3React()
 
 	const handleRedeem = useCallback(async () => {
 		const txHash = await redeem(yaxisChefContract, account)

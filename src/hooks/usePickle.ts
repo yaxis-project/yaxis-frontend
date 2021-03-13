@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import { provider } from 'web3-core'
-import { useWallet } from 'use-wallet'
 import BigNumber from 'bignumber.js'
 import useYaxis from './useYaxis'
 import { collapseDecimals, numberToFloat } from '../yaxis/utils'
@@ -14,7 +12,6 @@ const usePickle = () => {
 	}>({
 		pickleAPY: 0,
 	})
-	const { account } = useWallet<provider>()
 	const yaxis = useYaxis()
 	const block = useBlock()
 	let { PICKLE: picklePrice, Cure3Crv: _3crvPrice } = usePriceMap()

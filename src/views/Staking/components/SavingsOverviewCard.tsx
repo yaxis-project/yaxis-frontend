@@ -31,7 +31,7 @@ export default function () {
 	const t = (s: string) => phrases[s][language]
 
 	const { yaxReturns, yaxReturnsUSD } = useAccountReturns()
-	const { stakedBalance } = useYaxisStaking(YAX)
+	const { stakedBalance } = useYaxisStaking(YAX())
 	const { yAxisAPY } = useYAxisAPY()
 
 	const [totalSupply, setTotalStaking] = useState<BigNumber>(new BigNumber(0))
