@@ -10,7 +10,7 @@ import {
 	numberToDecimal,
 } from '../yaxis/utils'
 import useBlock from './useBlock'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 import { provider } from 'web3-core'
 import useYaxis from './useYaxis'
 import useMetaVault from './useMetaVault'
@@ -135,7 +135,7 @@ export interface MetaVaultData {
 }
 
 function useMetaVaultData(id: string): IHookReturn {
-	const { account, ethereum } = useWallet<provider>()
+	const { account, library, chainId } = useWeb3React()
 	const {
 		slippage,
 		pickleWithdrawFee,
@@ -162,7 +162,7 @@ function useMetaVaultData(id: string): IHookReturn {
 		{} as MetaVaultData,
 	)
 
-	const vaultConfig = currentConfig.vault
+	const vaultConfig = currentConfig(chainId).vault
 	const tokenAddresses: string[] = useMemo(() => {
 		return [
 			vaultConfig.dai,
@@ -176,7 +176,7 @@ function useMetaVaultData(id: string): IHookReturn {
 	const [daiBalance, usdcBalance, usdtBalance, threeCrvBalance] = balances
 	const [allowances, onUpdateAllowances] = useAllowances(
 		tokenAddresses,
-		currentConfig.contractAddresses.yAxisMetaVault,
+		currentConfig(chainId).contractAddresses.yAxisMetaVault,
 	)
 	const [daiApprove, usdcApprove, usdtApprove, threeCrvApprove] = allowances
 	// const [daiMaxWithdraw, usdcMaxWithdraw, usdtMaxWithdraw, threeCrvMaxWithdraw] = maxWithdraws;
@@ -416,7 +416,8 @@ function useMetaVaultData(id: string): IHookReturn {
 							const withdrawnFee = new BigNumber(1)
 								.times(1 - vaultWithdrawFee)
 								.times(1 - pickleWithdrawFee)
-							let isCrv = addr == currentConfig.vault.threeCrv
+							let isCrv =
+								addr == currentConfig(chainId).vault.threeCrv
 							const value = isCrv
 								? r
 								: await contract.methods
@@ -445,13 +446,14 @@ function useMetaVaultData(id: string): IHookReturn {
 			metaVaultData.totalSupply,
 			pickleWithdrawFee,
 			vaultWithdrawFee,
+			chainId,
 		],
 	)
 
 	useEffect(() => {
 		if (
 			account &&
-			ethereum &&
+			library &&
 			yaxis &&
 			yaxis.web3 &&
 			yaxPrice &&
@@ -462,7 +464,7 @@ function useMetaVaultData(id: string): IHookReturn {
 		}
 	}, [
 		account,
-		ethereum,
+		library,
 		yaxis,
 		fetchMetaVaultData,
 		yaxPrice,

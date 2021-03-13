@@ -4,8 +4,7 @@ import useEnter from '../../../hooks/useEnter'
 import useLeave from '../../../hooks/useLeave'
 import useYaxisStaking from '../../../hooks/useYaxisStaking'
 import Value from '../../../components/Value'
-import { useWallet } from 'use-wallet'
-
+import { useWeb3React } from '@web3-react/core'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 
@@ -42,14 +41,14 @@ const TableHeader = (props: any) => (
  * Generate the main YAX staking card for the vault.
  */
 export default function StakingCard() {
-	const { account } = useWallet()
+	const { account } = useWeb3React()
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 	const t = (s: string) => phrases[s][language]
 	const { onEnter } = useEnter()
 	const { onLeave } = useLeave()
 	const { stakedBalance, walletBalance, rate, yaxBalance } = useYaxisStaking(
-		YAX,
+		YAX(),
 	)
 
 	const [loading, setLoading] = useState(false)
@@ -157,7 +156,7 @@ export default function StakingCard() {
 
 			<Row gutter={24}>
 				<Col span={12} className={'balance'}>
-					<img src={YAX.icon} height="24" alt="logo" />
+					<img src={YAX().icon} height="24" alt="logo" />
 					<Value
 						value={getBalanceNumber(walletBalance)}
 						decimals={2}
@@ -165,7 +164,7 @@ export default function StakingCard() {
 					/>
 				</Col>
 				<Col span={12} className={'balance'}>
-					<img src={YAX.icon} height="24" alt="logo" />
+					<img src={YAX().icon} height="24" alt="logo" />
 					<Value
 						value={stakedBalance.toNumber()}
 						decimals={2}
@@ -212,17 +211,17 @@ export default function StakingCard() {
 							{t('Approve')}
 						</Button>
 					) : (
-							<Button
-								className="staking-btn"
-								disabled={depositDisabled}
-								onClick={stakeYAX}
-								block
-								type="primary"
-								loading={loading}
-							>
-								{t('Deposit')}
-							</Button>
-						)}
+						<Button
+							className="staking-btn"
+							disabled={depositDisabled}
+							onClick={stakeYAX}
+							block
+							type="primary"
+							loading={loading}
+						>
+							{t('Deposit')}
+						</Button>
+					)}
 				</Col>
 				<Col span={12}>
 					<Form.Item validateStatus={errorWithdraw && 'error'}>

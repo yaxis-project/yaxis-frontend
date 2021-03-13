@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import BigNumber from 'bignumber.js'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 
 import { getStaked, getYaxisChefContract } from '../yaxis/utils'
 import useYaxis from './useYaxis'
@@ -9,7 +9,7 @@ import useBlock from './useBlock'
 
 const useStakedBalance = (pid: number) => {
 	const [balance, setBalance] = useState(new BigNumber(0))
-	const { account }: { account: string } = useWallet()
+	const { account } = useWeb3React()
 	const yaxis = useYaxis()
 	const yaxisChefContract = getYaxisChefContract(yaxis)
 	const block = useBlock()

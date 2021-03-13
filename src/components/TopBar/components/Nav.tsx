@@ -4,6 +4,7 @@ import { Menu, Typography } from 'antd'
 import styled from 'styled-components'
 import { currentConfig } from '../../../yaxis/configs'
 import { CaretDownFilled } from '@ant-design/icons';
+import { useWeb3React } from "@web3-react/core"
 
 /**
  * Horizontal top navigation bar for the application.
@@ -11,7 +12,8 @@ import { CaretDownFilled } from '@ant-design/icons';
  */
 
 const Nav: React.FC = (props) => {
-	const activePools = currentConfig.pools.filter(pool => pool.active)
+	const { chainId } = useWeb3React()
+	const activePools = currentConfig(chainId).pools.filter(pool => pool.active)
 	return (
 		<StyledMenu
 			mode="horizontal"

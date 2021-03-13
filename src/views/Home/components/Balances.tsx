@@ -1,8 +1,7 @@
 import BigNumber from 'bignumber.js'
-import { provider } from 'web3-core'
 import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 import Card from '../../../components/Card'
 import CardContent from '../../../components/CardContent'
 import Label from '../../../components/Label'
@@ -22,8 +21,9 @@ import useMetaVaultData from '../../../hooks/useMetaVaultData'
 const Balances: React.FC = () => {
 	const totalSupply = useTotalSupply()
 	const yaxis = useYaxis()
-	const yaxisBalance = useTokenBalance(getYaxisAddress(yaxis))
-	const { account } = useWallet<provider>()
+	const yaxisBalance =
+		useTokenBalance(getYaxisAddress(yaxis))
+	const { account } = useWeb3React()
 	const { farms, stakedValues } = useFarms()
 	const { YAX: yaxisPrice } = usePriceMap()
 	const { totalAmount } = useAllEarnings()
@@ -49,7 +49,7 @@ const Balances: React.FC = () => {
 					.getPricePerFullShare()
 					.call()
 				setPricePerFullShare(new BigNumber(value).div(1e18))
-			} catch (e) {}
+			} catch (e) { }
 		}
 
 		if (yaxis && yaxis.web3) {
@@ -137,8 +137,8 @@ const Balances: React.FC = () => {
 											value={
 												!!account
 													? getBalanceNumber(
-															yaxisBalance,
-													  )
+														yaxisBalance,
+													)
 													: 'Locked'
 											}
 										/>

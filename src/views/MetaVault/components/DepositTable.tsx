@@ -14,7 +14,7 @@ import styled from 'styled-components'
 import { getContract } from '../../../utils/erc20'
 import { provider } from 'web3-core'
 import { callApprove, numberToDecimal } from '../../../yaxis/utils'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 import useTransactionAdder from '../../../hooks/useTransactionAdder'
 import { Transaction } from '../../../contexts/Transactions/types'
 import { mapObjIndexed, pipe, values, flatten } from 'ramda'
@@ -117,7 +117,8 @@ export default function DepositTable() {
 	const currencies = InvestingDepositCurrencies
 	const { onDepositAll, isSubmitting } = useMetaVault()
 	const { onAddTransaction } = useTransactionAdder()
-	const { account, ethereum } = useWallet()
+	const { account, library, chainId } = useWeb3React()
+
 	const priceMap = usePriceMap()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		initialCurrencyValues,
@@ -170,8 +171,8 @@ export default function DepositTable() {
 		const approvalCalls: Promise<any>[] = currenciesNeededApproval.map(
 			(currency) =>
 				callApprove(
-					getContract(ethereum as provider, currency.address),
-					currentConfig.contractAddresses.yAxisMetaVault,
+					getContract(library as provider, currency.address),
+					currentConfig(chainId).contractAddresses.yAxisMetaVault,
 					account,
 				)
 		)

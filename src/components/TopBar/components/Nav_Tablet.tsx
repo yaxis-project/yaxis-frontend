@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react'
 import styled from 'styled-components'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 import { NavLink } from 'react-router-dom'
 import { currentConfig } from '../../../yaxis/configs'
 import { Menu, Dropdown, Button, Typography } from 'antd';
@@ -41,7 +41,7 @@ const ItemGroup = styled(Menu.ItemGroup)`
 
 
 const NavTablet: React.FC<NavTabletProps> = () => {
-    const { account, reset, chainId } = useWallet()
+    const { account, chainId, deactivate } = useWeb3React()
 
     const [onPresentWalletProviderModal] = useModal(
         <WalletProviderModal />,
@@ -54,10 +54,10 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 
     const handleSignOutClick = useCallback(() => {
         localStorage.setItem('signOut', account)
-        reset()
-    }, [reset, account])
+        deactivate()
+    }, [deactivate, account])
 
-    const activePools = currentConfig.pools.filter(pool => pool.active)
+    const activePools = currentConfig(chainId).pools.filter(pool => pool.active)
 
     const menu = useMemo(
         () => <StyledMenu>
@@ -109,28 +109,28 @@ const NavTablet: React.FC<NavTabletProps> = () => {
                 </MenuItem>
             ) : (
 
-                    <Menu.ItemGroup title={
-                        <a
-                            href={etherscanUrl(`/address/${account}`)}
-                            target={'_blank'}
-                            rel="noopener noreferrer"
-                        >
-                            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                                <div>{chainId === 1 ? "Mainnet" : "Kovan"}</div>
-                                <Jazzicon
-                                    diameter={36}
-                                    seed={jsNumberForAddress(account)}
-                                />
-                                <div>{account.slice(0, 4)} ... {account.slice(-2)}</div>
-                            </div>
-                        </a>
-                    }
+                <Menu.ItemGroup title={
+                    <a
+                        href={etherscanUrl(`/address/${account}`)}
+                        target={'_blank'}
+                        rel="noopener noreferrer"
                     >
-                        <MenuItem key="logout" onClick={handleSignOutClick}>
-                            Logout
+                        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                            <div>{chainId === 1 ? "Mainnet" : "Kovan"}</div>
+                            <Jazzicon
+                                diameter={36}
+                                seed={jsNumberForAddress(account)}
+                            />
+                            <div>{account.slice(0, 4)} ... {account.slice(-2)}</div>
+                        </div>
+                    </a>
+                }
+                >
+                    <MenuItem key="logout" onClick={handleSignOutClick}>
+                        Logout
                         </MenuItem>
-                    </Menu.ItemGroup>
-                )}
+                </Menu.ItemGroup>
+            )}
         </StyledMenu>
         , [activePools, account, handleUnlockClick, handleSignOutClick])
     return (

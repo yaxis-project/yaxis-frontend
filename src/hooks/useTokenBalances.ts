@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import BigNumber from 'bignumber.js'
-import { useWallet } from 'use-wallet'
-import { provider } from 'web3-core'
+import { useWeb3React } from '@web3-react/core'
 
 import { getBalances } from '../utils/erc20'
 import useBlock from './useBlock'
@@ -13,7 +12,7 @@ const useTokenBalances = (tokenAddresses: string[]) => {
 	const [balances, setBalance] = useState<BigNumber[]>([
 		...Array(tokenAddresses.length),
 	])
-	const { account, ethereum } = useWallet<provider>()
+	const { account, library } = useWeb3React()
 	const block = useBlock()
 	const yaxis = useYaxis()
 	let mutilcallContract = getMutilcallContract(yaxis)
@@ -29,10 +28,10 @@ const useTokenBalances = (tokenAddresses: string[]) => {
 	}, [account, tokenAddresses, yaxis, mutilcallContract, setBalance])
 
 	useEffect(() => {
-		if (account && ethereum && yaxis && yaxis.web3) {
+		if (account && library && yaxis && yaxis.web3) {
 			fetchBalances()
 		}
-	}, [account, ethereum, setBalance, yaxis, block, fetchBalances])
+	}, [account, library, setBalance, yaxis, block, fetchBalances])
 
 	return balances
 }

@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 import useModal from '../../../hooks/useModal'
-import { Button, Menu, Dropdown, Row, Col, Tag } from 'antd'
+import { Button, Menu, Dropdown, Row, Col } from 'antd'
 import { CaretDownOutlined } from '@ant-design/icons'
 
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
@@ -17,7 +17,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 		'provider',
 	)
 
-	const { account, reset, chainId } = useWallet()
+	const { account, deactivate, chainId } = useWeb3React()
 
 	const handleUnlockClick = useCallback(() => {
 		onPresentWalletProviderModal()
@@ -25,8 +25,8 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 
 	const handleSignOutClick = useCallback(() => {
 		localStorage.setItem('signOut', account)
-		reset()
-	}, [reset, account])
+		deactivate()
+	}, [deactivate, account])
 
 	return (
 		<StyledAccountButton>
@@ -38,44 +38,44 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 						Connect
 					</StyledButton>
 				) : (
-						<Dropdown
-							placement="bottomRight"
-							overlay={
-								<Menu>
-									<Menu.ItemGroup
-										title={
-											<Col>
-												<div style={{ textAlign: "center" }} >Your Account</div>
-												<NetworkText>
-													{chainId === 1 ? "Mainnet" : "Kovan"}
-												</NetworkText>
-												<Button
-													href={etherscanUrl(`/address/${account}`)}
-													target={'_blank'}
-													rel="noopener noreferrer"
-													block
-													type="primary"
-													ghost
-												>
-													<span style={{ margin: "0 5px" }} >{account.slice(0, 4)} ... {account.slice(-2)}</span>
-												</Button>
-											</Col>
-										} />
-									<Menu.Item onClick={handleSignOutClick}>
-										Logout
+					<Dropdown
+						placement="bottomRight"
+						overlay={
+							<Menu>
+								<Menu.ItemGroup
+									title={
+										<Col>
+											<div style={{ textAlign: "center" }} >Your Account</div>
+											<NetworkText>
+												{chainId === 1 ? "Mainnet" : "Kovan"}
+											</NetworkText>
+											<Button
+												href={etherscanUrl(`/address/${account}`)}
+												target={'_blank'}
+												rel="noopener noreferrer"
+												block
+												type="primary"
+												ghost
+											>
+												<span style={{ margin: "0 5px" }} >{account.slice(0, 4)} ... {account.slice(-2)}</span>
+											</Button>
+										</Col>
+									} />
+								<Menu.Item onClick={handleSignOutClick}>
+									Logout
 									</Menu.Item>
-								</Menu>
-							}
-						>
-							<div style={{ display: "flex", alignItems: "center" }} >
-								<Jazzicon
-									diameter={36}
-									seed={jsNumberForAddress(account)}
-								/>
-								<CaretDownOutlined style={{ paddingLeft: "5px" }} />
-							</div>
-						</Dropdown>
-					)}
+							</Menu>
+						}
+					>
+						<div style={{ display: "flex", alignItems: "center" }} >
+							<Jazzicon
+								diameter={36}
+								seed={jsNumberForAddress(account)}
+							/>
+							<CaretDownOutlined style={{ paddingLeft: "5px" }} />
+						</div>
+					</Dropdown>
+				)}
 			</Col>
 		</StyledAccountButton>
 	)

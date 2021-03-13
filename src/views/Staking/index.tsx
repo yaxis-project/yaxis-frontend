@@ -15,6 +15,7 @@ import usePriceMap from '../../hooks/usePriceMap'
 import BigNumber from 'bignumber.js'
 import { currentConfig } from '../../yaxis/configs'
 import { etherscanUrl } from '../../yaxis/utils'
+import { useWeb3React } from '@web3-react/core'
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -24,7 +25,7 @@ const StyledCol = styled(Col)`
 
 
 const Staking: React.FC = () => {
-	const { stakedBalance } = useYaxisStaking(YAX)
+	const { stakedBalance } = useYaxisStaking(YAX())
 	const { YAX: YAXPrice } = usePriceMap()
 
 	const totalUSDBalance = new BigNumber(stakedBalance || '0')
@@ -33,7 +34,9 @@ const Staking: React.FC = () => {
 
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
-	const address = currentConfig.contractAddresses['xYaxStaking']
+
+	const { chainId } = useWeb3React()
+	const address = currentConfig(chainId).contractAddresses['xYaxStaking']
 
 	return (
 		<div className="savings-view">

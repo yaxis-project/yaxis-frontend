@@ -1,4 +1,3 @@
-import { map } from 'ramda'
 import { min, max } from 'lodash'
 import moment from 'moment'
 
@@ -45,8 +44,8 @@ export async function getYAXPriceData(
 		const data = await fetch(api)
 		const converted = await data.json()
 		const prices = converted?.prices
-		const dates = map((p) => p[0], prices)
-		const values = map((p) => p[1], prices)
+		const dates = prices.map((p) => p[0])
+		const values = prices.map((p) => p[1]) as any[]
 
 		setYaxData({
 			values: values,

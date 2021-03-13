@@ -14,7 +14,7 @@ import useUnstake from '../../../hooks/useUnstake'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import DepositModal from './DepositModal'
 import WithdrawModal from './WithdrawModal'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 import BigNumber from "bignumber.js";
 
 interface StakeProps {
@@ -24,7 +24,7 @@ interface StakeProps {
 }
 
 const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
-    const { account } = useWallet()
+    const { account } = useWeb3React()
 
     const [requestedApproval, setRequestedApproval] = useState(false)
 
@@ -89,29 +89,29 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
                             </Button>
                         </Col>
                     ) : (
-                            <Row gutter={18} style={{ width: "100%", justifyContent: "space-between", padding: 0 }}>
-                                <Col span={12}>
-                                    <Button
-                                        className="staking-btn"
-                                        disabled={tokenBalance.eq(new BigNumber(0))}
-                                        onClick={onPresentDeposit}
-                                        block
-                                    >
-                                        Stake
+                        <Row gutter={18} style={{ width: "100%", justifyContent: "space-between", padding: 0 }}>
+                            <Col span={12}>
+                                <Button
+                                    className="staking-btn"
+                                    disabled={tokenBalance.eq(new BigNumber(0))}
+                                    onClick={onPresentDeposit}
+                                    block
+                                >
+                                    Stake
                                     </Button>
-                                </Col>
-                                <Col span={12}>
-                                    <Button
-                                        className="staking-btn"
-                                        disabled={stakedBalance.eq(new BigNumber(0))}
-                                        onClick={onPresentWithdraw}
-                                        block
-                                    >
-                                        Unstake
+                            </Col>
+                            <Col span={12}>
+                                <Button
+                                    className="staking-btn"
+                                    disabled={stakedBalance.eq(new BigNumber(0))}
+                                    onClick={onPresentWithdraw}
+                                    block
+                                >
+                                    Unstake
                                     </Button>
-                                </Col>
-                            </Row>
-                        )}
+                            </Col>
+                        </Row>
+                    )}
                 </CardContents>
             </Row>
         </Card>

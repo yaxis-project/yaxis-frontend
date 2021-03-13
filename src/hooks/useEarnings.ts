@@ -1,15 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
-import { provider } from 'web3-core'
-
 import BigNumber from 'bignumber.js'
-import { useWallet } from 'use-wallet'
-
+import { useWeb3React } from '@web3-react/core'
 import { getEarned, getYaxisChefContract } from '../yaxis/utils'
 import useGlobal from './useGlobal'
 
 const useEarnings = (pid: number) => {
 	const [balance, setBalance] = useState(new BigNumber(0))
-	const { account, ethereum } = useWallet<provider>()
+	const { account } = useWeb3React()
 	const { yaxis, block } = useGlobal()
 	const yaxisChefContract = getYaxisChefContract(yaxis)
 

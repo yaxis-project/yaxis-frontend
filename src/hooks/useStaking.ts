@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { getXSushiStakingContract } from '../yaxis/utils'
-import { useWallet } from 'use-wallet'
+import { useWeb3React } from '@web3-react/core'
 import useYaxis from './useYaxis'
 
 const useStaking = () => {
-	const { account } = useWallet()
+	const { account } = useWeb3React()
 	const yaxis = useYaxis()
 	const stakingContract = getXSushiStakingContract(yaxis)
 

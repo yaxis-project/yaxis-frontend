@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-import { provider } from 'web3-core'
-import { useWallet } from 'use-wallet'
+import { useEffect, useState, useCallback } from 'react'
+import { useWeb3React } from '@web3-react/core'
 import BigNumber from 'bignumber.js'
 import useYaxis from './useYaxis'
 import { getYaxisChefContract, getYaxisSupply } from '../yaxis/utils'
@@ -8,19 +7,21 @@ import useBlock from './useBlock'
 
 const useTotalSupply = () => {
 	const [totalSupply, setTotalSupply] = useState<BigNumber>(new BigNumber(0))
-	const { account } = useWallet<provider>()
+	const { account } = useWeb3React()
 	const yaxis = useYaxis()
 	const yaxisChefContract = getYaxisChefContract(yaxis)
 	const block = useBlock()
 
-	const fetchTotalSupply = async () => {
-		const supply = await getYaxisSupply(yaxis)
-		setTotalSupply(supply)
-	}
+	const fetchTotalSupply = useCallback(async () => {
+		if (yaxis) {
+			const supply = await getYaxisSupply(yaxis)
+			setTotalSupply(supply)
+		}
+	}, [yaxis])
 
 	useEffect(() => {
-		if (yaxis) fetchTotalSupply()
-	}, [yaxis, block, account, yaxisChefContract])
+		fetchTotalSupply()
+	}, [block, account, yaxisChefContract, fetchTotalSupply])
 	return totalSupply
 }
 

@@ -347,7 +347,7 @@ export const configs: Record<number, Config> = {
 
 export const NETWORK_NAME = process.env.REACT_APP_NETWORK
 export const NETWORK_ID = NETWORK_NAME === 'kovan' ? 42 : 1
-export const currentConfig = configs[NETWORK_ID]
+export const currentConfig = (chainId = 1) => configs[chainId]
 
 export const tokensConfig = {
 	share: {

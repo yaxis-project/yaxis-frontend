@@ -7,7 +7,6 @@ import {
 	dayOptions,
 } from '../../hooks/useYAXPriceData'
 import useWindowWidth from '../../hooks/useWindowWidth'
-import { find } from 'ramda'
 import styled from 'styled-components'
 import usePriceMap from '../../hooks/usePriceMap'
 import moment from 'moment'
@@ -85,9 +84,8 @@ const PriceGraph: React.FC = () => {
 
 	const handleChange = (e: any) => {
 		const day =
-			find((day: SelectableDay) => day.name === e.target.value)(
-				dayOptions,
-			) || dayOptions[3]
+			dayOptions.find((day: SelectableDay) => day.name === e.target.value)
+			|| dayOptions[3]
 		if (day) setDate(day)
 	}
 
