@@ -13,14 +13,15 @@ import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 // import { TorusConnector } from '@web3-react/torus-connector'
 import Web3 from 'web3'
 
-const SUPPORTED_NETWORKS = [1, 42]
-const RPC_URLS: { [chainId: number]: string } = Object.fromEntries(
+export const SUPPORTED_NETWORKS = [1, 42]
+export const RPC_URLS: { [chainId: number]: string } = Object.fromEntries(
 	SUPPORTED_NETWORKS.map((networkId: number) => [
 		networkId,
 		process.env[`REACT_APP_RPC_URL_${networkId}`],
 	]),
 )
-const POLLING_INTERVAL = 12000
+export const POLLING_INTERVAL = 12000
+export const NETWORK_NAMES = { 1: 'mainnet', 42: 'kovan' }
 
 export const injected = new InjectedConnector({
 	supportedChainIds: [1, 42],
