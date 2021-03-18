@@ -448,6 +448,8 @@ function useMetaVaultData(id: string): IHookReturn {
 		],
 	)
 
+	const reset = useCallback(() => setMetaVaultData({} as MetaVaultData), [])
+
 	useEffect(() => {
 		if (
 			account &&
@@ -459,7 +461,7 @@ function useMetaVaultData(id: string): IHookReturn {
 			block
 		) {
 			fetchMetaVaultData()
-		}
+		} else reset()
 	}, [
 		account,
 		library,
@@ -468,6 +470,7 @@ function useMetaVaultData(id: string): IHookReturn {
 		yaxPrice,
 		cure3CrvPrice,
 		block,
+		reset,
 	])
 
 	return {
