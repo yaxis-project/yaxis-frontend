@@ -45,7 +45,7 @@ const StyledResponsiveWrapper = styled.div`
 `
 
 const StyledModal = styled(Card)`
-
+	position: relative;
 `
 
 export default Modal

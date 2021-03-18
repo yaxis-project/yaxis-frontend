@@ -1,29 +1,36 @@
 import React from 'react'
+import { useWeb3React } from '@web3-react/core'
 import Button from '../../Button'
 import CardIcon from '../../CardIcon'
 import CardTitle from '../../CardTitle'
-import Spacer from '../../Spacer'
+import { WalletInfo } from '../../../connectors'
+
 
 interface WalletCardProps {
-	icon: React.ReactNode
-	onConnect: () => Promise<boolean>
-	title: string
-	setError: (message: string) => void
+	config: WalletInfo
 }
 
-const WalletCard: React.FC<WalletCardProps> = ({ icon, onConnect, title, setError }) => {
-	return (<>
-		<CardIcon>{icon}</CardIcon>
-		<CardTitle text={title} />
-		<Spacer />
-		<Button onClick={async () => {
-			const error = await onConnect()
-			if (error)
-				setError(`${title} not found. Ensure that the extension is installed or that you are using the ${title} in-app browser.`)
-		}}
-			text="Connect"
-		/>
-	</>)
+const WalletCard: React.FC<WalletCardProps> = ({ config }) => {
+	const { activate } = useWeb3React()
+	return (
+		<>
+			<CardIcon>
+				<img
+					src={require('../../../assets/img/' + config.icon).default}
+					style={{ height: 32 }}
+					alt={`${config.name} logo`}
+				/>
+			</CardIcon>
+			<CardTitle text={config.name} />
+			<Button onClick={async () => {
+				if (!config.connector) return window.open(config.href, '_blank');
+				localStorage.removeItem('signOut')
+				await activate(config.connector)
+			}}
+				text={config.connector ? "Connect" : "Install"}
+			/>
+		</>
+	)
 }
 
 export default WalletCard
