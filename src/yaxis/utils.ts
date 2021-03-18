@@ -11,45 +11,6 @@ BigNumber.config({
 	EXPONENTIAL_AT: 1000,
 	DECIMAL_PLACES: 80,
 })
-const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price'
-const tokenCgkIdMap: any = {
-	YFI: 'yearn-finance',
-	PICKLE: 'pickle-finance',
-	BTC: 'bitcoin',
-	ETH: 'ethereum',
-	LINK: 'chainlink',
-	USDT: 'tether',
-	YFV: 'yfv-finance',
-	USDC: 'usd-coin',
-	WBTC: 'wrapped-bitcoin',
-	crvRenWSBTC: 'wrapped-bitcoin',
-	vUSD: 'usd-coin',
-	DAI: 'usd-coin',
-	aLINK: 'aave-link',
-	YCURVE: 'curve-fi-ydai-yusdc-yusdt-ytusd',
-	yCRV: 'curve-fi-ydai-yusdc-yusdt-ytusd',
-	YAX: 'yaxis',
-	Cure3Crv: 'lp-3pool-curve',
-	CRV: 'curve-dao-token',
-}
-
-export async function getCoinGeckoPrices() {
-	let cgkIds = Object.values(tokenCgkIdMap).join(',')
-	let prices = await (
-		await fetch(`${COINGECKO_API}?vs_currencies=usd&ids=${cgkIds}`)
-	).json()
-	const priceMap: any = {}
-	for (let symbol of Object.keys(tokenCgkIdMap)) {
-		let cgkId = tokenCgkIdMap[symbol]
-		if (prices[cgkId]) {
-			const price = prices[cgkId].usd || 0
-			priceMap[symbol] = price
-		} else {
-			priceMap[symbol] = 0
-		}
-	}
-	return priceMap
-}
 
 export function collapseDecimals(value: any, decimal = 18) {
 	return value

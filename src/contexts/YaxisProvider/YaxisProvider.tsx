@@ -1,7 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { Yaxis } from '../../yaxis/Yaxis'
-import Web3 from 'web3'
 import moment, { Moment } from 'moment'
 
 export interface YaxisContext {
@@ -16,20 +15,9 @@ export const Context = createContext<YaxisContext>({
 	lastUpdated: moment(),
 })
 
-declare global {
-	interface Window {
-		yaxissauce: any
-	}
-}
-
 const YaxisProvider: React.FC = ({ children }) => {
 	const { account, library, chainId } = useWeb3React()
 	const [yaxis, setYaxis] = useState<any>()
-
-	// @ts-ignore
-	window.yaxis = yaxis
-	// @ts-ignore
-	window.eth = library
 	const [block, setBlock] = useState(0)
 	const [lastUpdated, setLastUpdated] = useState<Moment>(moment())
 
@@ -60,7 +48,6 @@ const YaxisProvider: React.FC = ({ children }) => {
 				libraryNodeTimeout: 10000,
 			})
 			setYaxis(yaxisLib)
-			window.yaxissauce = yaxisLib
 		}
 	}, [library, account, chainId])
 

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { Ticker } from '../contexts/Prices/utils'
 import { useWeb3React } from '@web3-react/core'
 
 import crv3 from '../assets/img/currencies/3crv.svg'
@@ -20,7 +20,7 @@ export interface Currency {
 	tokenId?: string
 	icon: any
 	decimals: number
-	priceMapKey?: string
+	priceMapKey?: Ticker
 }
 
 export const DAI: Currency = {
@@ -51,7 +51,7 @@ export const ETH: Currency = {
 	tokenId: 'eth',
 	icon: eth,
 	decimals: 18,
-	priceMapKey: 'ethereum',
+	priceMapKey: 'ETH',
 }
 
 export const YAX = (): Currency => {
