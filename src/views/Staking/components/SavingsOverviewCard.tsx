@@ -22,7 +22,7 @@ import info from '../../../assets/img/info.svg'
 
 const { Text } = Typography
 
-export default function () {
+export default function SavingsOverviewCard() {
 	// const [loading, setLoading] = useState(true)
 	// setTimeout(() => setLoading(false), 1000)
 	const languages = useContext(LanguageContext)

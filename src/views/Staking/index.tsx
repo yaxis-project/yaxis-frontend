@@ -25,12 +25,7 @@ const StyledCol = styled(Col)`
 
 
 const Staking: React.FC = () => {
-	const { stakedBalance } = useYaxisStaking(YAX())
-	const { YAX: YAXPrice } = usePriceMap()
-
-	const totalUSDBalance = new BigNumber(stakedBalance || '0')
-		.multipliedBy(YAXPrice || '0')
-		.toFixed(2)
+	const { stakedBalanceUSD } = useYaxisStaking(YAX())
 
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
@@ -45,7 +40,7 @@ const Staking: React.FC = () => {
 				mainTitle={phrases['Staking Account'][language]}
 				secondaryText={phrases['YAX Staking'][language]}
 				secondaryTextLink={address && etherscanUrl(`/address/${address}#code`)}
-				value={'$' + Number(totalUSDBalance).toLocaleString(
+				value={'$' + Number(stakedBalanceUSD).toLocaleString(
 					undefined, // leave undefined to use the browser's locale,
 					// or use a string like 'en-US' to override it.
 					{ minimumFractionDigits: 2 },

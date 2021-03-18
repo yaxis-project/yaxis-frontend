@@ -456,6 +456,7 @@ export const getCurveApyApi = async () => {
 		const { apy = {} } = await (
 			await fetch('https://www.curve.fi/raw-stats/apys.json')
 		).json()
+		console.log(apy)
 		return apy?.total && apy?.total['3pool']
 			? parseFloat(apy?.total['3pool'])
 			: 0
