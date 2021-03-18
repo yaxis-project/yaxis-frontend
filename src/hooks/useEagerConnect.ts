@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { injected } from '../connectors'
+import { isMobile } from 'react-device-detect'
 
 export function useEagerConnect() {
 	const { activate, active } = useWeb3React()
@@ -9,13 +10,11 @@ export function useEagerConnect() {
 	useEffect(() => {
 		injected.isAuthorized().then((isAuthorized) => {
 			if (isAuthorized) {
-				activate(injected, undefined, true).catch((e) => {
-					console.log(e)
+				activate(injected, undefined, true).catch(() => {
 					setTried(true)
 				})
 			} else {
-				// if (isMobile && window.ethereum) {
-				if (false) {
+				if (isMobile && (window as any).ethereum) {
 					activate(injected, undefined, true).catch(() => {
 						setTried(true)
 					})

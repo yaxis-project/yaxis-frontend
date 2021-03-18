@@ -132,7 +132,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
                 </Menu.ItemGroup>
             )}
         </StyledMenu>
-        , [activePools, account, handleUnlockClick, handleSignOutClick])
+        , [activePools, account, handleUnlockClick, handleSignOutClick, chainId])
     return (
         <Dropdown overlay={menu} trigger={['click']}>
             <Button size="large" type="default" ghost style={{ border: "none" }} icon={<MenuOutlined style={{ fontSize: '30px' }} />} />
