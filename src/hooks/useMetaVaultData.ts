@@ -9,10 +9,8 @@ import {
 	getYaxisMetaVaultConverter,
 	numberToDecimal,
 } from '../yaxis/utils'
-import useBlock from './useBlock'
 import { useWeb3React } from '@web3-react/core'
-import { provider } from 'web3-core'
-import useYaxis from './useYaxis'
+import useGlobal from './useGlobal'
 import useMetaVault from './useMetaVault'
 import { getApy } from '../utils/number'
 import { Currencies } from '../utils/currencies'
@@ -142,9 +140,9 @@ function useMetaVaultData(id: string): IHookReturn {
 		vaultWithdrawFee,
 		strategy,
 	} = useMetaVault()
-	const yaxis = useYaxis()
-	const block = useBlock()
+	const { yaxis, block } = useGlobal()
 	const { YAX: yaxPrice, Cure3Crv: cure3CrvPrice } = usePriceMap()
+
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<boolean>(false)
 	const [errorMsg, setErrorMsg] = useState<string | undefined>()

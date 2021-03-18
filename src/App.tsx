@@ -7,7 +7,7 @@ import ModalsProvider from './contexts/Modals'
 import LanguageProvider from './contexts/Language'
 import TransactionProvider from './contexts/Transactions'
 import YaxisProvider from './contexts/YaxisProvider'
-import { PriceMapContextComponent } from './contexts/PriceMapContext'
+import PricesProvider from './contexts/Prices/Prices'
 
 import theme from './theme'
 import Home from './views/Home'
@@ -68,7 +68,7 @@ const Routes: React.FC = () => {
 const Providers: React.FC = ({ children }) =>
 	<Web3ReactProvider getLibrary={getLibrary}>
 		<ThemeProvider theme={theme}>
-			<PriceMapContextComponent>
+			<PricesProvider>
 				<YaxisProvider>
 					<LanguageProvider>
 						<TransactionProvider>
@@ -80,7 +80,7 @@ const Providers: React.FC = ({ children }) =>
 						</TransactionProvider>
 					</LanguageProvider >
 				</YaxisProvider >
-			</PriceMapContextComponent >
+			</PricesProvider >
 		</ThemeProvider >
 	</Web3ReactProvider >
 
