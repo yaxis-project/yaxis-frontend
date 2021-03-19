@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { currentConfig } from '../yaxis/configs'
 import useTokenBalances from './useTokenBalances'
+import useReturns from './useReturns'
 import useAllowances from './useAllowances'
 import BigNumber from 'bignumber.js'
 import {
@@ -113,6 +114,11 @@ interface IHookReturn {
 	onFetchMetaVaultData: () => void
 	isEstimating: boolean
 	callEstimateWithdrawals: (shares: string) => void
+	returns: {
+		metaVault: { USD: BigNumber; YAX: BigNumber }
+		staking: { YAX: BigNumber }
+		fetched: boolean
+	}
 }
 
 export interface MetaVaultData {
@@ -142,6 +148,7 @@ function useMetaVaultData(id: string): IHookReturn {
 	} = useMetaVault()
 	const { yaxis, block } = useGlobal()
 	const { YAX: yaxPrice, Cure3Crv: cure3CrvPrice } = usePriceMap()
+	const returns = useReturns()
 
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<boolean>(false)
@@ -488,6 +495,7 @@ function useMetaVaultData(id: string): IHookReturn {
 		onFetchMetaVaultData: fetchMetaVaultData,
 		isEstimating,
 		callEstimateWithdrawals,
+		returns,
 	}
 }
 

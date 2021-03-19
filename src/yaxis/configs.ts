@@ -19,7 +19,7 @@ export const configs: Record<number, Config> = {
 			dai: '0x59Dd2C19F322f7457C34C73023cC7dA1fde4063d',
 			usdt: '0x3631E53e320F072e53397Ab7717b4C4F90fd2183',
 			threeCrv: '0xFe2517Ff8E95876EE29aD9f91Ee31fB5Bd1dc2a3',
-			metaVaultOpenTime: 0,
+			metaVaultOpenTime: 1604167200000,
 		},
 		staking: {
 			openTime: 0,
