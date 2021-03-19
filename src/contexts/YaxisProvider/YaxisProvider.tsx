@@ -49,6 +49,7 @@ const YaxisProvider: React.FC = ({ children }) => {
 			})
 			setYaxis(yaxisLib)
 		}
+		console.log(3)
 	}, [library, account, chainId])
 
 	return (
