@@ -74,9 +74,9 @@ export default function SavingsOverviewCard() {
 		.times(metaVaultData?.tvl || 0)
 	const rate = pricePerFullShare.toNumber()
 	let metavaultAPY = new BigNumber(annualProfits).dividedBy(totalValueLocked || 1).multipliedBy(100)
-	let yaxAPY = new BigNumber(stakingData?.incentiveApy || 0)
+	let yaxAPY = stakingData?.incentiveApy ? new BigNumber(stakingData?.incentiveApy)
 		.div(pricePerFullShare)
-		.div(100);
+		.div(100) : new BigNumber(0)
 	const totalApy = yaxAPY.plus(metavaultAPY)
 
 	return (
