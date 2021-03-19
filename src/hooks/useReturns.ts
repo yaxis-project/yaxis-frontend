@@ -7,14 +7,16 @@ import BN from 'bignumber.js'
 
 const mvCurrs = ['DAI', 'USDT', 'USDC', 'CRV3']
 
+const defaultState = {
+	metaVault: { USD: new BN(0), YAX: new BN(0) },
+	staking: { YAX: new BN(0) },
+	fetched: false,
+}
+
 const useReturns = () => {
 	const { account, chainId } = useWeb3React()
 	const { block } = useGlobal()
-	const [state, setState] = useState({
-		metaVault: { USD: new BN(0), YAX: new BN(0) },
-		staking: { YAX: new BN(0) },
-		fetched: false,
-	})
+	const [state, setState] = useState(defaultState)
 	const config = useMemo(() => currentConfig(chainId), [chainId])
 
 	const getState = useCallback(async () => {
@@ -134,8 +136,9 @@ const useReturns = () => {
 	])
 
 	useEffect(() => {
-		getState()
-	}, [getState, block])
+		if (account) getState()
+		else setState(defaultState)
+	}, [getState, block, account])
 
 	return state
 }
