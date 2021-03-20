@@ -41,7 +41,7 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 					gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
 				>
 					{wallets.map((config, i) => {
-						return <StyledWalletCard key={`${i}-${config.name}`} className="gutter-row" span={12}>
+						return <StyledWalletCard key={`${i}-${config.name}`} className="gutter-row" span={wallets.length ? 24 * ((100 / wallets.length) * 0.01) : 24}>
 							<WalletCard config={config} />
 						</StyledWalletCard>
 					})}

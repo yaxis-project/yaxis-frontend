@@ -4,6 +4,7 @@ import Button from '../../Button'
 import CardIcon from '../../CardIcon'
 import CardTitle from '../../CardTitle'
 import { WalletInfo } from '../../../connectors'
+import { setRecentProvider } from '../../../connectors/utils'
 
 
 interface WalletCardProps {
@@ -26,6 +27,7 @@ const WalletCard: React.FC<WalletCardProps> = ({ config }) => {
 				if (!config.connector) return window.open(config.href, '_blank');
 				localStorage.removeItem('signOut')
 				await activate(config.connector)
+				setRecentProvider(config.name.toUpperCase())
 			}}
 				text={config.connector ? "Connect" : "Install"}
 			/>
