@@ -36,15 +36,14 @@ const useApproveStaking = () => {
 			notification.info({
 				message: 'Please approve YAX staking amount.',
 			})
-
 			const tx = await approve(lpContract, contract, account)
 			setLoading(false)
 			return tx
 		} catch (e) {
 			setError(e.message)
 			notification.error({
-				description: e.message,
 				message: `Unable to approve YAX for staking:`,
+				description: e.message,
 			})
 			setLoading(false)
 			return false

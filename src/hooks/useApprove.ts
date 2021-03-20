@@ -41,8 +41,8 @@ const useApprove = (contract: Contract, address: string, token?: string) => {
 		} catch (e) {
 			setError(e.message)
 			notification.error({
-				description: e.message,
 				message: `Unable to approve ${token} for staking:`,
+				description: e.message,
 			})
 			setLoading(false)
 			return false
