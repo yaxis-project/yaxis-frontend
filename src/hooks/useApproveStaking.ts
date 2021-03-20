@@ -41,7 +41,7 @@ const useApproveStaking = () => {
 			setLoading(false)
 			return tx
 		} catch (e) {
-			setError(e)
+			setError(e.message)
 			notification.error({
 				description: e.message,
 				message: `Unable to approve YAX for staking:`,

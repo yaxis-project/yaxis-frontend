@@ -38,13 +38,13 @@ const useAllEarnings = (): {
 				balances: balances,
 				totalAmount: sumEarning,
 			})
-		} catch {}
+		} catch { }
 	}, [account, yaxisChefContract, farms])
 
 	useEffect(() => {
 		try {
 			if (account && yaxisChefContract && yaxis) fetchAllBalances()
-		} catch {}
+		} catch { }
 	}, [account, block, yaxisChefContract, setBalance, yaxis, fetchAllBalances])
 
 	return allEarning
