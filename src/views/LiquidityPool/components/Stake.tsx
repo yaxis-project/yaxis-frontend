@@ -1,13 +1,16 @@
-import React, { useCallback, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { Contract } from 'web3-eth-contract'
-import { Row, Col, Card, Button, Divider } from 'antd'
+import { Row, Col, Card, Divider } from 'antd'
+import Button from '../../../components/Button'
+import Tooltip from '../../../components/Tooltip'
 import Label from '../../../components/Label'
 import Value from '../../../components/Value'
 import useAllowance from '../../../hooks/useAllowance'
 import useApprove from '../../../hooks/useApprove'
 import useModal from '../../../hooks/useModal'
 import useStake from '../../../hooks/useStake'
+import useGlobal from '../../../hooks/useGlobal'
 import useStakedBalance from '../../../hooks/useStakedBalance'
 import useTokenBalance from '../../../hooks/useTokenBalance'
 import useUnstake from '../../../hooks/useUnstake'
@@ -15,7 +18,8 @@ import { getBalanceNumber } from '../../../utils/formatBalance'
 import DepositModal from './DepositModal'
 import WithdrawModal from './WithdrawModal'
 import { useWeb3React } from '@web3-react/core'
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js'
+import { getYaxisChefContract } from '../../../yaxis/utils'
 
 interface StakeProps {
     lpContract: Contract
@@ -26,10 +30,18 @@ interface StakeProps {
 const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
     const { account } = useWeb3React()
 
-    const [requestedApproval, setRequestedApproval] = useState(false)
-
     const allowance = useAllowance(lpContract)
-    const { onApprove } = useApprove(lpContract)
+    const { yaxis } = useGlobal()
+
+    const {
+        onApprove,
+        loading: approveLoading,
+        error: approveError,
+    } = useApprove(
+        lpContract,
+        getYaxisChefContract(yaxis)?.options?.address,
+        tokenName,
+    )
 
     const tokenBalance = useTokenBalance(lpContract.options.address)
     const stakedBalance = useStakedBalance(pid)
@@ -53,24 +65,8 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
         />,
     )
 
-    const handleApprove = useCallback(async () => {
-        try {
-            setRequestedApproval(true)
-            const txHash = await onApprove()
-            // user rejected tx or didn't go thru
-            if (!txHash) {
-                setRequestedApproval(false)
-            }
-        } catch (e) {
-            console.log(e)
-        }
-    }, [onApprove, setRequestedApproval])
-
     return (
-        <Card
-            className="liquidity-card"
-            title={<strong>Staking</strong>}
-        >
+        <Card className="liquidity-card" title={<strong>Staking</strong>}>
             <Row>
                 <CardContents>
                     <Value value={getBalanceNumber(stakedBalance)} />
@@ -78,37 +74,42 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
                     <Divider />
                     {!allowance.toNumber() ? (
                         <Col span={12}>
-                            <Button
-                                className="staking-btn"
-                                block
-                                type="primary"
-                                disabled={!account || requestedApproval}
-                                onClick={handleApprove}
-                            >
-                                Approve {tokenName}
-                            </Button>
+                            <Tooltip title={approveError}>
+                                <Button
+                                    disabled={!account}
+                                    onClick={onApprove}
+                                    loading={approveLoading}
+                                >
+                                    Approve {tokenName}
+                                </Button>
+                            </Tooltip>
                         </Col>
                     ) : (
-                        <Row gutter={18} style={{ width: "100%", justifyContent: "space-between", padding: 0 }}>
+                        <Row
+                            gutter={18}
+                            style={{
+                                width: '100%',
+                                justifyContent: 'space-between',
+                                padding: 0,
+                            }}
+                        >
                             <Col span={12}>
                                 <Button
-                                    className="staking-btn"
                                     disabled={tokenBalance.eq(new BigNumber(0))}
                                     onClick={onPresentDeposit}
-                                    block
                                 >
                                     Stake
-                                    </Button>
+								</Button>
                             </Col>
                             <Col span={12}>
                                 <Button
-                                    className="staking-btn"
-                                    disabled={stakedBalance.eq(new BigNumber(0))}
+                                    disabled={stakedBalance.eq(
+                                        new BigNumber(0),
+                                    )}
                                     onClick={onPresentWithdraw}
-                                    block
                                 >
                                     Unstake
-                                    </Button>
+								</Button>
                             </Col>
                         </Row>
                     )}
@@ -119,11 +120,11 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
 }
 
 const CardContents = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: space-between;
+	align-items: center;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: space-between;
 `
 
 export default Stake
