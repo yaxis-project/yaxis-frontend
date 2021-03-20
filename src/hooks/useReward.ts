@@ -1,24 +1,38 @@
-import { useCallback, useMemo } from 'react'
-
-import useYaxis from './useYaxis'
+import { useCallback, useMemo, useState } from 'react'
+import { notification } from 'antd'
+import useGlobal from './useGlobal'
 import { useWeb3React } from '@web3-react/core'
 
 import { harvest, getYaxisChefContract } from '../yaxis/utils'
 
-const useReward = (pid: number) => {
+const useReward = (pid: number, tokenName?: string) => {
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState(null)
+
 	const { account } = useWeb3React()
-	const yaxis = useYaxis()
+	const { yaxis } = useGlobal()
 	const yaxisChefContract = useMemo(() => getYaxisChefContract(yaxis), [
 		yaxis,
 	])
 
 	const handleReward = useCallback(async () => {
-		const txHash = await harvest(yaxisChefContract, pid, account)
-		console.log(txHash)
-		return txHash
-	}, [account, pid, yaxisChefContract])
+		try {
+			setLoading(true)
+			const tx = await harvest(yaxisChefContract, pid, account)
+			setLoading(false)
+			return tx
+		} catch (e) {
+			setError(e.message)
+			notification.error({
+				message: `Unable to claim ${tokenName} reward:`,
+				description: e.message,
+			})
+			setLoading(false)
+			return false
+		}
+	}, [account, pid, yaxisChefContract, tokenName])
 
-	return { onReward: handleReward }
+	return { loading, error, onReward: handleReward }
 }
 
 export default useReward
