@@ -35,7 +35,7 @@ const useStaking = () => {
 	const onClaimReward = useCallback(async () => {
 		setClaiming(true)
 		try {
-			await stakingContract.methods
+			await stakingContract?.methods
 				.leave('0')
 				.send({ from: account })
 				.on('transactionHash', (tx: any) => {
@@ -46,12 +46,12 @@ const useStaking = () => {
 			console.error(e)
 		}
 		setClaiming(false)
-	}, [account, stakingContract.methods])
+	}, [account, stakingContract])
 
 	const onExit = useCallback(async () => {
 		setExiting(true)
 		try {
-			await stakingContract.methods
+			await stakingContract?.methods
 				.exit()
 				.send({ from: account })
 				.on('transactionHash', (tx: any) => {
@@ -62,7 +62,7 @@ const useStaking = () => {
 			console.error(e)
 		}
 		setExiting(false)
-	}, [account, stakingContract.methods])
+	}, [account, stakingContract])
 
 	return {
 		stakingData,
