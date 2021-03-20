@@ -1,11 +1,10 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
-import { Row, Col, Typography, Button, Tooltip } from 'antd'
+import { Row, Col, Typography, Button, Tooltip, notification } from 'antd'
 import Value from '../../../components/Value'
 // import useAccountReturns from '../../../hooks/useAccountReturns'
 import useMetaVault from '../../../hooks/useMetaVault';
 import useMetaVaultData from '../../../hooks/useMetaVaultData';
-
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import {
@@ -42,6 +41,10 @@ const InvestmentDetailOverview: React.FC = () => {
 			onFetchMetaVaultData()
 		} catch (e) {
 			console.error(e)
+			notification.error({
+				message: `Error claiming rewards:`,
+				description: e.message,
+			})
 		}
 	}
 
