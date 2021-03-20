@@ -8,13 +8,13 @@ import { useWeb3React } from '@web3-react/core'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import Button from '../../../components/Button'
+import Tooltip from '../../../components/Tooltip'
 import Input from '../../../components/Input'
-import { Row, Col, Typography, Card, Form, notification, Tooltip } from 'antd'
+import { Row, Col, Typography, Card, Form, notification } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import useApproveStaking from '../../../hooks/useApproveStaking'
 import useAllowanceStaking from '../../../hooks/useAllowanceStaking'
-import { isMobile } from 'react-device-detect'
 const { Text } = Typography
 
 /**
@@ -172,10 +172,7 @@ export default function StakingCard() {
 					</Form.Item>
 					{!allowance.toNumber() ? (
 						<Tooltip
-							placement="bottom"
 							title={approveError}
-							defaultVisible={isMobile}
-							trigger={isMobile ? 'click' : 'hover'}
 						>
 							<Button
 								disabled={!account}
