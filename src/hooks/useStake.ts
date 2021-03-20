@@ -17,6 +17,7 @@ const useStake = (pid: number, tokenName?: string) => {
 			try {
 				setLoading(true)
 				const tx = await stake(getYaxisChefContract(yaxis), pid, amount, account)
+				setLoading(false)
 				return tx
 			} catch (e) {
 				setError(e.message)

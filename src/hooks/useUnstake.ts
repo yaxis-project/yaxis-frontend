@@ -25,6 +25,7 @@ const useUnstake = (pid: number, tokenName?: string) => {
 					amount,
 					account,
 				)
+				setLoading(false)
 				return tx
 			} catch (e) {
 				setError(e.message)
