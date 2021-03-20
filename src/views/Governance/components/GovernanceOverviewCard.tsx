@@ -10,7 +10,7 @@ import {
 
 const { Text, Title, Link } = Typography
 
-export default function () {
+export default function GovernanceOverviewCard() {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 

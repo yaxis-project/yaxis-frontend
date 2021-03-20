@@ -198,7 +198,7 @@ const useYAxisAPY = () => {
 		if (yaxis?.web3 && priceMap.initialized) {
 			getYAxisAPY(priceMap)
 		}
-	}, [getYAxisAPY, yaxis, priceMap.initialized])
+	}, [getYAxisAPY, yaxis, priceMap])
 
 	return {
 		yAxisAPY,

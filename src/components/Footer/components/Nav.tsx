@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
-import { NavLink } from 'react-router-dom'
 import blog from '../../../assets/img/icons/ghost.svg'
 import discord from '../../../assets/img/icons/discord.svg'
 import github from '../../../assets/img/icons/github.svg'
@@ -95,14 +94,14 @@ const StyledCol3 = styled(StyledCol)`
 	}
 `
 
-const StyledNavLink = styled(NavLink)`
-	display: inline-block;
-	color: ${(props) => props.theme.color.primary.main};
-	padding-left: ${(props) => props.theme.spacing[3]}px;
-	padding-right: ${(props) => props.theme.spacing[3]}px;
-	text-decoration: none;
-	font-size: 18px;
-`
+// const StyledNavLink = styled(NavLink)`
+// 	display: inline-block;
+// 	color: ${(props) => props.theme.color.primary.main};
+// 	padding-left: ${(props) => props.theme.spacing[3]}px;
+// 	padding-right: ${(props) => props.theme.spacing[3]}px;
+// 	text-decoration: none;
+// 	font-size: 18px;
+// `
 
 const StyledLink = styled.a`
 	display: inline-block;

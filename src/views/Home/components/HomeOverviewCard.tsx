@@ -62,7 +62,7 @@ export default function HomeOverviewCard() {
 	}, [returns, investingBalance, stakedBalance])
 
 	return (
-		<DetailOverviewCard title="Your Return">
+		<DetailOverviewCard title={t("Your Return")}>
 			<DetailOverviewCardRow inline>
 				<Text>
 					<strong>Total</strong>

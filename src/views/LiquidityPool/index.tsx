@@ -9,7 +9,7 @@ import './index.less'
 import useLPContractData from '../../hooks/useLPContractData'
 import { numberToFloat } from '../../yaxis/utils'
 import { StakePool } from '../../yaxis/type'
-import Harvest from "./components/Harvest"
+// import Harvest from "./components/Harvest"
 import Stake from "./components/Stake"
 
 type Props = {

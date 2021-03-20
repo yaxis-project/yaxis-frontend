@@ -13,19 +13,19 @@ interface AccountOverviewCardProps {
 	time: string
 }
 
-const StyledRiskBadge = styled.div`
-	background: #bca52e;
-	opacity: 0.6;
-	color: white;
-	display: inline-block;
-	border-radius: 4px;
-	padding: 3px 4px;
-	font-size: 12px;
-	margin-left: 16px;
-	@media only screen and (max-width: 575px) {
-		margin-left: 0;
-	}
-`
+// const StyledRiskBadge = styled.div`
+// 	background: #bca52e;
+// 	opacity: 0.6;
+// 	color: white;
+// 	display: inline-block;
+// 	border-radius: 4px;
+// 	padding: 3px 4px;
+// 	font-size: 12px;
+// 	margin-left: 16px;
+// 	@media only screen and (max-width: 575px) {
+// 		margin-left: 0;
+// 	}
+// `
 const StyledImage = styled.img`
 @media only screen and (max-width: 575px) {
 	margin-left: 50px;

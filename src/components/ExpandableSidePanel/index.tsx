@@ -35,12 +35,12 @@ export const ExpandableRow = (props: ExpandableRowProps) => {
 	)
 }
 
-interface ExpandableSidePanel {
+interface ExpandableSidePanelProps {
 	children: React.ReactNode
 	header: string
 }
 
-export const ExpandableSidePanel = (props: ExpandableSidePanel) => {
+export const ExpandableSidePanel = (props: ExpandableSidePanelProps) => {
 	const { header, children } = props
 	return (
 		<>

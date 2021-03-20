@@ -2,16 +2,12 @@ import React from 'react'
 import { Typography, Card } from 'antd'
 import './index.less'
 
-const { Text, Title } = Typography
+const { Title } = Typography
 
 const gridStyle = {
 	width: '100%',
 }
 
-const gridStyleLast = {
-	width: '100%',
-	boxShadow: 'none',
-}
 
 interface DetailOverviewCardRowProps {
 	children: React.ReactNode

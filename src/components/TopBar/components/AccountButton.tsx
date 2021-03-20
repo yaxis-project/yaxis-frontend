@@ -81,25 +81,25 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 	)
 }
 
-const StyledCol = styled(Col)`
-	color: white;
-	padding: 8px 12px;
-	border: 1px solid white;
-	font-size: 1em;
-	line-height: 1em;
-	border-radius: 12px;
-	font-weight: 700;
-	margin-right: 18px;
-	> span:first-child {
-		margin-right: 15px;
-	}
+// const StyledCol = styled(Col)`
+// 	color: white;
+// 	padding: 8px 12px;
+// 	border: 1px solid white;
+// 	font-size: 1em;
+// 	line-height: 1em;
+// 	border-radius: 12px;
+// 	font-weight: 700;
+// 	margin-right: 18px;
+// 	> span:first-child {
+// 		margin-right: 15px;
+// 	}
 
-	@media only screen and (max-width: 1100px) {
-		> span:first-child {
-			margin-right: 5px;
-		}
-	}
-`
+// 	@media only screen and (max-width: 1100px) {
+// 		> span:first-child {
+// 			margin-right: 5px;
+// 		}
+// 	}
+// `
 
 const StyledButton = styled(Button)`
 	font-weight: bold;

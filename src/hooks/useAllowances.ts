@@ -42,7 +42,7 @@ const useAllowances = (
 		if (account && library && yaxis && yaxis.web3) {
 			onUpdateAllowances()
 		}
-	}, [account, library, yaxis, block])
+	}, [account, library, yaxis, block, onUpdateAllowances])
 
 	return [allowances, onUpdateAllowances]
 }

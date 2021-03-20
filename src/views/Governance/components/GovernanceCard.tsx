@@ -74,7 +74,7 @@ const voteButtonStyle = {
 	borderColor: theme.color.primary.main,
 }
 
-export default function () {
+export default function GovernanceCard() {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 	const gutter = 5

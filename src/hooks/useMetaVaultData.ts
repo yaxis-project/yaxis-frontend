@@ -92,10 +92,6 @@ interface ICurrencyResponse {
 	}
 }
 
-interface IResponseData {
-	[key: string]: ICurrencyResponse
-}
-
 interface IHookReturn {
 	loading: boolean
 	error: boolean
@@ -422,7 +418,7 @@ function useMetaVaultData(id: string): IHookReturn {
 								.times(1 - vaultWithdrawFee)
 								.times(1 - pickleWithdrawFee)
 							let isCrv =
-								addr == currentConfig(chainId).vault.threeCrv
+								addr === currentConfig(chainId).vault.threeCrv
 							const value = isCrv
 								? r
 								: await contract.methods

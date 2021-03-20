@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useState, useMemo } from 'react'
-import { provider } from 'web3-core'
-
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 

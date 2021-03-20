@@ -23,5 +23,5 @@ export default function useComputeAnnualProfits(): string {
 			.minus(1)
 			.times(metaVaultData?.tvl || 0)
 			.toFixed()
-	}, [yAxisAPY, yAxisAPY['3crv'], metaVaultData])
+	}, [yAxisAPY, metaVaultData])
 }
