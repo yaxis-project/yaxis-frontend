@@ -12,7 +12,7 @@ import useMetaVault from '../../../hooks/useMetaVault'
 /**
  * Generates investing vault stats card for the current signed in user.
  */
-export default function () {
+export default function VaultStatsCard() {
 	const { metavaultTvl } = useTVL()
 	const { metaVaultData } = useMetaVaultData('v1')
 	const { strategy } = useMetaVault()

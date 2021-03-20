@@ -12,7 +12,7 @@ import useComputeTVL from '../../../hooks/useComputeTVL'
 import useMetaVault from '../../../hooks/useMetaVault'
 import BigNumber from 'bignumber.js'
 
-export default function () {
+export default function VaultStatsCard() {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 	const t = (s: string) => phrases[s][language]

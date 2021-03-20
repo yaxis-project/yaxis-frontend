@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import { getXSushiStakingContract } from '../yaxis/utils'
 import { useWeb3React } from '@web3-react/core'
 import useYaxis from './useYaxis'
@@ -6,7 +6,9 @@ import useYaxis from './useYaxis'
 const useStaking = () => {
 	const { account } = useWeb3React()
 	const yaxis = useYaxis()
-	const stakingContract = getXSushiStakingContract(yaxis)
+	const stakingContract = useMemo(() => getXSushiStakingContract(yaxis), [
+		yaxis,
+	])
 
 	const [stakingData, setStakingData] = useState<any>({})
 	const [isClaiming, setClaiming] = useState<boolean>(false)
@@ -44,7 +46,7 @@ const useStaking = () => {
 			console.error(e)
 		}
 		setClaiming(false)
-	}, [account, yaxis])
+	}, [account, stakingContract.methods])
 
 	const onExit = useCallback(async () => {
 		setExiting(true)
@@ -60,7 +62,7 @@ const useStaking = () => {
 			console.error(e)
 		}
 		setExiting(false)
-	}, [account, yaxis])
+	}, [account, stakingContract.methods])
 
 	return {
 		stakingData,

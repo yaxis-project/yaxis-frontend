@@ -1,6 +1,8 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { Row, Col, Button } from "antd"
 import { LanguageContext } from '../../../contexts/Language'
+import phrases from './translations'
+
 import useTVL from '../../../hooks/useComputeTVL'
 import useTotalSupply from '../../../hooks/useTotalSupply'
 import BigNumber from 'bignumber.js'
@@ -42,7 +44,7 @@ export default function HomeExpandableOverview() {
 
 	return (
 		<>
-			<ExpandableSidePanel header="yAxis Overview" key="1">
+			<ExpandableSidePanel header={phrases["yAxis Overview"][language]} key="1">
 				<ExpandableRow
 					main={
 						<Tooltip

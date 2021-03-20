@@ -1,9 +1,8 @@
-import React, { useState, useContext, useMemo, useEffect } from 'react'
+import { useState, useContext, useMemo, useEffect } from 'react'
 import { Typography, Tooltip, Row } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import { YAX } from '../../../utils/currencies'
 import Value from '../../../components/Value'
-import useAccountReturns from '../../../hooks/useAccountReturns'
 import useYaxisStaking from '../../../hooks/useYaxisStaking'
 import phrases from './translations'
 import {
@@ -30,13 +29,13 @@ export default function SavingsOverviewCard() {
 
 	const t = (s: string) => phrases[s][language]
 
-	const { yaxReturns, yaxReturnsUSD } = useAccountReturns()
+	// const { yaxReturns, yaxReturnsUSD } = useAccountReturns()
 	const { stakedBalance } = useYaxisStaking(YAX())
 	const { yAxisAPY } = useYAxisAPY()
 
 	const [totalSupply, setTotalStaking] = useState<BigNumber>(new BigNumber(0))
 	const [pricePerFullShare, setPricePerFullShare] = useState<BigNumber>(new BigNumber(0))
-	const { stakingData, isExiting, onExit } = useStaking()
+	const { stakingData } = useStaking()
 	const yaxis = useYaxis()
 	const block = useBlock()
 	useEffect(() => {
@@ -72,7 +71,7 @@ export default function SavingsOverviewCard() {
 		.pow(365)
 		.minus(1)
 		.times(metaVaultData?.tvl || 0)
-	const rate = pricePerFullShare.toNumber()
+	// const rate = pricePerFullShare.toNumber()
 	let metavaultAPY = new BigNumber(annualProfits).dividedBy(totalValueLocked || 1).multipliedBy(100)
 	let yaxAPY = stakingData?.incentiveApy ? new BigNumber(stakingData?.incentiveApy)
 		.div(pricePerFullShare)

@@ -1,5 +1,3 @@
-import React from 'react'
-import styled from 'styled-components'
 import { currentConfig } from '../../../yaxis/configs'
 import { StakePool } from "../../../yaxis/type"
 import { Row, Col, Typography, Collapse } from 'antd'
@@ -17,18 +15,18 @@ interface AdvancedNavigationRowProps {
 	to: string
 }
 
-const StyledRiskBadge = styled.div`
-	background: #be3333;
-	opacity: 0.6;
-	color: white;
-	display: inline-block;
-	border-radius: 4px;
-	padding: 4px;
-	font-size: 10px;
-	line-height: 10px;
-	margin-left: 10px;
-	height: 18px;
-`
+// const StyledRiskBadge = styled.div`
+// 	background: #be3333;
+// 	opacity: 0.6;
+// 	color: white;
+// 	display: inline-block;
+// 	border-radius: 4px;
+// 	padding: 4px;
+// 	font-size: 10px;
+// 	line-height: 10px;
+// 	margin-left: 10px;
+// 	height: 18px;
+// `
 
 /**
  * Generates a row component styled with icons and a given linke.

@@ -29,7 +29,7 @@ const useAllowance = (lpContract: Contract) => {
 		}
 		let refreshInterval = setInterval(fetchAllowance, 1000)
 		return () => clearInterval(refreshInterval)
-	}, [account, yaxisChefContract, lpContract])
+	}, [account, yaxisChefContract, lpContract, fetchAllowance])
 
 	return allowance
 }

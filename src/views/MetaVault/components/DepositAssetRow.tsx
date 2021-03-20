@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { find } from 'lodash'
 import { Currency } from '../../../utils/currencies'
 import usePriceMap from '../../../hooks/usePriceMap'

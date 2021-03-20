@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { getYaxisChefContract, numberToFloat } from '../yaxis/utils'
 import useYaxis from './useYaxis'
@@ -9,7 +9,9 @@ const useRewardPerBlock = () => {
 	const [rewardPerBlock, setRewardPerBlock] = useState(0)
 	const { account } = useWeb3React()
 	const yaxis = useYaxis()
-	const yaxisChefContract = getYaxisChefContract(yaxis)
+	const yaxisChefContract = useMemo(() => getYaxisChefContract(yaxis), [
+		yaxis,
+	])
 	const block = useBlock()
 
 	const fetRewardPerBlock = useCallback(async () => {
@@ -24,7 +26,7 @@ const useRewardPerBlock = () => {
 			18,
 		)
 		setRewardPerBlock(rate)
-	}, [block, account, yaxisChefContract, yaxis])
+	}, [block, yaxisChefContract])
 
 	useEffect(() => {
 		if (
@@ -32,11 +34,20 @@ const useRewardPerBlock = () => {
 			yaxisChefContract &&
 			yaxis &&
 			block > 0 &&
-			rewardPerBlock == 0
+			rewardPerBlock === 0
 		) {
+			// Possible memory leak?
 			fetRewardPerBlock()
 		}
-	}, [account, block, yaxisChefContract, setRewardPerBlock, yaxis])
+	}, [
+		account,
+		block,
+		yaxisChefContract,
+		setRewardPerBlock,
+		yaxis,
+		fetRewardPerBlock,
+		rewardPerBlock,
+	])
 
 	return rewardPerBlock
 }

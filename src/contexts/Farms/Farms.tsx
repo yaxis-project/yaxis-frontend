@@ -14,7 +14,7 @@ import usePriceMap from '../../hooks/usePriceMap'
 import { StakedValue } from './types'
 
 const Farms: React.FC = ({ children }) => {
-	const [unharvested, setUnharvested] = useState(0)
+	const [unharvested] = useState(0)
 
 	const yaxis = useYaxis()
 	const farms = useMemo(() => getFarms(yaxis), [yaxis])

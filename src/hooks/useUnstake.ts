@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import useYaxis from './useYaxis'
 import { useWeb3React } from '@web3-react/core'
@@ -8,7 +8,9 @@ import { unstake, getYaxisChefContract } from '../yaxis/utils'
 const useUnstake = (pid: number) => {
 	const { account } = useWeb3React()
 	const yaxis = useYaxis()
-	const yaxisChefContract = getYaxisChefContract(yaxis)
+	const yaxisChefContract = useMemo(() => getYaxisChefContract(yaxis), [
+		yaxis,
+	])
 
 	const handleUnstake = useCallback(
 		async (amount: string) => {
@@ -20,7 +22,7 @@ const useUnstake = (pid: number) => {
 			)
 			console.log(txHash)
 		},
-		[account, pid, yaxis],
+		[account, pid, yaxisChefContract],
 	)
 
 	return { onUnstake: handleUnstake }

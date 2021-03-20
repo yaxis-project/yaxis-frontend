@@ -8,7 +8,7 @@ const NetworkCheck: React.FC = ({ children }) => {
     const wrongWCNetwork = useMemo(() => {
         const wcNetwork = connector?.['walletConnectProvider']?.['chainId']
         return wcNetwork && !WALLET_CONNECT_SUPPORTED_NETWORKS.includes(wcNetwork)
-    }, [connector, chainId])
+    }, [connector])
     const visible = useMemo(() => (active && !SUPPORTED_NETWORKS.includes(chainId)) || wrongWCNetwork, [active, chainId, wrongWCNetwork])
 
     return <>
@@ -22,8 +22,7 @@ const NetworkCheck: React.FC = ({ children }) => {
             {wrongWCNetwork ?
                 <>
                     <div>Wallet Connect only supports Ethereum mainnet. Please switch networks.</div>
-                    <div onClick={() => { }}>Reset</div>
-                    <div>{chainId}</div>
+                    <div>You are currently connected to {chainId}</div>
                 </>
                 :
                 <>
