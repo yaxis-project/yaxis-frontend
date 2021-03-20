@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo } from 'react'
+import { useContext, useState, useMemo, useCallback } from 'react'
 import { YAX } from '../../../utils/currencies'
 import useEnter from '../../../hooks/useEnter'
 import useLeave from '../../../hooks/useLeave'
@@ -7,22 +7,22 @@ import Value from '../../../components/Value'
 import { useWeb3React } from '@web3-react/core'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
-
+import Button from "../../../components/Button"
+import Input from "../../../components/Input"
 import {
 	Row,
 	Col,
 	Typography,
 	Card,
-	Button,
-	Input,
 	Form,
 	notification,
+	Tooltip
 } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import useApproveStaking from '../../../hooks/useApproveStaking'
 import useAllowanceStaking from '../../../hooks/useAllowanceStaking'
-
+import { isMobile } from 'react-device-detect'
 const { Text } = Typography
 
 /**
@@ -43,8 +43,7 @@ const TableHeader = (props: any) => (
 export default function StakingCard() {
 	const { account } = useWeb3React()
 	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
-	const t = (s: string) => phrases[s][language]
+	const t = useCallback((s: string) => phrases[s][languages?.state?.selected], [languages])
 	const { onEnter } = useEnter()
 	const { onLeave } = useLeave()
 	const { stakedBalance, walletBalance, rate, yaxBalance } = useYaxisStaking(
@@ -52,33 +51,22 @@ export default function StakingCard() {
 	)
 
 	const [loading, setLoading] = useState(false)
+	const [depositAmount, setDeposit] = useState<string>('')
 
-	const { onApprove } = useApproveStaking()
+
+	const { error: approveError, onApprove } = useApproveStaking()
 	const allowance = useAllowanceStaking()
 
-	const approveYAX = async () => {
-		try {
-			setLoading(true)
-			notification.info({
-				message: t('Please approve YAX staking amount.'),
-			})
-			const txHash = await onApprove()
-			if (!txHash) throw new Error('Approval transaction failed.')
-			setLoading(false)
-		} catch (err) {
-			notification.info({
-				message: t(
-					'An error occurred during YAX staking approval. Please try again.',
-				),
-			})
-			setLoading(false)
-		}
-	}
+	const approveYAX = useCallback(async () => {
+		setLoading(true)
+		await onApprove()
+		setLoading(false)
+	}, [onApprove])
 
 	/**
 	 * Computes
 	 */
-	const stakeYAX = async () => {
+	const stakeYAX = useCallback(async () => {
 		try {
 			setLoading(true)
 			notification.info({
@@ -96,7 +84,7 @@ export default function StakingCard() {
 			})
 			setLoading(false)
 		}
-	}
+	}, [depositAmount, onEnter, t])
 
 	const unstakeYAX = async () => {
 		try {
@@ -118,7 +106,6 @@ export default function StakingCard() {
 		}
 	}
 
-	const [depositAmount, setDeposit] = useState<string>('')
 	const updateDeposit = (value: string) => !isNaN(Number(value)) && setDeposit(value)
 
 	const errorDeposit = useMemo(
@@ -182,41 +169,24 @@ export default function StakingCard() {
 							min={"0"}
 							placeholder="0"
 							disabled={loading}
-							suffix={
-								<>
-									<Text type="secondary">
-										{YAX.name}
-									</Text>
-								&nbsp;
-								<Button
-										block
-										size="small"
-										onClick={maxDeposit}
-									>
-										MAX
-								</Button>
-								</>
-							}
+							suffix={YAX.name}
+							onClickMax={maxDeposit}
 						/>
 					</Form.Item>
 					{!allowance.toNumber() ? (
-						<Button
-							disabled={!account}
-							className="staking-btn"
-							onClick={approveYAX}
-							block
-							type="primary"
-							loading={loading}
-						>
-							{t('Approve')}
-						</Button>
+						<Tooltip placement="bottom" title={approveError} defaultVisible={isMobile}>
+							<Button
+								disabled={!account}
+								onClick={approveYAX}
+								loading={loading}
+							>
+								{t('Approve')}
+							</Button>
+						</Tooltip>
 					) : (
 						<Button
-							className="staking-btn"
 							disabled={depositDisabled}
 							onClick={stakeYAX}
-							block
-							type="primary"
 							loading={loading}
 						>
 							{t('Deposit')}
@@ -231,32 +201,16 @@ export default function StakingCard() {
 							min={"0"}
 							placeholder="0"
 							disabled={loading}
-							suffix={
-								<>
-									<Text type="secondary">
-										YAX
-									</Text>
-							&nbsp;
-							<Button
-										block
-										size="small"
-										onClick={maxWithdraw}
-									>
-										MAX
-							</Button>
-								</>
-							}
+							suffix="YAX"
+							onClickMax={maxWithdraw}
 						/>
 					</Form.Item>
 					<Button
-						className="staking-btn"
 						disabled={withdrawDisabled}
 						onClick={unstakeYAX}
-						block
-						type="primary"
 						loading={loading}
 					>
-						{phrases['Withdraw'][language]}
+						{t('Withdraw')}
 					</Button>
 				</Col>
 			</Row>
