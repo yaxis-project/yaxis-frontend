@@ -46,6 +46,7 @@ const useApproveStaking = () => {
 				description: e.message,
 				message: `Unable to approve YAX for staking:`,
 			})
+			setLoading(false)
 			return false
 		}
 	}, [account, lpContract, contract])
