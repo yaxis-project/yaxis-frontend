@@ -1,6 +1,6 @@
 import React from 'react'
 import { useWeb3React } from '@web3-react/core'
-import Button from '../../Button'
+import Button from '../../LegacyButton'
 import CardIcon from '../../CardIcon'
 import CardTitle from '../../CardTitle'
 import { WalletInfo } from '../../../connectors'

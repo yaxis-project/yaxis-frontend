@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import usePendingTransactions from '../../../hooks/usePendingTransactions'
-import Button from '../../Button'
+import Button from '../../LegacyButton'
 
 interface TxButtonProps { }
 
