@@ -83,7 +83,7 @@ export const getBalances = async (
 	})
 	try {
 		const response = await mutilcall.methods.aggregate(calls).call()
-		return response[1].map((value: any) => {
+		return (response[1] || []).map((value: any) => {
 			// @ts-ignore
 			let decodeUint256 = yaxis.web3.eth.abi.decodeParameter(
 				'uint256',

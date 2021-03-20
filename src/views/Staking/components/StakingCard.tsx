@@ -7,17 +7,9 @@ import Value from '../../../components/Value'
 import { useWeb3React } from '@web3-react/core'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
-import Button from "../../../components/Button"
-import Input from "../../../components/Input"
-import {
-	Row,
-	Col,
-	Typography,
-	Card,
-	Form,
-	notification,
-	Tooltip
-} from 'antd'
+import Button from '../../../components/Button'
+import Input from '../../../components/Input'
+import { Row, Col, Typography, Card, Form, notification, Tooltip } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import useApproveStaking from '../../../hooks/useApproveStaking'
@@ -43,7 +35,10 @@ const TableHeader = (props: any) => (
 export default function StakingCard() {
 	const { account } = useWeb3React()
 	const languages = useContext(LanguageContext)
-	const t = useCallback((s: string) => phrases[s][languages?.state?.selected], [languages])
+	const t = useCallback(
+		(s: string) => phrases[s][languages?.state?.selected],
+		[languages],
+	)
 	const { onEnter } = useEnter()
 	const { onLeave } = useLeave()
 	const { stakedBalance, walletBalance, rate, yaxBalance } = useYaxisStaking(
@@ -52,7 +47,6 @@ export default function StakingCard() {
 
 	const [loading, setLoading] = useState(false)
 	const [depositAmount, setDeposit] = useState<string>('')
-
 
 	const { error: approveError, onApprove } = useApproveStaking()
 	const allowance = useAllowanceStaking()
@@ -78,9 +72,8 @@ export default function StakingCard() {
 			setLoading(false)
 		} catch (err) {
 			notification.info({
-				message: t(
-					'An error occurred during YAX staking. Please try again.',
-				),
+				message: `An error occured duirng YAX staking:`,
+				description: err.message,
 			})
 			setLoading(false)
 		}
@@ -96,28 +89,30 @@ export default function StakingCard() {
 			await onLeave(sYax.toString())
 			setWithdraw('0')
 			setLoading(false)
-		} catch {
+		} catch (err) {
 			notification.info({
-				message: t(
-					'An error occurred during YAX unstaking. Please try again.',
-				),
+				message: `An error occured duirng YAX unstaking:`,
+				description: err.message,
 			})
 			setLoading(false)
 		}
 	}
 
-	const updateDeposit = (value: string) => !isNaN(Number(value)) && setDeposit(value)
+	const updateDeposit = (value: string) =>
+		!isNaN(Number(value)) && setDeposit(value)
 
 	const errorDeposit = useMemo(
 		() => new BigNumber(depositAmount).gt(walletBalance.div(1e18)),
 		[walletBalance, depositAmount],
 	)
 	const depositDisabled = useMemo(
-		() => depositAmount === '' || new BigNumber(depositAmount).eq(new BigNumber(0)) || errorDeposit,
+		() =>
+			depositAmount === '' ||
+			new BigNumber(depositAmount).eq(new BigNumber(0)) ||
+			errorDeposit,
 		[depositAmount, errorDeposit],
 	)
 	const maxDeposit = () => setDeposit(yaxBalance.toString() || '0')
-
 
 	const [withdrawAmount, setWithdraw] = useState<string>('')
 	const updateWithdraw = (value: string) =>
@@ -128,7 +123,9 @@ export default function StakingCard() {
 	)
 	const withdrawDisabled = useMemo(
 		() =>
-			withdrawAmount === '' || new BigNumber(withdrawAmount).eq(new BigNumber(0)) || errorWithdraw,
+			withdrawAmount === '' ||
+			new BigNumber(withdrawAmount).eq(new BigNumber(0)) ||
+			errorWithdraw,
 		[withdrawAmount, errorWithdraw],
 	)
 
@@ -166,15 +163,20 @@ export default function StakingCard() {
 						<Input
 							onChange={(e) => updateDeposit(e.target.value)}
 							value={depositAmount}
-							min={"0"}
+							min={'0'}
 							placeholder="0"
-							disabled={loading}
+							disabled={loading || walletBalance.isZero()}
 							suffix={YAX.name}
 							onClickMax={maxDeposit}
 						/>
 					</Form.Item>
 					{!allowance.toNumber() ? (
-						<Tooltip placement="bottom" title={approveError} defaultVisible={isMobile}>
+						<Tooltip
+							placement="bottom"
+							title={approveError}
+							defaultVisible={isMobile}
+							trigger={isMobile ? 'click' : 'hover'}
+						>
 							<Button
 								disabled={!account}
 								onClick={approveYAX}
@@ -198,9 +200,9 @@ export default function StakingCard() {
 						<Input
 							onChange={(e) => updateWithdraw(e.target.value)}
 							value={withdrawAmount}
-							min={"0"}
+							min={'0'}
 							placeholder="0"
-							disabled={loading}
+							disabled={loading || stakedBalance.isZero()}
 							suffix="YAX"
 							onClickMax={maxWithdraw}
 						/>
