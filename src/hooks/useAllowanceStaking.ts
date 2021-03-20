@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import BigNumber from 'bignumber.js'
-import useYaxis from './useYaxis'
+import useGlobal from './useGlobal'
 import { useWeb3React } from '@web3-react/core'
 import { getAllowance } from '../utils/erc20'
 import { getYaxisContract, getXSushiStakingContract } from '../yaxis/utils'
@@ -8,12 +8,14 @@ import { getYaxisContract, getXSushiStakingContract } from '../yaxis/utils'
 const useAllowanceStaking = () => {
 	const [allowance, setAllowance] = useState(new BigNumber(0))
 	const { account } = useWeb3React()
-	const yaxis = useYaxis()
-	const lpContract = getYaxisContract(yaxis)
-	const stakingContract = getXSushiStakingContract(yaxis)
+	const { yaxis, block } = useGlobal()
+	const lpContract = useMemo(() => getYaxisContract(yaxis), [yaxis])
+	const stakingContract = useMemo(() => getXSushiStakingContract(yaxis), [
+		yaxis,
+	])
 
 	const fetchAllowance = useCallback(async () => {
-		if (!lpContract) return
+		if (!account || !stakingContract || !lpContract) return
 		const allowance = await getAllowance(
 			lpContract,
 			stakingContract.options.address,
@@ -23,12 +25,8 @@ const useAllowanceStaking = () => {
 	}, [account, stakingContract, lpContract])
 
 	useEffect(() => {
-		if (account && stakingContract && lpContract) {
-			fetchAllowance()
-		}
-		let refreshInterval = setInterval(fetchAllowance, 1000)
-		return () => clearInterval(refreshInterval)
-	}, [account, stakingContract, lpContract, fetchAllowance])
+		fetchAllowance()
+	}, [fetchAllowance, block])
 
 	return allowance
 }
