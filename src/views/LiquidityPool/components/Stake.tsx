@@ -46,8 +46,16 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
     const tokenBalance = useTokenBalance(lpContract.options.address)
     const stakedBalance = useStakedBalance(pid)
 
-    const { onStake } = useStake(pid)
-    const { onUnstake } = useUnstake(pid)
+    const {
+        onStake,
+        error: stakeError,
+        loading: stakeLoading,
+    } = useStake(pid, tokenName)
+    const {
+        onUnstake,
+        loading: unstakeLoading,
+        error: unstakeError,
+    } = useUnstake(pid, tokenName)
 
     const [onPresentDeposit] = useModal(
         <DepositModal
@@ -94,22 +102,28 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
                             }}
                         >
                             <Col span={12}>
-                                <Button
-                                    disabled={tokenBalance.eq(new BigNumber(0))}
-                                    onClick={onPresentDeposit}
-                                >
-                                    Stake
+                                <Tooltip title={stakeError}>
+                                    <Button
+                                        disabled={tokenBalance.eq(new BigNumber(0))}
+                                        onClick={onPresentDeposit}
+                                        loading={stakeLoading}
+                                    >
+                                        Stake
 								</Button>
+                                </Tooltip>
                             </Col>
                             <Col span={12}>
-                                <Button
-                                    disabled={stakedBalance.eq(
-                                        new BigNumber(0),
-                                    )}
-                                    onClick={onPresentWithdraw}
-                                >
-                                    Unstake
+                                <Tooltip title={unstakeError}>
+                                    <Button
+                                        disabled={stakedBalance.eq(
+                                            new BigNumber(0),
+                                        )}
+                                        onClick={onPresentWithdraw}
+                                        loading={unstakeLoading}
+                                    >
+                                        Unstake
 								</Button>
+                                </Tooltip>
                             </Col>
                         </Row>
                     )}
