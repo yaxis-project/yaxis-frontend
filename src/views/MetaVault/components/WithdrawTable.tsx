@@ -211,7 +211,8 @@ export default function WithdrawTable() {
 
 		} catch (error) {
 			notification.info({
-				message: t('An error has occured. Please try again.'),
+				message: t('Error while withdrawing:'),
+				description: error.message
 			})
 			setSubmitting(false)
 		}

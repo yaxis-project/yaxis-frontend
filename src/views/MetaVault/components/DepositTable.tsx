@@ -205,9 +205,10 @@ export default function DepositTable() {
 				hash: receipt.transactionHash,
 				description: 'Deposit|$' + totalDepositing,
 			} as Transaction)
-		} catch {
+		} catch (e) {
 			notification.info({
-				message: `An error has occurred for this deposit. Please try again.`,
+				message: `Error while depositing:`,
+				description: e.message
 			})
 			setSubmitting(false)
 		}
