@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import Button from '../Button'
-import Input, { InputProps } from '../Input'
+import Button from '../LegacyButton'
+import Input, { InputProps } from '../LegacyInput'
 
 interface TokenInputProps extends InputProps {
 	max: number | string
