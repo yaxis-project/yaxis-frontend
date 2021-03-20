@@ -72,7 +72,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
 		icon: 'metamask-fox.svg',
 		iconStyle: { height: 32 },
 	},
-	WALLET_CONNECT: {
+	WALLETCONNECT: {
 		connector: walletconnect,
 		name: 'WalletConnect',
 		description: '',
@@ -80,7 +80,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
 		icon: 'wallet-connect.svg',
 		mobile: true,
 	},
-	// WALLET_LINK: {
+	// WALLETLINK: {
 	// 	connector: walletlink,
 	// 	name: 'Coinbase Wallet',
 	// 	description: '',

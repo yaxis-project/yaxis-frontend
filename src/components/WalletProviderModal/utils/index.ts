@@ -1,4 +1,5 @@
 import { WalletInfo } from '../../../connectors'
+import { isMobile } from 'react-device-detect'
 
 const noInjected = (wallets: WalletInfo[]) =>
 	wallets
@@ -13,6 +14,6 @@ export const handleInjected = (wallets: WalletInfo[]) => {
 	return wallets.filter((w) => w.name !== remove)
 }
 
-export const filterByDevice = (wallets: any) => {
-	return wallets
+export const filterByDevice = (wallets: WalletInfo[]) => {
+	return wallets.filter((w) => (isMobile ? w.mobile : !w.mobileOnly))
 }
