@@ -32,7 +32,7 @@ const Nav: React.FC = () => {
 					</Dropdown>
 				</StyledWrapper> */}
 				<StyledLink target="_blank" href="https://immunefi.com/bounty/yaxis/">Security</StyledLink>
-				<StyledLink target="_blank" href="https://gov.yaxis.io">Governance</StyledLink>
+				<StyledLink target="_blank" href="https://gov.yaxis.io/#/">Governance</StyledLink>
 			</StyledCol>
 
 			<StyledCol2 xs={24} sm={24} md={8}>
