@@ -18,6 +18,7 @@ const Input: React.FC<InputProps> = ({
     children,
     onClickMax,
     suffix,
+    disabled,
     ...rest
 }) => (
     <StyledInput
@@ -26,7 +27,12 @@ const Input: React.FC<InputProps> = ({
                 <>
                     {suffix && <Text type="secondary">{suffix}</Text>}
 					&nbsp;
-                    <Button block size="small" onClick={onClickMax}>
+                    <Button
+                        block
+                        size="small"
+                        onClick={onClickMax}
+                        disabled={disabled}
+                    >
                         MAX
 					</Button>
                 </>
@@ -34,6 +40,7 @@ const Input: React.FC<InputProps> = ({
                 suffix
             )
         }
+        disabled={disabled}
         {...rest}
     />
 )
