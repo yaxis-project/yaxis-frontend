@@ -5,9 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import { provider } from 'web3-core'
 import useGlobal from './useGlobal'
 import { getContract } from '../utils/erc20'
-import useYax from './useYaxis'
 import useTokenBalance from './useTokenBalance'
-import { Currency } from '../utils/currencies'
 import usePriceMap from './usePriceMap'
 
 const defaultState = {
@@ -22,12 +20,12 @@ const defaultState = {
 /**
  * Returns details for the yaxis token staking data for the signed in user.
  */
-export default function useYaxisStaking(currency: Currency) {
+export default function useYaxisStaking() {
 	// TODO: cleanup
-	const { address, stakingTokenAddress } = currency
+	const { block, yaxis } = useGlobal()
+	const address = useMemo(() => yaxis?.contracts?.yaxis?.options?.address, [yaxis])
+	const stakingTokenAddress = useMemo(() => yaxis?.contracts?.xYaxStaking?.options?.address, [yaxis])
 	const walletBalance = useTokenBalance(address)
-	const { block } = useGlobal()
-	const yaxis = useYax()
 	const { account, library } = useWeb3React()
 	const priceMap = usePriceMap()
 	const lpContract = useMemo(() => {
@@ -55,7 +53,7 @@ export default function useYaxisStaking(currency: Currency) {
 				yaxBalance: walletBalance.div(1e18),
 			}
 			setBalances(data)
-		} catch (err) {}
+		} catch (err) { }
 	}, [priceMap, sBalance, walletBalance, yaxis])
 
 	const reset = useCallback(() => {

@@ -9,7 +9,6 @@ import {
 } from '../../../components/DetailOverviewCard'
 import Value from '../../../components/Value'
 import useYaxisStaking from '../../../hooks/useYaxisStaking'
-import { YAX } from '../../../utils/currencies'
 import BigNumber from 'bignumber.js'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
 
@@ -31,7 +30,7 @@ export default function HomeOverviewCard() {
 	const t = (s: string) => phrases[s][language]
 
 
-	const { stakedBalance } = useYaxisStaking(YAX())
+	const { stakedBalance } = useYaxisStaking()
 	const {
 		metaVaultData: { totalBalance, mvltPrice, },
 		returns

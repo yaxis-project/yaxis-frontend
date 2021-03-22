@@ -1,6 +1,4 @@
 import { Ticker } from '../contexts/Prices/utils'
-import { useWeb3React } from '@web3-react/core'
-
 import crv3 from '../assets/img/currencies/3crv.svg'
 import dai from '../assets/img/currencies/dai.svg'
 import eth from '../assets/img/currencies/eth.svg'
@@ -10,8 +8,6 @@ import usdc from '../assets/img/currencies/usdc.svg'
 import usdt from '../assets/img/currencies/usdt.svg'
 import linkswap from '../assets/img/icons/pool-token.svg'
 import yax from '../assets/img/logo-ui.svg'
-
-import { currentConfig } from '../yaxis/configs'
 
 export interface Currency {
 	name: string
@@ -54,18 +50,12 @@ export const ETH: Currency = {
 	priceMapKey: 'ETH',
 }
 
-export const YAX = (): Currency => {
-	const { chainId } = useWeb3React()
-	return {
-		name: 'YAX',
-		tokenId: 'yax',
-		address: currentConfig(chainId).contractAddresses.yaxis,
-		stakingTokenAddress: currentConfig(chainId).contractAddresses
-			.xYaxStaking,
-		icon: yax,
-		decimals: 18,
-		priceMapKey: 'YAX',
-	}
+export const YAX: Currency = {
+	name: 'YAX',
+	tokenId: 'yax',
+	icon: yax,
+	decimals: 18,
+	priceMapKey: 'YAX',
 }
 
 export const USDT: Currency = {

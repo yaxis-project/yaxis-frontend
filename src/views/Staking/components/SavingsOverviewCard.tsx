@@ -1,7 +1,6 @@
 import { useState, useContext, useMemo, useEffect } from 'react'
 import { Typography, Tooltip, Row } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
-import { YAX } from '../../../utils/currencies'
 import Value from '../../../components/Value'
 import useYaxisStaking from '../../../hooks/useYaxisStaking'
 import phrases from './translations'
@@ -30,7 +29,7 @@ export default function SavingsOverviewCard() {
 	const t = (s: string) => phrases[s][language]
 
 	// const { yaxReturns, yaxReturnsUSD } = useAccountReturns()
-	const { stakedBalance } = useYaxisStaking(YAX())
+	const { stakedBalance } = useYaxisStaking()
 	const { yAxisAPY } = useYAxisAPY()
 
 	const [totalSupply, setTotalStaking] = useState<BigNumber>(new BigNumber(0))

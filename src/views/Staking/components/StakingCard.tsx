@@ -41,9 +41,7 @@ export default function StakingCard() {
 	)
 	const { onEnter } = useEnter()
 	const { onLeave } = useLeave()
-	const { stakedBalance, walletBalance, rate, yaxBalance } = useYaxisStaking(
-		YAX(),
-	)
+	const { stakedBalance, walletBalance, rate, yaxBalance } = useYaxisStaking()
 
 	const [loading, setLoading] = useState(false)
 	const [depositAmount, setDeposit] = useState<string>('')
@@ -140,7 +138,7 @@ export default function StakingCard() {
 
 			<Row gutter={24}>
 				<Col span={12} className={'balance'}>
-					<img src={YAX().icon} height="24" alt="logo" />
+					<img src={YAX.icon} height="24" alt="logo" />
 					<Value
 						value={getBalanceNumber(walletBalance)}
 						decimals={2}
@@ -148,7 +146,7 @@ export default function StakingCard() {
 					/>
 				</Col>
 				<Col span={12} className={'balance'}>
-					<img src={YAX().icon} height="24" alt="logo" />
+					<img src={YAX.icon} height="24" alt="logo" />
 					<Value
 						value={stakedBalance.toNumber()}
 						decimals={2}

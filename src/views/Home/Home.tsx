@@ -10,7 +10,6 @@ import { Row, Col } from 'antd'
 import useMetaVaultData from '../../hooks/useMetaVaultData'
 import BigNumber from 'bignumber.js'
 import useYaxisStaking from '../../hooks/useYaxisStaking'
-import { YAX } from '../../utils/currencies'
 import useGlobal from '../../hooks/useGlobal'
 import { formatBN } from "../../yaxis/utils"
 
@@ -45,7 +44,7 @@ const Home: React.FC = () => {
  * Lead data for the user's account overview.
  */
 const SavingsAccountOverview: React.FC = () => {
-	const { stakedBalanceUSD } = useYaxisStaking(YAX())
+	const { stakedBalanceUSD } = useYaxisStaking()
 	const { lastUpdated } = useGlobal()
 
 	return (

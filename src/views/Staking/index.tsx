@@ -9,7 +9,6 @@ import StakingCard from './components/StakingCard'
 import SavingsOverviewCard from './components/SavingsOverviewCard'
 import VaultStatsCard from './components/VaultStatsCard'
 import './index.less'
-import { YAX } from '../../utils/currencies'
 import useYaxisStaking from '../../hooks/useYaxisStaking'
 import { currentConfig } from '../../yaxis/configs'
 import { etherscanUrl } from '../../yaxis/utils'
@@ -23,7 +22,7 @@ const StyledCol = styled(Col)`
 
 
 const Staking: React.FC = () => {
-	const { stakedBalanceUSD } = useYaxisStaking(YAX())
+	const { stakedBalanceUSD } = useYaxisStaking()
 
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
