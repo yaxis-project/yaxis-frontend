@@ -301,7 +301,7 @@ export const configs: Record<number, Config> = {
 				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
 				lpAddress: '0x21dee38170F1e1F26baFf2C30C0fc8F8362b6961',
 				lpUrl:
-					'https://linkswap.app/#/add/0x514910771af9ca656af840dff83e8264ecf986ca/0xb1dc9124c395c1e97773ab855d66e879f053a289',
+					'https://linkswap.app/#/add/0xb1dC9124c395c1e97773ab855d66E879f053A289/ETH',
 				lpTokens: [
 					{
 						symbol: 'YAX',
@@ -345,8 +345,6 @@ export const configs: Record<number, Config> = {
 	},
 }
 
-export const NETWORK_NAME = process.env.REACT_APP_NETWORK
-export const NETWORK_ID = NETWORK_NAME === 'kovan' ? 42 : 1
 export const currentConfig = (chainId = 1) => configs[chainId]
 
 export const tokensConfig = {
