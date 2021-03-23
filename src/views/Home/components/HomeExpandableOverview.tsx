@@ -59,7 +59,7 @@ export default function HomeExpandableOverview() {
 										value={'$' + formatBN(stakingTvl)}
 									/>
 									<TooltipRow
-										main="Total Liqudity Pool value"
+										main="Total Liquidity Pool value"
 										value={'$' + formatBN(liquidityTvl)}
 									/>
 								</>
