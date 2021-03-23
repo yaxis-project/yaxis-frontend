@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import Page from '../../components/Page/Page'
 import YaxisPriceGraph from '../../components/YaxisPriceGraph'
@@ -13,6 +13,7 @@ import useYaxisStaking from '../../hooks/useYaxisStaking'
 import { currentConfig } from '../../yaxis/configs'
 import { etherscanUrl } from '../../yaxis/utils'
 import { useWeb3React } from '@web3-react/core'
+import { NETWORK_NAMES } from "../../connectors"
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -22,12 +23,13 @@ const StyledCol = styled(Col)`
 
 
 const Staking: React.FC = () => {
-	const { stakedBalanceUSD } = useYaxisStaking()
+	const { loading, balances: { stakedBalanceUSD } } = useYaxisStaking()
 
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 
 	const { chainId } = useWeb3React()
+	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 	const address = currentConfig(chainId).contractAddresses['xYaxStaking']
 
 	return (
@@ -36,7 +38,7 @@ const Staking: React.FC = () => {
 				loading={false}
 				mainTitle={phrases['Staking Account'][language]}
 				secondaryText={phrases['YAX Staking'][language]}
-				secondaryTextLink={address && etherscanUrl(`/address/${address}#code`)}
+				secondaryTextLink={address && etherscanUrl(`/address/${address}#code`, networkName)}
 				value={'$' + Number(stakedBalanceUSD).toLocaleString(
 					undefined, // leave undefined to use the browser's locale,
 					// or use a string like 'en-US' to override it.

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import Page from '../../components/Page/Page'
 import { Row, Col } from 'antd'
@@ -12,6 +12,8 @@ import BigNumber from 'bignumber.js'
 import { currentConfig } from '../../yaxis/configs'
 import { etherscanUrl } from '../../yaxis/utils'
 import { useWeb3React } from '@web3-react/core'
+import { NETWORK_NAMES } from "../../connectors"
+
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -29,6 +31,7 @@ const MetaVault: React.FC = () => {
 		.toFixed(2)
 
 	const { chainId } = useWeb3React()
+	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 	const address = currentConfig(chainId).contractAddresses['yAxisMetaVault']
 
 	return (
@@ -37,7 +40,7 @@ const MetaVault: React.FC = () => {
 				loading={false}
 				mainTitle="MetaVault Account"
 				secondaryText="MetaVault 2.0"
-				secondaryTextLink={address && etherscanUrl(`/address/${address}#code`)}
+				secondaryTextLink={address && etherscanUrl(`/address/${address}#code`, networkName)}
 				value={'$' + Number(totalUSDBalance).toLocaleString(
 					undefined, // leave undefined to use the browser's locale,
 					// or use a string like 'en-US' to override it.

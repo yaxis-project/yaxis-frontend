@@ -5,8 +5,6 @@ import { Yaxis } from './Yaxis'
 import { getApy } from '../utils/number'
 import { Farm, StakedValue, stakedValueFactory } from '../contexts/Farms/types'
 
-import { NETWORK_NAME } from './configs'
-
 BigNumber.config({
 	EXPONENTIAL_AT: 1000,
 	DECIMAL_PLACES: 80,
@@ -71,15 +69,15 @@ export const getYaxisMetaVaultConverter = (yaxis: Yaxis) => {
 export const getFarms = (yaxis: Yaxis): Farm[] => {
 	return yaxis
 		? yaxis.contracts.pools.map((pool) => {
-				return {
-					...pool,
-					id: pool.symbol,
-					lpToken: pool.symbol,
-					lpTokenAddress: pool.lpAddress,
-					earnToken: 'YAX',
-					earnTokenAddress: yaxis.contracts.yaxis.options.address,
-				}
-		  })
+			return {
+				...pool,
+				id: pool.symbol,
+				lpToken: pool.symbol,
+				lpTokenAddress: pool.lpAddress,
+				earnToken: 'YAX',
+				earnTokenAddress: yaxis.contracts.yaxis.options.address,
+			}
+		})
 		: []
 }
 
@@ -499,9 +497,9 @@ export const getPickle3CrvAPY = async (
 	return farmApy
 }
 
-export function etherscanUrl(url: string) {
+export function etherscanUrl(url: string, networkName: string) {
 	const baseUrl = 'etherscan.io'
-	const network = NETWORK_NAME === 'mainnet' ? '' : `${NETWORK_NAME}.`
+	const network = networkName === 'mainnet' ? '' : `${networkName}.`
 	return `https://${network}${baseUrl}${url}`
 }
 

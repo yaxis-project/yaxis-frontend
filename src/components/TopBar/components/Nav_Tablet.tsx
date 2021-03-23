@@ -9,6 +9,7 @@ import WalletProviderModal from '../../WalletProviderModal'
 import useModal from '../../../hooks/useModal'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import { etherscanUrl } from '../../../yaxis/utils'
+import { NETWORK_NAMES } from "../../../connectors"
 
 interface NavTabletProps { }
 
@@ -42,6 +43,7 @@ const ItemGroup = styled(Menu.ItemGroup)`
 
 const NavTablet: React.FC<NavTabletProps> = () => {
     const { account, chainId, deactivate } = useWeb3React()
+    const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 
     const [onPresentWalletProviderModal] = useModal(
         <WalletProviderModal />,
@@ -111,7 +113,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 
                 <Menu.ItemGroup title={
                     <a
-                        href={etherscanUrl(`/address/${account}`)}
+                        href={etherscanUrl(`/address/${account}`, networkName)}
                         target={'_blank'}
                         rel="noopener noreferrer"
                     >
@@ -132,7 +134,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
                 </Menu.ItemGroup>
             )}
         </StyledMenu>
-        , [activePools, account, handleUnlockClick, handleSignOutClick, chainId])
+        , [activePools, account, handleUnlockClick, handleSignOutClick, chainId, networkName])
     return (
         <Dropdown overlay={menu} trigger={['click']}>
             <Button size="large" type="default" ghost style={{ border: "none" }} icon={<MenuOutlined style={{ fontSize: '30px' }} />} />

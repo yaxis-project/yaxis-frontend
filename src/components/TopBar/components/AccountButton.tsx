@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import useModal from '../../../hooks/useModal'
@@ -8,6 +8,7 @@ import { CaretDownOutlined } from '@ant-design/icons'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import { etherscanUrl } from '../../../yaxis/utils'
 import WalletProviderModal from '../../WalletProviderModal'
+import { NETWORK_NAMES } from "../../../connectors"
 
 interface AccountButtonProps { }
 
@@ -18,6 +19,8 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 	)
 
 	const { account, deactivate, chainId } = useWeb3React()
+
+	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 
 	const handleUnlockClick = useCallback(() => {
 		onPresentWalletProviderModal()
@@ -47,10 +50,10 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 										<Col>
 											<div style={{ textAlign: "center" }} >Your Account</div>
 											<NetworkText>
-												{chainId === 1 ? "Mainnet" : "Kovan"}
+												{networkName}
 											</NetworkText>
 											<Button
-												href={etherscanUrl(`/address/${account}`)}
+												href={etherscanUrl(`/address/${account}`, networkName)}
 												target={'_blank'}
 												rel="noopener noreferrer"
 												block
