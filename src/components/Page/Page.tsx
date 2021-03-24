@@ -49,12 +49,12 @@ const BGHomeUnderlay = styled(BGUnderlay)`
 `
 
 interface PageProps {
-	loading: boolean
-	mainTitle: string
-	secondaryText: string
+	loading?: boolean
+	mainTitle?: string
+	secondaryText?: string
 	secondaryTextLink?: string
-	value: string
-	valueInfo: string
+	value?: string
+	valueInfo?: string
 	children: React.ReactElement
 }
 

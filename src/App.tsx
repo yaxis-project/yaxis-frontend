@@ -15,6 +15,7 @@ import MetaVault from './views/MetaVault'
 import Staking from './views/Staking'
 // import Liquidity from './views/Liquidity'
 import LiquidityPool from './views/LiquidityPool'
+import Swap from './views/Swap'
 import { notification } from 'antd'
 import { currentConfig } from './yaxis/configs'
 
@@ -59,6 +60,9 @@ const Routes: React.FC = () => {
 						<LiquidityPool pool={pool} />
 					</Route>
 				})}
+				<Route path="/swap" exact>
+					<Swap />
+				</Route>
 				<Redirect to='/' />
 			</Switch>
 		</Router>
