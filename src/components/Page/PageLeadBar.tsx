@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 import logo from '../../assets/img/logo-ui.svg'
 import arrow from '../../assets/img/arrow-ui.svg'
@@ -30,12 +29,12 @@ const StyledLink = styled.a`
 `
 
 interface PageLeadBarProps {
-	loading: boolean
-	mainTitle: string
-	secondaryText: string
+	loading?: boolean
+	mainTitle?: string
+	secondaryText?: string
 	secondaryTextLink?: string
-	value: string
-	valueInfo: string
+	value?: string
+	valueInfo?: string
 }
 
 /**
@@ -44,6 +43,7 @@ interface PageLeadBarProps {
  */
 const PageLeadBar = (props: PageLeadBarProps) => {
 	const { mainTitle, secondaryText, secondaryTextLink, value, valueInfo } = props
+	if (!mainTitle && !secondaryText && !secondaryTextLink && !value && !valueInfo) return null
 	return (
 		<StyledMain>
 			<Row
