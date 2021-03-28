@@ -21,19 +21,23 @@ const defaultState = {
  * Returns details for the yaxis token staking data for the signed in user.
  */
 export default function useYaxisStaking() {
+	const [balances, setBalances] = useState(defaultState)
+	const [loading, setLoading] = useState(true)
+
 	// TODO: cleanup
-	const { block, yaxis } = useGlobal()
-	const address = useMemo(() => yaxis?.contracts?.yaxis?.options?.address, [yaxis])
-	const stakingTokenAddress = useMemo(() => yaxis?.contracts?.xYaxStaking?.options?.address, [yaxis])
-	const walletBalance = useTokenBalance(address)
 	const { account, library } = useWeb3React()
-	const priceMap = usePriceMap()
+	const { block, yaxis } = useGlobal()
+
+	const address = useMemo(() => yaxis?.contracts?.yaxis?.options?.address, [yaxis])
+	const { balance: walletBalance, loading: loadingWalletBalance } = useTokenBalance(address)
+
+	const stakingTokenAddress = useMemo(() => yaxis?.contracts?.xYaxStaking?.options?.address, [yaxis])
 	const lpContract = useMemo(() => {
 		return getContract(library as provider, stakingTokenAddress)
 	}, [library, stakingTokenAddress])
-	const sBalance = useTokenBalance(lpContract.options.address)
+	const { balance: sBalance, loading: sBalanceLoading } = useTokenBalance(lpContract.options.address)
 
-	const [balances, setBalances] = useState(defaultState)
+	const priceMap = usePriceMap()
 
 	const getData = useCallback(async () => {
 		try {
@@ -53,26 +57,27 @@ export default function useYaxisStaking() {
 				yaxBalance: walletBalance.div(1e18),
 			}
 			setBalances(data)
+			setLoading(false)
 		} catch (err) { }
 	}, [priceMap, sBalance, walletBalance, yaxis])
 
-	const reset = useCallback(() => {
-		setBalances(defaultState)
-	}, [])
 
 	useEffect(() => {
-		if (yaxis && library && stakingTokenAddress) getData()
-		else reset()
+		setBalances(defaultState)
+		if (account) setLoading(true)
 	}, [
-		yaxis,
-		block,
 		account,
-		library,
-		sBalance,
-		stakingTokenAddress,
-		getData,
-		reset,
 	])
 
-	return balances
+	useEffect(() => {
+		if (!sBalanceLoading && !loadingWalletBalance) {
+			getData()
+		}
+	}, [
+		block,
+		getData,
+		sBalanceLoading,
+		loadingWalletBalance,
+	])
+	return { loading, balances }
 }

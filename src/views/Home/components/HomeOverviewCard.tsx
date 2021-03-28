@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react'
+import { useContext } from 'react'
 import styled from 'styled-components'
 import { Typography, Col } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
@@ -8,17 +8,16 @@ import {
 	DetailOverviewCardRow,
 } from '../../../components/DetailOverviewCard'
 import Value from '../../../components/Value'
-import useYaxisStaking from '../../../hooks/useYaxisStaking'
-import BigNumber from 'bignumber.js'
-import useMetaVaultData from '../../../hooks/useMetaVaultData'
+import useReturns from '../../../hooks/useReturns'
 
 const { Text } = Typography
 
-const commas = (num: string) => Number(num).toLocaleString(
-	undefined, // leave undefined to use the browser's locale,
-	// or use a string like 'en-US' to override it.
-	{ minimumFractionDigits: 2 },
-)
+const commas = (num: string) =>
+	Number(num).toLocaleString(
+		undefined, // leave undefined to use the browser's locale,
+		// or use a string like 'en-US' to override it.
+		{ minimumFractionDigits: 2 },
+	)
 
 /**
  * Creates a loadable detail overview for users on the home page, showing financial returns and account balances.
@@ -29,39 +28,16 @@ export default function HomeOverviewCard() {
 
 	const t = (s: string) => phrases[s][language]
 
-
-	const { stakedBalance } = useYaxisStaking()
 	const {
-		metaVaultData: { totalBalance, mvltPrice, },
-		returns
-	} = useMetaVaultData('v1')
-
-	// const savingsBalance = stakedBalanceUSD.toNumber()
-	const investingBalance = new BigNumber(totalBalance || '0')
-		.multipliedBy(mvltPrice || '0')
-
-	const [
-		metaVaultReturnsUSD,
-		metaVaultReturnsYAX,
-		stakingReturnsYAX,
-		totalUSD,
-		totalYAX
-	] = useMemo(() => {
-		if (!returns.fetched) return ["0", "0", "0", "0", "0"]
-		const mvReUSD = returns.metaVault.USD.plus(investingBalance)
-		const mvReYAX = returns.metaVault.YAX
-		const stReYAX = returns.staking.YAX.plus(stakedBalance)
-		return [
-			mvReUSD.toFixed(2),
-			mvReYAX.toFixed(2),
-			stReYAX.toFixed(2),
-			mvReUSD.toFixed(2),
-			mvReYAX.plus(stReYAX).toFixed(2)
-		]
-	}, [returns, investingBalance, stakedBalance])
+		returns: {
+			metaVaultUSD,
+			stakingUSD,
+			totalUSD,
+		},
+	} = useReturns()
 
 	return (
-		<DetailOverviewCard title={t("Your Return")}>
+		<DetailOverviewCard title={t('Your Lifetime Earnings')}>
 			<DetailOverviewCardRow inline>
 				<Text>
 					<strong>Total</strong>
@@ -69,10 +45,9 @@ export default function HomeOverviewCard() {
 				<Col>
 					<Value
 						numberPrefix="$"
-						value={commas(totalUSD)} decimals={2} />
-					<Value
-						numberSuffix=" YAX"
-						value={commas(totalYAX)} decimals={2} />
+						value={commas(totalUSD)}
+						decimals={2}
+					/>
 				</Col>
 			</DetailOverviewCardRow>
 			<DetailOverviewCardRow inline>
@@ -80,24 +55,24 @@ export default function HomeOverviewCard() {
 				<Col>
 					<Value
 						numberPrefix="$"
-						value={commas(metaVaultReturnsUSD)} decimals={2} />
-					<Value
-						numberSuffix=" YAX"
-						value={commas(metaVaultReturnsYAX)} decimals={2} />
+						value={commas(metaVaultUSD)}
+						decimals={2}
+					/>
 				</Col>
 			</DetailOverviewCardRow>
 			<DetailOverviewCardRow inline>
 				<StyledText>Staking Account</StyledText>
 				<Col>
 					<Value
-						numberSuffix=" YAX"
-						value={commas(stakingReturnsYAX)} decimals={2} />
+						numberPrefix="$"
+						value={commas(stakingUSD)}
+						decimals={2}
+					/>
 				</Col>
 			</DetailOverviewCardRow>
 		</DetailOverviewCard>
 	)
 }
-
 
 const StyledText = styled(Text)`
 	@media only screen and (max-width: 600px) {

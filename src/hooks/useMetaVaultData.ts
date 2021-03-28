@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { currentConfig } from '../yaxis/configs'
 import useTokenBalances from './useTokenBalances'
-import useReturns from './useReturns'
 import useAllowances from './useAllowances'
 import BigNumber from 'bignumber.js'
 import {
@@ -110,11 +109,6 @@ interface IHookReturn {
 	onFetchMetaVaultData: () => void
 	isEstimating: boolean
 	callEstimateWithdrawals: (shares: string) => void
-	returns: {
-		metaVault: { USD: BigNumber; YAX: BigNumber }
-		staking: { YAX: BigNumber }
-		fetched: boolean
-	}
 }
 
 export interface MetaVaultData {
@@ -144,7 +138,6 @@ function useMetaVaultData(id: string): IHookReturn {
 	} = useMetaVault()
 	const { yaxis, block } = useGlobal()
 	const { YAX: yaxPrice, Cure3Crv: cure3CrvPrice } = usePriceMap()
-	const returns = useReturns()
 
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<boolean>(false)
@@ -289,7 +282,7 @@ function useMetaVaultData(id: string): IHookReturn {
 	}))
 
 	useEffect(() => {
-		;(async () => {
+		; (async () => {
 			try {
 				setErrorMsg(undefined)
 				setError(false)
@@ -422,8 +415,8 @@ function useMetaVaultData(id: string): IHookReturn {
 							const value = isCrv
 								? r
 								: await contract.methods
-										.calc_token_amount_withdraw(r, addr)
-										.call()
+									.calc_token_amount_withdraw(r, addr)
+									.call()
 							let real = new BigNumber(value)
 								.times(withdrawnFee)
 								.times(isCrv ? 1 : 1 - slippage)
@@ -451,7 +444,12 @@ function useMetaVaultData(id: string): IHookReturn {
 		],
 	)
 
-	const reset = useCallback(() => setMetaVaultData({} as MetaVaultData), [])
+	useEffect(() => {
+		setMetaVaultData({} as MetaVaultData)
+		if (account) setLoading(true)
+	}, [
+		account,
+	])
 
 	useEffect(() => {
 		if (
@@ -462,9 +460,7 @@ function useMetaVaultData(id: string): IHookReturn {
 			yaxPrice &&
 			cure3CrvPrice &&
 			block
-		) {
-			fetchMetaVaultData()
-		} else reset()
+		) fetchMetaVaultData()
 	}, [
 		account,
 		library,
@@ -473,7 +469,6 @@ function useMetaVaultData(id: string): IHookReturn {
 		yaxPrice,
 		cure3CrvPrice,
 		block,
-		reset,
 	])
 
 	return {
@@ -491,7 +486,6 @@ function useMetaVaultData(id: string): IHookReturn {
 		onFetchMetaVaultData: fetchMetaVaultData,
 		isEstimating,
 		callEstimateWithdrawals,
-		returns,
 	}
 }
 

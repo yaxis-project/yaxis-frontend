@@ -44,7 +44,7 @@ const Home: React.FC = () => {
  * Lead data for the user's account overview.
  */
 const SavingsAccountOverview: React.FC = () => {
-	const { stakedBalanceUSD } = useYaxisStaking()
+	const { balances: { stakedBalanceUSD } } = useYaxisStaking()
 	const { lastUpdated } = useGlobal()
 
 	return (

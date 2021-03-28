@@ -21,7 +21,7 @@ import useMetaVaultData from '../../../hooks/useMetaVaultData'
 const Balances: React.FC = () => {
 	const totalSupply = useTotalSupply()
 	const yaxis = useYaxis()
-	const yaxisBalance =
+	const { balance: yaxisBalance } =
 		useTokenBalance(getYaxisAddress(yaxis))
 	const { account } = useWeb3React()
 	const { farms, stakedValues } = useFarms()

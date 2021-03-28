@@ -13,8 +13,8 @@ const translations = {
 	Overview: {
 		ENG: 'Overview',
 	},
-	'Your Return': {
-		ENG: 'Your Return',
+	'Your Lifetime Earnings': {
+		ENG: 'Your Lifetime Earnings',
 	},
 	'Investment Account': {
 		ENG: 'Investment Account',

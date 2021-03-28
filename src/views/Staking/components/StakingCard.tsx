@@ -41,7 +41,7 @@ export default function StakingCard() {
 	)
 	const { onEnter } = useEnter()
 	const { onLeave } = useLeave()
-	const { stakedBalance, walletBalance, rate, yaxBalance } = useYaxisStaking()
+	const { balances: { stakedBalance, walletBalance, rate, yaxBalance } } = useYaxisStaking()
 
 	const [loading, setLoading] = useState(false)
 	const [depositAmount, setDeposit] = useState<string>('')

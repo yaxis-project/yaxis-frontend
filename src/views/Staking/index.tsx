@@ -23,7 +23,7 @@ const StyledCol = styled(Col)`
 
 
 const Staking: React.FC = () => {
-	const { stakedBalanceUSD } = useYaxisStaking()
+	const { balances: { stakedBalanceUSD } } = useYaxisStaking()
 
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected

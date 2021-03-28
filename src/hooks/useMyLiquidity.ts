@@ -33,22 +33,22 @@ export default function useLP(pool: StakePool): LiquidityPoolData {
 		new BigNumber(0),
 	)
 
-	const userBalance = useTokenBalance(farm?.lpContract?.options?.address)
+	const { balance } = useTokenBalance(farm?.lpContract?.options?.address)
 	const stakedBalance = useStakedBalance(pool.pid)
 
 	const getData = useCallback(async () => {
 		if (!(farm && farm.lpContract)) return
 
-		const totalBalance = userBalance.plus(stakedBalance)
+		const totalBalance = balance.plus(stakedBalance)
 		const { lpContract } = farm
 		const supplyValue: BigNumber = await lpContract.methods
 			.totalSupply()
 			.call()
 		if (new BigNumber(supplyValue).gt(new BigNumber(0)))
 			setUserPoolShare(totalBalance.div(supplyValue))
-		setTokenBalance(userBalance)
+		setTokenBalance(balance)
 		setTotalSupply(supplyValue)
-	}, [farm, stakedBalance, userBalance])
+	}, [farm, stakedBalance, balance])
 
 	useEffect(() => {
 		getData()

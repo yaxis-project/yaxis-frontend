@@ -29,7 +29,7 @@ export default function SavingsOverviewCard() {
 	const t = (s: string) => phrases[s][language]
 
 	// const { yaxReturns, yaxReturnsUSD } = useAccountReturns()
-	const { stakedBalance } = useYaxisStaking()
+	const { balances: { stakedBalance } } = useYaxisStaking()
 	const { yAxisAPY } = useYAxisAPY()
 
 	const [totalSupply, setTotalStaking] = useState<BigNumber>(new BigNumber(0))

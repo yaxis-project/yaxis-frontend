@@ -9,7 +9,7 @@ import {
 import { ArrowRightOutlined } from '@ant-design/icons'
 const { Text, Link } = Typography
 
-export default function () {
+export default function GovernanceCard() {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 	const t = (s: string) => phrases[s][language]
