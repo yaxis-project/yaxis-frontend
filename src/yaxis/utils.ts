@@ -452,7 +452,7 @@ export const leave = async (
 export const getCurveApyApi = async () => {
 	try {
 		const { apy = {} } = await (
-			await fetch('http://stats.curve.fi/raw-stats/apys.json')
+			await fetch('https://stats.curve.fi/raw-stats/apys.json')
 		).json()
 		return apy?.total && apy?.total['3pool']
 			? parseFloat(apy?.total['3pool'])
