@@ -9,9 +9,9 @@ import HomeExpandableOverview from './components/HomeExpandableOverview'
 import { Row, Col } from 'antd'
 import useMetaVaultData from '../../hooks/useMetaVaultData'
 import BigNumber from 'bignumber.js'
-import useYaxisStaking from '../../hooks/useYaxisStaking'
+import useYaxisStaking from '../../hooks/useYAXISStaking'
 import useGlobal from '../../hooks/useGlobal'
-import { formatBN } from "../../yaxis/utils"
+import { formatBN } from '../../yaxis/utils'
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -44,7 +44,9 @@ const Home: React.FC = () => {
  * Lead data for the user's account overview.
  */
 const SavingsAccountOverview: React.FC = () => {
-	const { balances: { stakedBalanceUSD } } = useYaxisStaking()
+	const {
+		balances: { stakedBalanceUSD },
+	} = useYaxisStaking()
 	const { lastUpdated } = useGlobal()
 
 	return (

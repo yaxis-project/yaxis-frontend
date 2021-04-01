@@ -31,7 +31,7 @@ export default function useYaxisStaking() {
 	const address = useMemo(() => yaxis?.contracts?.yaxis?.options?.address, [yaxis])
 	const { balance: walletBalance, loading: loadingWalletBalance } = useTokenBalance(address)
 
-	const stakingTokenAddress = useMemo(() => yaxis?.contracts?.xYaxStaking?.options?.address, [yaxis])
+	const stakingTokenAddress = useMemo(() => yaxis?.contracts?.xYaxisStaking?.options?.address, [yaxis])
 	const lpContract = useMemo(() => {
 		return getContract(library as provider, stakingTokenAddress)
 	}, [library, stakingTokenAddress])
@@ -41,7 +41,7 @@ export default function useYaxisStaking() {
 
 	const getData = useCallback(async () => {
 		try {
-			const rate = await yaxis.contracts.xYaxStaking.methods
+			const rate = await yaxis.contracts.xYaxisStaking.methods
 				.getPricePerFullShare()
 				.call()
 			const data = {
