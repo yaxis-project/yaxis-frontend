@@ -1,5 +1,10 @@
 import React, { useMemo } from 'react'
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
+import {
+	BrowserRouter as Router,
+	Route,
+	Switch,
+	Redirect,
+} from 'react-router-dom'
 
 import { ThemeProvider } from 'styled-components'
 import FarmsProvider from './contexts/Farms'
@@ -20,9 +25,11 @@ import { notification } from 'antd'
 import { currentConfig } from './yaxis/configs'
 
 import { Web3ReactProvider, useWeb3React } from '@web3-react/core'
-import { useEagerConnect } from "./hooks/useEagerConnect"
-import { useInactiveListener } from "./hooks/useInactiveListener"
-import { getLibrary } from "./connectors"
+import { useEagerConnect } from './hooks/useEagerConnect'
+import { useInactiveListener } from './hooks/useInactiveListener'
+import { getLibrary } from './connectors'
+
+import SwapBanner from './components/Banner/Banners/SwapBanner'
 
 notification.config({
 	placement: 'topRight',
@@ -33,9 +40,13 @@ const Routes: React.FC = () => {
 	const triedEager = useEagerConnect()
 	useInactiveListener(!triedEager)
 	const { chainId } = useWeb3React()
-	const activePools = useMemo(() => currentConfig(chainId).pools.filter(pool => pool.active), [chainId])
+	const activePools = useMemo(
+		() => currentConfig(chainId).pools.filter((pool) => pool.active),
+		[chainId],
+	)
 	return (
 		<Router>
+			<SwapBanner />
 			<Switch>
 				<Route path="/" exact>
 					<Home />
@@ -49,27 +60,29 @@ const Routes: React.FC = () => {
 				{/* <Route path="/liquidity" exact>
 						<Liquidity />
 					</Route> */}
-				{activePools.length &&
+				{activePools.length && (
 					<Route key={`/liquidity`} path={`/liquidity`} exact>
 						<LiquidityPool pool={activePools[0]} />
 					</Route>
-				}
-				{activePools.map(pool => {
+				)}
+				{activePools.map((pool) => {
 					const key = `/liquidity/${pool.lpAddress}`
-					return <Route key={key} path={key} exact>
-						<LiquidityPool pool={pool} />
-					</Route>
+					return (
+						<Route key={key} path={key} exact>
+							<LiquidityPool pool={pool} />
+						</Route>
+					)
 				})}
 				<Route path="/swap" exact>
 					<Swap />
 				</Route>
-				<Redirect to='/' />
+				<Redirect to="/" />
 			</Switch>
 		</Router>
 	)
 }
 
-const Providers: React.FC = ({ children }) =>
+const Providers: React.FC = ({ children }) => (
 	<Web3ReactProvider getLibrary={getLibrary}>
 		<ThemeProvider theme={theme}>
 			<PricesProvider>
@@ -77,16 +90,15 @@ const Providers: React.FC = ({ children }) =>
 					<LanguageProvider>
 						<TransactionProvider>
 							<FarmsProvider>
-								<ModalsProvider>
-									{children}
-								</ModalsProvider>
+								<ModalsProvider>{children}</ModalsProvider>
 							</FarmsProvider>
 						</TransactionProvider>
-					</LanguageProvider >
-				</YaxisProvider >
-			</PricesProvider >
-		</ThemeProvider >
-	</Web3ReactProvider >
+					</LanguageProvider>
+				</YaxisProvider>
+			</PricesProvider>
+		</ThemeProvider>
+	</Web3ReactProvider>
+)
 
 const App = () => (
 	<Providers>

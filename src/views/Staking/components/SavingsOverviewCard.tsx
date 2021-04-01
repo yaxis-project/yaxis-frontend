@@ -2,7 +2,7 @@ import { useState, useContext, useMemo, useEffect } from 'react'
 import { Typography, Tooltip, Row } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import Value from '../../../components/Value'
-import useYaxisStaking from '../../../hooks/useYaxisStaking'
+import useYaxisStaking from '../../../hooks/useYAXISStaking'
 import phrases from './translations'
 import {
 	DetailOverviewCard,
@@ -15,7 +15,7 @@ import usePriceMap from '../../../hooks/usePriceMap'
 import useYaxis from '../../../hooks/useYaxis'
 import useBlock from '../../../hooks/useBlock'
 import BigNumber from 'bignumber.js'
-import { getTotalStaking } from '../../../yaxis/utils';
+import { getTotalStaking } from '../../../yaxis/utils'
 import info from '../../../assets/img/info.svg'
 
 const { Text } = Typography
@@ -29,11 +29,15 @@ export default function SavingsOverviewCard() {
 	const t = (s: string) => phrases[s][language]
 
 	// const { yaxReturns, yaxReturnsUSD } = useAccountReturns()
-	const { balances: { stakedBalance } } = useYaxisStaking()
+	const {
+		balances: { stakedBalance },
+	} = useYaxisStaking()
 	const { yAxisAPY } = useYAxisAPY()
 
 	const [totalSupply, setTotalStaking] = useState<BigNumber>(new BigNumber(0))
-	const [pricePerFullShare, setPricePerFullShare] = useState<BigNumber>(new BigNumber(0))
+	const [pricePerFullShare, setPricePerFullShare] = useState<BigNumber>(
+		new BigNumber(0),
+	)
 	const { stakingData } = useStaking()
 	const yaxis = useYaxis()
 	const block = useBlock()
@@ -44,12 +48,12 @@ export default function SavingsOverviewCard() {
 		}
 		async function fetchPricePerFullShare() {
 			try {
-				const value = await yaxis.contracts.xYaxStaking.methods.getPricePerFullShare().call()
+				const value = await yaxis.contracts.xYaxStaking.methods
+					.getPricePerFullShare()
+					.call()
 				setPricePerFullShare(new BigNumber(value).div(1e18))
-			} catch (e) {
-			}
+			} catch (e) {}
 		}
-
 
 		if (yaxis) {
 			fetchTotalStakinga()
@@ -62,7 +66,9 @@ export default function SavingsOverviewCard() {
 		[yAxisAPY],
 	)
 	const priceMap = usePriceMap()
-	const totalValueLocked = new BigNumber(totalSupply).div(1e18).times(priceMap?.YAX).toNumber() || 0
+	const totalValueLocked =
+		new BigNumber(totalSupply).div(1e18).times(priceMap?.YAX).toNumber() ||
+		0
 	const sumApy = new BigNumber(threeCrvApyPercent).div(100).multipliedBy(0.2)
 	const annualProfits = sumApy
 		.div(365)
@@ -71,10 +77,14 @@ export default function SavingsOverviewCard() {
 		.minus(1)
 		.times(metaVaultData?.tvl || 0)
 	// const rate = pricePerFullShare.toNumber()
-	let metavaultAPY = new BigNumber(annualProfits).dividedBy(totalValueLocked || 1).multipliedBy(100)
-	let yaxAPY = stakingData?.incentiveApy ? new BigNumber(stakingData?.incentiveApy)
-		.div(pricePerFullShare)
-		.div(100) : new BigNumber(0)
+	let metavaultAPY = new BigNumber(annualProfits)
+		.dividedBy(totalValueLocked || 1)
+		.multipliedBy(100)
+	let yaxAPY = stakingData?.incentiveApy
+		? new BigNumber(stakingData?.incentiveApy)
+				.div(pricePerFullShare)
+				.div(100)
+		: new BigNumber(0)
 	const totalApy = yaxAPY.plus(metavaultAPY)
 
 	return (
@@ -103,7 +113,7 @@ export default function SavingsOverviewCard() {
 						</>
 					}
 				>
-					<Text>Total APY{' '}</Text>
+					<Text>Total APY </Text>
 					<img
 						style={{ position: 'relative', top: -1 }}
 						src={info}

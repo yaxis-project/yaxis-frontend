@@ -2,7 +2,7 @@ import { useContext, useState, useMemo, useCallback } from 'react'
 import { YAX } from '../../../utils/currencies'
 import useEnter from '../../../hooks/useEnter'
 import useLeave from '../../../hooks/useLeave'
-import useYaxisStaking from '../../../hooks/useYaxisStaking'
+import useYaxisStaking from '../../../hooks/useYAXISStaking'
 import Value from '../../../components/Value'
 import { useWeb3React } from '@web3-react/core'
 import { LanguageContext } from '../../../contexts/Language'
@@ -41,7 +41,9 @@ export default function StakingCard() {
 	)
 	const { onEnter } = useEnter()
 	const { onLeave } = useLeave()
-	const { balances: { stakedBalance, walletBalance, rate, yaxBalance } } = useYaxisStaking()
+	const {
+		balances: { stakedBalance, walletBalance, rate, yaxBalance },
+	} = useYaxisStaking()
 
 	const [loading, setLoading] = useState(false)
 	const [depositAmount, setDeposit] = useState<string>('')
@@ -169,9 +171,7 @@ export default function StakingCard() {
 						/>
 					</Form.Item>
 					{!allowance.toNumber() ? (
-						<Tooltip
-							title={approveError}
-						>
+						<Tooltip title={approveError}>
 							<Button
 								disabled={!account}
 								onClick={approveYAX}

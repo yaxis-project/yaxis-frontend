@@ -6,10 +6,12 @@ import { abis } from './abis'
 
 export class Contracts {
 	public yaxis: Contract
+	public yax: Contract
 	public yaxisChef: Contract
 	public pickleChef: Contract
 	public pickleJar: Contract
 	public xYaxStaking: Contract
+	public xYaxisStaking: Contract
 	public yaxisMetaVault: Contract
 	public weth: Contract
 	public pools: StakePool[] = []
@@ -25,11 +27,13 @@ export class Contracts {
 
 	constructor(provider: any, networkId: number, public web3: Web3) {
 		this.yaxis = new this.web3.eth.Contract(abis.YaxisTokenABI)
+		this.yax = new this.web3.eth.Contract(abis.YaxisTokenABI)
 
 		this.yaxisChef = new this.web3.eth.Contract(abis.YaxisChefABI)
 		this.pickleChef = new this.web3.eth.Contract(abis.PickleChefABI)
 		this.pickleJar = new this.web3.eth.Contract(abis.PickleJarABI)
 
+		this.xYaxisStaking = new this.web3.eth.Contract(abis.XYaxABI)
 		this.xYaxStaking = new this.web3.eth.Contract(abis.XYaxABI)
 		this.yaxisMetaVault = new this.web3.eth.Contract(abis.YaxisMetaVaultABI)
 		this.multicall = new this.web3.eth.Contract(abis.MulticallABI)
@@ -68,9 +72,11 @@ export class Contracts {
 		}
 
 		setProvider(this.yaxis, this.config.contractAddresses.yaxis)
+		setProvider(this.yax, this.config.contractAddresses.yax)
 		setProvider(this.yaxisChef, this.config.contractAddresses.yaxisChef)
 		setProvider(this.weth, this.config.contractAddresses.weth)
 		setProvider(this.multicall, this.config.contractAddresses.multicall)
+		setProvider(this.xYaxisStaking, this.config.contractAddresses.xYaxisStaking)
 		setProvider(this.xYaxStaking, this.config.contractAddresses.xYaxStaking)
 		setProvider(
 			this.yaxisMetaVault,
