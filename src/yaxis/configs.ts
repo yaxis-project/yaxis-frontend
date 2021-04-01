@@ -5,9 +5,11 @@ export const configs: Record<number, Config> = {
 		contractAddresses: {
 			multicall: '0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A',
 			yaxis: '0x29a0d41ad9069861976aFA6F3e6B0b5eC2381096',
+			yax: '0x29a0d41ad9069861976aFA6F3e6B0b5eC2381096',
 			yaxisChef: '0xf74fd2daa87df8d99e1ea7df493a18b546957099',
 			weth: '0x38e966C6F5562D628e70560726A7B7bCD6D1EC8A',
 			xYaxStaking: '0x10dde3c84e066c15cc16b5d085dff8bb2bf960bf',
+			xYaxisStaking: '0x10dde3c84e066c15cc16b5d085dff8bb2bf960bf',
 			yAxisMetaVault: '0x6e4BA66AD61610098E216991977a067F0680FC96',
 			stableSwap3PoolConverter:
 				'0x4981D4A898e1C503BFA06B751f932600E124108f',
@@ -55,11 +57,13 @@ export const configs: Record<number, Config> = {
 		contractAddresses: {
 			multicall: '0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441',
 			yaxis: '0xb1dc9124c395c1e97773ab855d66e879f053a289',
+			yax: '0xb1dc9124c395c1e97773ab855d66e879f053a289',
 			yaxisChef: '0xc330e7e73717cd13fb6ba068ee871584cf8a194f',
 			pickleChef: '0xbD17B1ce622d73bD438b9E658acA5996dc394b0d',
 			pickleJar: '0x1BB74b5DdC1f4fC91D6f9E7906cf68bc93538e33',
 			weth: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
 			xYaxStaking: '0xeF31Cb88048416E301Fee1eA13e7664b887BA7e8',
+			xYaxisStaking: '0xeF31Cb88048416E301Fee1eA13e7664b887BA7e8',
 			yAxisMetaVault: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
 			stableSwap3PoolConverter:
 				'0xA5c16eb6eBD72BC72c70Fca3e4faCf389AD4aBE7',
@@ -346,14 +350,3 @@ export const configs: Record<number, Config> = {
 }
 
 export const currentConfig = (chainId = 1) => configs[chainId]
-
-export const tokensConfig = {
-	share: {
-		tokenId: 'mvlt',
-		name: 'MVLT',
-	},
-	reward: {
-		tokenId: 'yax',
-		name: 'YAX',
-	},
-}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import useGlobal from '../hooks/useGlobal'
-import useYaxisStaking from '../hooks/useYaxisStaking'
+import useYAXISStaking from './useYAXISStaking'
 import useMetaVaultData from '../hooks/useMetaVaultData'
 import useERC20Transactions from '../hooks/useERC20Transactions'
 import usePriceMap from '../hooks/usePriceMap'
@@ -20,7 +20,7 @@ const useReturns = () => {
 	const {
 		loading: loadingStaking,
 		balances: { stakedBalance },
-	} = useYaxisStaking()
+	} = useYAXISStaking()
 	const {
 		metaVaultData: { totalBalance, mvltPrice },
 		loading: loadingMetaVaultData,

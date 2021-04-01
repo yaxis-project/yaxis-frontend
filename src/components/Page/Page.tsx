@@ -4,7 +4,7 @@ import { Layout } from 'antd'
 import TopBar from '../TopBar'
 import Footer from '../Footer'
 import PageLeadBar from './PageLeadBar'
-import NetworkCheck from "../NetworkCheck"
+import NetworkCheck from '../NetworkCheck'
 
 const { Content } = Layout
 

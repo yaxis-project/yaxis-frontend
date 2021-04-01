@@ -26,9 +26,11 @@ export interface Config {
 	contractAddresses: {
 		multicall: string
 		yaxis: string
+		yax: string
 		yaxisChef: string
 		weth: string
 		xYaxStaking: string
+		xYaxisStaking: string
 		yAxisMetaVault: string
 		stableSwap3PoolConverter: string
 		pickleChef: string
