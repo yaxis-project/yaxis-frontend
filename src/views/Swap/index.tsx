@@ -1,8 +1,8 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import Page from '../../components/Page/Page'
 import { Row, Col } from 'antd'
-import { LanguageContext } from '../../contexts/Language'
+// import { LanguageContext } from '../../contexts/Language'
 import SwapCard from './components/SwapCard'
 import SwapInfo from './components/SwapInfo'
 
@@ -13,8 +13,8 @@ const StyledCol = styled(Col)`
 `
 
 const Staking: React.FC = () => {
-	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
+	// const languages = useContext(LanguageContext)
+	// const language = languages.state.selected
 
 	return (
 		<div className="savings-view">
