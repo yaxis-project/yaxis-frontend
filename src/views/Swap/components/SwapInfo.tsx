@@ -1,10 +1,29 @@
+import { useState } from 'react'
 import { Row, Col, Collapse, Typography } from 'antd'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import styled from 'styled-components'
 const { Panel } = Collapse
 const { Title, Paragraph } = Typography
 
-export default function VaultStatsCard() {
+const StyledCollapse = styled(Collapse)<any>`
+	${(props) =>
+		props.active
+			? `
+			border: 1px solid ${props.theme.color.primary.main};
+	.ant-collapse-item {
+		color: white;
+		background: ${props.theme.color.primary.main};
+		transition: background 0.5s;
+	}
+	.ant-collapse-header.ant-collapse-header {
+		color: white;
+	}
+	`
+			: ``}
+`
+
+export default function SwapInfo() {
+	const [active, setActive] = useState(['0'])
 	return (
 		<DetailOverviewCard title={'Details'}>
 			<BodyMain>
@@ -21,12 +40,15 @@ export default function VaultStatsCard() {
 				<Row style={{ padding: '10px' }}>
 					<Col span={20} push={2}>
 						<Title level={4}>Frequently Asked Questions</Title>
-						<Collapse
-							className="expandable-overview"
-							defaultActiveKey={['1']}
+						<StyledCollapse
+							activeKey={active}
 							expandIconPosition="right"
+							onChange={(key) =>
+								setActive(key.includes('0') ? ['0'] : [])
+							}
+							active={active.includes('0')}
 						>
-							<Panel header={'Who'} key="1">
+							<Panel header={'Who'} key="0">
 								<Body>
 									Swiss emmental who moved my cheese cheesy
 									feet cheesy feet chalk and cheese swiss
@@ -37,10 +59,14 @@ export default function VaultStatsCard() {
 									bavarian bergkase camembert de normandie.
 								</Body>
 							</Panel>
-						</Collapse>
-						<Collapse
-							className="expandable-overview"
+						</StyledCollapse>
+						<StyledCollapse
+							activeKey={active}
 							expandIconPosition="right"
+							onChange={(key) =>
+								setActive(key.includes('1') ? ['1'] : [])
+							}
+							active={active.includes('1')}
 						>
 							<Panel header={'Why'} key="1">
 								<Body>
@@ -55,12 +81,16 @@ export default function VaultStatsCard() {
 									camembert de normandie.
 								</Body>
 							</Panel>
-						</Collapse>
-						<Collapse
-							className="expandable-overview"
+						</StyledCollapse>
+						<StyledCollapse
+							activeKey={active}
 							expandIconPosition="right"
+							onChange={(key) =>
+								setActive(key.includes('2') ? ['2'] : [])
+							}
+							active={active.includes('2')}
 						>
-							<Panel header={'How'} key="1">
+							<Panel header={'How'} key="2">
 								<Body>
 									I love cheese, especially fromage frais
 									bavarian bergkase. Swiss emmental who moved
@@ -73,7 +103,7 @@ export default function VaultStatsCard() {
 									camembert de normandie.
 								</Body>
 							</Panel>
-						</Collapse>
+						</StyledCollapse>
 					</Col>
 				</Row>
 			</BodyMain>
