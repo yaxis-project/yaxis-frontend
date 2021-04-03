@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Currency, YAX, PICKLE } from '../../../utils/currencies'
+import { Currency, YAXIS, PICKLE } from '../../../utils/currencies'
 
 import theme from '../../../theme'
 import { LanguageContext } from '../../../contexts/Language'
@@ -44,12 +44,12 @@ const StrategyRow = (props: StrategyRowProps) => {
 						+{' '}
 					</Text>
 					<img
-						src={YAX.icon}
+						src={YAXIS.icon}
 						height="32"
 						style={{ marginTop: -4 }}
 						alt="logo"
 					/>
-					<Text>{phrases['YAX Rewards'][language]}</Text>
+					<Text>{phrases['YAXIS Rewards'][language]}</Text>
 				</Col>
 				<Col span={6}>
 					<Row>

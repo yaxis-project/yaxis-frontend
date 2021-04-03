@@ -22,8 +22,8 @@ const translations = {
 	Returns: {
 		ENG: 'Returns',
 	},
-	'YAX Staked': {
-		ENG: 'YAX Staked',
+	'YAXIS Staked': {
+		ENG: 'YAXIS Staked',
 	},
 	'Weekly Average APY': {
 		ENG: 'Weekly Average APY',
@@ -52,23 +52,23 @@ const translations = {
 	Approve: {
 		ENG: 'Approve',
 	},
-	'Please approve YAX staking amount.': {
-		ENG: 'Please approve YAX staking amount.',
+	'Please approve YAXIS staking amount.': {
+		ENG: 'Please approve YAXIS staking amount.',
 	},
 	'Please approve staking transaction.': {
 		ENG: 'Please approve staking transaction.',
 	},
-	'Please approve YAX unstaking transaction.': {
-		ENG: 'Please approve YAX unstaking transaction.',
+	'Please approve YAXIS unstaking transaction.': {
+		ENG: 'Please approve YAXIS unstaking transaction.',
 	},
-	'An error occurred during YAX staking approval. Please try again.': {
-		ENG: 'An error occurred during YAX staking approval. Please try again.',
+	'An error occurred during YAXIS staking approval. Please try again.': {
+		ENG: 'An error occurred during YAXIS staking approval. Please try again.',
 	},
-	'An error occurred during YAX staking. Please try again.': {
-		ENG: 'An error occurred during YAX staking. Please try again.',
+	'An error occurred during YAXIS staking. Please try again.': {
+		ENG: 'An error occurred during YAXIS staking. Please try again.',
 	},
-	'An error occurred during YAX unstaking. Please try again.': {
-		ENG: 'An error occurred during YAX unstaking. Please try again.',
+	'An error occurred during YAXIS unstaking. Please try again.': {
+		ENG: 'An error occurred during YAXIS unstaking. Please try again.',
 	},
 } as Dictionary
 

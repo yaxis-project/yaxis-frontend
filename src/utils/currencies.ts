@@ -55,7 +55,15 @@ export const YAX: Currency = {
 	tokenId: 'yax',
 	icon: yax,
 	decimals: 18,
-	priceMapKey: 'YAX',
+	priceMapKey: 'YAXIS',
+}
+
+export const YAXIS: Currency = {
+	name: 'YAXIS',
+	tokenId: 'yaxis',
+	icon: yax,
+	decimals: 18,
+	priceMapKey: 'YAXIS',
 }
 
 export const USDT: Currency = {
@@ -109,6 +117,7 @@ export enum Currencies {
 	USD,
 	ETH,
 	YAX,
+	YAXIS,
 	PICKLE,
 	USDC,
 	USDT,

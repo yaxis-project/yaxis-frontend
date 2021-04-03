@@ -40,7 +40,7 @@ export default function LiquidityOverviewCard(
 					<Text>Return</Text>
 					<Value
 						value={getBalanceNumber(earnings)}
-						numberSuffix=" YAX"
+						numberSuffix=" YAXIS"
 						decimals={2}
 					/>
 				</Col>

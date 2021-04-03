@@ -51,7 +51,7 @@ export default function useYaxisStaking() {
                 rate: new BigNumber(rate),
                 stakedBalanceUSD: new BigNumber(rate)
                     .div(1e18)
-                    .multipliedBy(priceMap?.YAX)
+                    .multipliedBy(priceMap?.YAXIS)
                     .times(sBalance)
                     .div(1e18),
                 yaxBalance: walletBalance.div(1e18),
