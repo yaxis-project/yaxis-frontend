@@ -21,11 +21,10 @@ import useMetaVaultData from '../../../hooks/useMetaVaultData'
 const Balances: React.FC = () => {
 	const totalSupply = useTotalSupply()
 	const yaxis = useYaxis()
-	const { balance: yaxisBalance } =
-		useTokenBalance(getYaxisAddress(yaxis))
+	const { balance: yaxisBalance } = useTokenBalance(getYaxisAddress(yaxis))
 	const { account } = useWeb3React()
 	const { farms, stakedValues } = useFarms()
-	const { YAX: yaxisPrice } = usePriceMap()
+	const { YAXIS: yaxisPrice } = usePriceMap()
 	const { totalAmount } = useAllEarnings()
 
 	const rewardPerBlock = useRewardPerBlock()
@@ -49,7 +48,7 @@ const Balances: React.FC = () => {
 					.getPricePerFullShare()
 					.call()
 				setPricePerFullShare(new BigNumber(value).div(1e18))
-			} catch (e) { }
+			} catch (e) {}
 		}
 
 		if (yaxis && yaxis.web3) {
@@ -137,8 +136,8 @@ const Balances: React.FC = () => {
 											value={
 												!!account
 													? getBalanceNumber(
-														yaxisBalance,
-													)
+															yaxisBalance,
+													  )
 													: 'Locked'
 											}
 										/>
@@ -158,7 +157,7 @@ const Balances: React.FC = () => {
 											: 'Locked'
 									}
 								/>{' '}
-								YAX
+								YAXIS
 							</FootnoteValue>
 						</Footnote>
 					</Card>
@@ -166,7 +165,7 @@ const Balances: React.FC = () => {
 				<Col xs={24} md={12}>
 					<Card>
 						<CardContent>
-							<Label text="YAX Supply" />
+							<Label text="YAXIS Supply" />
 							<Value
 								value={
 									totalSupply

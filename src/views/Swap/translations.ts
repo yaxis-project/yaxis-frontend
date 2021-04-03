@@ -4,8 +4,8 @@ const translations = {
 	'Staking Account': {
 		ENG: 'Staking Account',
 	},
-	'YAX Staking': {
-		ENG: 'YAX Staking',
+	'YAXIS Staking': {
+		ENG: 'YAXIS Staking',
 	},
 	Balance: {
 		ENG: 'Balance',

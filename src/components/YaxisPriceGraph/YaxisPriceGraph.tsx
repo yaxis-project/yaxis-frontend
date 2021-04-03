@@ -67,7 +67,7 @@ const PriceGraph: React.FC = () => {
 	const [isLoading, setLoading] = useState(true)
 	const [selectedDay, setDate] = useState<SelectableDay>(dayOptions[3])
 
-	const { YAX: yaxisPrice } = usePriceMap()
+	const { YAXIS: yaxisPrice } = usePriceMap()
 
 	const windowWidth = useWindowWidth();
 	const chartWidth = useMemo(() => {

@@ -53,7 +53,7 @@ const SavingsAccountOverview: React.FC = () => {
 		<AccountOverviewCard
 			loading={false}
 			mainTitle={'Staking Account'}
-			secondaryText={'YAX Staking'}
+			secondaryText={'YAXIS Staking'}
 			value={'$' + formatBN(stakedBalanceUSD)}
 			time={lastUpdated.fromNow()}
 		/>

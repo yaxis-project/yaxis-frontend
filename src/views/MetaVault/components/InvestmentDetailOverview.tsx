@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { Row, Col, Typography, Button, Tooltip, notification } from 'antd'
 import Value from '../../../components/Value'
 // import useAccountReturns from '../../../hooks/useAccountReturns'
-import useMetaVault from '../../../hooks/useMetaVault';
-import useMetaVaultData from '../../../hooks/useMetaVaultData';
+import useMetaVault from '../../../hooks/useMetaVault'
+import useMetaVaultData from '../../../hooks/useMetaVaultData'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import {
@@ -24,16 +24,16 @@ const InvestmentDetailOverview: React.FC = () => {
 	const t = (s: string) => phrases[s][language]
 
 	// const { yaxReturns, yaxReturnsUSD } = useAccountReturns()
-	const { threeCrvApyPercent, yaxApyPercent, lpApyPercent, totalAPY } = useComputeAPYs()
+	const {
+		threeCrvApyPercent,
+		yaxApyPercent,
+		lpApyPercent,
+		totalAPY,
+	} = useComputeAPYs()
 
 	const { isClaiming, onGetRewards } = useMetaVault()
 
-
-	const {
-		onFetchMetaVaultData,
-		metaVaultData
-	} = useMetaVaultData('V2');
-
+	const { onFetchMetaVaultData, metaVaultData } = useMetaVaultData('V2')
 
 	const handleClaimRewards = async () => {
 		try {
@@ -60,7 +60,7 @@ const InvestmentDetailOverview: React.FC = () => {
 						// value={yaxReturnsUSD}
 						value={pendingYax}
 						// numberSuffix={`${yaxReturns} YAX`}
-						numberSuffix={` YAX`}
+						numberSuffix={` YAXIS`}
 						decimals={2}
 					/>
 				</Col>
@@ -80,7 +80,7 @@ const InvestmentDetailOverview: React.FC = () => {
 				<Tooltip
 					title={
 						<>
-							<Row>YAX APY:</Row>
+							<Row>YAXIS APY:</Row>
 							<Row>{yaxApyPercent?.toFixed(2)}%</Row>
 							<Row>Curve LP APY:</Row>
 							<Row>{lpApyPercent?.toFixed(2)}%</Row>
@@ -89,12 +89,12 @@ const InvestmentDetailOverview: React.FC = () => {
 						</>
 					}
 				>
-					<Text>Total APY{' '}</Text>
+					<Text>Total APY </Text>
 					<img
 						style={{ position: 'relative', top: -1 }}
 						src={info}
 						height="15"
-						alt="YAX Supply Rewards"
+						alt="YAXIS Supply Rewards"
 					/>
 				</Tooltip>
 				<Value
@@ -112,7 +112,7 @@ const StyledRow = styled(Row)`
 	padding: 22px;
 	border-top: 1px solid #eceff1;
 
-	 .ant-typography {
+	.ant-typography {
 		font-size: 14px;
 		color: #333333;
 	}
@@ -128,18 +128,18 @@ const StyledRow = styled(Row)`
 `
 
 const HarvestButton = styled(Button)`
-	background: ${props => props.theme.color.green[600]};
+	background: ${(props) => props.theme.color.green[600]};
 	border: none;
 	height: 60px;
 	font-weight: 600;
 	&:hover {
-		background-color: ${props => props.theme.color.green[500]};
+		background-color: ${(props) => props.theme.color.green[500]};
 	}
 	&:active {
-		background-color: ${props => props.theme.color.green[500]};
+		background-color: ${(props) => props.theme.color.green[500]};
 	}
 	&:focus {
-		background-color: ${props => props.theme.color.green[500]};
+		background-color: ${(props) => props.theme.color.green[500]};
 	}
 	&[disabled] {
 		color: #8c8c8c;
@@ -147,6 +147,5 @@ const HarvestButton = styled(Button)`
 		border: none;
 	}
 `
-
 
 export default InvestmentDetailOverview

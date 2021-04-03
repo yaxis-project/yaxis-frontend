@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Row, Col, Button } from "antd"
+import { Row, Col, Button } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 
@@ -15,7 +15,7 @@ import {
 } from '../../../components/ExpandableSidePanel'
 import { Tooltip } from 'antd'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
-import { formatBN } from "../../../yaxis/utils"
+import { formatBN } from '../../../yaxis/utils'
 
 interface TooltipRowProps {
 	main: string
@@ -24,7 +24,11 @@ interface TooltipRowProps {
 
 const TooltipRow = ({ main, value }: TooltipRowProps) => (
 	<>
-		<div style={{ textDecoration: "underline", textUnderlineOffset: "4px" }}>{main}</div>
+		<div
+			style={{ textDecoration: 'underline', textUnderlineOffset: '4px' }}
+		>
+			{main}
+		</div>
 		<div>{value}</div>
 	</>
 )
@@ -44,7 +48,10 @@ export default function HomeExpandableOverview() {
 
 	return (
 		<>
-			<ExpandableSidePanel header={phrases["yAxis Overview"][language]} key="1">
+			<ExpandableSidePanel
+				header={phrases['yAxis Overview'][language]}
+				key="1"
+			>
 				<ExpandableRow
 					main={
 						<Tooltip
@@ -55,7 +62,7 @@ export default function HomeExpandableOverview() {
 										value={'$' + formatBN(metavaultTvl)}
 									/>
 									<TooltipRow
-										main="Total YAX Staking value"
+										main="Total YAXIS Staking value"
 										value={'$' + formatBN(stakingTvl)}
 									/>
 									<TooltipRow
@@ -70,7 +77,7 @@ export default function HomeExpandableOverview() {
 								style={{ position: 'relative', top: -1 }}
 								src={info}
 								height="15"
-								alt="YAX Supply Rewards"
+								alt="YAXIS Supply Rewards"
 							/>
 						</Tooltip>
 					}
@@ -85,15 +92,22 @@ export default function HomeExpandableOverview() {
 				<Row gutter={20}>
 					<Col span={12}>
 						<ExpandableRow
-							main="Price of YAX"
+							main="Price of YAXIS"
 							secondary={
-								<Value value={hrPrice} numberPrefix="$" decimals={2} />
+								<Value
+									value={hrPrice}
+									numberPrefix="$"
+									decimals={2}
+								/>
 							}
 						/>
 					</Col>
-					<Col style={{
-						display: "flex", alignItems: "center"
-					}}>
+					<Col
+						style={{
+							display: 'flex',
+							alignItems: 'center',
+						}}
+					>
 						{/* TODO: Faucet on Kovan */}
 						<Button
 							type="primary"
@@ -101,7 +115,7 @@ export default function HomeExpandableOverview() {
 							target="_blank"
 							style={{ fontWeight: 900 }}
 						>
-							Get YAX
+							Get YAXIS
 						</Button>
 					</Col>
 				</Row>
@@ -122,7 +136,7 @@ export default function HomeExpandableOverview() {
 							<img
 								src={info}
 								height="15"
-								alt="YAX Supply Rewards"
+								alt="YAXIS Supply Rewards"
 							/>
 						</Tooltip>
 					}

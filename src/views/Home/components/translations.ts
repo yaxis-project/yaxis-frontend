@@ -4,8 +4,8 @@ const translations = {
 	'yAxis Overview': {
 		ENG: 'yAxis Overview',
 	},
-	'Price of YAX': {
-		ENG: 'Price of YAX',
+	'Price of YAXIS': {
+		ENG: 'Price of YAXIS',
 	},
 	'Total Value Locked': {
 		ENG: 'Total Value Locked',

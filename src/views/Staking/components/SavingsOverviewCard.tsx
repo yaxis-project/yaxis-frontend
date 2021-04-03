@@ -67,8 +67,10 @@ export default function SavingsOverviewCard() {
 	)
 	const priceMap = usePriceMap()
 	const totalValueLocked =
-		new BigNumber(totalSupply).div(1e18).times(priceMap?.YAX).toNumber() ||
-		0
+		new BigNumber(totalSupply)
+			.div(1e18)
+			.times(priceMap?.YAXIS)
+			.toNumber() || 0
 	const sumApy = new BigNumber(threeCrvApyPercent).div(100).multipliedBy(0.2)
 	const annualProfits = sumApy
 		.div(365)
@@ -99,14 +101,14 @@ export default function SavingsOverviewCard() {
 				/>
 			</DetailOverviewCardRow> */}
 			<DetailOverviewCardRow>
-				<Text>YAX Staked</Text>
-				<Value value={stakedBalance.toFixed(3)} numberSuffix=" YAX" />
+				<Text>YAXIS Staked</Text>
+				<Value value={stakedBalance.toFixed(3)} numberSuffix=" YAXIS" />
 			</DetailOverviewCardRow>
 			<DetailOverviewCardRow>
 				<Tooltip
 					title={
 						<>
-							<Row>YAX APY:</Row>
+							<Row>YAXIS APY:</Row>
 							<Row>{yaxAPY?.toFixed(2)}%</Row>
 							<Row>CRV APY (20%):</Row>
 							<Row>{metavaultAPY?.toFixed(2)}%</Row>
@@ -118,7 +120,7 @@ export default function SavingsOverviewCard() {
 						style={{ position: 'relative', top: -1 }}
 						src={info}
 						height="15"
-						alt="YAX Supply Rewards"
+						alt="YAXIS Supply Rewards"
 					/>
 				</Tooltip>
 				<Value value={totalApy.toFixed(2)} numberSuffix="%" />
