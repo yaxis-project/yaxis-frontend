@@ -1,54 +1,85 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Row, Col } from 'antd'
+import { Row, Col, Grid } from 'antd'
 import { ReactComponent as discord } from '../../../assets/img/icons/discord.svg'
 import { ReactComponent as github } from '../../../assets/img/icons/github.svg'
 import { ReactComponent as twitter } from '../../../assets/img/icons/twitter.svg'
 import quantstamp from '../../../assets/img/icons/quantstamp.svg'
 import Icon, { ReadOutlined } from '@ant-design/icons'
+const { useBreakpoint } = Grid
 
 const Nav: React.FC = () => {
+	const { xs, sm } = useBreakpoint()
 	return (
-		<StyledRow>
+		<StyledRow align="middle">
 			<StyledCol xs={24} sm={24} md={8}>
-				{/* <StyledNavLink to="/">Home</StyledNavLink> */}
-				{/* <StyledWrapper>
-					<Dropdown overlay={menu} placement="topLeft">
-						<StyledLink>Contracts</StyledLink>
-					</Dropdown>
-				</StyledWrapper> */}
-				<StyledLink target="_blank" href="https://immunefi.com/bounty/yaxis/">Security</StyledLink>
-				<StyledLink target="_blank" href="https://gov.yaxis.io/#/">Governance</StyledLink>
+				<Row justify="center">
+					<StyledLink
+						target="_blank"
+						href="https://resources.yaxis.io"
+					>
+						Resources
+					</StyledLink>
+					<StyledLink target="_blank" href="https://gov.yaxis.io/#/">
+						Governance
+					</StyledLink>
+					<StyledLink
+						target="_blank"
+						href="https://immunefi.com/bounty/yaxis/"
+					>
+						Security
+					</StyledLink>
+				</Row>
+				<Row justify="center" style={{ paddingTop: '10px' }}>
+					<StyledLink
+						target="_blank"
+						href="https://trello.com/b/nkcEh9pc/yaxis-bounty-board-community"
+					>
+						We're Hiring!
+					</StyledLink>
+				</Row>
 			</StyledCol>
 
 			<StyledCol2 xs={24} sm={24} md={8}>
-				<StyledLinkButton target="_blank" href="https://certificate.quantstamp.com/full/meta-vault-v-2">
-					Secured by <img src={quantstamp} height="17" alt="Quantstamp Audit Link" />
-				</StyledLinkButton>
+				<Row justify="center">
+					<StyledLinkButton
+						target="_blank"
+						href="https://certificate.quantstamp.com/full/meta-vault-v-2"
+					>
+						Secured by{' '}
+						<img
+							src={quantstamp}
+							height="17"
+							alt="Quantstamp Audit Link"
+						/>
+					</StyledLinkButton>
+				</Row>
 			</StyledCol2>
 
 			<StyledCol3 xs={24} sm={24} md={8}>
-				<StyledLink target="_blank" href="https://yaxis.ghost.io" >
-					<ReadOutlined style={{ fontSize: "25px" }} />
-				</StyledLink>
-				<StyledLink
-					target="_blank"
-					href="https://discord.gg/u8KZPCMJ6x"
-				>
-					<HoverableIcon component={discord} />
-				</StyledLink>
-				<StyledLink
-					target="_blank"
-					href="https://github.com/yaxis-project"
-				>
-					<HoverableIcon component={github} />
-				</StyledLink>
-				<StyledLink
-					target="_blank"
-					href="https://twitter.com/yaxis_project"
-				>
-					<HoverableIcon component={twitter} />
-				</StyledLink>
+				<Row justify={xs || sm ? 'center' : 'end'}>
+					<StyledLink target="_blank" href="https://yaxis.ghost.io">
+						<ReadOutlined style={{ fontSize: '25px' }} />
+					</StyledLink>
+					<StyledLink
+						target="_blank"
+						href="https://discord.gg/u8KZPCMJ6x"
+					>
+						<HoverableIcon component={discord} />
+					</StyledLink>
+					<StyledLink
+						target="_blank"
+						href="https://github.com/yaxis-project"
+					>
+						<HoverableIcon component={github} />
+					</StyledLink>
+					<StyledLink
+						target="_blank"
+						href="https://twitter.com/yaxis_project"
+					>
+						<HoverableIcon component={twitter} />
+					</StyledLink>
+				</Row>
 			</StyledCol3>
 		</StyledRow>
 	)
@@ -97,12 +128,12 @@ const StyledLinkButton = styled.a`
 	padding: 10px ${(props) => props.theme.spacing[3]}px;
 	text-decoration: none;
 	font-size: 12px;
-	width: 100%;
+	width: 200px;
 	border: 1px solid grey;
 	border-radius: 18px;
 	text-align: center;
 
-	&:hover{
+	&:hover {
 		border: 1px solid ${(props) => props.theme.color.primary.hover};
 	}
 `
