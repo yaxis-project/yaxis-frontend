@@ -10,11 +10,11 @@ const translations = {
 	Asset: {
 		ENG: 'Asset',
 	},
-	'Wallet Balance': {
-		ENG: 'Wallet Balance',
+	'Available Balance': {
+		ENG: 'Available Balance',
 	},
-	'Account Balance': {
-		ENG: 'Account Balance',
+	'Staked Balance': {
+		ENG: 'Staked Balance',
 	},
 	'Account Overview': {
 		ENG: 'Account Overview',
