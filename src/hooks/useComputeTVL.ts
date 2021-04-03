@@ -25,7 +25,7 @@ export default function useComputeTVL() {
 	const { farms, stakedValues } = useFarms()
 	const block = useBlock()
 	const yaxis = useYaxis()
-	const { YAX: yaxisPrice } = usePriceMap()
+	const { YAXIS: yaxisPrice } = usePriceMap()
 
 	const fetchData = useCallback(async () => {
 		const stakedSupply = await getTotalStaking(yaxis)

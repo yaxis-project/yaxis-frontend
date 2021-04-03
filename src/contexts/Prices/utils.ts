@@ -17,7 +17,7 @@ export type Ticker =
 	| 'aLINK'
 	| 'YCURVE'
 	| 'yCRV'
-	| 'YAX'
+	| 'YAXIS'
 	| 'Cure3Crv'
 	| 'CRV'
 
@@ -38,7 +38,7 @@ const tokenCgkIdMap: Record<Ticker, CoinGeckoID> = {
 	aLINK: 'aave-link',
 	YCURVE: 'curve-fi-ydai-yusdc-yusdt-ytusd',
 	yCRV: 'curve-fi-ydai-yusdc-yusdt-ytusd',
-	YAX: 'yaxis',
+	YAXIS: 'yaxis',
 	Cure3Crv: 'lp-3pool-curve',
 	CRV: 'curve-dao-token',
 }

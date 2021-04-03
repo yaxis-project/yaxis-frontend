@@ -38,7 +38,7 @@ const Staking: React.FC = () => {
 			<Page
 				loading={false}
 				mainTitle={phrases['Staking Account'][language]}
-				secondaryText={phrases['YAX Staking'][language]}
+				secondaryText={phrases['YAXIS Staking'][language]}
 				secondaryTextLink={
 					address &&
 					etherscanUrl(`/address/${address}#code`, networkName)

@@ -8,8 +8,8 @@ import BN from 'bignumber.js'
 const mvCurrs = ['DAI', 'USDT', 'USDC', 'CRV3']
 
 const defaultState = {
-    metaVault: { USD: new BN(0), YAX: new BN(0) },
-    staking: { YAX: new BN(0) },
+    metaVault: { USD: new BN(0), YAX: new BN(0), YAXIS: new BN(0) },
+    staking: { YAX: new BN(0), YAXIS: new BN(0) },
 }
 
 const useERC20Transactions = () => {
@@ -114,11 +114,35 @@ const useERC20Transactions = () => {
                             )
                         }
 
+                        // DEPOSIT STAKING NEW
+                        if (
+                            curr.tokenSymbol === 'YAXIS' &&
+                            curr.from === account.toLowerCase() &&
+                            curr.to ===
+                            config.contractAddresses.xYaxStaking.toLowerCase()
+                        ) {
+                            acc.staking.YAXIS = acc.staking.YAXIS.minus(
+                                new BN(curr.value).div(10 ** 18),
+                            )
+                        }
+
+                        // WITHDRAW STAKING NEW
+                        if (
+                            curr.tokenSymbol === 'YAXIS' &&
+                            curr.to === account.toLowerCase() &&
+                            curr.from ===
+                            config.contractAddresses.xYaxStaking.toLowerCase()
+                        ) {
+                            acc.staking.YAXIS = acc.staking.YAXIS.plus(
+                                new BN(curr.value).div(10 ** 18),
+                            )
+                        }
+
                         return acc
                     },
                     {
-                        metaVault: { USD: new BN(0), YAX: new BN(0) },
-                        staking: { YAX: new BN(0) },
+                        metaVault: { USD: new BN(0), YAX: new BN(0), YAXIS: new BN(0) },
+                        staking: { YAX: new BN(0), YAXIS: new BN(0) },
                     },
                 )
                 setState(totals)

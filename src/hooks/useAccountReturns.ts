@@ -6,7 +6,7 @@ import usePriceMap from './usePriceMap'
  * Generates the signed in user's yax returns.
  */
 export default function useAccountReturns() {
-	const { YAX: yaxisPrice } = usePriceMap()
+	const { YAXIS: yaxisPrice } = usePriceMap()
 	const { balances, totalAmount } = useAllEarnings()
 
 	const yaxReturns = getBalanceNumber(totalAmount)

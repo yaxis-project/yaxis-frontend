@@ -34,10 +34,10 @@ const useReturns = () => {
 				mvltPrice || '0',
 			)
 			const mvReUSD = erc20.metaVault.USD.plus(investingBalance)
-			const mvReYAX = erc20.metaVault.YAX
-			const mvReturn = mvReUSD.plus(mvReYAX.multipliedBy(priceMap?.YAX))
-			const stReYAX = erc20.staking.YAX.plus(stakedBalance)
-			const stReturn = stReYAX.multipliedBy(priceMap?.YAX)
+			const mvReYAX = erc20.metaVault.YAX.plus(erc20.metaVault.YAXIS)
+			const mvReturn = mvReUSD.plus(mvReYAX.multipliedBy(priceMap?.YAXIS))
+			const stReYAX = erc20.staking.YAX.plus(erc20.staking.YAXIS).plus(stakedBalance)
+			const stReturn = stReYAX.multipliedBy(priceMap?.YAXIS)
 			setState({
 				metaVaultUSD: mvReturn.toFixed(2),
 				stakingUSD: stReturn.toFixed(2),

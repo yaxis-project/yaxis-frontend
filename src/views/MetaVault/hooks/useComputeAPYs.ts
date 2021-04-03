@@ -72,7 +72,7 @@ export default function useComputeAPYs() {
 	// 		const totalValueLocked =
 	// 			new BigNumber(totalSupply)
 	// 				.div(1e18)
-	// 				.times(priceMap?.YAX)
+	// 				.times(priceMap?.YAXIS)
 	// 				.toNumber() || 0
 	// 		const sumApy = new BigNumber(threeCrvApyPercent)
 	// 			.div(100)

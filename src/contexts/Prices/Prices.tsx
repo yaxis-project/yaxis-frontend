@@ -24,7 +24,7 @@ export const defaultPriceMap: Record<Ticker, number> = {
 	aLINK: 0,
 	YCURVE: 0,
 	yCRV: 0,
-	YAX: 0,
+	YAXIS: 0,
 	Cure3Crv: 0,
 	CRV: 0,
 }
@@ -42,21 +42,19 @@ export function PricesProvider({
 	const [isInitialized, setIsInitialized] = useState<boolean>(false)
 	const { block } = useGlobal()
 	useEffect(() => {
-		(async () => {
+		;(async () => {
 			try {
 				const priceMap = await getCoinGeckoPrices()
 				setValue(priceMap)
 				setIsInitialized(true)
 			} catch (e) {
-				console.log("Could net fetch prices", e)
+				console.log('Could net fetch prices', e)
 			}
 		})()
 	}, [block])
 
 	return (
-		<Context.Provider
-			value={{ initialized: isInitialized, ...value }}
-		>
+		<Context.Provider value={{ initialized: isInitialized, ...value }}>
 			{children}
 		</Context.Provider>
 	)

@@ -137,7 +137,7 @@ function useMetaVaultData(id: string): IHookReturn {
 		strategy,
 	} = useMetaVault()
 	const { yaxis, block } = useGlobal()
-	const { YAX: yaxPrice, Cure3Crv: cure3CrvPrice } = usePriceMap()
+	const { YAXIS: yaxPrice, Cure3Crv: cure3CrvPrice } = usePriceMap()
 
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<boolean>(false)

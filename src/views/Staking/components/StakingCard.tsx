@@ -1,5 +1,5 @@
 import { useContext, useState, useMemo, useCallback } from 'react'
-import { YAX } from '../../../utils/currencies'
+import { YAXIS } from '../../../utils/currencies'
 import useEnter from '../../../hooks/useEnter'
 import useLeave from '../../../hooks/useLeave'
 import useYaxisStaking from '../../../hooks/useYAXISStaking'
@@ -72,7 +72,7 @@ export default function StakingCard() {
 			setLoading(false)
 		} catch (err) {
 			notification.info({
-				message: `An error occured duirng YAX staking:`,
+				message: `An error occured duirng YAXIS staking:`,
 				description: err.message,
 			})
 			setLoading(false)
@@ -83,7 +83,7 @@ export default function StakingCard() {
 		try {
 			setLoading(true)
 			notification.info({
-				message: t('Please approve YAX unstaking transaction.'),
+				message: t('Please approve YAXIS unstaking transaction.'),
 			})
 			const sYax = new BigNumber(withdrawAmount).times(1e18).div(rate)
 			await onLeave(sYax.toString())
@@ -91,7 +91,7 @@ export default function StakingCard() {
 			setLoading(false)
 		} catch (err) {
 			notification.info({
-				message: `An error occured duirng YAX unstaking:`,
+				message: `An error occured duirng YAXIS unstaking:`,
 				description: err.message,
 			})
 			setLoading(false)
@@ -140,19 +140,19 @@ export default function StakingCard() {
 
 			<Row gutter={24}>
 				<Col span={12} className={'balance'}>
-					<img src={YAX.icon} height="24" alt="logo" />
+					<img src={YAXIS.icon} height="24" alt="logo" />
 					<Value
 						value={getBalanceNumber(walletBalance)}
 						decimals={2}
-						numberSuffix=" YAX"
+						numberSuffix=" YAXIS"
 					/>
 				</Col>
 				<Col span={12} className={'balance'}>
-					<img src={YAX.icon} height="24" alt="logo" />
+					<img src={YAXIS.icon} height="24" alt="logo" />
 					<Value
 						value={stakedBalance.toNumber()}
 						decimals={2}
-						numberSuffix=" YAX"
+						numberSuffix=" YAXIS"
 					/>
 				</Col>
 			</Row>
@@ -166,7 +166,7 @@ export default function StakingCard() {
 							min={'0'}
 							placeholder="0"
 							disabled={loading || walletBalance.isZero()}
-							suffix={YAX.name}
+							suffix={YAXIS.name}
 							onClickMax={maxDeposit}
 						/>
 					</Form.Item>
@@ -198,7 +198,7 @@ export default function StakingCard() {
 							min={'0'}
 							placeholder="0"
 							disabled={loading || stakedBalance.isZero()}
-							suffix="YAX"
+							suffix="YAXIS"
 							onClickMax={maxWithdraw}
 						/>
 					</Form.Item>

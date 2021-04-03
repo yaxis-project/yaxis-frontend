@@ -13,8 +13,8 @@ const translations = {
 	'Select Vote': {
 		ENG: 'Select Vote',
 	},
-	'YAX Rewards': {
-		ENG: 'YAX Rewards',
+	'YAXIS Rewards': {
+		ENG: 'YAXIS Rewards',
 	},
 	'Voting Share': {
 		ENG: 'Voting Share',

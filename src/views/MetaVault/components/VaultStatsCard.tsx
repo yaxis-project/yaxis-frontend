@@ -35,7 +35,7 @@ export default function VaultStatsCard() {
 					secondary={
 						<Value
 							value={metaVaultData?.rewardPerBlock}
-							numberSuffix=" YAX"
+							numberSuffix=" YAXIS"
 							decimals={3}
 						/>
 					}
