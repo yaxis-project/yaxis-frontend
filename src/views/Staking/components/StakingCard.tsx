@@ -134,8 +134,8 @@ export default function StakingCard() {
 	return (
 		<Card className="staking-card" title={<strong>{t('Staking')}</strong>}>
 			<Row gutter={24}>
-				<TableHeader value={t('Wallet Balance')} span={12} />
-				<TableHeader value={t('Account Balance')} span={12} />
+				<TableHeader value={t('Available Balance')} span={12} />
+				<TableHeader value={t('Staked Balance')} span={12} />
 			</Row>
 
 			<Row gutter={24}>
