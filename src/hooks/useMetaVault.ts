@@ -5,7 +5,8 @@ import useYaxis from './useYaxis'
 import { depositAll, getYaxisMetaVault, withdraw } from '../yaxis/utils'
 import { notification } from 'antd'
 import Web3 from 'web3'
-const erc20 = require('./../yaxis/abi/erc20.json')
+import { abis } from '../yaxis/abis'
+const erc20 = abis.ERC20Abi
 
 const useMetaVault = () => {
 	const { account, library } = useWeb3React()
@@ -39,7 +40,7 @@ const useMetaVault = () => {
 						.integerValue(BigNumber.ROUND_DOWN)
 						.toFixed()
 				}
-			} catch (e) {}
+			} catch (e) { }
 			return '0'
 		},
 		[yaxis],
@@ -118,7 +119,7 @@ const useMetaVault = () => {
 			const tokenContract = new web3.eth.Contract(erc20, tokenAddress)
 			const currentStrategy = await tokenContract.methods.name().call()
 			setStrategy(currentStrategy)
-		} catch (err) {}
+		} catch (err) { }
 	}, [web3, yaxis])
 
 	useEffect(() => {
