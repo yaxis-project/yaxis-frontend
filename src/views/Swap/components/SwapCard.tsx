@@ -5,6 +5,7 @@ import {
 } from '../../../components/DetailOverviewCard'
 import { Affix, Row, Col } from 'antd'
 import useYAXStaking from '../../../hooks/useYAXISStaking'
+import useContractWrite from '../../../hooks/useContractWrite'
 import Button from '../../../components/Button'
 import { ArrowRightOutlined } from '@ant-design/icons'
 
@@ -16,6 +17,11 @@ export default function VaultStatsCard() {
 		stakedBalance,
 		walletBalance,
 	])
+	const { call } = useContractWrite({
+		contractName: 'swap',
+		method: 'swap',
+		description: 'Token Swap',
+	})
 	return (
 		<Affix offsetTop={50}>
 			<DetailOverviewCard title={'Swap'}>
@@ -35,7 +41,9 @@ export default function VaultStatsCard() {
 					</Row>
 				</DetailOverviewCardRow>
 				<div style={{ margin: '10px' }}>
-					<Button disabled={totalYAX.eq(0)}>Swap</Button>
+					<Button disabled={totalYAX.eq(0)} onClick={() => call()}>
+						Swap
+					</Button>
 				</div>
 			</DetailOverviewCard>
 		</Affix>

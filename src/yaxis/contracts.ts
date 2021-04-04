@@ -7,6 +7,7 @@ import { abis } from './abis'
 export class Contracts {
 	public yaxis: Contract
 	public yax: Contract
+	public swap: Contract
 	public yaxisChef: Contract
 	public pickleChef: Contract
 	public pickleJar: Contract
@@ -27,7 +28,8 @@ export class Contracts {
 
 	constructor(provider: any, networkId: number, public web3: Web3) {
 		this.yaxis = new this.web3.eth.Contract(abis.YaxisTokenABI)
-		this.yax = new this.web3.eth.Contract(abis.YaxisTokenABI)
+		this.yax = new this.web3.eth.Contract(abis.YaxTokenABI)
+		this.swap = new this.web3.eth.Contract(abis.SwapABI)
 
 		this.yaxisChef = new this.web3.eth.Contract(abis.YaxisChefABI)
 		this.pickleChef = new this.web3.eth.Contract(abis.PickleChefABI)
@@ -73,6 +75,7 @@ export class Contracts {
 
 		setProvider(this.yaxis, this.config.contractAddresses.yaxis)
 		setProvider(this.yax, this.config.contractAddresses.yax)
+		setProvider(this.swap, this.config.contractAddresses.swap)
 		setProvider(this.yaxisChef, this.config.contractAddresses.yaxisChef)
 		setProvider(this.weth, this.config.contractAddresses.weth)
 		setProvider(this.multicall, this.config.contractAddresses.multicall)
