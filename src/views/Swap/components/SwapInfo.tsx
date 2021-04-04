@@ -66,15 +66,17 @@ export default function SwapInfo() {
 						>
 							<Panel header={'What do I need to do?'} key="0">
 								<Body>
-									Log in to your wallet account and click the
-									SWAP button!
+									The first step is to claim any unclaimed
+									rewards that are pending on MetaVault or a
+									LP.
 									<br />
 									<br />
-									That's it. No need to unstake. This
-									all-in-one action will harvest your pending
-									rewards, approve the YAXIS token for use,
-									swap your account balance, and swap your
-									staking balance.
+									Next click the SWAP button!
+									<br />
+									<br />
+									No need to unstake your staked YAX. This
+									all-in-one action will swap your account
+									balance and swap your staking balance.
 									<br />
 									<br />
 								</Body>

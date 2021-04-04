@@ -27,6 +27,7 @@ export interface Config {
 		multicall: string
 		yaxis: string
 		yax: string
+		swap: string
 		yaxisChef: string
 		weth: string
 		xYaxStaking: string
