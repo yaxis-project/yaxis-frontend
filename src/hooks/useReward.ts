@@ -3,7 +3,7 @@ import { notification } from 'antd'
 import useGlobal from './useGlobal'
 import { useWeb3React } from '@web3-react/core'
 
-import { harvest, getYaxisChefContract } from '../yaxis/utils'
+import { getYaxisChefContract } from '../yaxis/utils'
 
 const useReward = (pid: number, tokenName?: string) => {
 	const [loading, setLoading] = useState(false)
@@ -15,10 +15,17 @@ const useReward = (pid: number, tokenName?: string) => {
 		yaxis,
 	])
 
-	const handleReward = useCallback(async () => {
+	const handleReward = useCallback(async (cb?) => {
 		try {
 			setLoading(true)
-			const tx = await harvest(yaxisChefContract, pid, account)
+			const tx = await yaxisChefContract.methods
+				.deposit(pid, '0')
+				.send({ from: account })
+				.on('transactionHash', (tx: any) => {
+					cb && cb()
+					console.log(tx)
+					return tx.transactionHash
+				})
 			setLoading(false)
 			return tx
 		} catch (e) {

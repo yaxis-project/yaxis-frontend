@@ -1,6 +1,6 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState, useMemo } from 'react'
 import styled from 'styled-components'
-import { Row, Col, Typography, Button, Tooltip, notification } from 'antd'
+import { Row, Col, Typography, Tooltip, notification } from 'antd'
 import Value from '../../../components/Value'
 // import useAccountReturns from '../../../hooks/useAccountReturns'
 import useMetaVault from '../../../hooks/useMetaVault'
@@ -11,6 +11,8 @@ import {
 	DetailOverviewCard,
 	DetailOverviewCardRow,
 } from '../../../components/DetailOverviewCard'
+import Button from '../../../components/Button'
+import RewardAPYTooltip from '../../../components/Tooltip/Tooltips/RewardAPYTooltip'
 import info from '../../../assets/img/info.svg'
 
 import useComputeAPYs from '../hooks/useComputeAPYs'
@@ -35,11 +37,13 @@ const InvestmentDetailOverview: React.FC = () => {
 
 	const { onFetchMetaVaultData, metaVaultData } = useMetaVaultData('V2')
 
+	const [claimVisible, setClaimVisible] = useState(false)
 	const handleClaimRewards = async () => {
 		try {
-			await onGetRewards()
+			await onGetRewards(() => setClaimVisible(true))
 			onFetchMetaVaultData()
 		} catch (e) {
+			setClaimVisible(false)
 			console.error(e)
 			notification.error({
 				message: `Error claiming rewards:`,
@@ -48,7 +52,10 @@ const InvestmentDetailOverview: React.FC = () => {
 		}
 	}
 
-	const pendingYax = parseFloat(metaVaultData?.pendingYax || '0')
+	const pendingYax = useMemo(
+		() => parseFloat(metaVaultData?.pendingYax || '0'),
+		[metaVaultData?.pendingYax],
+	)
 
 	return (
 		<DetailOverviewCard title={t('Account Overview')}>
@@ -65,15 +72,16 @@ const InvestmentDetailOverview: React.FC = () => {
 					/>
 				</Col>
 				<Col xs={12} sm={12} md={12}>
-					<HarvestButton
-						type="primary"
-						disabled={!pendingYax}
-						block
-						loading={isClaiming}
-						onClick={handleClaimRewards}
-					>
-						Claim
-					</HarvestButton>
+					<RewardAPYTooltip visible={claimVisible} title="">
+						<Button
+							disabled={!pendingYax}
+							loading={isClaiming}
+							onClick={handleClaimRewards}
+							height={'40px'}
+						>
+							Claim
+						</Button>
+					</RewardAPYTooltip>
 				</Col>
 			</StyledRow>
 			<DetailOverviewCardRow>
@@ -124,27 +132,6 @@ const StyledRow = styled(Row)`
 		> .ant-typography {
 			font-size: 18px;
 		}
-	}
-`
-
-const HarvestButton = styled(Button)`
-	background: ${(props) => props.theme.color.green[600]};
-	border: none;
-	height: 60px;
-	font-weight: 600;
-	&:hover {
-		background-color: ${(props) => props.theme.color.green[500]};
-	}
-	&:active {
-		background-color: ${(props) => props.theme.color.green[500]};
-	}
-	&:focus {
-		background-color: ${(props) => props.theme.color.green[500]};
-	}
-	&[disabled] {
-		color: #8c8c8c;
-		background-color: #f0f0f0;
-		border: none;
 	}
 `
 

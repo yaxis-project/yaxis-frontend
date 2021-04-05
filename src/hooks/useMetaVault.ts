@@ -95,7 +95,7 @@ const useMetaVault = () => {
 		[account, yaxis],
 	)
 
-	const onGetRewards = useCallback(async () => {
+	const onGetRewards = useCallback(async (cb?) => {
 		setClaiming(true)
 		try {
 			const contract = getYaxisMetaVault(yaxis)
@@ -104,6 +104,7 @@ const useMetaVault = () => {
 				.send({ from: account })
 				.on('transactionHash', (tx: any) => {
 					console.log(tx)
+					cb && cb()
 					return tx.transactionHash
 				})
 		} catch (e) {
