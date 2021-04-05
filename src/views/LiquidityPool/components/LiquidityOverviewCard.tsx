@@ -1,4 +1,5 @@
-import { Typography, Row, Col, Button } from 'antd'
+import { useState } from 'react'
+import { Typography, Row, Col } from 'antd'
 import styled from 'styled-components'
 import {
 	DetailOverviewCard,
@@ -6,6 +7,8 @@ import {
 } from '../../../components/DetailOverviewCard'
 // import useAccountReturns from '../../../hooks/useAccountReturns'
 import Value from '../../../components/Value'
+import Button from '../../../components/Button'
+import RewardAPYTooltip from '../../../components/Tooltip/Tooltips/RewardAPYTooltip'
 import Tooltip from '../../../components/Tooltip'
 import useLPFarmAPY from '../hooks/useLPFarmAPY'
 import useMyLiquidity from '../../../hooks/useMyLiquidity'
@@ -32,6 +35,7 @@ export default function LiquidityOverviewCard(
 	const { userPoolShare } = useMyLiquidity(pool)
 	const earnings = useEarnings(pool.pid)
 	const { loading, error, onReward } = useReward(pool.pid)
+	const [claimVisible, setClaimVisible] = useState(false)
 
 	return (
 		<DetailOverviewCard title="Overview">
@@ -46,15 +50,16 @@ export default function LiquidityOverviewCard(
 				</Col>
 				<Col xs={12} sm={12} md={12}>
 					<Tooltip title={error}>
-						<HarvestButton
-							type="primary"
-							disabled={!earnings.toNumber()}
-							onClick={onReward}
-							block
-							loading={loading}
-						>
-							Claim
-						</HarvestButton>
+						<RewardAPYTooltip visible={claimVisible} title="">
+							<Button
+								disabled={!earnings.toNumber()}
+								onClick={() => onReward(setClaimVisible(true))}
+								loading={loading}
+								height={'40px'}
+							>
+								Claim
+							</Button>
+						</RewardAPYTooltip>
 					</Tooltip>
 				</Col>
 			</StyledRow>
@@ -108,26 +113,5 @@ const StyledRow = styled(Row)`
 		> .ant-typography {
 			font-size: 18px;
 		}
-	}
-`
-
-const HarvestButton = styled(Button)`
-	background: ${(props) => props.theme.color.green[600]};
-	border: none;
-	height: 60px;
-	font-weight: 600;
-	&:hover {
-		background-color: ${(props) => props.theme.color.green[500]};
-	}
-	&:active {
-		background-color: ${(props) => props.theme.color.green[500]};
-	}
-	&:focus {
-		background-color: ${(props) => props.theme.color.green[500]};
-	}
-	&[disabled] {
-		color: #8c8c8c;
-		background-color: #f0f0f0;
-		border: none;
 	}
 `
