@@ -20,8 +20,7 @@ import { Transaction } from '../../../contexts/Transactions/types'
 import { mapObjIndexed, pipe, values, flatten } from 'ramda'
 
 const { Title, Text } = Typography
-const { useBreakpoint } = Grid;
-
+const { useBreakpoint } = Grid
 
 /**
  * Object to store the list of depositing values by currency.
@@ -112,7 +111,7 @@ const StyledCol = styled(Col)`
  * Creates a deposit table for the savings account.
  */
 export default function DepositTable() {
-	const { md } = useBreakpoint();
+	const { md } = useBreakpoint()
 
 	const currencies = InvestingDepositCurrencies
 	const { onDepositAll, isSubmitting } = useMetaVault()
@@ -174,7 +173,7 @@ export default function DepositTable() {
 					getContract(library as provider, currency.address),
 					currentConfig(chainId).contractAddresses.yAxisMetaVault,
 					account,
-				)
+				),
 		)
 		notification.info({
 			message: `Please approve ${approvalCalls.length} tokens for deposit.`,
@@ -198,7 +197,7 @@ export default function DepositTable() {
 			return '0'
 		})
 		try {
-			currenciesNeededApproval.length && await handleApprove()
+			currenciesNeededApproval.length && (await handleApprove())
 			const receipt = await onDepositAll(amounts)
 			setCurrencyValues(initialCurrencyValues)
 			onAddTransaction({
@@ -208,7 +207,7 @@ export default function DepositTable() {
 		} catch (e) {
 			notification.info({
 				message: `Error while depositing:`,
-				description: e.message
+				description: e.message,
 			})
 			setSubmitting(false)
 		}
@@ -223,14 +222,15 @@ export default function DepositTable() {
 					<Text type="secondary">{phrases['Asset'][language]}</Text>
 				</Col>
 				<Col xs={8} sm={8} md={7}>
-					<Text type="secondary">{phrases['Wallet Balance'][language]}</Text>
+					<Text type="secondary">
+						{phrases['Wallet Balance'][language]}
+					</Text>
 				</Col>
 				<StyledCol xs={10} sm={10} md={12}>
 					<Text type="secondary">{phrases['Amount'][language]}</Text>
 				</StyledCol>
 			</HeaderRow>
-			{currencies.map((currency) =>
-			(
+			{[currencies[3]].map((currency) => (
 				<DepositAssetRow
 					key={currency.name}
 					currency={currency}
@@ -238,9 +238,8 @@ export default function DepositTable() {
 					value={currencyValues[currency.tokenId]}
 					disabled={isSubmitting || submitting}
 				/>
-			)
-			)}
-			<Row className="total" style={md ? {} : { padding: "0 10%" }}>
+			))}
+			<Row className="total" style={md ? {} : { padding: '0 10%' }}>
 				<Col offset={md ? 12 : 0} xs={24} sm={24} md={11}>
 					<Text type="secondary">{phrases['Total'][language]}</Text>
 					<Title level={3}>${totalDepositing}</Title>
@@ -253,7 +252,7 @@ export default function DepositTable() {
 						type="primary"
 					>
 						{currenciesNeededApproval &&
-							currenciesNeededApproval.length > 0
+						currenciesNeededApproval.length > 0
 							? phrases['Approve'][language]
 							: phrases['Deposit'][language]}
 					</Button>
