@@ -73,6 +73,7 @@ export default function LiquidityOverviewCard(
 							'Reward emissions have ended. Still gathering fees.'
 						}
 						visible={true}
+						placement={'right'}
 					>
 						<Text>Average APY</Text>
 					</Tooltip>
