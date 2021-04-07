@@ -67,7 +67,19 @@ export default function LiquidityOverviewCard(
 				/>
 			</DetailOverviewCardRow>
 			<DetailOverviewCardRow>
-				<Text>Average APY</Text>
+				{pool.symbol === 'YAX/ETH LINKSWAP LP' ? (
+					<Tooltip
+						title={
+							'Reward emissions have ended. Still gathering fees.'
+						}
+						visible={true}
+					>
+						<Text>Average APY</Text>
+					</Tooltip>
+				) : (
+					<Text>Average APY</Text>
+				)}
+
 				<Value
 					value={lpFarmAPY.toNumber()}
 					numberSuffix="%"
