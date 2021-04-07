@@ -150,7 +150,7 @@ async function getLinkPoolInfo(
 		prices,
 		lpPrice,
 		tvl,
-		poolWeight: new BigNumber(1),
+		poolWeight: new BigNumber(0),
 	}
 }
 
