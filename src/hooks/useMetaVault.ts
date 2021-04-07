@@ -5,8 +5,8 @@ import useYaxis from './useYaxis'
 import { depositAll, getYaxisMetaVault, withdraw } from '../yaxis/utils'
 import { notification } from 'antd'
 import Web3 from 'web3'
-import { abis } from '../yaxis/abis'
-const erc20 = abis.ERC20Abi
+import networks from '../yaxis/abis'
+const erc20 = networks["1"].ERC20Abi
 
 const useMetaVault = () => {
 	const { account, library } = useWeb3React()
