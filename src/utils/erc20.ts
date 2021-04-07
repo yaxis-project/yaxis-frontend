@@ -3,11 +3,11 @@ import { provider as Provider } from 'web3-core'
 import { Contract } from 'web3-eth-contract'
 import BigNumber from 'bignumber.js'
 import { Yaxis } from '../yaxis/Yaxis'
-import { abis } from '../yaxis/abis'
+import networks from '../yaxis/abis'
 
 export const getContract = (provider: Provider, address?: string) => {
 	const web3 = new Web3(provider)
-	return new web3.eth.Contract(abis.ERC20Abi, address)
+	return new web3.eth.Contract(networks["1"].ERC20Abi, address)
 }
 
 export const getAllowance = async (

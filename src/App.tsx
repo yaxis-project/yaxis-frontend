@@ -21,6 +21,7 @@ import Staking from './views/Staking'
 // import Liquidity from './views/Liquidity'
 import LiquidityPool from './views/LiquidityPool'
 import Swap from './views/Swap'
+import Faucet from './views/Faucet'
 import { notification } from 'antd'
 import { currentConfig } from './yaxis/configs'
 
@@ -75,6 +76,9 @@ const Routes: React.FC = () => {
 				})}
 				<Route path="/swap" exact>
 					<Swap />
+				</Route>
+				<Route path="/faucet" exact>
+					<Faucet />
 				</Route>
 				<Redirect to="/" />
 			</Switch>

@@ -2,7 +2,7 @@ import { Contract } from 'web3-eth-contract'
 import Web3 from 'web3'
 import { Config, StakePool } from './type'
 import { configs } from './configs'
-import { abis } from './abis'
+import networks from './abis'
 
 export class Contracts {
 	public yaxis: Contract
@@ -27,6 +27,8 @@ export class Contracts {
 	}
 
 	constructor(provider: any, networkId: number, public web3: Web3) {
+		const abis = networks[networkId]
+
 		this.yaxis = new this.web3.eth.Contract(abis.YaxisTokenABI)
 		this.yax = new this.web3.eth.Contract(abis.YaxTokenABI)
 		this.swap = new this.web3.eth.Contract(abis.SwapABI)
