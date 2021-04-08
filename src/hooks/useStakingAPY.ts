@@ -3,8 +3,7 @@ import useYAxisAPY from './useYAxisAPY'
 import useMetaVaultData from './useMetaVaultData'
 import useStaking from './useStaking'
 import usePriceMap from './usePriceMap'
-import useYaxis from './useYaxis'
-import useBlock from './useBlock'
+import useGlobal from './useGlobal'
 import BigNumber from 'bignumber.js'
 import { getTotalStaking } from '../yaxis/utils'
 
@@ -23,8 +22,7 @@ const useStakingAPY = () => {
     const { metaVaultData } = useMetaVaultData('v1')
     const { stakingData } = useStaking()
     const priceMap = usePriceMap()
-    const yaxis = useYaxis()
-    const block = useBlock()
+    const { yaxis, block } = useGlobal()
 
     const fetchData = useCallback(async () => {
         const totalSupply = await getTotalStaking(yaxis)

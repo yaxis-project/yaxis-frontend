@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState, useMemo } from 'react'
 import { getXSushiStakingContract } from '../yaxis/utils'
 import { useWeb3React } from '@web3-react/core'
-import useYaxis from './useYaxis'
+import useGlobal from './useGlobal'
 
 const useStaking = () => {
 	const { account } = useWeb3React()
-	const yaxis = useYaxis()
+	const { yaxis } = useGlobal()
 	const stakingContract = useMemo(() => getXSushiStakingContract(yaxis), [
 		yaxis,
 	])
@@ -23,7 +23,7 @@ const useStaking = () => {
 			data.incentiveApy = incentiveApy
 			data.initialized = true
 			setStakingData(data)
-		} catch (e) {}
+		} catch (e) { }
 	}, [stakingContract, setStakingData])
 
 	useEffect(() => {

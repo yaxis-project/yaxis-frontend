@@ -5,7 +5,7 @@ import {
 	DetailOverviewCardRow,
 } from '../../../components/DetailOverviewCard'
 import { Affix, Row, Col } from 'antd'
-import useYaxis from '../../../hooks/useYaxis'
+import useGlobal from '../../../hooks/useGlobal'
 import useApprove from '../../../hooks/useApprove'
 import useYAXStaking from '../../../hooks/useYAXStaking'
 import useContractWrite from '../../../hooks/useContractWrite'
@@ -18,7 +18,7 @@ import { ethers } from 'ethers'
 export default function SwapCard() {
 	const [allowance, setAllownace] = useState('0')
 	const { account } = useWeb3React()
-	const yaxis = useYaxis()
+	const { yaxis } = useGlobal()
 	const {
 		balances: { stakedBalance, yaxBalance },
 	} = useYAXStaking()

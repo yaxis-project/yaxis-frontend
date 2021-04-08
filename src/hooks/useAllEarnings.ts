@@ -3,8 +3,7 @@ import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 
 import { getEarned, getYaxisChefContract, getFarms } from '../yaxis/utils'
-import useYaxis from './useYaxis'
-import useBlock from './useBlock'
+import useGlobal from './useGlobal'
 
 const useAllEarnings = (): {
 	balances: Array<BigNumber>
@@ -18,10 +17,9 @@ const useAllEarnings = (): {
 		totalAmount: new BigNumber(0),
 	})
 	const { account } = useWeb3React()
-	const yaxis = useYaxis()
+	const { yaxis, block } = useGlobal()
 	const farms = useMemo(() => getFarms(yaxis), [yaxis])
 	const yaxisChefContract = getYaxisChefContract(yaxis)
-	const block = useBlock()
 
 	const fetchAllBalances = useCallback(async () => {
 		try {

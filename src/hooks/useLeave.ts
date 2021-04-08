@@ -1,13 +1,13 @@
 import { useCallback } from 'react'
 
-import useYaxis from './useYaxis'
+import useGlobal from './useGlobal'
 import { useWeb3React } from '@web3-react/core'
 
 import { leave, getXSushiStakingContract } from '../yaxis/utils'
 
 const useLeave = () => {
 	const { account } = useWeb3React()
-	const yaxis = useYaxis()
+	const { yaxis } = useGlobal()
 
 	const handle = useCallback(
 		async (amount: string) => {

@@ -1,18 +1,16 @@
 import { useCallback, useEffect, useState, useMemo } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { getYaxisChefContract, numberToFloat } from '../yaxis/utils'
-import useYaxis from './useYaxis'
-import useBlock from './useBlock'
+import useGlobal from './useGlobal'
 import BigNumber from 'bignumber.js'
 
 const useRewardPerBlock = () => {
 	const [rewardPerBlock, setRewardPerBlock] = useState(0)
 	const { account } = useWeb3React()
-	const yaxis = useYaxis()
+	const { yaxis, block } = useGlobal()
 	const yaxisChefContract = useMemo(() => getYaxisChefContract(yaxis), [
 		yaxis,
 	])
-	const block = useBlock()
 
 	const fetRewardPerBlock = useCallback(async () => {
 		const [multiplier, yaxPerBlock] = await Promise.all([
