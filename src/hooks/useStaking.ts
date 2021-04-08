@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState, useMemo } from 'react'
 import { getXSushiStakingContract } from '../yaxis/utils'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 import useGlobal from './useGlobal'
 
 const useStaking = () => {
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const { yaxis } = useGlobal()
 	const stakingContract = useMemo(() => getXSushiStakingContract(yaxis), [
 		yaxis,

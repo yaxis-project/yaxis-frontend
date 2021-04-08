@@ -12,12 +12,12 @@ import useContractWrite from '../../../hooks/useContractWrite'
 import Button from '../../../components/Button'
 import { ArrowRightOutlined, ArrowDownOutlined } from '@ant-design/icons'
 import { formatBN } from '../../../yaxis/utils'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { ethers } from 'ethers'
 
 export default function SwapCard() {
 	const [allowance, setAllownace] = useState('0')
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const { yaxis } = useGlobal()
 	const {
 		balances: { stakedBalance, yaxBalance },

@@ -17,120 +17,123 @@ import useUnstake from '../../../hooks/useUnstake'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import DepositModal from './DepositModal'
 import WithdrawModal from './WithdrawModal'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import BigNumber from 'bignumber.js'
 import { getYaxisChefContract } from '../../../yaxis/utils'
 
 interface StakeProps {
-    lpContract: Contract
-    pid: number
-    tokenName: string
+	lpContract: Contract
+	pid: number
+	tokenName: string
 }
 
 const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
-    const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 
-    const allowance = useAllowance(lpContract)
-    const { yaxis } = useGlobal()
+	const allowance = useAllowance(lpContract)
+	const { yaxis } = useGlobal()
 
-    const {
-        onApprove,
-        loading: approveLoading,
-        error: approveError,
-    } = useApprove(
-        lpContract,
-        getYaxisChefContract(yaxis)?.options?.address,
-        tokenName,
-    )
+	const {
+		onApprove,
+		loading: approveLoading,
+		error: approveError,
+	} = useApprove(
+		lpContract,
+		getYaxisChefContract(yaxis)?.options?.address,
+		tokenName,
+	)
 
-    const { balance: tokenBalance } = useTokenBalance(lpContract.options.address)
-    const stakedBalance = useStakedBalance(pid)
+	const { balance: tokenBalance } = useTokenBalance(
+		lpContract.options.address,
+	)
+	const stakedBalance = useStakedBalance(pid)
 
-    const {
-        onStake,
-        error: stakeError,
-        loading: stakeLoading,
-    } = useStake(pid, tokenName)
-    const {
-        onUnstake,
-        loading: unstakeLoading,
-        error: unstakeError,
-    } = useUnstake(pid, tokenName)
+	const { onStake, error: stakeError, loading: stakeLoading } = useStake(
+		pid,
+		tokenName,
+	)
+	const {
+		onUnstake,
+		loading: unstakeLoading,
+		error: unstakeError,
+	} = useUnstake(pid, tokenName)
 
-    const [onPresentDeposit] = useModal(
-        <DepositModal
-            max={tokenBalance}
-            onConfirm={onStake}
-            tokenName={tokenName}
-        />,
-    )
+	const [onPresentDeposit] = useModal(
+		<DepositModal
+			max={tokenBalance}
+			onConfirm={onStake}
+			tokenName={tokenName}
+		/>,
+	)
 
-    const [onPresentWithdraw] = useModal(
-        <WithdrawModal
-            max={stakedBalance}
-            onConfirm={onUnstake}
-            tokenName={tokenName}
-        />,
-    )
+	const [onPresentWithdraw] = useModal(
+		<WithdrawModal
+			max={stakedBalance}
+			onConfirm={onUnstake}
+			tokenName={tokenName}
+		/>,
+	)
 
-    return (
-        <Card className="liquidity-card" title={<strong>Staking</strong>}>
-            <Row>
-                <CardContents>
-                    <Value value={getBalanceNumber(stakedBalance)} />
-                    <Label text={`${tokenName} Tokens Staked`} />
-                    <Divider />
-                    {!allowance.toNumber() ? (
-                        <Col span={12}>
-                            <Tooltip title={approveError}>
-                                <Button
-                                    disabled={!account}
-                                    onClick={onApprove}
-                                    loading={approveLoading}
-                                >
-                                    Approve {tokenName}
-                                </Button>
-                            </Tooltip>
-                        </Col>
-                    ) : (
-                        <Row
-                            gutter={18}
-                            style={{
-                                width: '100%',
-                                justifyContent: 'space-between',
-                                padding: 0,
-                            }}
-                        >
-                            <Col span={12}>
-                                <Tooltip title={stakeError}>
-                                    <Button
-                                        disabled={tokenBalance.eq(new BigNumber(0))}
-                                        onClick={onPresentDeposit}
-                                        loading={stakeLoading}
-                                    >
-                                        Stake
+	return (
+		<Card className="liquidity-card" title={<strong>Staking</strong>}>
+			<Row>
+				<CardContents>
+					<Value value={getBalanceNumber(stakedBalance)} />
+					<Label text={`${tokenName} Tokens Staked`} />
+					<Divider />
+					{!allowance.toNumber() ? (
+						<Col span={12}>
+							<Tooltip title={approveError}>
+								<Button
+									disabled={!account}
+									onClick={onApprove}
+									loading={approveLoading}
+								>
+									Approve {tokenName}
 								</Button>
-                                </Tooltip>
-                            </Col>
-                            <Col span={12}>
-                                <Tooltip title={unstakeError}>
-                                    <Button
-                                        disabled={stakedBalance.eq(
-                                            new BigNumber(0),
-                                        )}
-                                        onClick={onPresentWithdraw}
-                                        loading={unstakeLoading}
-                                    >
-                                        Unstake
-								</Button>
-                                </Tooltip>
-                            </Col>
-                        </Row>
-                    )}
-                </CardContents>
-            </Row>
-        </Card>
-    )
+							</Tooltip>
+						</Col>
+					) : (
+						<Row
+							gutter={18}
+							style={{
+								width: '100%',
+								justifyContent: 'space-between',
+								padding: 0,
+							}}
+						>
+							<Col span={12}>
+								<Tooltip title={stakeError}>
+									<Button
+										disabled={tokenBalance.eq(
+											new BigNumber(0),
+										)}
+										onClick={onPresentDeposit}
+										loading={stakeLoading}
+									>
+										Stake
+									</Button>
+								</Tooltip>
+							</Col>
+							<Col span={12}>
+								<Tooltip title={unstakeError}>
+									<Button
+										disabled={stakedBalance.eq(
+											new BigNumber(0),
+										)}
+										onClick={onPresentWithdraw}
+										loading={unstakeLoading}
+									>
+										Unstake
+									</Button>
+								</Tooltip>
+							</Col>
+						</Row>
+					)}
+				</CardContents>
+			</Row>
+		</Card>
+	)
 }
 
 const CardContents = styled.div`

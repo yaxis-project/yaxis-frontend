@@ -67,7 +67,7 @@ export const getAllowances = async (
 		})
 	} catch (e) {
 		console.error('Error when get allowances')
-		return Promise.reject(e)
+		return [new BigNumber(0), new BigNumber(0), new BigNumber(0), new BigNumber(0)]
 	}
 }
 export const getBalances = async (
@@ -93,6 +93,6 @@ export const getBalances = async (
 		})
 	} catch (e) {
 		console.error('Error when get balances', e)
-		return Promise.reject(e)
+		return [new BigNumber(0), new BigNumber(0), new BigNumber(0), new BigNumber(0)]
 	}
 }

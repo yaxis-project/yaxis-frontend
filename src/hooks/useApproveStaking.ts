@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { notification } from 'antd'
 import useGlobal from './useGlobal'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 import {
 	approve,
 	getXSushiStakingContract,
@@ -14,7 +14,7 @@ const useApproveStaking = () => {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState(null)
 
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const { yaxis, balance } = useGlobal()
 	const lpContract = useMemo(() => getYaxisContract(yaxis), [yaxis])
 	const contract = useMemo(() => getXSushiStakingContract(yaxis), [yaxis])
@@ -27,7 +27,7 @@ const useApproveStaking = () => {
 			if (new BN(gas).gt(balance))
 				setError('Your Ethereum balance is too low')
 		}
-		canAfford()
+		if (account) canAfford()
 	}, [account, lpContract, contract, balance])
 
 	const handleApprove = useCallback(async () => {
