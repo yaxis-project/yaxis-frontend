@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import useYaxis from './useYaxis'
+import useGlobal from './useGlobal'
 import { useWeb3React } from '@web3-react/core'
 
 import { enter, getXSushiStakingContract } from '../yaxis/utils'
@@ -11,7 +11,7 @@ import { enter, getXSushiStakingContract } from '../yaxis/utils'
  */
 const useEnter = () => {
 	const { account } = useWeb3React()
-	const yaxis = useYaxis()
+	const { yaxis } = useGlobal()
 
 	/**
 	 * Return YAX staking for amount, for the

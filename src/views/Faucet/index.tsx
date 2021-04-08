@@ -7,7 +7,7 @@ import { Redirect } from 'react-router-dom'
 import { DetailOverviewCard } from '../../components/DetailOverviewCard'
 import Button from '../../components/Button'
 import * as currencies from '../../utils/currencies'
-import useYaxis from '../../hooks/useYaxis'
+import useGlobal from '../../hooks/useGlobal'
 import BN from 'bignumber.js'
 import icon from '../../assets/img/faucet.svg'
 
@@ -19,7 +19,7 @@ const StyledCol = styled(Col)`
 
 const Faucet: React.FC = () => {
 	const { account, chainId } = useWeb3React()
-	const yaxis = useYaxis()
+	const { yaxis } = useGlobal()
 
 	const body = useMemo(() => {
 		if (!chainId)
@@ -112,7 +112,7 @@ const Faucet: React.FC = () => {
 											onClick={async () =>
 												await yaxis.contracts.yax.methods
 													.faucet(
-														new BN(10).multipliedBy(
+														new BN(1).multipliedBy(
 															10 **
 																currencies.YAX
 																	.decimals,
@@ -162,7 +162,7 @@ const Faucet: React.FC = () => {
 											onClick={async () =>
 												await yaxis.contracts.vault.dai.methods
 													.faucet(
-														new BN(10).multipliedBy(
+														new BN(1).multipliedBy(
 															10 **
 																currencies.DAI
 																	.decimals,
@@ -214,7 +214,7 @@ const Faucet: React.FC = () => {
 											onClick={async () =>
 												await yaxis.contracts.vault.threeCrv.methods
 													.faucet(
-														new BN(10).multipliedBy(
+														new BN(1).multipliedBy(
 															10 **
 																currencies.CRV3
 																	.decimals,
@@ -264,7 +264,7 @@ const Faucet: React.FC = () => {
 											onClick={async () =>
 												await yaxis.contracts.vault.usdc.methods
 													.faucet(
-														new BN(10).multipliedBy(
+														new BN(1).multipliedBy(
 															10 **
 																currencies.USDC
 																	.decimals,
@@ -314,7 +314,7 @@ const Faucet: React.FC = () => {
 											onClick={async () =>
 												await yaxis.contracts.vault.usdt.methods
 													.faucet(
-														new BN(10).multipliedBy(
+														new BN(1).multipliedBy(
 															10 **
 																currencies.USDT
 																	.decimals,

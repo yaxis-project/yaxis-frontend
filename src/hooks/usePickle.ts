@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import useYaxis from './useYaxis'
+import useGlobal from './useGlobal'
 import { collapseDecimals, numberToFloat } from '../yaxis/utils'
-import useBlock from './useBlock'
 import usePriceMap from './usePriceMap'
 import { getApy } from '../utils/number'
 
@@ -12,8 +11,7 @@ const usePickle = () => {
 	}>({
 		pickleAPY: 0,
 	})
-	const yaxis = useYaxis()
-	const block = useBlock()
+	const { yaxis, block } = useGlobal()
 	let { PICKLE: picklePrice, Cure3Crv: _3crvPrice } = usePriceMap()
 	let pickleChef = yaxis?.contracts?.pickleChef
 	let pickleJar = yaxis?.contracts?.pickleJar

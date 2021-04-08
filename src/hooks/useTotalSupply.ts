@@ -1,16 +1,14 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import BigNumber from 'bignumber.js'
-import useYaxis from './useYaxis'
+import useGlobal from './useGlobal'
 import { getYaxisChefContract, getYaxisSupply } from '../yaxis/utils'
-import useBlock from './useBlock'
 
 const useTotalSupply = () => {
 	const [totalSupply, setTotalSupply] = useState<BigNumber>(new BigNumber(0))
 	const { account } = useWeb3React()
-	const yaxis = useYaxis()
+	const { yaxis, block } = useGlobal()
 	const yaxisChefContract = getYaxisChefContract(yaxis)
-	const block = useBlock()
 
 	const fetchTotalSupply = useCallback(async () => {
 		if (yaxis) {

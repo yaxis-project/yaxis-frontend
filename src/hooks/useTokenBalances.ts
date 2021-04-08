@@ -4,8 +4,7 @@ import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 
 import { getBalances } from '../utils/erc20'
-import useBlock from './useBlock'
-import useYaxis from './useYaxis'
+import useGlobal from './useGlobal'
 import { getMutilcallContract } from '../yaxis/utils'
 
 const useTokenBalances = (tokenAddresses: string[]) => {
@@ -13,8 +12,7 @@ const useTokenBalances = (tokenAddresses: string[]) => {
 		...Array(tokenAddresses.length),
 	])
 	const { account, library } = useWeb3React()
-	const block = useBlock()
-	const yaxis = useYaxis()
+	const { yaxis, block } = useGlobal()
 	let mutilcallContract = getMutilcallContract(yaxis)
 
 	const fetchBalances = useCallback(async () => {
