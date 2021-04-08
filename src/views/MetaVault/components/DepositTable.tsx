@@ -198,7 +198,7 @@ export default function DepositTable() {
 		})
 		try {
 			currenciesNeededApproval.length && (await handleApprove())
-			const receipt = await onDepositAll(amounts)
+			const receipt = await onDepositAll(amounts, false)
 			setCurrencyValues(initialCurrencyValues)
 			onAddTransaction({
 				hash: receipt.transactionHash,
