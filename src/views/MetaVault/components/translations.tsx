@@ -46,6 +46,9 @@ const translations = {
 	'An error has occured. Please try again.': {
 		ENG: 'An error has occured. Please try again.',
 	},
+	'Error while withdrawing:': {
+		ENG: 'Error while withdrawing:',
+	},
 	Available: {
 		ENG: 'Available',
 	},

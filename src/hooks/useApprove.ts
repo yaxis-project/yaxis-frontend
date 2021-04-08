@@ -32,7 +32,7 @@ const useApprove = (contract: Contract, address: string, token?: string) => {
 		try {
 			setLoading(true)
 			notification.info({
-				message: `Please approve ${token} staking amount.`,
+				message: `Please approve ${token} use.`,
 			})
 			if (!approve) throw new Error("Internal Error. Please reset and try again.")
 			const tx = await approve.send({ from: account })
@@ -41,7 +41,7 @@ const useApprove = (contract: Contract, address: string, token?: string) => {
 		} catch (e) {
 			setError(e.message)
 			notification.error({
-				message: `Unable to approve ${token} for staking:`,
+				message: `Unable to approve ${token} use:`,
 				description: e.message,
 			})
 			setLoading(false)
