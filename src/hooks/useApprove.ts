@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { notification } from 'antd'
 import useGlobal from './useGlobal'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 import { Contract } from 'web3-eth-contract'
 import { ethers } from 'ethers'
 import BN from 'bignumber.js'
@@ -11,7 +11,7 @@ const useApprove = (contract: Contract, address: string, token?: string) => {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState(null)
 
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const { balance } = useGlobal()
 
 	const approve = useMemo(
@@ -25,7 +25,7 @@ const useApprove = (contract: Contract, address: string, token?: string) => {
 			if (new BN(gas).gt(balance))
 				setError('Your Ethereum balance is too low')
 		}
-		if (approve) canAfford()
+		if (approve && account) canAfford()
 	}, [account, balance, approve])
 
 	const handleApprove = useCallback(async () => {

@@ -14,7 +14,7 @@ import styled from 'styled-components'
 import { getContract } from '../../../utils/erc20'
 import { provider } from 'web3-core'
 import { callApprove, numberToDecimal } from '../../../yaxis/utils'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useTransactionAdder from '../../../hooks/useTransactionAdder'
 import { Transaction } from '../../../contexts/Transactions/types'
 import { mapObjIndexed, pipe, values, flatten } from 'ramda'
@@ -116,7 +116,7 @@ export default function DepositTable() {
 	const currencies = InvestingDepositCurrencies
 	const { onDepositAll, isSubmitting } = useMetaVault()
 	const { onAddTransaction } = useTransactionAdder()
-	const { account, library, chainId } = useWeb3React()
+	const { account, library, chainId } = useWeb3Provider()
 
 	const priceMap = usePriceMap()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(

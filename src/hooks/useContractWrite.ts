@@ -5,7 +5,7 @@ import {
 } from 'react'
 import { notification } from 'antd'
 import useGlobal from './useGlobal'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 import { Contracts } from "../yaxis/contracts"
 import { Contract } from 'web3-eth-contract'
 
@@ -20,7 +20,7 @@ const useContractWrite = ({ contractName, method, description, args }: Params) =
 	const [data, setData] = useState(null)
 	const [loading, setLoading] = useState(false)
 
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const { yaxis } = useGlobal()
 	const contract = useMemo(
 		() => {

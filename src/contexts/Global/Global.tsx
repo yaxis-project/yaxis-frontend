@@ -1,5 +1,5 @@
-import React, { createContext, useEffect, useState, useMemo } from 'react'
-import { useWeb3React } from '@web3-react/core'
+import React, { createContext, useEffect, useState } from 'react'
+import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { Yaxis } from '../../yaxis/Yaxis'
 import moment, { Moment } from 'moment'
 import BN from 'bignumber.js'
@@ -18,15 +18,10 @@ export const Context = createContext<YaxisContext>({
 	balance: new BN(0),
 })
 
-const YaxisProvider: React.FC = ({ children }) => {
-	const { account: acc1, library: lib1, chainId: chainId1 } = useWeb3React()
-	const { library: lib2, chainId: chainId2 } = useWeb3React('fallback')
-	const [account, library, chainId] = useMemo(() => {
-		if (acc1) return [acc1, lib1, chainId1]
-		return [null, lib2, chainId2]
-	}, [acc1, lib1, chainId1, lib2, chainId2])
+const GlobalProvider: React.FC = ({ children }) => {
+	const { account, library, chainId } = useWeb3Provider()
 
-	const [yaxis, setYaxis] = useState<any>()
+	const [yaxis, setYaxis] = useState<Yaxis>()
 	const [block, setBlock] = useState(0)
 	const [balance, setBalance] = useState(new BN(0))
 	const [lastUpdated, setLastUpdated] = useState<Moment>(moment())
@@ -78,4 +73,4 @@ const YaxisProvider: React.FC = ({ children }) => {
 	)
 }
 
-export default YaxisProvider
+export default GlobalProvider

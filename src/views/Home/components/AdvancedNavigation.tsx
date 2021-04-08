@@ -1,9 +1,9 @@
 import { currentConfig } from '../../../yaxis/configs'
-import { StakePool } from "../../../yaxis/type"
+import { StakePool } from '../../../yaxis/type'
 import { Row, Col, Typography, Collapse } from 'antd'
 import * as currencies from '../../../utils/currencies'
-import { brandBlue } from "../../../theme/colors"
-import { useWeb3React } from '@web3-react/core'
+import { brandBlue } from '../../../theme/colors'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
 
 const { Text, Link } = Typography
 
@@ -37,9 +37,25 @@ function AdvancedNavigationRow(props: AdvancedNavigationRowProps) {
 	const [token1, token2] = data.lpTokens
 	return (
 		<Row className="lp-row" justify="center">
-			<Col xs={24} sm={3} style={{ margin: "8px" }}>
-				<img src={typeof currencies[token1.symbol] === 'function' ? (currencies[token1.symbol]()?.icon) : currencies[token1.symbol]?.icon} height="24" alt="logo" />
-				<img src={typeof currencies[token2.symbol] === 'function' ? (currencies[token2.symbol]()?.icon) : currencies[token2.symbol]?.icon} height="24" alt="logo" />
+			<Col xs={24} sm={3} style={{ margin: '8px' }}>
+				<img
+					src={
+						typeof currencies[token1.symbol] === 'function'
+							? currencies[token1.symbol]()?.icon
+							: currencies[token1.symbol]?.icon
+					}
+					height="24"
+					alt="logo"
+				/>
+				<img
+					src={
+						typeof currencies[token2.symbol] === 'function'
+							? currencies[token2.symbol]()?.icon
+							: currencies[token2.symbol]?.icon
+					}
+					height="24"
+					alt="logo"
+				/>
 			</Col>
 			<Col xs={24} sm={20}>
 				<Row>
@@ -61,18 +77,15 @@ function AdvancedNavigationRow(props: AdvancedNavigationRowProps) {
  * @see AdvancedNavigationRow
  */
 export default function AdvancedNavigation() {
-	const { chainId } = useWeb3React()
+	const { chainId } = useWeb3Provider()
 
-	const activePools = currentConfig(chainId)?.pools.filter(pool => pool?.active)
+	const activePools = currentConfig(chainId)?.pools.filter(
+		(pool) => pool?.active,
+	)
 
 	return activePools.length > 0 ? (
-		<Collapse
-			expandIconPosition="right"
-		>
-			<Panel
-				header={'Advanced'}
-				key="1"
-			>
+		<Collapse expandIconPosition="right">
+			<Panel header={'Advanced'} key="1">
 				{activePools.map((pool) => (
 					<AdvancedNavigationRow
 						key={pool.name}

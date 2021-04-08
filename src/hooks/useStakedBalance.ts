@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState, useMemo } from 'react'
 
 import BigNumber from 'bignumber.js'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 
 import { getStaked, getYaxisChefContract } from '../yaxis/utils'
 import useGlobal from './useGlobal'
 
 const useStakedBalance = (pid: number) => {
 	const [balance, setBalance] = useState(new BigNumber(0))
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const { yaxis, block } = useGlobal()
 	const yaxisChefContract = useMemo(() => getYaxisChefContract(yaxis), [
 		yaxis,

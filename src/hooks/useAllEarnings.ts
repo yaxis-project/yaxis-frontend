@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useMemo } from 'react'
 import BigNumber from 'bignumber.js'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 
 import { getEarned, getYaxisChefContract, getFarms } from '../yaxis/utils'
 import useGlobal from './useGlobal'
@@ -16,7 +16,7 @@ const useAllEarnings = (): {
 		balances: [],
 		totalAmount: new BigNumber(0),
 	})
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const { yaxis, block } = useGlobal()
 	const farms = useMemo(() => getFarms(yaxis), [yaxis])
 	const yaxisChefContract = getYaxisChefContract(yaxis)

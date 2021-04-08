@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { notification } from 'antd'
 import useGlobal from './useGlobal'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 
 import { getYaxisChefContract } from '../yaxis/utils'
 
@@ -9,7 +9,7 @@ const useReward = (pid: number, tokenName?: string) => {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState(null)
 
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const { yaxis } = useGlobal()
 	const yaxisChefContract = useMemo(() => getYaxisChefContract(yaxis), [
 		yaxis,

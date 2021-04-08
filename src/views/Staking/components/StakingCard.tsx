@@ -4,7 +4,7 @@ import useEnter from '../../../hooks/useEnter'
 import useLeave from '../../../hooks/useLeave'
 import useYaxisStaking from '../../../hooks/useYAXISStaking'
 import Value from '../../../components/Value'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import Button from '../../../components/Button'
@@ -33,7 +33,7 @@ const TableHeader = (props: any) => (
  * Generate the main YAX staking card for the vault.
  */
 export default function StakingCard() {
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const languages = useContext(LanguageContext)
 	const t = useCallback(
 		(s: string) => phrases[s][languages?.state?.selected],

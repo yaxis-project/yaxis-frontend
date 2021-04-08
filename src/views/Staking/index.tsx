@@ -12,7 +12,7 @@ import './index.less'
 import useYaxisStaking from '../../hooks/useYAXISStaking'
 import { currentConfig } from '../../yaxis/configs'
 import { etherscanUrl } from '../../yaxis/utils'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { NETWORK_NAMES } from '../../connectors'
 
 const StyledCol = styled(Col)`
@@ -29,7 +29,7 @@ const Staking: React.FC = () => {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 
-	const { chainId } = useWeb3React()
+	const { chainId } = useWeb3Provider()
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 	const address = currentConfig(chainId).contractAddresses['xYaxStaking']
 

@@ -11,7 +11,7 @@ import FarmsProvider from './contexts/Farms'
 import ModalsProvider from './contexts/Modals'
 import LanguageProvider from './contexts/Language'
 import TransactionProvider from './contexts/Transactions'
-import YaxisProvider from './contexts/YaxisProvider'
+import YaxisProvider from './contexts/Global'
 import PricesProvider from './contexts/Prices/Prices'
 
 import theme from './theme'
@@ -25,7 +25,11 @@ import Faucet from './views/Faucet'
 import { notification } from 'antd'
 import { currentConfig } from './yaxis/configs'
 
-import { Web3ReactProvider, useWeb3React } from '@web3-react/core'
+import {
+	Web3ReactProvider,
+	createWeb3ReactRoot,
+	useWeb3React,
+} from '@web3-react/core'
 import { useEagerConnect } from './hooks/useEagerConnect'
 import { useInactiveListener } from './hooks/useInactiveListener'
 import { getLibrary } from './connectors'
@@ -86,23 +90,33 @@ const Routes: React.FC = () => {
 	)
 }
 
-const Providers: React.FC = ({ children }) => (
-	<Web3ReactProvider getLibrary={getLibrary}>
-		<ThemeProvider theme={theme}>
-			<PricesProvider>
-				<YaxisProvider>
-					<LanguageProvider>
-						<TransactionProvider>
-							<FarmsProvider>
-								<ModalsProvider>{children}</ModalsProvider>
-							</FarmsProvider>
-						</TransactionProvider>
-					</LanguageProvider>
-				</YaxisProvider>
-			</PricesProvider>
-		</ThemeProvider>
-	</Web3ReactProvider>
-)
+const Providers: React.FC = ({ children }) => {
+	const Web3ReactProviderFallback = useMemo(
+		() => createWeb3ReactRoot('fallback'),
+		[],
+	)
+	return (
+		<Web3ReactProvider getLibrary={getLibrary}>
+			<Web3ReactProviderFallback getLibrary={getLibrary}>
+				<ThemeProvider theme={theme}>
+					<PricesProvider>
+						<YaxisProvider>
+							<LanguageProvider>
+								<TransactionProvider>
+									<FarmsProvider>
+										<ModalsProvider>
+											{children}
+										</ModalsProvider>
+									</FarmsProvider>
+								</TransactionProvider>
+							</LanguageProvider>
+						</YaxisProvider>
+					</PricesProvider>
+				</ThemeProvider>
+			</Web3ReactProviderFallback>
+		</Web3ReactProvider>
+	)
+}
 
 const App = () => (
 	<Providers>

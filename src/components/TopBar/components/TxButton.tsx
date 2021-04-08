@@ -1,13 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import usePendingTransactions from '../../../hooks/usePendingTransactions'
 import Button from '../../LegacyButton'
 
-interface TxButtonProps { }
+interface TxButtonProps {}
 
 const TxButton: React.FC<TxButtonProps> = () => {
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const pendingTransactions = usePendingTransactions()
 	return (
 		<>
