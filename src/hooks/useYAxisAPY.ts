@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import useYaxis from './useYaxis'
+import useGlobal from './useGlobal'
 import { getMutilcallContract } from '../yaxis/utils'
 import usePriceMap from './usePriceMap'
 interface YAxisAPY {
@@ -15,7 +15,7 @@ interface PoolInfo {
 const useYAxisAPY = () => {
 	const [yAxisAPY, setYAxisAPY] = useState<YAxisAPY>({})
 	const [isInitialized, setIsInitialized] = useState<boolean>(false)
-	const yaxis = useYaxis()
+	const { yaxis } = useGlobal()
 	const multicallContract = getMutilcallContract(yaxis)
 	const priceMap = usePriceMap()
 

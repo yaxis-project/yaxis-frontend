@@ -9,7 +9,7 @@ import Value from '../../../components/Value'
 import useAllEarnings from '../../../hooks/useAllEarnings'
 import useFarms from '../../../hooks/useFarms'
 import useTokenBalance from '../../../hooks/useTokenBalance'
-import useYaxis from '../../../hooks/useYaxis'
+import useGlobal from '../../../hooks/useGlobal'
 import { getTotalStaking, getYaxisAddress } from '../../../yaxis/utils'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import useRewardPerBlock from '../../../hooks/useRewardPerBlock'
@@ -20,7 +20,7 @@ import useMetaVaultData from '../../../hooks/useMetaVaultData'
 
 const Balances: React.FC = () => {
 	const totalSupply = useTotalSupply()
-	const yaxis = useYaxis()
+	const { yaxis } = useGlobal()
 	const { balance: yaxisBalance } = useTokenBalance(getYaxisAddress(yaxis))
 	const { account } = useWeb3React()
 	const { farms, stakedValues } = useFarms()

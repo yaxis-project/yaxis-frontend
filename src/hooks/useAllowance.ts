@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import BigNumber from 'bignumber.js'
-import useYaxis from './useYaxis'
+import useGlobal from './useGlobal'
 import { useWeb3React } from '@web3-react/core'
 import { Contract } from 'web3-eth-contract'
 
@@ -11,7 +11,7 @@ import { getYaxisChefContract } from '../yaxis/utils'
 const useAllowance = (lpContract: Contract) => {
 	const [allowance, setAllowance] = useState(new BigNumber(0))
 	const { account } = useWeb3React()
-	const yaxis = useYaxis()
+	const { yaxis } = useGlobal()
 	const yaxisChefContract = getYaxisChefContract(yaxis)
 
 	const fetchAllowance = useCallback(async () => {

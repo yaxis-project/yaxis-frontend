@@ -1,7 +1,7 @@
 import { useCallback, useState, useMemo, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { BigNumber } from 'bignumber.js'
-import useYaxis from './useYaxis'
+import useGlobal from './useGlobal'
 import { depositAll, getYaxisMetaVault, withdraw } from '../yaxis/utils'
 import { notification } from 'antd'
 import Web3 from 'web3'
@@ -10,7 +10,7 @@ const erc20 = networks["1"].ERC20Abi
 
 const useMetaVault = () => {
 	const { account, library } = useWeb3React()
-	const yaxis = useYaxis()
+	const { yaxis } = useGlobal()
 	const defaultSlippage = 0.001 // 0.1%
 	const vaultWithdrawFee = 0.001 // 0.1%
 	const pickleWithdrawFee = 0 // 0.5%

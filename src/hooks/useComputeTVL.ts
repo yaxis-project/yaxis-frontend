@@ -3,8 +3,7 @@ import useFarms from './useFarms'
 import BigNumber from 'bignumber.js'
 import useMetaVaultData from './useMetaVaultData'
 import usePriceMap from './usePriceMap'
-import useYaxis from './useYaxis'
-import useBlock from './useBlock'
+import useGlobal from './useGlobal'
 import { getTotalStaking } from '../yaxis/utils'
 
 /**
@@ -23,8 +22,7 @@ export default function useComputeTVL() {
 	})
 
 	const { farms, stakedValues } = useFarms()
-	const block = useBlock()
-	const yaxis = useYaxis()
+	const { yaxis, block } = useGlobal()
 	const { YAXIS: yaxisPrice } = usePriceMap()
 
 	const fetchData = useCallback(async () => {

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react'
 
-import useYaxis from '../../hooks/useYaxis'
+import useGlobal from '../../hooks/useGlobal'
 
 import {
 	getFarms,
@@ -16,15 +16,15 @@ import { StakedValue } from './types'
 const Farms: React.FC = ({ children }) => {
 	const [unharvested] = useState(0)
 
-	const yaxis = useYaxis()
+	const { yaxis } = useGlobal()
 	const farms = useMemo(() => getFarms(yaxis), [yaxis])
 
 	const [stakedValues, setBalance] = useState([] as Array<StakedValue>)
 
-	const [yaxisChefContract, wethContact] = useMemo(() =>
-		[getYaxisChefContract(yaxis), getWethContract(yaxis)]
-		, [yaxis])
-
+	const [yaxisChefContract, wethContact] = useMemo(
+		() => [getYaxisChefContract(yaxis), getWethContract(yaxis)],
+		[yaxis],
+	)
 
 	const priceMap = usePriceMap()
 
@@ -42,14 +42,9 @@ const Farms: React.FC = ({ children }) => {
 					),
 				)
 				setBalance(balances)
-			} catch { }
+			} catch {}
 		}
-	}, [
-		wethContact, yaxisChefContract,
-		farms,
-		setBalance,
-		priceMap,
-	])
+	}, [wethContact, yaxisChefContract, farms, setBalance, priceMap])
 
 	useEffect(() => {
 		if (wethContact && yaxisChefContract) {
