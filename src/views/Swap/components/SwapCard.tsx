@@ -1,36 +1,60 @@
-import { useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import styled from 'styled-components'
 import {
 	DetailOverviewCard,
 	DetailOverviewCardRow,
 } from '../../../components/DetailOverviewCard'
 import { Affix, Row, Col } from 'antd'
-import useYAXStaking from '../../../hooks/useYAXISStaking'
+import useYaxis from '../../../hooks/useYaxis'
+import useApprove from '../../../hooks/useApprove'
+import useYAXStaking from '../../../hooks/useYAXStaking'
 import useContractWrite from '../../../hooks/useContractWrite'
 import Button from '../../../components/Button'
 import { ArrowRightOutlined, ArrowDownOutlined } from '@ant-design/icons'
 import { formatBN } from '../../../yaxis/utils'
+import { useWeb3React } from '@web3-react/core'
+import { ethers } from 'ethers'
 
-export default function VaultStatsCard() {
+export default function SwapCard() {
+	const [allowance, setAllownace] = useState('0')
+	const { account } = useWeb3React()
+	const yaxis = useYaxis()
 	const {
-		balances: { stakedBalance, walletBalance },
+		balances: { stakedBalance, yaxBalance },
 	} = useYAXStaking()
 
-	const { call } = useContractWrite({
+	const { onApprove, loading: loadingApprove } = useApprove(
+		yaxis?.contracts?.yax,
+		yaxis?.contracts?.swap.options.address,
+		'YAX',
+	)
+	const { call, loading: loadingSwap } = useContractWrite({
 		contractName: 'swap',
 		method: 'swap',
 		description: 'Token Swap',
 	})
 
-	const totalYAX = useMemo(() => stakedBalance.plus(walletBalance), [
+	const totalYAX = useMemo(() => stakedBalance.plus(yaxBalance), [
 		stakedBalance,
-		walletBalance,
+		yaxBalance,
 	])
 
-	const longWalletBalance = useMemo(
-		() => walletBalance.toFixed(2).length > 8,
+	useEffect(() => {
+		const checkAllowance = async () => {
+			const a = await yaxis?.contracts?.yax.methods
+				.allowance(account, yaxis?.contracts?.swap.options.address)
+				.call()
+			setAllownace(a)
+		}
+		if (account && yaxis?.contracts) {
+			checkAllowance()
+		}
+	}, [account, yaxis?.contracts, loadingApprove])
 
-		[walletBalance],
+	const longWalletBalance = useMemo(
+		() => yaxBalance.toFixed(2).length > 8,
+
+		[yaxBalance],
 	)
 
 	const longStakedBalance = useMemo(
@@ -41,13 +65,13 @@ export default function VaultStatsCard() {
 	return (
 		<Affix offsetTop={100}>
 			<DetailOverviewCard title={'Swap'}>
-				{walletBalance && (
+				{yaxBalance && (
 					<DetailOverviewCardRow>
 						<BalanceTitle>Account Balance</BalanceTitle>
 						<Row justify={'space-around'}>
 							<Col span={longWalletBalance ? 24 : 8}>
 								<Row justify="center">
-									{formatBN(walletBalance)}
+									{formatBN(yaxBalance)}
 								</Row>
 								<Row justify="center">YAX</Row>
 							</Col>
@@ -66,7 +90,7 @@ export default function VaultStatsCard() {
 							</Col>
 							<Col span={longWalletBalance ? 24 : 8}>
 								<Row justify="center">
-									{formatBN(walletBalance)}
+									{formatBN(yaxBalance)}
 								</Row>
 								<Row justify="center">YAXIS</Row>
 							</Col>
@@ -107,9 +131,23 @@ export default function VaultStatsCard() {
 				)}
 
 				<DetailOverviewCardRow>
-					<Button disabled={totalYAX.eq(0)} onClick={() => call()}>
-						Swap
-					</Button>
+					{ethers.constants.MaxUint256.eq(allowance) ? (
+						<Button
+							loading={loadingSwap}
+							disabled={totalYAX.eq(0)}
+							onClick={() => call()}
+						>
+							Swap
+						</Button>
+					) : (
+						<Button
+							loading={loadingApprove}
+							disabled={totalYAX.eq(0)}
+							onClick={() => onApprove()}
+						>
+							Approve
+						</Button>
+					)}
 				</DetailOverviewCardRow>
 			</DetailOverviewCard>
 		</Affix>

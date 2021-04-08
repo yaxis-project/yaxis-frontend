@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import Banner from '..'
-import useYAXStaking from '../../../hooks/useYAXISStaking'
+import useYAXStaking from '../../../hooks/useYAXStaking'
 
 const SwapBanner = () => {
 	const {
