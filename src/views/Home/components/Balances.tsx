@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import Card from '../../../components/Card'
 import CardContent from '../../../components/CardContent'
 import Label from '../../../components/Label'
@@ -22,7 +22,7 @@ const Balances: React.FC = () => {
 	const totalSupply = useTotalSupply()
 	const { yaxis } = useGlobal()
 	const { balance: yaxisBalance } = useTokenBalance(getYaxisAddress(yaxis))
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const { farms, stakedValues } = useFarms()
 	const { YAXIS: yaxisPrice } = usePriceMap()
 	const { totalAmount } = useAllEarnings()

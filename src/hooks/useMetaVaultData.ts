@@ -9,7 +9,7 @@ import {
 	getYaxisMetaVaultConverter,
 	numberToDecimal,
 } from '../yaxis/utils'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from '../hooks/useWeb3Provider'
 import useGlobal from './useGlobal'
 import useMetaVault from './useMetaVault'
 import { getApy } from '../utils/number'
@@ -129,7 +129,7 @@ export interface MetaVaultData {
 }
 
 function useMetaVaultData(id: string): IHookReturn {
-	const { account, library, chainId } = useWeb3React()
+	const { account, library, chainId } = useWeb3Provider()
 	const {
 		slippage,
 		pickleWithdrawFee,
@@ -322,10 +322,14 @@ function useMetaVaultData(id: string): IHookReturn {
 					yaxPerBlock,
 					rewardMultiplier,
 				]: any[] = await Promise.all([
-					contract.methods.balanceOf(account).call(),
-					contract.methods.userInfo(account).call(),
+					account ? contract.methods.balanceOf(account).call() : "0",
+					account ? contract.methods.userInfo(account).call() : {
+						accEarned: "0",
+						amount: "0",
+						yaxRewardDebt: "0"
+					},
 					contract.methods.balance().call(),
-					contract.methods.pendingYax(account).call(),
+					account ? contract.methods.pendingYax(account).call() : "0",
 					contract.methods.totalSupply().call(),
 					contract.methods.yaxPerBlock().call(),
 					contract.methods.getMultiplier(block, block + 1).call(),
@@ -453,7 +457,6 @@ function useMetaVaultData(id: string): IHookReturn {
 
 	useEffect(() => {
 		if (
-			account &&
 			library &&
 			yaxis &&
 			yaxis.web3 &&

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 
 import BigNumber from 'bignumber.js'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 
 import { getAllowances } from '../utils/erc20'
 import useGlobal from './useGlobal'
@@ -14,7 +14,7 @@ const useAllowances = (
 	const [allowances, setAllowances] = useState<BigNumber[]>([
 		...Array(tokenAddresses.length),
 	])
-	const { account, library } = useWeb3React()
+	const { account, library } = useWeb3Provider()
 	const { yaxis, block } = useGlobal()
 	let mutilcallContract = getMutilcallContract(yaxis)
 

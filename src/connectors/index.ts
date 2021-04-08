@@ -1,3 +1,4 @@
+import { NetworkConnector } from '@web3-react/network-connector'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
@@ -19,6 +20,11 @@ export const RPC_URLS: { [chainId: number]: string } = Object.fromEntries(
 )
 export const POLLING_INTERVAL = 12000
 export const NETWORK_NAMES = { 1: 'mainnet', 42: 'kovan' }
+
+export const network = new NetworkConnector({
+	urls: { 1: RPC_URLS[1] },
+	defaultChainId: 1
+})
 
 export const injected = new InjectedConnector({
 	supportedChainIds: [1, 42],

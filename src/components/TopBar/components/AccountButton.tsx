@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useModal from '../../../hooks/useModal'
 import { Button, Menu, Dropdown, Row, Col } from 'antd'
 import { CaretDownOutlined } from '@ant-design/icons'
@@ -8,9 +8,10 @@ import { CaretDownOutlined } from '@ant-design/icons'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import { etherscanUrl } from '../../../yaxis/utils'
 import WalletProviderModal from '../../WalletProviderModal'
-import { NETWORK_NAMES } from "../../../connectors"
+import { network, NETWORK_NAMES } from '../../../connectors'
+import { useWeb3React } from '@web3-react/core'
 
-interface AccountButtonProps { }
+interface AccountButtonProps {}
 
 const AccountButton: React.FC<AccountButtonProps> = (props) => {
 	const [onPresentWalletProviderModal] = useModal(
@@ -18,7 +19,8 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 		'provider',
 	)
 
-	const { account, deactivate, chainId } = useWeb3React()
+	const { account, deactivate, chainId } = useWeb3Provider()
+	const { activate } = useWeb3React('fallback')
 
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 
@@ -29,15 +31,14 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 	const handleSignOutClick = useCallback(() => {
 		localStorage.setItem('signOut', account)
 		deactivate()
+		activate(network)
 	}, [deactivate, account])
 
 	return (
 		<StyledAccountButton>
 			<Col>
 				{!account ? (
-					<StyledButton
-						onClick={handleUnlockClick}
-					>
+					<StyledButton onClick={handleUnlockClick}>
 						Connect
 					</StyledButton>
 				) : (
@@ -48,34 +49,47 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 								<Menu.ItemGroup
 									title={
 										<Col>
-											<div style={{ textAlign: "center" }} >Your Account</div>
+											<div
+												style={{ textAlign: 'center' }}
+											>
+												Your Account
+											</div>
 											<NetworkText>
 												{networkName}
 											</NetworkText>
 											<Button
-												href={etherscanUrl(`/address/${account}`, networkName)}
+												href={etherscanUrl(
+													`/address/${account}`,
+													networkName,
+												)}
 												target={'_blank'}
 												rel="noopener noreferrer"
 												block
 												type="primary"
 												ghost
 											>
-												<span style={{ margin: "0 5px" }} >{account.slice(0, 4)} ... {account.slice(-2)}</span>
+												<span
+													style={{ margin: '0 5px' }}
+												>
+													{account.slice(0, 4)} ...{' '}
+													{account.slice(-2)}
+												</span>
 											</Button>
 										</Col>
-									} />
+									}
+								/>
 								<Menu.Item onClick={handleSignOutClick}>
 									Logout
-									</Menu.Item>
+								</Menu.Item>
 							</Menu>
 						}
 					>
-						<div style={{ display: "flex", alignItems: "center" }} >
+						<div style={{ display: 'flex', alignItems: 'center' }}>
 							<Jazzicon
 								diameter={36}
 								seed={jsNumberForAddress(account)}
 							/>
-							<CaretDownOutlined style={{ paddingLeft: "5px" }} />
+							<CaretDownOutlined style={{ paddingLeft: '5px' }} />
 						</div>
 					</Dropdown>
 				)}
@@ -134,6 +148,5 @@ const NetworkText = styled.div`
 	text-align: center;
 	font-size: 0.9em;
 `
-
 
 export default AccountButton

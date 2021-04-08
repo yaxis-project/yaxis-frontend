@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 import { currentConfig } from '../yaxis/configs'
 import * as currencies from '../utils/currencies'
 import useGlobal from '../hooks/useGlobal'
@@ -13,7 +13,7 @@ const defaultState = {
 }
 
 const useERC20Transactions = () => {
-    const { account, chainId } = useWeb3React()
+    const { account, chainId } = useWeb3Provider()
     const { block } = useGlobal()
     const [state, setState] = useState(defaultState)
     const [loading, setLoading] = useState(true)
@@ -159,10 +159,10 @@ const useERC20Transactions = () => {
         config.contractAddresses.yAxisMetaVault,
     ])
 
-    // useEffect(() => {
-    //     if (account) setLoading(true)
-    //     setState(defaultState)
-    // }, [account])
+    useEffect(() => {
+        if (account) setLoading(true)
+        setState(defaultState)
+    }, [account])
 
     useEffect(() => {
         getState()

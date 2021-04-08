@@ -1,17 +1,18 @@
 import React, { useMemo, useCallback } from 'react'
 import styled from 'styled-components'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { NavLink } from 'react-router-dom'
 import { currentConfig } from '../../../yaxis/configs'
-import { Menu, Dropdown, Button, Typography } from 'antd';
-import { MenuOutlined } from '@ant-design/icons';
+import { Menu, Dropdown, Button, Typography } from 'antd'
+import { MenuOutlined } from '@ant-design/icons'
 import WalletProviderModal from '../../WalletProviderModal'
 import useModal from '../../../hooks/useModal'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import { etherscanUrl } from '../../../yaxis/utils'
-import { NETWORK_NAMES } from "../../../connectors"
+import { network, NETWORK_NAMES } from '../../../connectors'
+import { useWeb3React } from '@web3-react/core'
 
-interface NavTabletProps { }
+interface NavTabletProps {}
 
 const StyledMenu = styled(Menu)`
 	padding: 10px;
@@ -22,10 +23,10 @@ const StyledLink = styled(NavLink)`
 `
 const MenuItem = styled(Menu.Item)`
 	height: 38px;
-    font-size: 18px;
+	font-size: 18px;
 `
 const StyledSpan = styled.span`
-    font-size: 18px;
+	font-size: 18px;
 `
 
 const StyledSubMenu = styled(Menu.SubMenu)`
@@ -40,106 +41,136 @@ const ItemGroup = styled(Menu.ItemGroup)`
 	height: 30px;
 `
 
-
 const NavTablet: React.FC<NavTabletProps> = () => {
-    const { account, chainId, deactivate } = useWeb3React()
-    const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
+	const { account, chainId, deactivate } = useWeb3Provider()
+	const { activate } = useWeb3React('fallback')
 
-    const [onPresentWalletProviderModal] = useModal(
-        <WalletProviderModal />,
-        'provider',
-    )
+	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 
-    const handleUnlockClick = useCallback(() => {
-        onPresentWalletProviderModal()
-    }, [onPresentWalletProviderModal])
+	const [onPresentWalletProviderModal] = useModal(
+		<WalletProviderModal />,
+		'provider',
+	)
 
-    const handleSignOutClick = useCallback(() => {
-        localStorage.setItem('signOut', account)
-        deactivate()
-    }, [deactivate, account])
+	const handleUnlockClick = useCallback(() => {
+		onPresentWalletProviderModal()
+	}, [onPresentWalletProviderModal])
 
-    const activePools = currentConfig(chainId).pools.filter(pool => pool.active)
+	const handleSignOutClick = useCallback(() => {
+		localStorage.setItem('signOut', account)
+		deactivate()
+		activate(network)
+	}, [deactivate, account])
 
-    const menu = useMemo(
-        () => <StyledMenu>
-            <MenuItem key={'/'}>
-                <StyledLink exact activeClassName="active" to="/">
-                    Overview
-                    </StyledLink>
-            </MenuItem>
+	const activePools = currentConfig(chainId).pools.filter(
+		(pool) => pool.active,
+	)
 
-            <MenuItem key={'/vault'}>
-                <StyledLink activeClassName="active" to="/vault">
-                    MetaVault
-                    </StyledLink>
-            </MenuItem>
+	const menu = useMemo(
+		() => (
+			<StyledMenu>
+				<MenuItem key={'/'}>
+					<StyledLink exact activeClassName="active" to="/">
+						Overview
+					</StyledLink>
+				</MenuItem>
 
-            <MenuItem key={'/staking'}>
-                <StyledLink activeClassName="active" to="/staking">
-                    Staking
-                    </StyledLink>
-            </MenuItem>
+				<MenuItem key={'/vault'}>
+					<StyledLink activeClassName="active" to="/vault">
+						MetaVault
+					</StyledLink>
+				</MenuItem>
 
-            <StyledSubMenu
-                key={'/liquidity'}
-                title={
-                    // TODO: to: /liquidity
-                    <StyledSpan>
-                        Advanced
-                    </StyledSpan>
-                }
-            >
-                <ItemGroup title="Provide Liquidity" />
-                {activePools.map(
-                    (farm) =>
-                        <MenuItem key={`/liquidity/${farm.lpAddress}`}>
-                            <StyledLink activeClassName="active" to={`/liquidity/${farm.lpAddress}`}>
-                                <MenuText>{farm.name}</MenuText>
-                            </StyledLink>
-                        </MenuItem>
-                )}
-            </StyledSubMenu>
+				<MenuItem key={'/staking'}>
+					<StyledLink activeClassName="active" to="/staking">
+						Staking
+					</StyledLink>
+				</MenuItem>
 
+				<StyledSubMenu
+					key={'/liquidity'}
+					title={
+						// TODO: to: /liquidity
+						<StyledSpan>Advanced</StyledSpan>
+					}
+				>
+					<ItemGroup title="Provide Liquidity" />
+					{activePools.map((farm) => (
+						<MenuItem key={`/liquidity/${farm.lpAddress}`}>
+							<StyledLink
+								activeClassName="active"
+								to={`/liquidity/${farm.lpAddress}`}
+							>
+								<MenuText>{farm.name}</MenuText>
+							</StyledLink>
+						</MenuItem>
+					))}
+				</StyledSubMenu>
 
-            <Menu.Divider />
-            {!account ? (
-                <MenuItem
-                    onClick={handleUnlockClick}
-                >
-                    Connect
-                </MenuItem>
-            ) : (
-
-                <Menu.ItemGroup title={
-                    <a
-                        href={etherscanUrl(`/address/${account}`, networkName)}
-                        target={'_blank'}
-                        rel="noopener noreferrer"
-                    >
-                        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                            <div>{chainId === 1 ? "Mainnet" : "Kovan"}</div>
-                            <Jazzicon
-                                diameter={36}
-                                seed={jsNumberForAddress(account)}
-                            />
-                            <div>{account.slice(0, 4)} ... {account.slice(-2)}</div>
-                        </div>
-                    </a>
-                }
-                >
-                    <MenuItem key="logout" onClick={handleSignOutClick}>
-                        Logout
-                        </MenuItem>
-                </Menu.ItemGroup>
-            )}
-        </StyledMenu>
-        , [activePools, account, handleUnlockClick, handleSignOutClick, chainId, networkName])
-    return (
-        <Dropdown overlay={menu} trigger={['click']}>
-            <Button size="large" type="default" ghost style={{ border: "none" }} icon={<MenuOutlined style={{ fontSize: '30px' }} />} />
-        </Dropdown>
-    )
+				<Menu.Divider />
+				{!account ? (
+					<MenuItem onClick={handleUnlockClick}>Connect</MenuItem>
+				) : (
+					<Menu.ItemGroup
+						title={
+							<a
+								href={etherscanUrl(
+									`/address/${account}`,
+									networkName,
+								)}
+								target={'_blank'}
+								rel="noopener noreferrer"
+							>
+								<div
+									style={{
+										display: 'flex',
+										flexDirection: 'column',
+										justifyContent: 'center',
+										alignItems: 'center',
+									}}
+								>
+									<div>
+										{chainId === 1 ? 'Mainnet' : 'Kovan'}
+									</div>
+									<Jazzicon
+										diameter={36}
+										seed={jsNumberForAddress(account)}
+									/>
+									<div>
+										{account.slice(0, 4)} ...{' '}
+										{account.slice(-2)}
+									</div>
+								</div>
+							</a>
+						}
+					>
+						<MenuItem key="logout" onClick={handleSignOutClick}>
+							Logout
+						</MenuItem>
+					</Menu.ItemGroup>
+				)}
+			</StyledMenu>
+		),
+		[
+			activePools,
+			account,
+			handleUnlockClick,
+			handleSignOutClick,
+			chainId,
+			networkName,
+		],
+	)
+	return (
+		<Dropdown overlay={menu} trigger={['click']}>
+			<Button
+				size="large"
+				type="default"
+				ghost
+				style={{ border: 'none' }}
+				icon={<MenuOutlined style={{ fontSize: '30px' }} />}
+			/>
+		</Dropdown>
+	)
 }
 
 export default NavTablet

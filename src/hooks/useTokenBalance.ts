@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import BigNumber from 'bignumber.js'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 import { getBalance } from '../utils/erc20'
 import useGlobal from './useGlobal'
 
@@ -12,7 +12,7 @@ import useGlobal from './useGlobal'
 export default function useTokenBalance(tokenAddress: string) {
 	const [loading, setLoading] = useState(true)
 	const [balance, setBalance] = useState(new BigNumber(0))
-	const { account, library } = useWeb3React()
+	const { account, library } = useWeb3Provider()
 	const { block } = useGlobal()
 
 	const fetchBalance = useCallback(async () => {

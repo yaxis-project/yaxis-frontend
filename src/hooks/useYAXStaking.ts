@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
 
 import BigNumber from 'bignumber.js'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 import { provider } from 'web3-core'
 import useGlobal from './useGlobal'
 import { getContract } from '../utils/erc20'
@@ -25,7 +25,7 @@ export default function useYaxisStaking() {
     const [loading, setLoading] = useState(true)
 
     // TODO: cleanup
-    const { account, library } = useWeb3React()
+    const { account, library } = useWeb3Provider()
     const { block, yaxis } = useGlobal()
 
     const address = useMemo(() => yaxis?.contracts?.yax?.options?.address, [yaxis])

@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import useGlobal from './useGlobal'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 
 import { enter, getXSushiStakingContract } from '../yaxis/utils'
 
@@ -10,7 +10,7 @@ import { enter, getXSushiStakingContract } from '../yaxis/utils'
  * given account. Note Amount is in units of Ether.
  */
 const useEnter = () => {
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const { yaxis } = useGlobal()
 
 	/**

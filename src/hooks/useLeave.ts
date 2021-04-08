@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 
 import useGlobal from './useGlobal'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './useWeb3Provider'
 
 import { leave, getXSushiStakingContract } from '../yaxis/utils'
 
 const useLeave = () => {
-	const { account } = useWeb3React()
+	const { account } = useWeb3Provider()
 	const { yaxis } = useGlobal()
 
 	const handle = useCallback(

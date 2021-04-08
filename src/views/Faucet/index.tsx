@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import Page from '../../components/Page/Page'
 import { Row, Col, Card } from 'antd'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { Redirect } from 'react-router-dom'
 import { DetailOverviewCard } from '../../components/DetailOverviewCard'
 import Button from '../../components/Button'
@@ -18,7 +18,7 @@ const StyledCol = styled(Col)`
 `
 
 const Faucet: React.FC = () => {
-	const { account, chainId } = useWeb3React()
+	const { account, chainId } = useWeb3Provider()
 	const { yaxis } = useGlobal()
 
 	const body = useMemo(() => {

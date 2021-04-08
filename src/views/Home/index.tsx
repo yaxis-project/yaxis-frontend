@@ -1,3 +1,4 @@
+import './index.less'
 import React from 'react'
 import styled from 'styled-components'
 import { HomePage } from '../../components/Page'
