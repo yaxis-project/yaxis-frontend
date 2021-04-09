@@ -33,6 +33,8 @@
 		"web3-utils": "^1.3.4"
 	},
 	"scripts": {
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
 		"start": "craco start",
 		"build": "craco build",
 		"test": "craco test",
