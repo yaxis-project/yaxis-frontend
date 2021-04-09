@@ -60,7 +60,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 		localStorage.setItem('signOut', account)
 		deactivate()
 		activate(network)
-	}, [deactivate, account])
+	}, [activate, deactivate, account])
 
 	const activePools = currentConfig(chainId).pools.filter(
 		(pool) => pool.active,
