@@ -32,7 +32,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 		localStorage.setItem('signOut', account)
 		deactivate()
 		activate(network)
-	}, [deactivate, account])
+	}, [activate, deactivate, account])
 
 	return (
 		<StyledAccountButton>
