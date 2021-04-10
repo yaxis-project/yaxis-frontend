@@ -13,8 +13,8 @@ import { useWeb3React } from '@web3-react/core'
 
 const Nav: React.FC = (props) => {
 	const { chainId } = useWeb3React()
-	const activePools = currentConfig(chainId).pools.filter(
-		(pool) => pool.active,
+	const activePools = currentConfig(chainId)?.pools.filter(
+		(pool) => pool?.active,
 	)
 	return (
 		<StyledMenu
@@ -48,13 +48,13 @@ const Nav: React.FC = (props) => {
 				}
 			>
 				<ItemGroup title="Provide Liquidity" />
-				{activePools.map((farm) => (
-					<Menu.Item key={`/liquidity/${farm.lpAddress}`}>
+				{activePools.map((pool) => (
+					<Menu.Item key={`/liquidity/${pool.lpAddress}`}>
 						<StyledLink
 							activeClassName="active"
-							to={`/liquidity/${farm.lpAddress}`}
+							to={`/liquidity/${pool.lpAddress}`}
 						>
-							<MenuText>{farm.name}</MenuText>
+							<MenuText>{pool.name}</MenuText>
 						</StyledLink>
 					</Menu.Item>
 				))}

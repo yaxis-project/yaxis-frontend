@@ -4,6 +4,7 @@ import { Row, Col, Typography, Collapse } from 'antd'
 import * as currencies from '../../../utils/currencies'
 import { brandBlue } from '../../../theme/colors'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
+import { NavLink } from 'react-router-dom'
 
 const { Text, Link } = Typography
 
@@ -63,9 +64,9 @@ function AdvancedNavigationRow(props: AdvancedNavigationRowProps) {
 					{/* <StyledRiskBadge>HIGHER RISK</StyledRiskBadge> */}
 				</Row>
 				<Row>
-					<Link href={to} style={{ color: brandBlue }}>
+					<NavLink to={to} style={{ color: brandBlue }}>
 						{data.name} →
-					</Link>
+					</NavLink>
 				</Row>
 			</Col>
 		</Row>
