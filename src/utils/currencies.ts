@@ -95,7 +95,19 @@ export const UNI_ETH_YAX_LP: Currency = {
 	decimals: 18,
 }
 
+export const UNI_LP: Currency = {
+	name: 'YAX/ETH UNI-V2 LP',
+	icon: uni,
+	decimals: 18,
+}
+
 export const LINKSWAP_ETH_YAX_LP: Currency = {
+	name: 'YAX/ETH LINKSWAP LP',
+	icon: linkswap,
+	decimals: 18,
+}
+
+export const LINKSWAP_LP: Currency = {
 	name: 'YAX/ETH LINKSWAP LP',
 	icon: linkswap,
 	decimals: 18,

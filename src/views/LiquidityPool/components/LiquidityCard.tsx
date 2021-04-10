@@ -9,7 +9,7 @@ import useFarms from '../../../hooks/useFarms'
 import { StakePool } from '../../../yaxis/type'
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
 import * as currencies from '../../../utils/currencies'
-import { getFullDisplayBalance } from "../../../utils/formatBalance"
+import { getFullDisplayBalance } from '../../../utils/formatBalance'
 
 const { Text } = Typography
 
@@ -39,19 +39,12 @@ const LiquidityRow = (props: LiquidityRowProps) => {
 				<Text>{name}</Text>
 			</Col>
 			<Col span={15}>
-				<Row style={{ borderBottom: "none" }}>
-					<Col style={{ marginRight: "10px" }}>
-						<Value
-							value={Number(balance)}
-							decimals={2}
-							secondary
-						/>
+				<Row style={{ borderBottom: 'none' }}>
+					<Col style={{ marginRight: '10px' }}>
+						<Value value={Number(balance)} decimals={2} secondary />
 					</Col>
 					<Col>
-
-						<Text>
-							{symbol}
-						</Text>
+						<Text>{symbol}</Text>
 					</Col>
 				</Row>
 			</Col>
@@ -75,13 +68,13 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 		farm: { lpUrl, id },
 		userBalance,
 		userPoolShare,
-		stakedBalance
+		stakedBalance,
 	} = useLP(pool)
 	const totalBalance = userBalance.plus(stakedBalance)
 
 	const defaultUserBalances = useMemo(() => {
 		const output = {}
-		pool.lpTokens.forEach(token => output[token.symbol] = 0)
+		pool.lpTokens.forEach((token) => (output[token.symbol] = 0))
 		return output
 	}, [pool])
 	const [userBalances, setUserBalances] = useState(defaultUserBalances)
@@ -93,9 +86,12 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 			const nextState = {}
 			pool.lpTokens.forEach(
 				(token, i) =>
-					nextState[token.symbol] = new BigNumber(stakedValue?.reserve[i])
+					(nextState[token.symbol] = new BigNumber(
+						stakedValue?.reserve[i],
+					)
 						.times(userPoolShare)
-						.toFixed(2))
+						.toFixed(2)),
+			)
 			setUserBalances(nextState)
 		}
 	}, [stakedValues, userPoolShare, pool, id])
@@ -114,22 +110,29 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 
 			<LiquidityRow
 				// TODO: Make a dynamic currency icon component with fallback
-				icon={currencies.currencyMap[pool.symbol]?.icon || currencies.UNI_ETH_YAX_LP.icon}
+				icon={
+					currencies.currencyMap[pool.symbol]?.icon ||
+					currencies.UNI_ETH_YAX_LP.icon
+				}
 				name={'Pool Tokens'}
 				balance={getFullDisplayBalance(totalBalance)}
 				symbol={pool.symbol}
 			/>
-			{pool.lpTokens.map(({ symbol }, i) =>
+			{pool.lpTokens.map(({ symbol }, i) => (
 				<LiquidityRow
 					key={`LiqudityRow-${symbol}-${i}`}
-					icon={typeof currencies[symbol] === 'function' ? (currencies[symbol]()?.icon) : currencies[symbol]?.icon}
+					icon={
+						typeof currencies[symbol] === 'function'
+							? currencies[symbol]()?.icon
+							: currencies[symbol]?.icon
+					}
 					name={symbol}
 					balance={userBalances[symbol]}
 					symbol={symbol}
 				/>
-			)}
+			))}
 
-			<Row gutter={18}>
+			<Row gutter={18} justify="center">
 				<Col span={12}>
 					<Button
 						className="staking-btn-link"
@@ -143,19 +146,21 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 						Remove
 					</Button>
 				</Col>
-				<Col span={12}>
-					<Button
-						className="staking-btn-link"
-						block
-						type="primary"
-						disabled={!lpUrl}
-						icon={<PlusOutlined />}
-						href={lpUrl}
-						target="_blank"
-					>
-						Add
-					</Button>
-				</Col>
+				{!pool?.legacy && (
+					<Col span={12}>
+						<Button
+							className="staking-btn-link"
+							block
+							type="primary"
+							disabled={!lpUrl}
+							icon={<PlusOutlined />}
+							href={lpUrl}
+							target="_blank"
+						>
+							Add
+						</Button>
+					</Col>
+				)}
 			</Row>
 		</Card>
 	)

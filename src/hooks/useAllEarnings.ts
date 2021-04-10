@@ -24,8 +24,8 @@ const useAllEarnings = (): {
 	const fetchAllBalances = useCallback(async () => {
 		try {
 			const balances: Array<BigNumber> = await Promise.all(
-				farms.map(({ pid }: { pid: number }) =>
-					getEarned(yaxisChefContract, pid, account),
+				farms.map((farm) =>
+					getEarned(yaxisChefContract, farm?.pid, account),
 				),
 			)
 			let sumEarning = new BigNumber(0)

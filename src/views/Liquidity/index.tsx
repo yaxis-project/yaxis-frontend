@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import Page from '../../components/Page/Page'
-import { Collapse, Card, Table } from 'antd'
+import Tooltip from '../../components/Tooltip'
+import { Collapse, Card, Table, Row, Col } from 'antd'
+import info from '../../assets/img/info.svg'
 import './index.less'
 import useFarms from '../../hooks/useFarms'
 const { Panel } = Collapse
@@ -28,7 +30,11 @@ const Liqudity: React.FC = () => {
 			<Page>
 				<>
 					<Card
-						title={<strong>Active Liquidity Pools</strong>}
+						title={
+							<Col style={{ fontSize: '18px', fontWeight: 700 }}>
+								Active Liquidity Pools
+							</Col>
+						}
 						bodyStyle={{ padding: 0 }}
 					>
 						<Table
@@ -48,11 +54,29 @@ const Liqudity: React.FC = () => {
 						/>
 					</Card>
 
-					<Collapse
-						defaultActiveKey={['1']}
-						expandIconPosition="right"
-					>
-						<Panel header={'Legacy Liquidity Pools'} key="1">
+					<Collapse expandIconPosition="right">
+						<Panel
+							header={
+								<Row gutter={10}>
+									<Col>Legacy Liquidity Pools</Col>
+									<Col>
+										<Tooltip
+											title={
+												'LPs that are no longer supported'
+											}
+											placement={'right'}
+										>
+											<img
+												src={info}
+												height="20"
+												alt="Legacy Liquidity Pools info"
+											/>
+										</Tooltip>
+									</Col>
+								</Row>
+							}
+							key="1"
+						>
 							<Table
 								columns={columns}
 								dataSource={legacyPools}
