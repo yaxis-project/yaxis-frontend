@@ -9,7 +9,7 @@ const useLeave = () => {
 
 	const handle = useCallback(
 		async (a: string) => {
-			const rewardsYaxis = yaxis?.contracts?.rewardsYaxis
+			const rewardsYaxis = yaxis?.contracts?.rewards.Yaxis
 			const amount = new BigNumber(a)
 			const txHash = await rewardsYaxis.methods
 				.withdraw(amount)

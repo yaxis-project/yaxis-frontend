@@ -18,7 +18,7 @@ const useEnter = () => {
 	 */
 	const onEnter = useCallback(
 		async (a: string) => {
-			const rewardsYaxis = yaxis?.contracts?.rewardsYaxis
+			const rewardsYaxis = yaxis?.contracts?.rewards.Yaxis
 			const yaxisToken = yaxis?.contracts?.yaxis
 			const amount = new BigNumber(a).times(10 ** 18)
 			const txHash = await yaxisToken.methods
