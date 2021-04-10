@@ -89,26 +89,12 @@ export default function HomeExpandableOverview() {
 						/>
 					}
 				/>
-				<Row gutter={20}>
-					<Col span={12}>
-						<ExpandableRow
-							main="Price of YAXIS"
-							secondary={
-								<Value
-									value={hrPrice}
-									numberPrefix="$"
-									decimals={2}
-								/>
-							}
-						/>
-					</Col>
-					<Col
-						style={{
-							display: 'flex',
-							alignItems: 'center',
-						}}
-					>
-						{/* TODO: Faucet on Kovan */}
+				<ExpandableRow
+					main="Price of YAXIS"
+					secondary={
+						<Value value={hrPrice} numberPrefix="$" decimals={2} />
+					}
+					rightContent={
 						<Button
 							type="primary"
 							href="https://app.uniswap.org/#/swap?outputCurrency=0xb1dc9124c395c1e97773ab855d66e879f053a289"
@@ -117,8 +103,8 @@ export default function HomeExpandableOverview() {
 						>
 							Get YAXIS
 						</Button>
-					</Col>
-				</Row>
+					}
+				/>
 
 				<ExpandableRow
 					main={
