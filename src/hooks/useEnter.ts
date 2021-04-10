@@ -1,9 +1,7 @@
 import { useCallback } from 'react'
-
 import useGlobal from './useGlobal'
 import useWeb3Provider from './useWeb3Provider'
-
-import { enter, getXSushiStakingContract } from '../yaxis/utils'
+import BigNumber from 'bignumber.js'
 
 /**
  * Hook to generate yaxis callback for YAX staking for amount, for the
@@ -19,12 +17,17 @@ const useEnter = () => {
 	 * @param amount string Amount in Ether units of YAX to stake.
 	 */
 	const onEnter = useCallback(
-		async (amount: string) => {
-			const txHash = await enter(
-				getXSushiStakingContract(yaxis),
-				amount,
-				account,
-			)
+		async (a: string) => {
+			const rewardsYaxis = yaxis?.contracts?.rewardsYaxis
+			const yaxisToken = yaxis?.contracts?.yaxis
+			const amount = new BigNumber(a).times(10 ** 18)
+			const txHash = await yaxisToken.methods
+				.transferAndCall(
+					rewardsYaxis.options.address,
+					amount,
+					rewardsYaxis.methods.stake(amount).encodeABI(),
+				)
+				.send({ from: account, amount })
 			console.log(txHash)
 		},
 		[account, yaxis],

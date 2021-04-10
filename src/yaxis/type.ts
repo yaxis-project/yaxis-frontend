@@ -36,6 +36,7 @@ export interface Config {
 		stableSwap3PoolConverter: string
 		pickleChef: string
 		pickleJar: string
+		rewardsYaxis: string
 	}
 	pools: StakePool[]
 	vault: {
