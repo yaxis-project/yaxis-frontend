@@ -18,7 +18,7 @@ import theme from './theme'
 import Home from './views/Home'
 import MetaVault from './views/MetaVault'
 import Staking from './views/Staking'
-// import Liquidity from './views/Liquidity'
+import Liquidity from './views/Liquidity'
 import LiquidityPool from './views/LiquidityPool'
 import Swap from './views/Swap'
 import Faucet from './views/Faucet'
@@ -45,10 +45,7 @@ const Routes: React.FC = () => {
 	const triedEager = useEagerConnect()
 	useInactiveListener(!triedEager)
 	const { chainId } = useWeb3React()
-	const activePools = useMemo(
-		() => currentConfig(chainId).pools.filter((pool) => pool.active),
-		[chainId],
-	)
+	const pools = useMemo(() => currentConfig(chainId).pools, [chainId])
 	return (
 		<Router>
 			<SwapBanner />
@@ -62,15 +59,10 @@ const Routes: React.FC = () => {
 				<Route path="/staking" exact>
 					<Staking />
 				</Route>
-				{/* <Route path="/liquidity" exact>
-						<Liquidity />
-					</Route> */}
-				{activePools.length && (
-					<Route key={`/liquidity`} path={`/liquidity`} exact>
-						<LiquidityPool pool={activePools[0]} />
-					</Route>
-				)}
-				{activePools.map((pool) => {
+				<Route path="/liquidity" exact>
+					<Liquidity />
+				</Route>
+				{pools.map((pool) => {
 					const key = `/liquidity/${pool.lpAddress}`
 					return (
 						<Route key={key} path={key} exact>

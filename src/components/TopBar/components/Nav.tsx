@@ -3,8 +3,8 @@ import { NavLink } from 'react-router-dom'
 import { Menu, Typography } from 'antd'
 import styled from 'styled-components'
 import { currentConfig } from '../../../yaxis/configs'
-import { CaretDownFilled } from '@ant-design/icons';
-import { useWeb3React } from "@web3-react/core"
+import { CaretDownFilled } from '@ant-design/icons'
+import { useWeb3React } from '@web3-react/core'
 
 /**
  * Horizontal top navigation bar for the application.
@@ -13,7 +13,9 @@ import { useWeb3React } from "@web3-react/core"
 
 const Nav: React.FC = (props) => {
 	const { chainId } = useWeb3React()
-	const activePools = currentConfig(chainId).pools.filter(pool => pool.active)
+	const activePools = currentConfig(chainId).pools.filter(
+		(pool) => pool.active,
+	)
 	return (
 		<StyledMenu
 			mode="horizontal"
@@ -40,21 +42,22 @@ const Nav: React.FC = (props) => {
 			<StyledSubMenu
 				key={'/liquidity'}
 				title={
-					// TODO: to: /liquidity
-					<StyledLink activeClassName="active" to="#" style={{ pointerEvents: "none" }}>
+					<StyledLink activeClassName="active" to="/liquidity">
 						Advanced <CaretDownFilled style={{ margin: 0 }} />
 					</StyledLink>
 				}
 			>
 				<ItemGroup title="Provide Liquidity" />
-				{activePools.map(
-					(farm) =>
-						<Menu.Item key={`/liquidity/${farm.lpAddress}`}>
-							<StyledLink activeClassName="active" to={`/liquidity/${farm.lpAddress}`}>
-								<MenuText>{farm.name}</MenuText>
-							</StyledLink>
-						</Menu.Item  >
-				)}
+				{activePools.map((farm) => (
+					<Menu.Item key={`/liquidity/${farm.lpAddress}`}>
+						<StyledLink
+							activeClassName="active"
+							to={`/liquidity/${farm.lpAddress}`}
+						>
+							<MenuText>{farm.name}</MenuText>
+						</StyledLink>
+					</Menu.Item>
+				))}
 			</StyledSubMenu>
 		</StyledMenu>
 	)

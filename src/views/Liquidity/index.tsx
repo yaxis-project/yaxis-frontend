@@ -1,23 +1,76 @@
-import React from 'react'
+import React, { useMemo } from 'react'
+import { useHistory } from 'react-router-dom'
 import Page from '../../components/Page/Page'
-import { Row } from 'antd'
+import { Collapse, Card, Table } from 'antd'
 import './index.less'
 import useFarms from '../../hooks/useFarms'
+const { Panel } = Collapse
+
+const columns = [
+	{
+		title: 'Name',
+		dataIndex: 'name',
+		key: 'name',
+	},
+]
 
 const Liqudity: React.FC = () => {
 	const { farms } = useFarms()
-	const activePools = farms.filter((pool) => pool.active)
-
+	const activePools = useMemo(() => farms.filter((pool) => pool.active), [
+		farms,
+	])
+	const legacyPools = useMemo(() => farms.filter((pool) => pool.legacy), [
+		farms,
+	])
+	const history = useHistory()
 	return (
 		<div className="liquidity-view">
-			<Page
-				loading={false}
-				mainTitle="YAX+ETH LINKSWAP LP"
-				secondaryText="Provide Liquidity"
-				value={`0 LPT`}
-				valueInfo="Your Position"
-			>
-				<Row gutter={16}>{activePools.map((pool) => pool.name)}</Row>
+			<Page>
+				<>
+					<Card
+						title={<strong>Active Liquidity Pools</strong>}
+						bodyStyle={{ padding: 0 }}
+					>
+						<Table
+							columns={columns}
+							dataSource={activePools}
+							pagination={false}
+							rowKey={'name'}
+							rowClassName="LP-Table-Row"
+							onRow={(record, rowIndex) => {
+								return {
+									onClick: (event) =>
+										history.push(
+											`/liquidity/${record.lpAddress}`,
+										),
+								}
+							}}
+						/>
+					</Card>
+
+					<Collapse
+						defaultActiveKey={['1']}
+						expandIconPosition="right"
+					>
+						<Panel header={'Legacy Liquidity Pools'} key="1">
+							<Table
+								columns={columns}
+								dataSource={legacyPools}
+								pagination={false}
+								rowKey={'name'}
+								rowClassName="LP-Table-Row"
+								onRow={(record, rowIndex) => {
+									return {
+										onClick: (event) =>
+											history.push(
+												`/liquidity/${record.lpAddress}`,
+											),
+									}
+								}}
+							/>
+						</Panel>
+					</Collapse>
+				</>
 			</Page>
 		</div>
 	)
