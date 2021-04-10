@@ -9,7 +9,9 @@ import './index.less'
 import useLPContractData from '../../hooks/useLPContractData'
 import { numberToFloat } from '../../yaxis/utils'
 import { StakePool } from '../../yaxis/type'
-import Stake from "./components/Stake"
+import Stake from './components/Stake'
+import LegacyStake from './components/LegacyStake'
+import { red } from '../../theme/colors'
 
 type Props = {
 	pool: StakePool
@@ -30,22 +32,37 @@ const Liqudity: React.FC<Props> = ({ pool }) => {
 			<Page
 				loading={false}
 				mainTitle={pool.name}
-				secondaryText="Provide Liquidity"
-				value={`${numberToFloat(stakedBalance)} LPT`}
-				valueInfo="Your Position"
+				secondaryText={
+					pool?.legacy ? 'Legacy Liquidity Pool' : 'Liquidity Pool'
+				}
+				value={
+					pool?.legacy
+						? 'No longer supported.'
+						: `${numberToFloat(stakedBalance)} LPT`
+				}
+				valueInfo={
+					pool?.legacy
+						? 'Please unstake, remove funds, and move to a new LP.'
+						: 'Your Position'
+				}
+				background={pool?.legacy ? red[100] : undefined}
 			>
 				<Row gutter={16}>
 					<Col xs={24} sm={24} md={24} lg={16}>
-						{/* TODO: Graph */}
-						{/* <YaxisPriceGraph /> */}
 						<LiquidityCard pool={pool} />
-						{pool.pid !== null && <Row style={{ marginTop: "16px" }} >
+						{pool?.legacy ? (
+							<LegacyStake
+								lpContract={lpContract}
+								pid={pool.pid}
+								tokenName={pool.symbol.toUpperCase()}
+							/>
+						) : (
 							<Stake
 								lpContract={lpContract}
 								pid={pool.pid}
 								tokenName={pool.symbol.toUpperCase()}
 							/>
-						</Row>}
+						)}
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<Row>

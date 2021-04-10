@@ -1,7 +1,7 @@
 import { Contract } from 'web3-eth-contract'
 
 export interface StakePool {
-	pid: number
+	pid?: number
 	active: boolean
 	type: string
 	liquidId: string

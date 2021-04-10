@@ -1,4 +1,4 @@
-import { brandBlue, hoverBlue, black, green, grey, white } from './colors'
+import { brandBlue, hoverBlue, red, black, green, grey, white } from './colors'
 
 const theme = {
 	borderRadius: 12,
@@ -20,6 +20,7 @@ const theme = {
 			grey: 'rgba(0, 0, 0, 0.45)',
 		},
 		white,
+		red
 	},
 	siteWidth: 1116,
 	spacing: {

@@ -36,12 +36,35 @@ export const configs: Record<number, Config> = {
 		},
 		pools: [
 			{
-				pid: 6,
 				active: true,
+				legacy: false,
+				type: 'uni',
+				liquidId: '0x85C09c861E228fcB537BD598264Efe3e32558224/ETH',
+				lpAddress: '0xa18644Cd7FB63571f856BAf354FbF3745173254D',
+				lpUrl: '',
+				lpTokens: [
+					{
+						symbol: 'YAXIS',
+						decimals: 18,
+					},
+					{
+						symbol: 'ETH',
+						decimals: 18,
+					},
+				],
+				tokenAddress: '0x85C09c861E228fcB537BD598264Efe3e32558224',
+				name: 'Uniswap YAXIS/ETH',
+				symbol: 'YAXIS/ETH UNI-V2 LP',
+				tokenSymbol: 'YAXIS',
+				icon: '',
+			},
+			{
+				pid: 6,
+				active: false,
 				legacy: true,
 				type: 'uni',
-				liquidId: '0x29a0d41ad9069861976aFA6F3e6B0b5eC2381096/ETH',
-				lpAddress: '0xe1D13c665FFb8eB104c3dDa0c66341F22d336b1B',
+				liquidId: '0xe0e3413740aAF1E2E23278c9692a6c3Bb728E9B0/ETH',
+				lpAddress: '0xb16792A979F8DDA6A64f8bb8CeA624E85517B436',
 				lpUrl: '',
 				lpTokens: [
 					{
@@ -53,9 +76,9 @@ export const configs: Record<number, Config> = {
 						decimals: 18,
 					},
 				],
-				tokenAddress: '0x29a0d41ad9069861976aFA6F3e6B0b5eC2381096',
+				tokenAddress: '0xe0e3413740aAF1E2E23278c9692a6c3Bb728E9B0',
 				name: 'Uniswap YAX/ETH',
-				symbol: 'YAX/ETH UNI-V2 LP 111',
+				symbol: 'YAX/ETH UNI-V2 LP',
 				tokenSymbol: 'YAX',
 				icon: '',
 			},

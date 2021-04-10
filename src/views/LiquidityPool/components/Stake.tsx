@@ -75,64 +75,66 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
 	)
 
 	return (
-		<Card className="liquidity-card" title={<strong>Staking</strong>}>
-			<Row>
-				<CardContents>
-					<Value value={getBalanceNumber(stakedBalance)} />
-					<Label text={`${tokenName} Tokens Staked`} />
-					<Divider />
-					{!allowance.toNumber() ? (
-						<Col span={12}>
-							<Tooltip title={approveError}>
-								<Button
-									disabled={!account}
-									onClick={onApprove}
-									loading={approveLoading}
-								>
-									Approve {tokenName}
-								</Button>
-							</Tooltip>
-						</Col>
-					) : (
-						<Row
-							gutter={18}
-							style={{
-								width: '100%',
-								justifyContent: 'space-between',
-								padding: 0,
-							}}
-						>
+		<Row style={{ marginTop: '16px' }}>
+			<Card className="liquidity-card" title={<strong>Staking</strong>}>
+				<Row>
+					<CardContents>
+						<Value value={getBalanceNumber(stakedBalance)} />
+						<Label text={`${tokenName} Tokens Staked`} />
+						<Divider />
+						{!allowance.toNumber() ? (
 							<Col span={12}>
-								<Tooltip title={stakeError}>
+								<Tooltip title={approveError}>
 									<Button
-										disabled={tokenBalance.eq(
-											new BigNumber(0),
-										)}
-										onClick={onPresentDeposit}
-										loading={stakeLoading}
+										disabled={!account}
+										onClick={onApprove}
+										loading={approveLoading}
 									>
-										Stake
+										Approve {tokenName}
 									</Button>
 								</Tooltip>
 							</Col>
-							<Col span={12}>
-								<Tooltip title={unstakeError}>
-									<Button
-										disabled={stakedBalance.eq(
-											new BigNumber(0),
-										)}
-										onClick={onPresentWithdraw}
-										loading={unstakeLoading}
-									>
-										Unstake
-									</Button>
-								</Tooltip>
-							</Col>
-						</Row>
-					)}
-				</CardContents>
-			</Row>
-		</Card>
+						) : (
+							<Row
+								gutter={18}
+								style={{
+									width: '100%',
+									justifyContent: 'space-between',
+									padding: 0,
+								}}
+							>
+								<Col span={12}>
+									<Tooltip title={stakeError}>
+										<Button
+											disabled={tokenBalance.eq(
+												new BigNumber(0),
+											)}
+											onClick={onPresentDeposit}
+											loading={stakeLoading}
+										>
+											Stake
+										</Button>
+									</Tooltip>
+								</Col>
+								<Col span={12}>
+									<Tooltip title={unstakeError}>
+										<Button
+											disabled={stakedBalance.eq(
+												new BigNumber(0),
+											)}
+											onClick={onPresentWithdraw}
+											loading={unstakeLoading}
+										>
+											Unstake
+										</Button>
+									</Tooltip>
+								</Col>
+							</Row>
+						)}
+					</CardContents>
+				</Row>
+			</Card>
+		</Row>
 	)
 }
 

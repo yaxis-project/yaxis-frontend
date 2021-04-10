@@ -23,3 +23,7 @@ export const grey = {
 	600: '#595959',
 	800: '#262626',
 }
+
+export const red = {
+	100: '#FF7674',
+}
