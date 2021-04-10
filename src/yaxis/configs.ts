@@ -16,6 +16,7 @@ export const configs: Record<number, Config> = {
 				'0x4981D4A898e1C503BFA06B751f932600E124108f',
 			pickleChef: '0x76f4A0CE3753F745e97e588F8423230B83f4a2F4',
 			pickleJar: '0x13F4cc6C239aBaD03EbD2deAA6A7107E9c6c9BEB',
+			rewardsYaxis: '0x8Dd07469b35C02cfa294071D456a2d98b5D42Fa9'
 		},
 		vault: {
 			usdc: '0x39B8a63F0c5b65Da458e6fDc5C2e543A80A15Abc',
@@ -69,6 +70,8 @@ export const configs: Record<number, Config> = {
 			yAxisMetaVault: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
 			stableSwap3PoolConverter:
 				'0xA5c16eb6eBD72BC72c70Fca3e4faCf389AD4aBE7',
+			rewardsYaxis: ''
+
 		},
 		vault: {
 			usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',

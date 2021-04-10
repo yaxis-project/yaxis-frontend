@@ -4,17 +4,13 @@ import useEnter from '../../../hooks/useEnter'
 import useLeave from '../../../hooks/useLeave'
 import useYaxisStaking from '../../../hooks/useYAXISStaking'
 import Value from '../../../components/Value'
-import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import Button from '../../../components/Button'
-import Tooltip from '../../../components/Tooltip'
 import Input from '../../../components/Input'
 import { Row, Col, Typography, Card, Form, notification } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
-import useApproveStaking from '../../../hooks/useApproveStaking'
-import useAllowanceStaking from '../../../hooks/useAllowanceStaking'
 const { Text } = Typography
 
 /**
@@ -33,7 +29,6 @@ const TableHeader = (props: any) => (
  * Generate the main YAX staking card for the vault.
  */
 export default function StakingCard() {
-	const { account } = useWeb3Provider()
 	const languages = useContext(LanguageContext)
 	const t = useCallback(
 		(s: string) => phrases[s][languages?.state?.selected],
@@ -42,20 +37,11 @@ export default function StakingCard() {
 	const { onEnter } = useEnter()
 	const { onLeave } = useLeave()
 	const {
-		balances: { stakedBalance, walletBalance, rate, yaxBalance },
+		balances: { stakedBalance, walletBalance, yaxBalance },
 	} = useYaxisStaking()
 
 	const [loading, setLoading] = useState(false)
 	const [depositAmount, setDeposit] = useState<string>('')
-
-	const { error: approveError, onApprove } = useApproveStaking()
-	const allowance = useAllowanceStaking()
-
-	const approveYAX = useCallback(async () => {
-		setLoading(true)
-		await onApprove()
-		setLoading(false)
-	}, [onApprove])
 
 	/**
 	 * Computes
@@ -85,7 +71,7 @@ export default function StakingCard() {
 			notification.info({
 				message: t('Please approve YAXIS unstaking transaction.'),
 			})
-			const sYax = new BigNumber(withdrawAmount).times(1e18).div(rate)
+			const sYax = new BigNumber(withdrawAmount).times(1e18)
 			await onLeave(sYax.toString())
 			setWithdraw('0')
 			setLoading(false)
@@ -170,25 +156,13 @@ export default function StakingCard() {
 							onClickMax={maxDeposit}
 						/>
 					</Form.Item>
-					{!allowance.toNumber() ? (
-						<Tooltip title={approveError}>
-							<Button
-								disabled={!account}
-								onClick={approveYAX}
-								loading={loading}
-							>
-								{t('Approve')}
-							</Button>
-						</Tooltip>
-					) : (
-						<Button
-							disabled={depositDisabled}
-							onClick={stakeYAX}
-							loading={loading}
-						>
-							{t('Deposit')}
-						</Button>
-					)}
+					<Button
+						disabled={depositDisabled}
+						onClick={stakeYAX}
+						loading={loading}
+					>
+						{t('Deposit')}
+					</Button>
 				</Col>
 				<Col span={12}>
 					<Form.Item validateStatus={errorWithdraw && 'error'}>

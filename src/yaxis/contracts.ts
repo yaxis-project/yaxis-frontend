@@ -19,6 +19,7 @@ export class Contracts {
 	private config: Config
 	public multicall: Contract
 	public vaultConverter: Contract
+	public rewardsYaxis: Contract
 	public vault: {
 		usdc: Contract
 		dai: Contract
@@ -32,6 +33,8 @@ export class Contracts {
 		this.yaxis = new this.web3.eth.Contract(abis.YaxisTokenABI)
 		this.yax = new this.web3.eth.Contract(abis.YaxTokenABI)
 		this.swap = new this.web3.eth.Contract(abis.SwapABI)
+
+		this.rewardsYaxis = new this.web3.eth.Contract(abis.RewardsYaxisABI)
 
 		this.yaxisChef = new this.web3.eth.Contract(abis.YaxisChefABI)
 		this.pickleChef = new this.web3.eth.Contract(abis.PickleChefABI)
@@ -78,6 +81,9 @@ export class Contracts {
 		setProvider(this.yaxis, this.config.contractAddresses.yaxis)
 		setProvider(this.yax, this.config.contractAddresses.yax)
 		setProvider(this.swap, this.config.contractAddresses.swap)
+
+		setProvider(this.rewardsYaxis, this.config.contractAddresses.rewardsYaxis)
+
 		setProvider(this.yaxisChef, this.config.contractAddresses.yaxisChef)
 		setProvider(this.weth, this.config.contractAddresses.weth)
 		setProvider(this.multicall, this.config.contractAddresses.multicall)
