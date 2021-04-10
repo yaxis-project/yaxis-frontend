@@ -6,7 +6,7 @@ import { brandBlue } from '../../../theme/colors'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { NavLink } from 'react-router-dom'
 
-const { Text, Link } = Typography
+const { Text } = Typography
 
 const { Panel } = Collapse
 
