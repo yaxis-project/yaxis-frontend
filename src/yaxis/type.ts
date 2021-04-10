@@ -39,6 +39,11 @@ export interface Config {
 		pickleJar: string
 		rewardsYaxis: string
 	}
+	rewards: {
+		MetaVault: string
+		Yaxis: string
+		YaxisEth: string
+	},
 	pools: StakePool[]
 	vault: {
 		usdc: string

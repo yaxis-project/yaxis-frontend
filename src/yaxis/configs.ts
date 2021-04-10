@@ -18,6 +18,11 @@ export const configs: Record<number, Config> = {
 			pickleJar: '0x13F4cc6C239aBaD03EbD2deAA6A7107E9c6c9BEB',
 			rewardsYaxis: '0x8Dd07469b35C02cfa294071D456a2d98b5D42Fa9'
 		},
+		rewards: {
+			MetaVault: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8',
+			Yaxis: '0x8Dd07469b35C02cfa294071D456a2d98b5D42Fa9',
+			YaxisEth: '0x71d8189DF0515ac3E2339599FeC1627e6e3AFB72'
+		},
 		vault: {
 			usdc: '0x39B8a63F0c5b65Da458e6fDc5C2e543A80A15Abc',
 			dai: '0xa53114780566B3bDB0D36D78E65729305b24FbB8',
@@ -72,7 +77,11 @@ export const configs: Record<number, Config> = {
 			stableSwap3PoolConverter:
 				'0xA5c16eb6eBD72BC72c70Fca3e4faCf389AD4aBE7',
 			rewardsYaxis: ''
-
+		},
+		rewards: {
+			MetaVault: '',
+			Yaxis: '',
+			YaxisEth: ''
 		},
 		vault: {
 			usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
