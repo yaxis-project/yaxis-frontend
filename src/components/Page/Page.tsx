@@ -56,6 +56,7 @@ interface PageProps {
 	value?: string
 	valueInfo?: string
 	children: React.ReactElement
+	background?: string
 }
 
 const Page = ({ children, ...props }: PageProps) => (

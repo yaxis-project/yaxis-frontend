@@ -26,7 +26,7 @@ export default function useYaxisStaking() {
     const address = useMemo(() => yaxis?.contracts?.yaxis?.options?.address, [yaxis])
     const { balance: walletBalance, loading: loadingWalletBalance } = useTokenBalance(address)
 
-    const stakingAddress = useMemo(() => yaxis?.contracts?.rewardsYaxis?.options?.address, [yaxis])
+    const stakingAddress = useMemo(() => yaxis?.contracts?.rewards?.Yaxis?.options?.address, [yaxis])
     const { balance: sBalance, loading: sBalanceLoading } = useTokenBalance(stakingAddress)
 
     const priceMap = usePriceMap()

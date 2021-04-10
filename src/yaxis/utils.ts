@@ -105,7 +105,7 @@ export const getEarned = async (
 	pid: number,
 	account: string,
 ) => {
-	if (pid === null) return 0
+	if (!pid) return 0
 	return yaxisChefContract.methods.pendingYaxis(pid, account).call()
 }
 
