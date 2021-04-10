@@ -15,5 +15,5 @@ export const abis = {
     XYaxABI: require('./xYax.json') as AbiItem[],
     YaxisMetaVaultABI: require('./yAxisMetaVault.json') as AbiItem[],
     ConverterABI: require('./converter.json') as AbiItem[],
-    RewardsYaxisABI: require('./RewardsYaxis.json') as AbiItem[],
+    RewardsABI: require('./Rewards.json') as AbiItem[],
 }

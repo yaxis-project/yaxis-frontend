@@ -19,22 +19,32 @@ export class Contracts {
 	private config: Config
 	public multicall: Contract
 	public vaultConverter: Contract
-	public rewardsYaxis: Contract
 	public vault: {
 		usdc: Contract
 		dai: Contract
 		usdt: Contract
 		threeCrv: Contract
 	}
+	public rewards: {
+		Yaxis: Contract
+		YaxisEth: Contract
+		MetaVault: Contract
+	}
 
 	constructor(provider: any, networkId: number, public web3: Web3) {
 		const abis = networks[networkId]
 
+		this.config = configs[networkId]
+
+		this.rewards = {
+			MetaVault: new this.web3.eth.Contract(abis.RewardsABI),
+			YaxisEth: new this.web3.eth.Contract(abis.RewardsABI),
+			Yaxis: new this.web3.eth.Contract(abis.RewardsABI),
+		}
+
 		this.yaxis = new this.web3.eth.Contract(abis.YaxisTokenABI)
 		this.yax = new this.web3.eth.Contract(abis.YaxTokenABI)
 		this.swap = new this.web3.eth.Contract(abis.SwapABI)
-
-		this.rewardsYaxis = new this.web3.eth.Contract(abis.RewardsYaxisABI)
 
 		this.yaxisChef = new this.web3.eth.Contract(abis.YaxisChefABI)
 		this.pickleChef = new this.web3.eth.Contract(abis.PickleChefABI)
@@ -52,7 +62,6 @@ export class Contracts {
 			threeCrv: new this.web3.eth.Contract(abis.ERC20Abi),
 		}
 		this.weth = new this.web3.eth.Contract(abis.WETHAbi)
-		this.config = configs[networkId]
 		for (let index = 0; index < this.config.pools.length; index++) {
 			let stakePool = this.config.pools[index]
 			stakePool.lpContract = new this.web3.eth.Contract(
@@ -82,12 +91,26 @@ export class Contracts {
 		setProvider(this.yax, this.config.contractAddresses.yax)
 		setProvider(this.swap, this.config.contractAddresses.swap)
 
-		setProvider(this.rewardsYaxis, this.config.contractAddresses.rewardsYaxis)
+		setProvider(
+			this.rewards.Yaxis,
+			this.config.rewards.Yaxis,
+		)
+		setProvider(
+			this.rewards.YaxisEth,
+			this.config.rewards.YaxisEth,
+		)
+		setProvider(
+			this.rewards.MetaVault,
+			this.config.rewards.MetaVault,
+		)
 
 		setProvider(this.yaxisChef, this.config.contractAddresses.yaxisChef)
 		setProvider(this.weth, this.config.contractAddresses.weth)
 		setProvider(this.multicall, this.config.contractAddresses.multicall)
-		setProvider(this.xYaxisStaking, this.config.contractAddresses.xYaxisStaking)
+		setProvider(
+			this.xYaxisStaking,
+			this.config.contractAddresses.xYaxisStaking,
+		)
 		setProvider(this.xYaxStaking, this.config.contractAddresses.xYaxStaking)
 		setProvider(
 			this.yaxisMetaVault,
