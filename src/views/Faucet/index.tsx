@@ -336,6 +336,73 @@ const Faucet: React.FC = () => {
 						/>
 					</StyledCol>
 				</Row>
+				<Row gutter={16}>
+					{yaxis?.contracts.pools.map((pool) => {
+						console.log(pool)
+						return (
+							<StyledCol xs={24} sm={24} md={24} lg={8}>
+								<Card
+									title={
+										<Row
+											justify="space-between"
+											style={{
+												width: '100%',
+											}}
+										>
+											<Col>
+												<Row>
+													<img
+														src={
+															currencies[
+																`${pool.type.toUpperCase()}_LP`
+															].icon
+														}
+														height="36"
+														alt="logo"
+													/>
+													<div
+														style={{
+															paddingLeft: '14px',
+														}}
+													>
+														{pool.name}
+													</div>
+												</Row>
+											</Col>
+											<Col>
+												<Button
+													block={false}
+													onClick={async () =>
+														pool.lpContract.methods
+															.addLiquidity(
+																0,
+																0,
+																new BN(
+																	1,
+																).multipliedBy(
+																	10 ** 18,
+																),
+															)
+															.send({
+																from: account,
+															})
+													}
+												>
+													<img
+														src={icon}
+														height="36"
+														alt="logo"
+													/>
+												</Button>
+											</Col>
+										</Row>
+									}
+									bordered={false}
+								/>
+							</StyledCol>
+						)
+					})}
+				</Row>
 			</div>
 		)
 	}, [yaxis?.contracts, chainId, account])
