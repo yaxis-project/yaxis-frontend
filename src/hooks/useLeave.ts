@@ -1,17 +1,20 @@
 import { useCallback } from 'react'
-
 import useGlobal from './useGlobal'
 import useWeb3Provider from './useWeb3Provider'
-
-import { leave, getXSushiStakingContract } from '../yaxis/utils'
+import BigNumber from 'bignumber.js'
 
 const useLeave = () => {
 	const { account } = useWeb3Provider()
 	const { yaxis } = useGlobal()
 
 	const handle = useCallback(
-		async (amount: string) => {
-			await leave(getXSushiStakingContract(yaxis), amount, account)
+		async (a: string) => {
+			const rewardsYaxis = yaxis?.contracts?.rewardsYaxis
+			const amount = new BigNumber(a)
+			const txHash = await rewardsYaxis.methods
+				.withdraw(amount)
+				.send({ from: account })
+			console.log(txHash)
 		},
 		[account, yaxis],
 	)
