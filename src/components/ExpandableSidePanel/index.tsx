@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, Collapse, Divider } from 'antd'
+import { Typography, Collapse, Divider, Row, Col } from 'antd'
 const { Text, Title } = Typography
 
 const { Panel } = Collapse
@@ -7,31 +7,35 @@ const { Panel } = Collapse
 interface ExpandableRowProps {
 	main: string | React.ReactNode
 	secondary: string | React.ReactNode
+	rightContent?: string | React.ReactNode
 }
 
 export const ExpandableRow = (props: ExpandableRowProps) => {
-	const { main, secondary } = props
+	const { main, secondary, rightContent } = props
 	return (
-		<>
-			<Text
-				style={{
-					margin: 0,
-					marginLeft: 22,
-					marginTop: 22,
-					display: 'block',
-				}}
-				type="secondary"
-			>
-				{main}
-			</Text>
-			<Title
-				style={{ margin: 0, marginLeft: 22, marginBottom: 22 }}
-				level={5}
-			>
-				{secondary}
-			</Title>
+		<Row align={'middle'}>
+			<Col span={rightContent ? 12 : 24}>
+				<Text
+					style={{
+						margin: 0,
+						marginLeft: 22,
+						marginTop: 22,
+						display: 'block',
+					}}
+					type="secondary"
+				>
+					{main}
+				</Text>
+				<Title
+					style={{ margin: 0, marginLeft: 22, marginBottom: 22 }}
+					level={5}
+				>
+					{secondary}
+				</Title>
+			</Col>
+			{rightContent && <Col span={12}>{rightContent}</Col>}
 			<Divider plain style={{ margin: 0 }} />
-		</>
+		</Row>
 	)
 }
 
