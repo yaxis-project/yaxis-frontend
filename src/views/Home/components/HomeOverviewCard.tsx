@@ -29,11 +29,7 @@ export default function HomeOverviewCard() {
 	const t = (s: string) => phrases[s][language]
 
 	const {
-		returns: {
-			metaVaultUSD,
-			stakingUSD,
-			totalUSD,
-		},
+		returns: { metaVaultUSD, stakingUSD, totalUSD },
 	} = useReturns()
 
 	return (
