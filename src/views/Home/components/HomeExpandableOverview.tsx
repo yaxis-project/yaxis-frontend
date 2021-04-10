@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Row, Col, Button } from 'antd'
+import { Button } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 
@@ -11,7 +11,7 @@ import { getBalanceNumber } from '../../../utils/formatBalance'
 import info from '../../../assets/img/info.svg'
 import {
 	ExpandableSidePanel,
-	ExpandableRow,
+	CardRow,
 } from '../../../components/ExpandableSidePanel'
 import { Tooltip } from 'antd'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
@@ -52,7 +52,7 @@ export default function HomeExpandableOverview() {
 				header={phrases['yAxis Overview'][language]}
 				key="1"
 			>
-				<ExpandableRow
+				<CardRow
 					main={
 						<Tooltip
 							title={
@@ -89,7 +89,7 @@ export default function HomeExpandableOverview() {
 						/>
 					}
 				/>
-				<ExpandableRow
+				<CardRow
 					main="Price of YAXIS"
 					secondary={
 						<Value value={hrPrice} numberPrefix="$" decimals={2} />
@@ -106,7 +106,7 @@ export default function HomeExpandableOverview() {
 					}
 				/>
 
-				<ExpandableRow
+				<CardRow
 					main={
 						<Tooltip
 							title={

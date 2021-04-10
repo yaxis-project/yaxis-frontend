@@ -70,6 +70,9 @@ const translations = {
 	'Weekly Average APY': {
 		ENG: 'Weekly Average APY',
 	},
+	Return: {
+		ENG: 'Return',
+	},
 } as Dictionary
 
 export default translations

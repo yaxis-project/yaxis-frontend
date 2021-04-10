@@ -4,13 +4,13 @@ const { Text, Title } = Typography
 
 const { Panel } = Collapse
 
-interface ExpandableRowProps {
+interface CardRowProps {
 	main: string | React.ReactNode
 	secondary: string | React.ReactNode
 	rightContent?: string | React.ReactNode
 }
 
-export const ExpandableRow = (props: ExpandableRowProps) => {
+export const CardRow = (props: CardRowProps) => {
 	const { main, secondary, rightContent } = props
 	return (
 		<Row align={'middle'}>
