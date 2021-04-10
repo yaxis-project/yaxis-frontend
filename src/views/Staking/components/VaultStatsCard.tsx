@@ -3,7 +3,7 @@ import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import {
 	ExpandableSidePanel,
-	ExpandableRow,
+	CardRow,
 } from '../../../components/ExpandableSidePanel'
 import CountUp from 'react-countup'
 import Value from '../../../components/Value'
@@ -23,11 +23,8 @@ export default function VaultStatsCard() {
 	return (
 		<>
 			<ExpandableSidePanel header={t('Vault Stats')} key="1">
-				<ExpandableRow
-					main={t('Current Strategy')}
-					secondary={strategy}
-				/>
-				<ExpandableRow
+				<CardRow main={t('Current Strategy')} secondary={strategy} />
+				<CardRow
 					main={t('Total Value Locked')}
 					secondary={
 						<CountUp
@@ -40,7 +37,7 @@ export default function VaultStatsCard() {
 						/>
 					}
 				/>
-				<ExpandableRow
+				<CardRow
 					main={t('Distributed Interest (annually)')}
 					secondary={
 						<Value

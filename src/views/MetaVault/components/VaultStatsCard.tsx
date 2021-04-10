@@ -2,7 +2,7 @@ import React from 'react'
 
 import {
 	ExpandableSidePanel,
-	ExpandableRow,
+	CardRow,
 } from '../../../components/ExpandableSidePanel'
 import useTVL from '../../../hooks/useComputeTVL'
 import Value from '../../../components/Value'
@@ -19,8 +19,8 @@ export default function VaultStatsCard() {
 	return (
 		<>
 			<ExpandableSidePanel header="Vault Stats" key="1">
-				<ExpandableRow main="Current Strategy" secondary={strategy} />
-				<ExpandableRow
+				<CardRow main="Current Strategy" secondary={strategy} />
+				<CardRow
 					main="Total Value Locked"
 					secondary={
 						<Value
@@ -30,7 +30,7 @@ export default function VaultStatsCard() {
 						/>
 					}
 				/>
-				<ExpandableRow
+				<CardRow
 					main="Rewards Per Block"
 					secondary={
 						<Value

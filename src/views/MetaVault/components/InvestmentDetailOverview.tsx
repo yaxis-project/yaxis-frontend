@@ -7,10 +7,9 @@ import useMetaVault from '../../../hooks/useMetaVault'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
-import {
-	DetailOverviewCard,
-	DetailOverviewCardRow,
-} from '../../../components/DetailOverviewCard'
+import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
+import { CardRow } from '../../../components/ExpandableSidePanel'
+
 import Button from '../../../components/Button'
 import RewardAPYTooltip from '../../../components/Tooltip/Tooltips/RewardAPYTooltip'
 import info from '../../../assets/img/info.svg'
@@ -59,80 +58,63 @@ const InvestmentDetailOverview: React.FC = () => {
 
 	return (
 		<DetailOverviewCard title={t('Account Overview')}>
-			<StyledRow justify="space-between">
-				<Col xs={6} sm={10} md={10}>
-					<Text>Return</Text>
+			<CardRow
+				main={t('Return')}
+				secondary={
 					<Value
-						// numberPrefix="$"
-						// value={yaxReturnsUSD}
 						value={pendingYax}
-						// numberSuffix={`${yaxReturns} YAX`}
 						numberSuffix={` YAXIS`}
 						decimals={2}
 					/>
-				</Col>
-				<Col xs={12} sm={12} md={12}>
-					<RewardAPYTooltip visible={claimVisible} title="">
-						<Button
-							disabled={!pendingYax}
-							loading={isClaiming}
-							onClick={handleClaimRewards}
-							height={'40px'}
-						>
-							Claim
-						</Button>
-					</RewardAPYTooltip>
-				</Col>
-			</StyledRow>
-			<DetailOverviewCardRow>
-				<Tooltip
-					title={
-						<>
-							<Row>YAXIS APY:</Row>
-							<Row>{yaxApyPercent?.toFixed(2)}%</Row>
-							<Row>Curve LP APY:</Row>
-							<Row>{lpApyPercent?.toFixed(2)}%</Row>
-							<Row>CRV APY (80%):</Row>
-							<Row>{threeCrvApyPercent?.toFixed(2)}%</Row>
-						</>
-					}
-				>
-					<Text>Total APY </Text>
-					<img
-						style={{ position: 'relative', top: -1 }}
-						src={info}
-						height="15"
-						alt="YAXIS Supply Rewards"
+				}
+				rightContent={
+					<Col xs={12} sm={12} md={12}>
+						<RewardAPYTooltip visible={claimVisible} title="">
+							<Button
+								disabled={!pendingYax}
+								loading={isClaiming}
+								onClick={handleClaimRewards}
+								height={'40px'}
+							>
+								Claim
+							</Button>
+						</RewardAPYTooltip>
+					</Col>
+				}
+			/>
+			<CardRow
+				main={
+					<Tooltip
+						title={
+							<>
+								<Row>YAXIS APY:</Row>
+								<Row>{yaxApyPercent?.toFixed(2)}%</Row>
+								<Row>Curve LP APY:</Row>
+								<Row>{lpApyPercent?.toFixed(2)}%</Row>
+								<Row>CRV APY (80%):</Row>
+								<Row>{threeCrvApyPercent?.toFixed(2)}%</Row>
+							</>
+						}
+					>
+						<Text type="secondary">Total APY </Text>
+						<img
+							style={{ position: 'relative', top: -1 }}
+							src={info}
+							height="15"
+							alt="YAXIS Supply Rewards"
+						/>
+					</Tooltip>
+				}
+				secondary={
+					<Value
+						value={totalAPY.toFixed(2)}
+						numberSuffix={'%'}
+						decimals={2}
 					/>
-				</Tooltip>
-				<Value
-					value={totalAPY.toFixed(2)}
-					numberSuffix={'%'}
-					decimals={2}
-				/>
-			</DetailOverviewCardRow>
+				}
+			/>
 		</DetailOverviewCard>
 	)
 }
-
-const StyledRow = styled(Row)`
-	font-size: 18px;
-	padding: 22px;
-	border-top: 1px solid #eceff1;
-
-	.ant-typography {
-		font-size: 14px;
-		color: #333333;
-	}
-
-	&[data-inline='true'] {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		> .ant-typography {
-			font-size: 18px;
-		}
-	}
-`
 
 export default InvestmentDetailOverview
