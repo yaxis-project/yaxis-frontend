@@ -5,7 +5,6 @@ import {
 	Col,
 	Typography,
 	Divider,
-	Input,
 	Select,
 	notification,
 	Form,
@@ -26,6 +25,7 @@ import Value from '../../../components/Value'
 import { ArrowDownOutlined } from '@ant-design/icons'
 import info from '../../../assets/img/info.svg'
 import usePriceMap from '../../../hooks/usePriceMap'
+import Input from '../../../components/Input'
 
 const { Option } = Select
 
@@ -251,29 +251,17 @@ export default function WithdrawTable() {
 					</Text>
 					<Form.Item validateStatus={withdrawalError && 'error'}>
 						<Input
-							placeholder="0"
-							min={'0'}
-							type="number"
-							value={withdrawValueUSD}
-							suffix={
-								<>
-									<Text type="secondary">{USD.name}</Text>
-									&nbsp;
-									<Button
-										block
-										size="small"
-										onClick={() =>
-											updateWithdraw(
-												totalAvailableInUSD.toString(),
-											)
-										}
-									>
-										MAX
-									</Button>
-								</>
-							}
 							onChange={(e) => updateWithdraw(e.target.value)}
-							disabled={submitting}
+							value={withdrawValueUSD}
+							min={'0'}
+							placeholder="0"
+							disabled={
+								submitting || totalAvailableInUSD.isZero()
+							}
+							suffix={USD.name}
+							onClickMax={() =>
+								updateWithdraw(totalAvailableInUSD.toString())
+							}
 						/>
 					</Form.Item>
 				</Col>
