@@ -7,12 +7,14 @@ import AccountOverviewCard from './components/AccountOverviewCard'
 import HomeOverviewCard from './components/HomeOverviewCard'
 import AdvancedNavigation from './components/AdvancedNavigation'
 import HomeExpandableOverview from './components/HomeExpandableOverview'
-import { Row, Col } from 'antd'
+import { Row, Col, Grid } from 'antd'
 import useMetaVaultData from '../../hooks/useMetaVaultData'
 import BigNumber from 'bignumber.js'
 import useYaxisStaking from '../../hooks/useYAXISStaking'
 import useGlobal from '../../hooks/useGlobal'
 import { formatBN } from '../../yaxis/utils'
+
+const { useBreakpoint } = Grid
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -21,10 +23,11 @@ const StyledCol = styled(Col)`
 `
 
 const Home: React.FC = () => {
+	const { lg } = useBreakpoint()
 	return (
 		<div className="home-view">
 			<HomePage>
-				<Row gutter={16}>
+				<Row gutter={lg ? 16 : 0}>
 					<Col md={24} lg={16} className={'home-left'}>
 						<YaxisPriceGraph />
 						<InvestmentAccountOverview />
