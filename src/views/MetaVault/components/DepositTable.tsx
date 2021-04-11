@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo } from 'react'
+import { useState, useContext, useMemo } from 'react'
 import { InvestingDepositCurrencies, Currency } from '../../../utils/currencies'
 import DepositAssetRow from './DepositAssetRow'
 import useMetaVault from '../../../hooks/useMetaVault'
@@ -8,7 +8,7 @@ import usePriceMap from '../../../hooks/usePriceMap'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import { reduce } from 'lodash'
-import { Row, Col, Grid, Typography, Button, notification } from 'antd'
+import { Row, Col, Grid, Typography, notification } from 'antd'
 import { BigNumber } from 'bignumber.js'
 import styled from 'styled-components'
 import { getContract } from '../../../utils/erc20'
@@ -18,6 +18,7 @@ import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useTransactionAdder from '../../../hooks/useTransactionAdder'
 import { Transaction } from '../../../contexts/Transactions/types'
 import { mapObjIndexed, pipe, values, flatten } from 'ramda'
+import Button from '../../../components/Button'
 
 const { Title, Text } = Typography
 const { useBreakpoint } = Grid
@@ -248,8 +249,6 @@ export default function DepositTable() {
 						disabled={disabled}
 						loading={isSubmitting || submitting}
 						onClick={handleSubmit}
-						block
-						type="primary"
 					>
 						{currenciesNeededApproval &&
 						currenciesNeededApproval.length > 0
