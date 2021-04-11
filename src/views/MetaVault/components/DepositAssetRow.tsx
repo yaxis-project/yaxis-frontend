@@ -5,8 +5,9 @@ import usePriceMap from '../../../hooks/usePriceMap'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
 import Value from '../../../components/Value'
 import BigNumber from 'bignumber.js'
+import Input from '../../../components/Input'
 
-import { Row, Col, Typography, Input, Form, Button } from 'antd'
+import { Row, Col, Typography, Form } from 'antd'
 
 const { Text } = Typography
 
@@ -48,11 +49,7 @@ export default function DepositAssetRow(props: DepositAssetRowProps) {
 					<Text>{currency.name}</Text>
 				</Col>
 				<Col xs={12} sm={8} md={7} className="balance">
-					<Value
-						value={balanceUSD}
-						numberPrefix="$"
-						decimals={2}
-					/>
+					<Value value={balanceUSD} numberPrefix="$" decimals={2} />
 					<Text type="secondary">
 						{balance.toFixed(2)} {currency.name}
 					</Text>
@@ -63,34 +60,25 @@ export default function DepositAssetRow(props: DepositAssetRowProps) {
 						style={{ marginBottom: 0 }}
 					>
 						<Input
-							placeholder="0"
-							size="large"
-							type="number"
-							value={value}
-							min={"0"}
-							suffix={
-								<>
-									<Text type="secondary">
-										{currency.name}
-									</Text>
-									&nbsp;
-									<Button
-										block
-										size="small"
-										onClick={
-											() => onChange(currency.tokenId, currencyData?.maxDeposit || '0')
-										}
-									>
-										MAX
-									</Button>
-								</>
-							}
 							onChange={(e) => {
 								onChange(currency.tokenId, e.target.value)
-								setInputError(new BigNumber(e.target.value).gt(new BigNumber(balance)))
+								setInputError(
+									new BigNumber(e.target.value).gt(
+										new BigNumber(balance),
+									),
+								)
+							}}
+							value={value}
+							min={'0'}
+							placeholder="0"
+							disabled={disabled || balance.isZero()}
+							suffix={currency.name}
+							onClickMax={() =>
+								onChange(
+									currency.tokenId,
+									currencyData?.maxDeposit || '0',
+								)
 							}
-							}
-							disabled={disabled}
 						/>
 					</Form.Item>
 				</Col>
