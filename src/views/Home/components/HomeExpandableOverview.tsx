@@ -113,7 +113,7 @@ export default function HomeExpandableOverview() {
 								<>
 									<TooltipRow
 										main="New rewards per block"
-										value={metaVaultData?.rewardPerBlock}
+										value={`${metaVaultData?.rewardPerBlock} YAXIS`}
 									/>
 								</>
 							}
