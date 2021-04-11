@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Button } from 'antd'
+import { Col } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 
@@ -16,6 +16,7 @@ import {
 import { Tooltip } from 'antd'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
 import { formatBN } from '../../../yaxis/utils'
+import Button from '../../../components/Button'
 
 interface TooltipRowProps {
 	main: string
@@ -95,14 +96,17 @@ export default function HomeExpandableOverview() {
 						<Value value={hrPrice} numberPrefix="$" decimals={2} />
 					}
 					rightContent={
-						<Button
-							type="primary"
-							href="https://app.uniswap.org/#/swap?outputCurrency=0xb1dc9124c395c1e97773ab855d66e879f053a289"
-							target="_blank"
-							style={{ fontWeight: 900 }}
-						>
-							Get YAXIS
-						</Button>
+						<Col lg={18} md={12} sm={12} xs={12}>
+							<Button
+								type="primary"
+								href="https://app.uniswap.org/#/swap?outputCurrency=0xb1dc9124c395c1e97773ab855d66e879f053a289"
+								target="_blank"
+								height="40px"
+								style={{ paddingTop: '5px' }}
+							>
+								Get YAXIS
+							</Button>
+						</Col>
 					}
 				/>
 
