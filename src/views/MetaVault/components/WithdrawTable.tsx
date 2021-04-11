@@ -1,6 +1,5 @@
-import React, { useState, useContext, useMemo } from 'react'
+import { useState, useContext, useMemo } from 'react'
 import {
-	Button,
 	Row,
 	Col,
 	Typography,
@@ -22,6 +21,7 @@ import BigNumber from 'bignumber.js'
 import useTransactionAdder from '../../../hooks/useTransactionAdder'
 import { Transaction } from '../../../contexts/Transactions/types'
 import Value from '../../../components/Value'
+import Button from '../../../components/Button'
 import { ArrowDownOutlined } from '@ant-design/icons'
 import info from '../../../assets/img/info.svg'
 import usePriceMap from '../../../hooks/usePriceMap'
@@ -115,8 +115,6 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 					disabled={withdrawDisabled}
 					loading={submitting}
 					onClick={handleSubmit}
-					block
-					type="primary"
 				>
 					{t('Withdraw')}
 				</Button>
