@@ -85,8 +85,18 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 				>
 					{availableCurrencies.map((currency) => (
 						<Option value={currency.name} key={currency.name}>
-							<img src={currency.icon} height="36" alt="logo" />
-							<Text>{currency.name}</Text>
+							<Row gutter={10} align={'middle'}>
+								<Col>
+									<img
+										src={currency.icon}
+										height="36"
+										alt="logo"
+									/>
+								</Col>
+								<Col>
+									<Text>{currency.name}</Text>
+								</Col>
+							</Row>
 						</Option>
 					))}
 				</Select>
