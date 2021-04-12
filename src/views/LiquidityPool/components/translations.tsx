@@ -28,6 +28,27 @@ const translations = {
 	'Weekly Average APY': {
 		ENG: 'Weekly Average APY',
 	},
+	Deposit: {
+		ENG: 'Deposit',
+	},
+	Withdraw: {
+		ENG: 'Withdraw',
+	},
+	'Available Balance': {
+		ENG: 'Available Balance',
+	},
+	'Staked Balance': {
+		ENG: 'Staked Balance',
+	},
+	'Account Overview': {
+		ENG: 'Account Overview',
+	},
+	Staking: {
+		ENG: 'Staking',
+	},
+	Approve: {
+		ENG: 'Approve',
+	},
 } as Dictionary
 
 export default translations
