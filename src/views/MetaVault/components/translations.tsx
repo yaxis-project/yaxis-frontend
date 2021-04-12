@@ -73,6 +73,15 @@ const translations = {
 	Return: {
 		ENG: 'Return',
 	},
+	'Available Balance': {
+		ENG: 'Available Balance',
+	},
+	'Staked Balance': {
+		ENG: 'Staked Balance',
+	},
+	Staking: {
+		ENG: 'Staking',
+	},
 } as Dictionary
 
 export default translations
