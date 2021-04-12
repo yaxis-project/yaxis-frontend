@@ -1,149 +1,233 @@
-import React from 'react'
-import styled from 'styled-components'
-import { Contract } from 'web3-eth-contract'
-import { Row, Col, Card, Divider } from 'antd'
-import Button from '../../../components/Button'
-import Tooltip from '../../../components/Tooltip'
-import Label from '../../../components/Label'
-import Value from '../../../components/Value'
+import { useContext, useState, useMemo, useCallback } from 'react'
+import * as currencies from '../../../utils/currencies'
+import useContractWrite from '../../../hooks/useContractWrite'
 import useAllowance from '../../../hooks/useAllowance'
 import useApprove from '../../../hooks/useApprove'
-import useModal from '../../../hooks/useModal'
-import useStake from '../../../hooks/useStake'
 import useGlobal from '../../../hooks/useGlobal'
-import useStakedBalance from '../../../hooks/useStakedBalance'
-import useTokenBalance from '../../../hooks/useTokenBalance'
-import useUnstake from '../../../hooks/useUnstake'
-import { getBalanceNumber } from '../../../utils/formatBalance'
-import DepositModal from './DepositModal'
-import WithdrawModal from './WithdrawModal'
-import useWeb3Provider from '../../../hooks/useWeb3Provider'
+import useRewardsContract from '../../../hooks/useRewardsContract'
+import Value from '../../../components/Value'
+import { LanguageContext } from '../../../contexts/Language'
+import phrases from './translations'
+import Button from '../../../components/Button'
+import Input from '../../../components/Input'
+import { Row, Col, Typography, Card, Form } from 'antd'
 import BigNumber from 'bignumber.js'
-import { getYaxisChefContract } from '../../../yaxis/utils'
+import { getBalanceNumber } from '../../../utils/formatBalance'
+const { Text } = Typography
 
-interface StakeProps {
-	lpContract: Contract
-	pid: number
-	tokenName: string
-}
+/**
+ * Construct a simple colomn with secondary text for use in a row.
+ * @param props any
+ */
+const TableHeader = (props: any) => (
+	<Col span={props.span}>
+		<Text style={{ float: props.float || 'none' }} type="secondary">
+			{props.value}
+		</Text>
+	</Col>
+)
 
-const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
-	const { account } = useWeb3Provider()
-
-	const allowance = useAllowance(lpContract)
-	const { yaxis } = useGlobal()
-
+function Stake({ pool }) {
+	const currency = useMemo(
+		() => currencies[`${pool.type.toUpperCase()}_LP`],
+		[pool.type],
+	)
+	const languages = useContext(LanguageContext)
+	const t = useCallback(
+		(s: string) => phrases[s][languages?.state?.selected],
+		[languages],
+	)
+	const { call: handleStake, loading: loadingStake } = useContractWrite({
+		contractName: `rewards.${pool.rewards}`,
+		method: 'stake',
+		description: `stake ${pool.name}`,
+	})
+	const { call: handleUnstake, loading: loadingUnstake } = useContractWrite({
+		contractName: `rewards.${pool.rewards}`,
+		method: 'unstake',
+		description: `unstake ${pool.name}`,
+	})
 	const {
-		onApprove,
-		loading: approveLoading,
-		error: approveError,
-	} = useApprove(
-		lpContract,
-		getYaxisChefContract(yaxis)?.options?.address,
-		tokenName,
+		balances: {
+			rawWalletBalance,
+			walletBalance,
+			stakedBalance,
+			rawStakedBalance,
+		},
+	} = useRewardsContract(pool.lpAddress, pool.rewards)
+
+	const [depositAmount, setDeposit] = useState<string>('')
+	const updateDeposit = (value: string) =>
+		!isNaN(Number(value)) && setDeposit(value)
+	const errorDeposit = useMemo(
+		() => new BigNumber(depositAmount).gt(rawWalletBalance.div(1e18)),
+		[rawWalletBalance, depositAmount],
+	)
+	const depositDisabled = useMemo(
+		() =>
+			depositAmount === '' ||
+			new BigNumber(depositAmount).isZero() ||
+			errorDeposit,
+		[depositAmount, errorDeposit],
+	)
+	const onMaxDeposit = () => setDeposit(walletBalance.toString() || '0')
+
+	const [withdrawAmount, setWithdraw] = useState<string>('')
+	const updateWithdraw = (value: string) =>
+		!isNaN(Number(value)) && setWithdraw(value)
+	const errorWithdraw = useMemo(
+		() => new BigNumber(withdrawAmount).gt(rawStakedBalance),
+		[rawStakedBalance, withdrawAmount],
+	)
+	const withdrawDisabled = useMemo(
+		() =>
+			withdrawAmount === '' ||
+			new BigNumber(withdrawAmount).isZero() ||
+			errorWithdraw,
+		[withdrawAmount, errorWithdraw],
 	)
 
-	const { balance: tokenBalance } = useTokenBalance(
-		lpContract.options.address,
-	)
-	const stakedBalance = useStakedBalance(pid)
-
-	const { onStake, error: stakeError, loading: stakeLoading } = useStake(
-		pid,
-		tokenName,
-	)
-	const {
-		onUnstake,
-		loading: unstakeLoading,
-		error: unstakeError,
-	} = useUnstake(pid, tokenName)
-
-	const [onPresentDeposit] = useModal(
-		<DepositModal
-			max={tokenBalance}
-			onConfirm={onStake}
-			tokenName={tokenName}
-		/>,
-	)
-
-	const [onPresentWithdraw] = useModal(
-		<WithdrawModal
-			max={stakedBalance}
-			onConfirm={onUnstake}
-			tokenName={tokenName}
-		/>,
-	)
+	const onMaxWithdraw = () => setWithdraw(stakedBalance.toString() || '0')
 
 	return (
-		<Row style={{ marginTop: '16px' }}>
-			<Card className="liquidity-card" title={<strong>Staking</strong>}>
-				<Row>
-					<CardContents>
-						<Value value={getBalanceNumber(stakedBalance)} />
-						<Label text={`${tokenName} Tokens Staked`} />
-						<Divider />
-						{!allowance.toNumber() ? (
-							<Col span={12}>
-								<Tooltip title={approveError}>
-									<Button
-										disabled={!account}
-										onClick={onApprove}
-										loading={approveLoading}
-									>
-										Approve {tokenName}
-									</Button>
-								</Tooltip>
-							</Col>
-						) : (
-							<Row
-								gutter={18}
-								style={{
-									width: '100%',
-									justifyContent: 'space-between',
-									padding: 0,
-								}}
-							>
-								<Col span={12}>
-									<Tooltip title={stakeError}>
-										<Button
-											disabled={tokenBalance.eq(
-												new BigNumber(0),
-											)}
-											onClick={onPresentDeposit}
-											loading={stakeLoading}
-										>
-											Stake
-										</Button>
-									</Tooltip>
-								</Col>
-								<Col span={12}>
-									<Tooltip title={unstakeError}>
-										<Button
-											disabled={stakedBalance.eq(
-												new BigNumber(0),
-											)}
-											onClick={onPresentWithdraw}
-											loading={unstakeLoading}
-										>
-											Unstake
-										</Button>
-									</Tooltip>
-								</Col>
-							</Row>
-						)}
-					</CardContents>
-				</Row>
-			</Card>
-		</Row>
+		<>
+			<Row gutter={24}>
+				<TableHeader value={t('Available Balance')} span={12} />
+				<TableHeader value={t('Staked Balance')} span={12} />
+			</Row>
+
+			<Row gutter={24}>
+				<Col span={12} className={'balance'}>
+					<img src={currency.icon} height="24" alt="logo" />
+					<Value
+						value={getBalanceNumber(rawWalletBalance)}
+						decimals={2}
+						numberSuffix={` ${currency.name}`}
+					/>
+				</Col>
+				<Col span={12} className={'balance'}>
+					<img src={currency.icon} height="24" alt="logo" />
+					<Value
+						value={getBalanceNumber(rawStakedBalance)}
+						decimals={2}
+						numberSuffix={` ${currency.name}`}
+					/>
+				</Col>
+			</Row>
+
+			<Row gutter={24}>
+				<Col span={12}>
+					<Form.Item validateStatus={errorDeposit && 'error'}>
+						<Input
+							onChange={(e) => updateDeposit(e.target.value)}
+							value={depositAmount}
+							min={'0'}
+							placeholder="0"
+							disabled={loadingStake || walletBalance.isZero()}
+							onClickMax={onMaxDeposit}
+						/>
+					</Form.Item>
+					<Button
+						disabled={depositDisabled}
+						onClick={async () =>
+							await handleStake({
+								amount: new BigNumber(
+									depositAmount,
+								).multipliedBy(10 ** currency.decimals),
+								args: [
+									new BigNumber(depositAmount).multipliedBy(
+										10 ** currency.decimals,
+									),
+								],
+								cb: () => setDeposit('0'),
+							})
+						}
+						loading={loadingStake}
+					>
+						{t('Deposit')}
+					</Button>
+				</Col>
+				<Col span={12}>
+					<Form.Item validateStatus={errorWithdraw && 'error'}>
+						<Input
+							onChange={(e) => updateWithdraw(e.target.value)}
+							value={withdrawAmount}
+							min={'0'}
+							placeholder="0"
+							disabled={loadingUnstake || stakedBalance.isZero()}
+							onClickMax={onMaxWithdraw}
+						/>
+					</Form.Item>
+					<Button
+						disabled={withdrawDisabled}
+						onClick={async () =>
+							await handleUnstake({
+								amount: new BigNumber(
+									withdrawAmount,
+								).multipliedBy(10 ** currency.decimals),
+								args: [
+									new BigNumber(withdrawAmount).multipliedBy(
+										10 ** currency.decimals,
+									),
+								],
+								cb: () => setWithdraw('0'),
+							})
+						}
+						loading={loadingUnstake}
+					>
+						{t('Withdraw')}
+					</Button>
+				</Col>
+			</Row>
+		</>
 	)
 }
 
-const CardContents = styled.div`
-	align-items: center;
-	display: flex;
-	flex: 1;
-	flex-direction: column;
-	justify-content: space-between;
-`
+export default function ApprovalWrapper({ pool }) {
+	const languages = useContext(LanguageContext)
+	const t = useCallback(
+		(s: string) => phrases[s][languages?.state?.selected],
+		[languages],
+	)
 
-export default Stake
+	const { yaxis } = useGlobal()
+	const LPContract = useMemo(
+		() =>
+			yaxis?.contracts.pools.find((p) => pool.lpAddress === p.lpAddress)
+				?.lpContract,
+		[yaxis?.contracts, pool.lpAddress],
+	)
+	const allowance = useAllowance(
+		LPContract,
+		yaxis?.contracts?.rewards[pool.rewards].options.address,
+	)
+
+	const { onApprove, loading } = useApprove(
+		LPContract,
+		yaxis?.contracts?.rewards[pool.rewards].options.address,
+		pool.name,
+	)
+	return (
+		<Card className="staking-card" title={<strong>{t('Staking')}</strong>}>
+			{allowance.isEqualTo(0) ? (
+				<>
+					<Row justify="center" style={{ paddingBottom: '20px' }}>
+						<Col>
+							To start staking, first approve the Rewards contract
+							to use your LP token
+						</Col>
+					</Row>
+					<Row justify="center">
+						<Col span={4}>
+							<Button onClick={onApprove} loading={loading}>
+								{t('Approve')}
+							</Button>
+						</Col>
+					</Row>
+				</>
+			) : (
+				<Stake pool={pool} />
+			)}
+		</Card>
+	)
+}

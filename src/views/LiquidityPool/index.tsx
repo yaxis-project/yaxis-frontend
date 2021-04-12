@@ -57,11 +57,7 @@ const Liqudity: React.FC<Props> = ({ pool }) => {
 								tokenName={pool.symbol.toUpperCase()}
 							/>
 						) : (
-							<Stake
-								lpContract={lpContract}
-								pid={pool.pid}
-								tokenName={pool.symbol.toUpperCase()}
-							/>
+							<Stake pool={pool} />
 						)}
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
