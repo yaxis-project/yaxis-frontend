@@ -21,6 +21,7 @@ export interface StakePool {
 	icon: string
 	lpUrl: string
 	legacy?: boolean
+	rewards?: string
 }
 
 export interface Config {
