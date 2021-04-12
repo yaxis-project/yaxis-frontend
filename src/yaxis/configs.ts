@@ -57,6 +57,7 @@ export const configs: Record<number, Config> = {
 				symbol: 'YAXIS/ETH UNI-V2 LP',
 				tokenSymbol: 'YAXIS',
 				icon: '',
+				rewards: 'YaxisEth'
 			},
 			{
 				pid: 6,
@@ -120,8 +121,9 @@ export const configs: Record<number, Config> = {
 		},
 		pools: [
 			{
+				legacy: true,
 				pid: 6,
-				active: true,
+				active: false,
 				type: 'uni',
 				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
 				lpAddress: '0x1107b6081231d7f256269ad014bf92e041cb08df',
@@ -337,8 +339,9 @@ export const configs: Record<number, Config> = {
 			// 	icon: '',
 			// },
 			{
+				legacy: true,
 				pid: null,
-				active: true,
+				active: false,
 				type: 'link',
 				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
 				lpAddress: '0x21dee38170F1e1F26baFf2C30C0fc8F8362b6961',
