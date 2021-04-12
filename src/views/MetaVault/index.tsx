@@ -5,6 +5,7 @@ import { Row, Col } from 'antd'
 import InvestmentDetailOverview from './components/InvestmentDetailOverview'
 import InvestmentAccountActionCard from './components/InvestmentAccountActionCard'
 import VaultStatsCard from './components/VaultStatsCard'
+import Stake from './components/Stake'
 import RecentTransactionsCard from './components/RecentTransactionsCard'
 import useMetaVaultData from '../../hooks/useMetaVaultData'
 import './index.less'
@@ -56,6 +57,7 @@ const MetaVault: React.FC = () => {
 				<Row gutter={16}>
 					<Col xs={24} sm={24} md={24} lg={16}>
 						<InvestmentAccountActionCard />
+						<Stake />
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<InvestmentDetailOverview />
