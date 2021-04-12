@@ -19,6 +19,13 @@ export interface Currency {
 	priceMapKey?: Ticker
 }
 
+export const MVLT: Currency = {
+	name: 'MVLT',
+	tokenId: 'mvlt',
+	icon: yax,
+	decimals: 18,
+}
+
 export const DAI: Currency = {
 	name: 'DAI',
 	tokenId: 'dai',
