@@ -2,13 +2,21 @@ import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useModal from '../../../hooks/useModal'
-import { Button, Menu, Dropdown, Row, Col } from 'antd'
-import { CaretDownOutlined } from '@ant-design/icons'
-
+import { Button, Menu, Dropdown, Row, Col, Divider } from 'antd'
+import {
+	CaretDownOutlined,
+	CopyOutlined,
+	BlockOutlined,
+	CheckCircleTwoTone,
+} from '@ant-design/icons'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import { etherscanUrl } from '../../../yaxis/utils'
 import WalletProviderModal from '../../WalletProviderModal'
-import { network, NETWORK_NAMES } from '../../../connectors'
+import {
+	network,
+	NETWORK_NAMES,
+	FRIENDLY_NETWORK_NAMES,
+} from '../../../connectors'
 import { useWeb3React } from '@web3-react/core'
 
 interface AccountButtonProps {}
@@ -23,6 +31,10 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 	const { activate } = useWeb3React('fallback')
 
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
+	const friendlyNetworkName = useMemo(
+		() => FRIENDLY_NETWORK_NAMES[chainId] || '',
+		[chainId],
+	)
 
 	const handleUnlockClick = useCallback(() => {
 		onPresentWalletProviderModal()
@@ -45,43 +57,82 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 					<Dropdown
 						placement="bottomRight"
 						overlay={
-							<Menu>
+							<StyledMenu>
 								<Menu.ItemGroup
 									title={
-										<Col>
-											<div
-												style={{ textAlign: 'center' }}
+										<Col
+											style={{
+												marginBottom: '5px',
+											}}
+										>
+											<StyledRow
+												style={{
+													margin:
+														'5px 10px 12px 10px',
+												}}
 											>
-												Your Account
-											</div>
-											<NetworkText>
-												{networkName}
-											</NetworkText>
-											<Button
-												href={etherscanUrl(
-													`/address/${account}`,
-													networkName,
-												)}
-												target={'_blank'}
-												rel="noopener noreferrer"
-												block
-												type="primary"
-												ghost
-											>
-												<span
-													style={{ margin: '0 5px' }}
-												>
+												<AccountText>
+													Account:
+												</AccountText>
+												<AccountIdText>
 													{account.slice(0, 4)} ...{' '}
 													{account.slice(-2)}
-												</span>
-											</Button>
+												</AccountIdText>
+											</StyledRow>
+											<StyledRow>
+												<CopyOutlined />
+												<StyledText>
+													Copy Address
+												</StyledText>
+											</StyledRow>
+											<StyledRow>
+												<BlockOutlined />
+												<StyledText>
+													<a
+														href={etherscanUrl(
+															`/address/${account}`,
+															networkName,
+														)}
+														rel="noopener noreferrer"
+														target="_blank"
+													>
+														View on Etherscan
+													</a>
+												</StyledText>
+											</StyledRow>
+											<StyledRow>
+												<CheckCircleTwoTone twoToneColor="#52c41a" />{' '}
+												<StyledText>
+													{friendlyNetworkName}
+												</StyledText>
+											</StyledRow>
+											<Divider
+												orientation="left"
+												style={{
+													margin: '10px 0px 5px 0px',
+												}}
+											/>
 										</Col>
 									}
 								/>
-								<Menu.Item onClick={handleSignOutClick}>
+								<Menu.Item>
+									<a
+										href="https://resources.yaxis.io/"
+										rel="noopener noreferrer"
+										target="_blank"
+									>
+										Help Center
+									</a>
+								</Menu.Item>
+								<Menu.Item
+									onClick={handleSignOutClick}
+									style={{
+										marginBottom: '8px',
+									}}
+								>
 									Logout
 								</Menu.Item>
-							</Menu>
+							</StyledMenu>
 						}
 					>
 						<div style={{ display: 'flex', alignItems: 'center' }}>
@@ -98,25 +149,16 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 	)
 }
 
-// const StyledCol = styled(Col)`
-// 	color: white;
-// 	padding: 8px 12px;
-// 	border: 1px solid white;
-// 	font-size: 1em;
-// 	line-height: 1em;
-// 	border-radius: 12px;
-// 	font-weight: 700;
-// 	margin-right: 18px;
-// 	> span:first-child {
-// 		margin-right: 15px;
-// 	}
+const StyledMenu = styled(Menu)`
+	margin: 8px -2px 0 0;
+	border: 2px solid lightgrey;
+`
 
-// 	@media only screen and (max-width: 1100px) {
-// 		> span:first-child {
-// 			margin-right: 5px;
-// 		}
-// 	}
-// `
+const StyledRow = styled(Row)`
+	display: flex;
+	align-items: center;
+	margin-bottom: 5px;
+`
 
 const StyledButton = styled(Button)`
 	font-weight: bold;
@@ -126,7 +168,6 @@ const StyledButton = styled(Button)`
 	@media only screen and (max-width: 1100px) {
 		height: 32px;
 	}
-}
 `
 
 const StyledAccountButton = styled(Row)`
@@ -144,9 +185,25 @@ const StyledAccountButton = styled(Row)`
 	}
 `
 
-const NetworkText = styled.div`
+const AccountText = styled.div`
+	font-weight: bold;
+	margin-left: -8px;
+`
+
+const AccountIdText = styled.div`
+	font-weight: bold;
+	font-size: 1em;
+	color: #016eac;
+	border: 1.5px solid #016eac;
+	border-radius: 20px;
+	padding: 2px 10px;
+	margin-left: 10px;
+`
+
+const StyledText = styled.div`
 	text-align: center;
 	font-size: 0.9em;
+	margin-left: 10px;
 `
 
 export default AccountButton
