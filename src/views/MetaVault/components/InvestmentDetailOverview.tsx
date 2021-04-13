@@ -1,16 +1,12 @@
-import React, { useContext, useState, useMemo } from 'react'
-import { Row, Col, Typography, Tooltip, notification } from 'antd'
+import React, { useContext } from 'react'
+import { Row, Typography, Tooltip } from 'antd'
 import Value from '../../../components/Value'
 // import useAccountReturns from '../../../hooks/useAccountReturns'
-import useMetaVault from '../../../hooks/useMetaVault'
-import useMetaVaultData from '../../../hooks/useMetaVaultData'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import { CardRow } from '../../../components/ExpandableSidePanel'
-
-import Button from '../../../components/Button'
-import RewardAPYTooltip from '../../../components/Tooltip/Tooltips/RewardAPYTooltip'
+import Claim from './Claim'
 import info from '../../../assets/img/info.svg'
 
 import useComputeAPYs from '../hooks/useComputeAPYs'
@@ -31,56 +27,9 @@ const InvestmentDetailOverview: React.FC = () => {
 		totalAPY,
 	} = useComputeAPYs()
 
-	const { isClaiming, onGetRewards } = useMetaVault()
-
-	const { onFetchMetaVaultData, metaVaultData } = useMetaVaultData('V2')
-
-	const [claimVisible, setClaimVisible] = useState(false)
-	const handleClaimRewards = async () => {
-		try {
-			await onGetRewards(() => setClaimVisible(true))
-			onFetchMetaVaultData()
-		} catch (e) {
-			setClaimVisible(false)
-			console.error(e)
-			notification.error({
-				message: `Error claiming rewards:`,
-				description: e.message,
-			})
-		}
-	}
-
-	const pendingYax = useMemo(
-		() => parseFloat(metaVaultData?.pendingYax || '0'),
-		[metaVaultData?.pendingYax],
-	)
-
 	return (
 		<DetailOverviewCard title={t('Account Overview')}>
-			<CardRow
-				main={t('Return')}
-				secondary={
-					<Value
-						value={pendingYax}
-						numberSuffix={` YAXIS`}
-						decimals={2}
-					/>
-				}
-				rightContent={
-					<Col xs={12} sm={12} md={12}>
-						<RewardAPYTooltip visible={claimVisible} title="">
-							<Button
-								disabled={!pendingYax}
-								loading={isClaiming}
-								onClick={handleClaimRewards}
-								height={'40px'}
-							>
-								Claim
-							</Button>
-						</RewardAPYTooltip>
-					</Col>
-				}
-			/>
+			<Claim />
 			<CardRow
 				main={
 					<Tooltip
