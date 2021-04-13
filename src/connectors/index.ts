@@ -20,6 +20,7 @@ export const RPC_URLS: { [chainId: number]: string } = Object.fromEntries(
 )
 export const POLLING_INTERVAL = 12000
 export const NETWORK_NAMES = { 1: 'mainnet', 42: 'kovan' }
+export const FRIENDLY_NETWORK_NAMES = { 1: "Ethereum Mainnet", 42: "Kovan Test Network"}
 
 export const network = new NetworkConnector({
 	urls: { 1: RPC_URLS[1] },
