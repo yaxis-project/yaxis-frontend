@@ -11,7 +11,7 @@ import {
 	Form,
 	Tooltip,
 } from 'antd'
-import { Currency, USD, DAI, CRV3, USDT, USDC } from '../../../utils/currencies'
+import { Currency, USD, CRV3 } from '../../../utils/currencies'
 import logo from '../../../assets/img/logo-ui.svg'
 import { find } from 'lodash'
 import { numberToDecimal } from '../../../yaxis/utils'
@@ -35,10 +35,10 @@ interface WithdrawalSelectorProps {
 	withdrawValueUSD: BigNumber
 	withdrawDisabled: boolean
 	availableCurrencies: Currency[]
-	handleSubmit: any,
-	setWithdrawCurrency: any,
-	withdrawalCurrency: any,
-	submitting: any,
+	handleSubmit: any
+	setWithdrawCurrency: any
+	withdrawalCurrency: any
+	submitting: any
 }
 
 const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
@@ -72,7 +72,7 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 			</Col>
 			<Col xs={24} sm={14}>
 				<Select
-					defaultValue={DAI.name}
+					defaultValue={CRV3.name}
 					disabled={submitting}
 					onSelect={(selected) =>
 						setWithdrawCurrency(
@@ -122,7 +122,7 @@ const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
 const useWithdrawValueHandler = () => {
 	const {
 		metaVaultData: { totalBalance, mvltPrice },
-		currenciesData
+		currenciesData,
 	} = useMetaVaultData('v1')
 
 	const [withdrawValueUSD, setWithdrawValueUSD] = useState('')
@@ -132,10 +132,10 @@ const useWithdrawValueHandler = () => {
 		[totalBalance, mvltPrice],
 	)
 
-	const withdrawValueShares = useMemo(() => new BigNumber(withdrawValueUSD).div(mvltPrice), [
-		withdrawValueUSD,
-		mvltPrice,
-	])
+	const withdrawValueShares = useMemo(
+		() => new BigNumber(withdrawValueUSD).div(mvltPrice),
+		[withdrawValueUSD, mvltPrice],
+	)
 
 	return {
 		withdrawValueUSD,
@@ -143,7 +143,7 @@ const useWithdrawValueHandler = () => {
 		withdrawValueShares,
 		totalAvailableInUSD,
 		totalBalance,
-		currenciesData
+		currenciesData,
 	}
 }
 
@@ -160,22 +160,22 @@ export default function WithdrawTable() {
 		withdrawValueShares,
 		totalAvailableInUSD,
 		totalBalance,
-		currenciesData
+		currenciesData,
 	} = useWithdrawValueHandler()
 
-	const updateWithdraw = (value: string) =>
-		setWithdrawValueUSD(
-			value
-		)
-	const withdrawalError = new BigNumber(withdrawValueUSD).gt(totalAvailableInUSD)
+	const updateWithdraw = (value: string) => setWithdrawValueUSD(value)
+	const withdrawalError = new BigNumber(withdrawValueUSD).gt(
+		totalAvailableInUSD,
+	)
 	const withdrawDisabled =
-		withdrawValueUSD === '' || new BigNumber(withdrawValueUSD).isLessThanOrEqualTo(new BigNumber(0)) ||
+		withdrawValueUSD === '' ||
+		new BigNumber(withdrawValueUSD).isLessThanOrEqualTo(new BigNumber(0)) ||
 		withdrawalError
 
 	const [submitting, setSubmitting] = useState(false)
 	const [withdrawalCurrency, setWithdrawCurrency] = useState<
 		Currency | undefined
-	>(DAI)
+	>(CRV3)
 
 	const t = (s: string) => phrases[s][language]
 	const { onAddTransaction } = useTransactionAdder()
@@ -208,11 +208,10 @@ export default function WithdrawTable() {
 				description: 'Withdraw|$' + withdrawValueUSD,
 			} as Transaction)
 			setSubmitting(false)
-
 		} catch (error) {
 			notification.info({
 				message: t('Error while withdrawing:'),
-				description: error.message
+				description: error.message,
 			})
 			setSubmitting(false)
 		}
@@ -253,21 +252,26 @@ export default function WithdrawTable() {
 					<Form.Item validateStatus={withdrawalError && 'error'}>
 						<Input
 							placeholder="0"
-							min={"0"}
+							min={'0'}
 							type="number"
 							value={withdrawValueUSD}
 							suffix={
 								<>
 									<Text type="secondary">{USD.name}</Text>
 									&nbsp;
-								<Button
+									<Button
 										block
 										size="small"
-										onClick={() => updateWithdraw(totalAvailableInUSD.toString())}
+										onClick={() =>
+											updateWithdraw(
+												totalAvailableInUSD.toString(),
+											)
+										}
 									>
 										MAX
-								</Button>
-								</>}
+									</Button>
+								</>
+							}
 							onChange={(e) => updateWithdraw(e.target.value)}
 							disabled={submitting}
 						/>
@@ -281,9 +285,13 @@ export default function WithdrawTable() {
 
 			<WithdrawalSelector
 				handleSubmit={handleSubmit}
-				withdrawValueUSD={withdrawValueUSD === '' ? new BigNumber(0) : new BigNumber(withdrawValueUSD)}
+				withdrawValueUSD={
+					withdrawValueUSD === ''
+						? new BigNumber(0)
+						: new BigNumber(withdrawValueUSD)
+				}
 				withdrawDisabled={withdrawDisabled}
-				availableCurrencies={[DAI, CRV3, USDT, USDC]}
+				availableCurrencies={[CRV3]}
 				withdrawalCurrency={withdrawalCurrency}
 				setWithdrawCurrency={setWithdrawCurrency}
 				submitting={submitting}
