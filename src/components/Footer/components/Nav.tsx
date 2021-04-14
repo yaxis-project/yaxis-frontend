@@ -12,14 +12,8 @@ const Nav: React.FC = () => {
 	const { xs, sm } = useBreakpoint()
 	return (
 		<StyledRow align="middle">
-			<StyledCol xs={24} sm={24} md={8}>
+			<StyledCol xs={24} sm={24} md={9}>
 				<Row justify="center">
-					<StyledLink
-						target="_blank"
-						href="https://resources.yaxis.io"
-					>
-						Resources
-					</StyledLink>
 					<StyledLink target="_blank" href="https://gov.yaxis.io/#/">
 						Governance
 					</StyledLink>
@@ -29,8 +23,6 @@ const Nav: React.FC = () => {
 					>
 						Security
 					</StyledLink>
-				</Row>
-				<Row justify="center" style={{ paddingTop: '10px' }}>
 					<StyledLink
 						target="_blank"
 						href="https://trello.com/b/nkcEh9pc/yaxis-bounty-board-community"
@@ -40,7 +32,7 @@ const Nav: React.FC = () => {
 				</Row>
 			</StyledCol>
 
-			<StyledCol2 xs={24} sm={24} md={8}>
+			<StyledCol2 xs={24} sm={24} md={7}>
 				<Row justify="center">
 					<StyledLinkButton
 						target="_blank"
