@@ -3,13 +3,16 @@ import styled from 'styled-components'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { NavLink } from 'react-router-dom'
 import { currentConfig } from '../../../yaxis/configs'
+import AccountInfo from './AccountInfo'
 import { Menu, Dropdown, Button, Typography } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
 import WalletProviderModal from '../../WalletProviderModal'
 import useModal from '../../../hooks/useModal'
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
-import { etherscanUrl } from '../../../yaxis/utils'
-import { network, NETWORK_NAMES } from '../../../connectors'
+import {
+	network,
+	NETWORK_NAMES,
+	FRIENDLY_NETWORK_NAMES,
+} from '../../../connectors'
 import { useWeb3React } from '@web3-react/core'
 
 interface NavTabletProps {}
@@ -45,7 +48,13 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 	const { account, chainId, deactivate } = useWeb3Provider()
 	const { activate } = useWeb3React('fallback')
 
-	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
+	const networkName: string = useMemo(() => NETWORK_NAMES[chainId] || '', [
+		chainId,
+	])
+	const friendlyNetworkName: string = useMemo(
+		() => FRIENDLY_NETWORK_NAMES[chainId] || '',
+		[chainId],
+	)
 
 	const [onPresentWalletProviderModal] = useModal(
 		<WalletProviderModal />,
@@ -69,6 +78,16 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 	const menu = useMemo(
 		() => (
 			<StyledMenu>
+				{!account ? (
+					<MenuItem onClick={handleUnlockClick}>Connect</MenuItem>
+				) : (
+					<AccountInfo
+						account={account}
+						networkName={networkName}
+						friendlyNetworkName={friendlyNetworkName}
+						mobile={true}
+					/>
+				)}
 				<MenuItem key={'/'}>
 					<StyledLink exact activeClassName="active" to="/">
 						Overview
@@ -108,56 +127,31 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 				</StyledSubMenu>
 
 				<Menu.Divider />
-				{!account ? (
-					<MenuItem onClick={handleUnlockClick}>Connect</MenuItem>
-				) : (
-					<Menu.ItemGroup
-						title={
-							<a
-								href={etherscanUrl(
-									`/address/${account}`,
-									networkName,
-								)}
-								target={'_blank'}
-								rel="noopener noreferrer"
-							>
-								<div
-									style={{
-										display: 'flex',
-										flexDirection: 'column',
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
-								>
-									<div>
-										{chainId === 1 ? 'Mainnet' : 'Kovan'}
-									</div>
-									<Jazzicon
-										diameter={36}
-										seed={jsNumberForAddress(account)}
-									/>
-									<div>
-										{account.slice(0, 4)} ...{' '}
-										{account.slice(-2)}
-									</div>
-								</div>
-							</a>
-						}
+				<MenuItem>
+					<a
+						href="https://resources.yaxis.io/"
+						rel="noopener noreferrer"
+						target="_blank"
 					>
-						<MenuItem key="logout" onClick={handleSignOutClick}>
-							Logout
-						</MenuItem>
-					</Menu.ItemGroup>
+						Help Center
+					</a>
+				</MenuItem>
+				{!account ? (
+					<></>
+				) : (
+					<MenuItem key="logout" onClick={handleSignOutClick}>
+						Logout
+					</MenuItem>
 				)}
 			</StyledMenu>
 		),
 		[
-			activePools,
 			account,
 			handleUnlockClick,
-			handleSignOutClick,
-			chainId,
 			networkName,
+			friendlyNetworkName,
+			activePools,
+			handleSignOutClick,
 		],
 	)
 	return (
