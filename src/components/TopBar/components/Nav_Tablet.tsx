@@ -44,6 +44,18 @@ const ItemGroup = styled(Menu.ItemGroup)`
 	height: 30px;
 `
 
+const Connect = styled(Menu.Item)`
+	font-weight: bold;
+	font-size: 1.3em;
+	color: #016eac;
+	display: flex;
+	background-color: #f5f5f5;
+	border-radius: 5px;
+	&:hover {
+		color: rgb(67, 210, 255);
+	}
+`
+
 const NavTablet: React.FC<NavTabletProps> = () => {
 	const { account, chainId, deactivate } = useWeb3Provider()
 	const { activate } = useWeb3React('fallback')
@@ -79,7 +91,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 		() => (
 			<StyledMenu>
 				{!account ? (
-					<MenuItem onClick={handleUnlockClick}>Connect</MenuItem>
+					<Connect onClick={handleUnlockClick}>Connect</Connect>
 				) : (
 					<AccountInfo
 						account={account}

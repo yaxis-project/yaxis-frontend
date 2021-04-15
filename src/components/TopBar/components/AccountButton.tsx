@@ -59,7 +59,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 									friendlyNetworkName={friendlyNetworkName}
 									mobile={false}
 								/>
-								<Menu.Item>
+								<StyledText>
 									<a
 										href="https://resources.yaxis.io/"
 										rel="noopener noreferrer"
@@ -67,15 +67,15 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 									>
 										Help Center
 									</a>
-								</Menu.Item>
-								<Menu.Item
+								</StyledText>
+								<StyledText
 									onClick={handleSignOutClick}
 									style={{
 										marginBottom: '8px',
 									}}
 								>
 									Logout
-								</Menu.Item>
+								</StyledText>
 							</StyledMenu>
 						}
 					>
@@ -92,6 +92,10 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 		</StyledAccountButton>
 	)
 }
+
+const StyledText = styled(Menu.Item)`
+	font-size: 1.1em;
+`
 
 const StyledMenu = styled(Menu)`
 	margin: 8px -2px 0 0;
