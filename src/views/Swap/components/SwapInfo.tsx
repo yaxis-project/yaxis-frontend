@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Row, Col, Collapse, Typography } from 'antd'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import styled from 'styled-components'
+import { NavLink } from 'react-router-dom'
 const { Panel } = Collapse
 const { Title } = Typography
 
@@ -25,7 +26,7 @@ const StyledCollapse = styled(Collapse)<any>`
 export default function SwapInfo() {
 	const [active, setActive] = useState(['0'])
 	return (
-		<DetailOverviewCard title={'Details'}>
+		<DetailOverviewCard title={'Token Swap Migration'}>
 			<BodyMain>
 				<Paragraph>
 					Starting April 17th 2021, the governance token YAX is
@@ -40,10 +41,20 @@ export default function SwapInfo() {
 					</TextLink>{' '}
 					governance proposal passed with an overwhelming 97.18%
 					approval rating! <br /> <br /> It will be distributed fairly
-					through at least 1 year of emissions. The token will have a
-					maximum supply of 11 million YAXIS tokens - with 1 million
-					of those coming from the token swap. The full proposal is
-					detailed{' '}
+					without a{' '}
+					<TextLink
+						target={'_blank'}
+						rel="noopener noreferrer"
+						href="https://www.investopedia.com/terms/p/premining.asp"
+					>
+						pre-mine
+					</TextLink>{' '}
+					through at least 1 year of staking rewards emissions. This
+					involves locking up your tokens in a smart contract to
+					recieve extra YAXIS token on every block. They can be
+					removed at any time. The token will have a maximum supply of
+					11 million YAXIS tokens - with 1 million of those coming
+					from the token swap. The full proposal is detailed{' '}
 					<TextLink
 						target={'_blank'}
 						rel="noopener noreferrer"
@@ -66,9 +77,13 @@ export default function SwapInfo() {
 						>
 							<Panel header={'What do I need to do?'} key="0">
 								<Body>
+									It's as easy as following the Steps section
+									on this page
+									<br />
+									<br />
 									The first step is to claim any unclaimed
 									rewards that are pending on MetaVault or a
-									LP.
+									Liquidity Pool.
 									<br />
 									<br />
 									Next click the SWAP button!
@@ -86,6 +101,67 @@ export default function SwapInfo() {
 							activeKey={active}
 							expandIconPosition="right"
 							onChange={(key) =>
+								setActive(key.includes('5') ? ['5'] : [])
+							}
+							active={active.includes('5')}
+						>
+							<Panel
+								header={"What's changing about MetaVault?"}
+								key="5"
+							>
+								<Body>
+									To recieve emissions for being a MetaVault
+									user you will now have to stake. The
+									MetaVault has a form of "IOU" token, called
+									MVLT, to represent funds that are deposited.
+									These must be locked up in the rewards smart
+									contract to recieve APY.
+									<br />
+									<br />
+									If you have already completed all of the
+									steps in the Steps section, then you are
+									already moved over.
+									<br />
+									<br />
+									For future deposits there is a new Staking
+									section at the bottom left of the{' '}
+									<StyledNavLink to="/vault">
+										MetaVault
+									</StyledNavLink>{' '}
+									page.
+								</Body>
+							</Panel>
+						</StyledCollapse>
+						<StyledCollapse
+							activeKey={active}
+							expandIconPosition="right"
+							onChange={(key) =>
+								setActive(key.includes('3') ? ['3'] : [])
+							}
+							active={active.includes('3')}
+						>
+							<Panel header={'What are the benefits?'} key="3">
+								<Body>
+									There are 2 main benefits from this token
+									swap:
+									<ul>
+										<li>
+											A faster experience with our
+											upgraded token from ERC20 to ERC677.
+										</li>
+										<li>
+											Higher returns due to boosted APY of
+											the pools and vaults, plus increased
+											usage to fuel stakeholder revenue.
+										</li>
+									</ul>
+								</Body>
+							</Panel>
+						</StyledCollapse>
+						<StyledCollapse
+							activeKey={active}
+							expandIconPosition="right"
+							onChange={(key) =>
 								setActive(key.includes('1') ? ['1'] : [])
 							}
 							active={active.includes('1')}
@@ -95,9 +171,13 @@ export default function SwapInfo() {
 								key="1"
 							>
 								<Body>
-									These will unfortunately take more work to
-									swap over. You will have to go through the
-									following steps:
+									If you have already completed all of the
+									steps in the Steps section, then you are
+									already moved over.
+									<br />
+									<br />
+									If not, the following steps are handled on
+									the Stake tab of the Steps section:
 									<br />
 									<ol>
 										<li>
@@ -117,62 +197,37 @@ export default function SwapInfo() {
 							activeKey={active}
 							expandIconPosition="right"
 							onChange={(key) =>
-								setActive(key.includes('3') ? ['3'] : [])
-							}
-							active={active.includes('3')}
-						>
-							<Panel header={'What are the benefits?'} key="3">
-								<Body>
-									There are 3 main outcomes from this token
-									swap:
-									<ul>
-										<li>
-											Upgrade our token from an ERC20
-											token to an ERC677 token.
-										</li>
-										<li>
-											Boost APY of the pools and vaults.
-										</li>
-										<li>
-											Attract high TVL, and generate large
-											revenue for holders.
-										</li>
-									</ul>
-								</Body>
-							</Panel>
-						</StyledCollapse>
-						<StyledCollapse
-							activeKey={active}
-							expandIconPosition="right"
-							onChange={(key) =>
 								setActive(key.includes('2') ? ['2'] : [])
 							}
 							active={active.includes('2')}
 						>
-							<Panel header={'What’s an ERC677 token?'} key="2">
+							<Panel
+								header={'Why switch to an ERC677 token?'}
+								key="2"
+							>
 								<Body>
-									The other advantage of having a token swap,
-									is it allows us to upgrade to{' '}
+									An{' '}
 									<TextLink
 										target={'_blank'}
 										rel="noopener noreferrer"
 										href="https://github.com/ethereum/EIPs/issues/677"
 									>
 										ERC677
-									</TextLink>
-									. It shares the same properties of an ERC20
-									token only with added features. <br />
+									</TextLink>{' '}
+									token comes with the same properties of an
+									ERC20 token, only with added features.{' '}
+									<br />
 									<br />
 									The main one being: you can “transfer and
-									call” in one transaction. That means you
-									don’t need to first approve staking in a
-									separate transaction, before actually
+									call” in one transaction. This means you
+									don’t need to first approve, before actually
 									staking. You can both approve and send
-									tokens in the same transaction. This
-									function will lower fees for entering the
-									ecosystem, and is a key competitive
-									advantage over other platforms. It has no
-									issues with trading, wallets etc.
+									tokens in the same transaction. <br />
+									<br />
+									This function will lower fees for entering
+									yAxis, and is a key competitive advantage
+									over other platforms. There are no conflicts
+									with trading, using wallets, etc. as normal.
 								</Body>
 							</Panel>
 						</StyledCollapse>
@@ -189,6 +244,11 @@ export default function SwapInfo() {
 								key="4"
 							>
 								<Body>
+									There are already 1 million tokens in
+									circulation that will be swapped to the new
+									YAXIS token.
+									<br />
+									<br />
 									The{' '}
 									<TextLink
 										target={'_blank'}
@@ -198,36 +258,45 @@ export default function SwapInfo() {
 										YIP-09
 									</TextLink>{' '}
 									governance proposal established the
-									following fair mining allocations:
+									following fair mining allocations for the
+									remainder:
 									<br />
 									<br />
 									<ul>
-										<b>Growth:</b>
+										<b>Growth for users - 8.8 million:</b>
 										<li>
-											4 million (36.4%) tokens to the
-											community (staking + LP).
+											4 million (36.4%) tokens towards
+											YAXIS staking and Liqudity Pools.
 										</li>
 										<li>
-											4 million (36.4%) tokens to vault
-											users.
+											4 million (36.4%) tokens towards
+											MetaVault staking.
 										</li>
 										<li>
-											800k (7.3%) tokens flexibly to
-											maintain balance.
+											800k (7.3%) tokens flexibly to be
+											allocated for maximum yAxis growth.
 										</li>
 										<br />
-										<b>Treasuries:</b>
+										<b>
+											Treasuries for the yAxis Team - 1.2
+											million:
+										</b>
 										<li>
 											500k (4.5%) tokens to support the
-											Champions Bounty Programme who will
-											help with marketing, partnerships,
+											Champions Bounty Programme who lead
+											marketing, partnerships,
 											initiatives, exchanges, and content.
 										</li>
 										<li>
-											400k (3.6%) tokens towards a
-											development fund for building.
+											300k (2.7%) tokens to the current
+											development team who maintain and
+											build yAxis.
 										</li>
-										<li>300k (2.7%) tokens to the team.</li>
+										<li>
+											400k (3.6%) tokens towards future
+											development to expand and improve
+											yAxis.
+										</li>
 									</ul>
 									For more details see the full proposal{' '}
 									<TextLink
@@ -262,4 +331,10 @@ const Body = styled(Paragraph)`
 
 const TextLink = styled.a`
 	color: ${(props) => props.theme.color.primary.main};
+	font-weight: 600;
+`
+
+const StyledNavLink = styled(NavLink)`
+	color: ${(props) => props.theme.color.primary.main};
+	font-weight: 600;
 `
