@@ -5,6 +5,8 @@ import { getEarned, getYaxisChefContract } from '../yaxis/utils'
 import useGlobal from './useGlobal'
 
 const useEarnings = (pid: number) => {
+	const [loading, setLoading] = useState(true)
+
 	const [balance, setBalance] = useState(new BigNumber(0))
 	const { account } = useWeb3Provider()
 	const { yaxis, block } = useGlobal()
@@ -13,6 +15,7 @@ const useEarnings = (pid: number) => {
 	const fetchBalance = useCallback(async () => {
 		const balance = await getEarned(yaxisChefContract, pid, account)
 		setBalance(new BigNumber(balance))
+		setLoading(false)
 	}, [account, yaxisChefContract, pid])
 
 	useEffect(() => {
@@ -21,7 +24,7 @@ const useEarnings = (pid: number) => {
 		}
 	}, [account, block, yaxisChefContract, setBalance, yaxis, fetchBalance])
 
-	return balance
+	return { loading, balance }
 }
 
 export default useEarnings

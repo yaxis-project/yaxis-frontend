@@ -13,7 +13,7 @@ export default function useLPContractData(farmId: string) {
 	const { library } = useWeb3Provider()
 	const farmData = useFarm(farmId)
 	const currency = currencyMap[farmData.symbol]
-	const stakedBalance = useStakedBalance(farmData.pid)
+	const { balance: stakedBalance } = useStakedBalance(farmData.pid)
 	const lpContract = useMemo(() => {
 		return getContract(library as provider, farmData.lpTokenAddress)
 	}, [library, farmData.lpTokenAddress])

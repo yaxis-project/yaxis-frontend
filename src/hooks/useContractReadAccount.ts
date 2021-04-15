@@ -8,9 +8,10 @@ interface Params {
     contractName: string
     method: string
     args?: any[]
+    result?: string
 }
 
-const useContractReadAccount = ({ contractName, method, args }: Params) => {
+const useContractReadAccount = ({ contractName, method, args, result }: Params) => {
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(true)
 
@@ -18,9 +19,10 @@ const useContractReadAccount = ({ contractName, method, args }: Params) => {
     const { yaxis, block } = useGlobal()
 
     const contract = useMemo(() => {
-        const c = objectPath.get(yaxis?.contracts, contractName) as Contract
-        if (!c) console.log(`Unable to initialize contract: ${contractName}`)
-        return c
+        if (!yaxis) return null
+        const output = objectPath.get(yaxis?.contracts, contractName) as Contract
+        if (!output) console.log(`Unable to initialize contract: ${contractName}`)
+        return output
     }, [yaxis, contractName])
 
     useEffect(() => {
@@ -33,12 +35,12 @@ const useContractReadAccount = ({ contractName, method, args }: Params) => {
             const m = await contract?.methods[method]
             const withArgs = args ? m(...args) : m()
             const response = await withArgs.call()
-            setData(response)
+            result ? setData(response[result]) : setData(response)
             setLoading(false)
         }
-        if (account)
+        if (account && contract)
             get()
-    }, [account, contract, method, args, block])
+    }, [account, contract, method, args, result, block])
 
     return { loading, data }
 }

@@ -6,11 +6,11 @@ import useTokenBalance from './useTokenBalance'
 import usePriceMap from './usePriceMap'
 
 const defaultState = {
-    sYaxBalance: new BigNumber(0),
+    sYaxisBalance: new BigNumber(0),
     stakedBalance: new BigNumber(0),
     stakedBalanceUSD: new BigNumber(0),
     walletBalance: new BigNumber(0),
-    yaxBalance: new BigNumber(0),
+    yaxisBalance: new BigNumber(0),
 }
 
 /**
@@ -34,14 +34,14 @@ export default function useYaxisStaking() {
     const getData = useCallback(async () => {
         try {
             const data = {
-                sYaxBalance: sBalance,
+                sYaxisBalance: sBalance,
                 stakedBalance: sBalance.div(1e18),
                 walletBalance,
                 stakedBalanceUSD:
                     sBalance
                         .div(1e18)
                         .multipliedBy(priceMap?.YAXIS),
-                yaxBalance: walletBalance.div(1e18),
+                yaxisBalance: walletBalance.div(1e18),
             }
             setBalances(data)
             setLoading(false)
