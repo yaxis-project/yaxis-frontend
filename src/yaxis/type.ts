@@ -33,12 +33,10 @@ export interface Config {
 		yaxisChef: string
 		weth: string
 		xYaxStaking: string
-		xYaxisStaking: string
 		yAxisMetaVault: string
 		stableSwap3PoolConverter: string
 		pickleChef: string
 		pickleJar: string
-		rewardsYaxis: string
 	}
 	rewards: {
 		MetaVault: string

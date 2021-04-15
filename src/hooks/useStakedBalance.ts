@@ -8,6 +8,7 @@ import useGlobal from './useGlobal'
 
 const useStakedBalance = (pid: number) => {
 	const [balance, setBalance] = useState(new BigNumber(0))
+	const [loading, setLoading] = useState(true)
 	const { account } = useWeb3Provider()
 	const { yaxis, block } = useGlobal()
 	const yaxisChefContract = useMemo(() => getYaxisChefContract(yaxis), [
@@ -17,6 +18,7 @@ const useStakedBalance = (pid: number) => {
 	const fetchBalance = useCallback(async () => {
 		const balance = await getStaked(yaxisChefContract, pid, account)
 		setBalance(new BigNumber(balance))
+		setLoading(false)
 	}, [account, pid, yaxisChefContract])
 
 	useEffect(() => {
@@ -25,7 +27,7 @@ const useStakedBalance = (pid: number) => {
 		}
 	}, [account, pid, setBalance, block, yaxis, fetchBalance])
 
-	return balance
+	return { balance, loading }
 }
 
 export default useStakedBalance

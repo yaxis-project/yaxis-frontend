@@ -19,7 +19,7 @@ interface StakeProps {
 }
 
 const LegacyStake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
-	const stakedBalance = useStakedBalance(pid)
+	const { balance: stakedBalance } = useStakedBalance(pid)
 
 	const {
 		onUnstake,
