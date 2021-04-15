@@ -37,7 +37,7 @@ export default function StakingCard() {
 	const { onEnter } = useEnter()
 	const { onLeave } = useLeave()
 	const {
-		balances: { stakedBalance, walletBalance, yaxBalance },
+		balances: { stakedBalance, walletBalance, yaxisBalance },
 	} = useYaxisStaking()
 
 	const [loading, setLoading] = useState(false)
@@ -52,8 +52,8 @@ export default function StakingCard() {
 			notification.info({
 				message: t('Please approve staking transaction.'),
 			})
-			const yax = depositAmount
-			await onEnter(yax)
+			console.log(depositAmount)
+			await onEnter(depositAmount)
 			setDeposit('0')
 			setLoading(false)
 		} catch (err) {
@@ -77,7 +77,7 @@ export default function StakingCard() {
 			setLoading(false)
 		} catch (err) {
 			notification.info({
-				message: `An error occured duirng YAXIS unstaking:`,
+				message: `An error occured during YAXIS unstaking:`,
 				description: err.message,
 			})
 			setLoading(false)
@@ -98,7 +98,7 @@ export default function StakingCard() {
 			errorDeposit,
 		[depositAmount, errorDeposit],
 	)
-	const maxDeposit = () => setDeposit(yaxBalance.toString() || '0')
+	const maxDeposit = () => setDeposit(yaxisBalance.toString() || '0')
 
 	const [withdrawAmount, setWithdraw] = useState<string>('')
 	const updateWithdraw = (value: string) =>

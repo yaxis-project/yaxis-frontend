@@ -12,7 +12,6 @@ export class Contracts {
 	public pickleChef: Contract
 	public pickleJar: Contract
 	public xYaxStaking: Contract
-	public xYaxisStaking: Contract
 	public yaxisMetaVault: Contract
 	public weth: Contract
 	public pools: StakePool[] = []
@@ -50,7 +49,6 @@ export class Contracts {
 		this.pickleChef = new this.web3.eth.Contract(abis.PickleChefABI)
 		this.pickleJar = new this.web3.eth.Contract(abis.PickleJarABI)
 
-		this.xYaxisStaking = new this.web3.eth.Contract(abis.XYaxABI)
 		this.xYaxStaking = new this.web3.eth.Contract(abis.XYaxABI)
 		this.yaxisMetaVault = new this.web3.eth.Contract(abis.YaxisMetaVaultABI)
 		this.multicall = new this.web3.eth.Contract(abis.MulticallABI)
@@ -107,10 +105,7 @@ export class Contracts {
 		setProvider(this.yaxisChef, this.config.contractAddresses.yaxisChef)
 		setProvider(this.weth, this.config.contractAddresses.weth)
 		setProvider(this.multicall, this.config.contractAddresses.multicall)
-		setProvider(
-			this.xYaxisStaking,
-			this.config.contractAddresses.xYaxisStaking,
-		)
+
 		setProvider(this.xYaxStaking, this.config.contractAddresses.xYaxStaking)
 		setProvider(
 			this.yaxisMetaVault,

@@ -105,7 +105,6 @@ const Banner: React.FC<BannerProps> = ({ text, visible = true }) => (
 						icon={<Icon />}
 						message={<Text>{text}</Text>}
 						banner
-						onClick={() => console.log('hi')}
 					/>
 				)}
 			</NavLink>

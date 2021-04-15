@@ -15,7 +15,7 @@ interface LegacyClaimProps {
 }
 
 const LegacyClaim: React.FC<LegacyClaimProps> = ({ pool }) => {
-	const earnings = useEarnings(pool.pid)
+	const { balance: earnings } = useEarnings(pool.pid)
 	const { loading, error, onReward } = useReward(pool.pid)
 	const [claimVisible, setClaimVisible] = useState(false)
 	return (
