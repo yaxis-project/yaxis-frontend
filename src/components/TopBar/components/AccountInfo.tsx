@@ -12,33 +12,36 @@ const { Text } = Typography
 const StyledRow = styled(Row)<any>`
 	display: flex;
 	align-items: center;
-	margin-bottom: ${(props) => (props.mobile ? '5' : '10')}px;
+	margin-bottom: ${(props) => (props.mobile ? '10' : '10')}px;
+	margin-right: 10px;
 `
-const StyledText = styled.div`
+const StyledText = styled.div<any>`
 	text-align: center;
-	// font-size: 0.9em;
-	// margin-left: 10px;
+	font-size: ${(props) => (props.mobile ? '1.1' : '1')}em;
+	margin-left: 10px;
 	color: rgba(0, 0, 0, 0.45);
 `
 
-const StyledCol = styled(Col)`  
-    margin-bottom: 5px,
-    padding-left: 15px,
-    padding-right: 5px,`
+const StyledCol = styled(Col)<any>`
+	margin-bottom: 5px;
+	padding-left: 15px;
+	padding-right: 5px;
+`
 
 const AccountText = styled.div`
 	font-weight: bold;
-	// margin-left: -8px;
+	font-size: 1.2em;
+	margin-left: -8px;
 `
 
-const AccountIdText = styled.div`
+const AccountIdText = styled.div<any>`
 	font-weight: bold;
 	font-size: 1em;
 	color: #016eac;
 	border: 1.5px solid #016eac;
 	border-radius: 20px;
-	// padding: 2px 10px;
-	// margin-left: 10px;
+	padding: 2px 10px;
+	margin-left: 10px;
 `
 
 interface AccountInfoProps {
@@ -58,7 +61,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 		<>
 			<Menu.ItemGroup
 				title={
-					<StyledCol>
+					<StyledCol mobile={mobile}>
 						<StyledRow
 							mobile={mobile}
 							style={{
@@ -78,19 +81,27 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 								copyable={{
 									icon: [
 										<Row>
-											<CopyOutlined key="copy-icon" />
-											<StyledText>
-												Copy Address
-											</StyledText>
+											<Col>
+												<CopyOutlined key="copy-icon" />
+											</Col>
+											<Col>
+												<StyledText mobile={mobile}>
+													Copy Address
+												</StyledText>
+											</Col>
 										</Row>,
 										<Row>
-											<CheckCircleTwoTone
-												key="copied-icon"
-												twoToneColor="#52c41a"
-											/>
-											<StyledText>
-												Address Copied!
-											</StyledText>
+											<Col>
+												<CheckCircleTwoTone
+													key="copied-icon"
+													twoToneColor="#52c41a"
+												/>
+											</Col>
+											<Col>
+												<StyledText mobile={mobile}>
+													Address Copied!
+												</StyledText>
+											</Col>
 										</Row>,
 									],
 									text: `${account}`,
@@ -100,7 +111,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 						</StyledRow>
 						<StyledRow>
 							<BlockOutlined />
-							<StyledText>
+							<StyledText mobile={mobile}>
 								<a
 									href={etherscanUrl(
 										`/address/${account}`,
@@ -115,7 +126,9 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 						</StyledRow>
 						<StyledRow>
 							<CheckCircleTwoTone twoToneColor="#52c41a" />{' '}
-							<StyledText>{friendlyNetworkName}</StyledText>
+							<StyledText mobile={mobile}>
+								{friendlyNetworkName}
+							</StyledText>
 						</StyledRow>
 						<Divider
 							orientation="left"
