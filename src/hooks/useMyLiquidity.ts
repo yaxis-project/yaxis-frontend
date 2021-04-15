@@ -34,7 +34,7 @@ export default function useLP(pool: StakePool): LiquidityPoolData {
 	)
 
 	const { balance } = useTokenBalance(farm?.lpContract?.options?.address)
-	const stakedBalance = useStakedBalance(pool.pid)
+	const { balance: stakedBalance } = useStakedBalance(pool.pid)
 
 	const getData = useCallback(async () => {
 		if (!(farm && farm.lpContract)) return

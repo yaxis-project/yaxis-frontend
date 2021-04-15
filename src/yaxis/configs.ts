@@ -10,13 +10,11 @@ export const configs: Record<number, Config> = {
 			yaxisChef: '0xd75b3d1477F1D1fF28e878E46a8223c1Fa4DDefD',
 			weth: '0xAA8f43ba4A39b40b7CC08d3Cc8CC2428157dff3e',
 			xYaxStaking: '0xc5598a5FE5aFFb55308ac06593Af31784606de4C',
-			xYaxisStaking: '0xc5598a5FE5aFFb55308ac06593Af31784606de4C',
 			yAxisMetaVault: '0x6e4BA66AD61610098E216991977a067F0680FC96',
 			stableSwap3PoolConverter:
 				'0x4981D4A898e1C503BFA06B751f932600E124108f',
 			pickleChef: '0x76f4A0CE3753F745e97e588F8423230B83f4a2F4',
 			pickleJar: '0x13F4cc6C239aBaD03EbD2deAA6A7107E9c6c9BEB',
-			rewardsYaxis: '0x8Dd07469b35C02cfa294071D456a2d98b5D42Fa9'
 		},
 		rewards: {
 			MetaVault: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8',
@@ -96,11 +94,9 @@ export const configs: Record<number, Config> = {
 			pickleJar: '0x1BB74b5DdC1f4fC91D6f9E7906cf68bc93538e33',
 			weth: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
 			xYaxStaking: '0xeF31Cb88048416E301Fee1eA13e7664b887BA7e8',
-			xYaxisStaking: '0xeF31Cb88048416E301Fee1eA13e7664b887BA7e8',
 			yAxisMetaVault: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
 			stableSwap3PoolConverter:
 				'0xA5c16eb6eBD72BC72c70Fca3e4faCf389AD4aBE7',
-			rewardsYaxis: ''
 		},
 		rewards: {
 			MetaVault: '',
@@ -142,6 +138,31 @@ export const configs: Record<number, Config> = {
 				tokenAddress: '0xb1dc9124c395c1e97773ab855d66e879f053a289',
 				name: 'Uniswap YAX/ETH',
 				symbol: 'YAX/ETH UNI-V2 LP',
+				tokenSymbol: 'YAX',
+				icon: '',
+			},
+			{
+				legacy: true,
+				pid: null,
+				active: false,
+				type: 'link',
+				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
+				lpAddress: '0x21dee38170F1e1F26baFf2C30C0fc8F8362b6961',
+				lpUrl:
+					'https://linkswap.app/#/add/0xb1dC9124c395c1e97773ab855d66E879f053A289/ETH',
+				lpTokens: [
+					{
+						symbol: 'YAX',
+						decimals: 18,
+					},
+					{
+						symbol: 'ETH',
+						decimals: 18,
+					},
+				],
+				tokenAddress: '0xb1dc9124c395c1e97773ab855d66e879f053a289',
+				name: 'Linkswap YAX/ETH',
+				symbol: 'YAX/ETH LINKSWAP LP',
 				tokenSymbol: 'YAX',
 				icon: '',
 			},
@@ -338,31 +359,6 @@ export const configs: Record<number, Config> = {
 			// 	tokenSymbol: 'YFL',
 			// 	icon: '',
 			// },
-			{
-				legacy: true,
-				pid: null,
-				active: false,
-				type: 'link',
-				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
-				lpAddress: '0x21dee38170F1e1F26baFf2C30C0fc8F8362b6961',
-				lpUrl:
-					'https://linkswap.app/#/add/0xb1dC9124c395c1e97773ab855d66E879f053A289/ETH',
-				lpTokens: [
-					{
-						symbol: 'YAX',
-						decimals: 18,
-					},
-					{
-						symbol: 'ETH',
-						decimals: 18,
-					},
-				],
-				tokenAddress: '0xb1dc9124c395c1e97773ab855d66e879f053a289',
-				name: 'Linkswap YAX/ETH',
-				symbol: 'YAX/ETH LINKSWAP LP',
-				tokenSymbol: 'YAX',
-				icon: '',
-			},
 			// {
 			// 	pid: 8,
 			// 	type: 'uni',
