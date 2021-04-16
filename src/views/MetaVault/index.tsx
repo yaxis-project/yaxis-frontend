@@ -24,6 +24,7 @@ const StyledCol = styled(Col)`
 const MetaVault: React.FC = () => {
 	const {
 		metaVaultData: { totalBalance, mvltPrice },
+		loading,
 	} = useMetaVaultData('v1')
 
 	const totalUSDBalance = new BigNumber(totalBalance || '0')
@@ -60,7 +61,10 @@ const MetaVault: React.FC = () => {
 						<Stake />
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
-						<InvestmentDetailOverview />
+						<InvestmentDetailOverview
+							totalUSDBalance={totalUSDBalance}
+							balanceLoading={loading}
+						/>
 						<VaultStatsCard />
 						<RecentTransactionsCard />
 					</StyledCol>
