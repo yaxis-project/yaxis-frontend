@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Row, Typography, Tooltip } from 'antd'
 import Value from '../../../components/Value'
 // import useAccountReturns from '../../../hooks/useAccountReturns'
@@ -8,12 +8,18 @@ import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import { CardRow } from '../../../components/ExpandableSidePanel'
 import Claim from './Claim'
 import info from '../../../assets/img/info.svg'
-
+import APYCalculator from '../../../components/APYCalculator'
 import useComputeAPYs from '../hooks/useComputeAPYs'
+import BigNumber from 'bignumber.js'
 
 const { Text } = Typography
 
-const InvestmentDetailOverview: React.FC = () => {
+type Props = { totalUSDBalance: string; balanceLoading: boolean }
+
+const InvestmentDetailOverview: React.FC<Props> = ({
+	totalUSDBalance,
+	balanceLoading,
+}) => {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 
@@ -25,6 +31,7 @@ const InvestmentDetailOverview: React.FC = () => {
 		yaxApyPercent,
 		lpApyPercent,
 		totalAPY,
+		loadingAPY,
 	} = useComputeAPYs()
 
 	return (
@@ -60,6 +67,11 @@ const InvestmentDetailOverview: React.FC = () => {
 						decimals={2}
 					/>
 				}
+			/>
+			<APYCalculator
+				APY={totalAPY.toNumber()}
+				balance={new BigNumber(totalUSDBalance)}
+				loading={loadingAPY || balanceLoading}
 			/>
 		</DetailOverviewCard>
 	)
