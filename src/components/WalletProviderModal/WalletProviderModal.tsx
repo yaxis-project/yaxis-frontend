@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
-import { Button } from 'antd'
+import { Button, Pagination } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import Modal, { ModalProps } from '../Modal'
 import ModalContent from '../ModalContent'
@@ -14,6 +14,7 @@ import { getErrorMessage } from '../../connectors/errors'
 import { handleInjected, filterByDevice } from './utils'
 
 const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
+	const [page, setPage] = useState(1)
 	const { account, error } = useWeb3Provider()
 	useEffect(() => {
 		if (account) {
@@ -40,22 +41,28 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 				<StyledWalletsWrapper
 					gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
 				>
-					{wallets.map((config, i) => {
-						return (
-							<StyledWalletCard
-								key={`${i}-${config.name}`}
-								className="gutter-row"
-								span={
-									wallets.length
-										? 24 * ((100 / wallets.length) * 0.01)
-										: 24
-								}
-							>
-								<WalletCard config={config} />
-							</StyledWalletCard>
-						)
-					})}
+					{wallets
+						.slice((page - 1) * 3, (page - 1) * 3 + 3)
+						.map((config, i) => {
+							return (
+								<StyledWalletCard
+									key={`${i}-${config.name}`}
+									className="gutter-row"
+									span={wallets.length ? 8 : 24}
+								>
+									<WalletCard config={config} />
+								</StyledWalletCard>
+							)
+						})}
 				</StyledWalletsWrapper>
+				<Row justify="center" style={{ marginTop: '40px' }}>
+					<Pagination
+						current={page}
+						onChange={(page) => setPage(page)}
+						total={wallets.length}
+						pageSize={3}
+					/>
+				</Row>
 			</ModalContent>
 		</Modal>
 	)

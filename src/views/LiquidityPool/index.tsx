@@ -26,7 +26,7 @@ const StyledCol = styled(Col)`
 const Liqudity: React.FC<Props> = ({ pool }) => {
 	// should use this method to get 'stakedBalance' rather than 'userBalance' below
 	// as it's hooked up to block updates & other internal data
-	const { stakedBalance, lpContract } = useLPContractData(pool.symbol)
+	const { stakedBalance } = useLPContractData(pool.symbol)
 	return (
 		<div className="liquidity-view">
 			<Page
@@ -52,7 +52,6 @@ const Liqudity: React.FC<Props> = ({ pool }) => {
 						<LiquidityCard pool={pool} />
 						{pool?.legacy ? (
 							<LegacyStake
-								lpContract={lpContract}
 								pid={pool.pid}
 								tokenName={pool.symbol.toUpperCase()}
 							/>

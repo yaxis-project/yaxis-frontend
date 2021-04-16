@@ -1,5 +1,4 @@
 import React from 'react'
-import { Contract } from 'web3-eth-contract'
 import { Row, Col, Card } from 'antd'
 import Button from '../../../components/Button'
 import Tooltip from '../../../components/Tooltip'
@@ -13,12 +12,11 @@ import WithdrawModal from './WithdrawModal'
 import BigNumber from 'bignumber.js'
 
 interface StakeProps {
-	lpContract: Contract
 	pid: number
 	tokenName: string
 }
 
-const LegacyStake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
+const LegacyStake: React.FC<StakeProps> = ({ pid, tokenName }) => {
 	const { balance: stakedBalance } = useStakedBalance(pid)
 
 	const {
