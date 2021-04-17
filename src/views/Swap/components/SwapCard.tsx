@@ -63,7 +63,6 @@ export default function SwapCard() {
 		if (!account) return 'wait'
 		if (!todo) return 'finish'
 		if (current === index) return 'process'
-		console.log(current, index)
 		return 'wait'
 	}, [])
 
