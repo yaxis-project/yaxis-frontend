@@ -23,6 +23,7 @@ export default function SwapCard() {
 				step={0}
 				current={current}
 				setCurrent={setCurrent}
+				complete={toDo[0]}
 				earnings={data?.earnings}
 				pendingYax={new BigNumber(data?.mvEarnings || 0)}
 				stakedUniLP={data?.stakedUniLP}
@@ -30,33 +31,35 @@ export default function SwapCard() {
 				linkLPBalance={data?.linkLPBalance}
 			/>
 		),
-		[data, current],
+		[data, current, toDo],
 	)
 
 	const SwapContent = useMemo(
 		() => (
 			<StepSwap
-				step={0}
+				step={1}
 				current={current}
 				setCurrent={setCurrent}
+				complete={toDo[1]}
 				balances={data?.balances}
 			/>
 		),
-		[data, current],
+		[data, current, toDo],
 	)
 
 	const StakeContent = useMemo(
 		() => (
 			<StepStake
-				step={0}
+				step={2}
 				current={current}
 				setCurrent={setCurrent}
+				complete={toDo[2]}
 				yaxisBalance={data?.yaxisBalance}
 				mvltBalance={data?.mvltBalance}
 				stakedMvlt={data?.stakedMvlt}
 			/>
 		),
-		[data, current],
+		[data, current, toDo],
 	)
 
 	const getStatus = useCallback((account, todo, current, index) => {
@@ -146,17 +149,20 @@ export default function SwapCard() {
 
 			setToDo([step1, step2, step3])
 
-			if (step1) setCurrent(0)
-			else if (step2) setCurrent(1)
-			else if (step3) setCurrent(2)
-			else setCurrent(3)
+			if (!initialized) {
+				if (step1) setCurrent(0)
+				else if (step2) setCurrent(1)
+				else if (step3) setCurrent(2)
+				else setCurrent(3)
+			}
+
 			setInitialized(true)
 		}
 
 		if (!loadingData) {
 			determineStep()
 		}
-	}, [initialized, chainId, loadingData, data])
+	}, [chainId, loadingData, data, initialized])
 
 	return (
 		<Affix offsetTop={80}>

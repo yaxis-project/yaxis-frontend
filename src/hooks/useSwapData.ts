@@ -129,6 +129,7 @@ const useSwapData = () => {
             data()
         }
     }, [
+        account,
         initialized,
         chainId,
         loadingEarnings,
