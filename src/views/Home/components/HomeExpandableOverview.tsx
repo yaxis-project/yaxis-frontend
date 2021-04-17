@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { Col } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
-
+import useGlobal from '../../../hooks/useGlobal'
 import useTVL from '../../../hooks/useComputeTVL'
 import useTotalSupply from '../../../hooks/useTotalSupply'
 import BigNumber from 'bignumber.js'
@@ -38,6 +38,8 @@ const TooltipRow = ({ main, value }: TooltipRowProps) => (
  * Generates an expandable side panel that shows basic overview data for the home page.
  */
 export default function HomeExpandableOverview() {
+	const { yaxis } = useGlobal()
+
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 
@@ -97,15 +99,13 @@ export default function HomeExpandableOverview() {
 					}
 					rightContent={
 						<Col lg={18} md={12} sm={12} xs={12}>
-							<Button
-								type="primary"
-								href="https://app.uniswap.org/#/swap?outputCurrency=0xb1dc9124c395c1e97773ab855d66e879f053a289"
+							<a
+								href={`https://app.uniswap.org/#/swap?outputCurrency=${yaxis?.contracts.yaxis.options.address}}`}
 								target="_blank"
-								height="40px"
-								style={{ paddingTop: '5px' }}
+								rel="noreferrer"
 							>
-								Get YAXIS
-							</Button>
+								<Button height={'40px'}>Get YAXIS</Button>
+							</a>
 						</Col>
 					}
 				/>

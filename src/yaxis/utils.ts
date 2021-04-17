@@ -507,7 +507,7 @@ type FormatBNOptions = {
 	hideOnWhole?: boolean
 	showDust?: boolean
 }
-export const formatBN = (BN: BigNumber, options?: FormatBNOptions) => {
+export const formatBN = (BN: BigNumber, options: FormatBNOptions = {}) => {
 	const { places = 2, hideOnWhole = true, showDust = false } = options
 
 	const isWhole = BN.toString() === BN.toFixed(0).toString()
