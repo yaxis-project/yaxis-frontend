@@ -219,7 +219,7 @@ export default function ApprovalWrapper() {
 				</>
 			) : (
 				<Stake
-					mvlt={yaxis?.contracts?.rewards.MetaVault.options.address}
+					mvlt={yaxis?.contracts?.yaxisMetaVault.options.address}
 				/>
 			)}
 		</Card>
