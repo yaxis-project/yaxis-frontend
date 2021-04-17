@@ -77,11 +77,8 @@ const StepSwap: React.FC<StepSwapProps> = ({
 					.allowance(account, yaxis?.contracts?.swap.options.address)
 					.call()
 				setAllowanceYAX(aYax)
-				const aSYax = await yaxis?.contracts?.yax.methods
-					.allowance(
-						account,
-						yaxis?.contracts?.xYaxStaking.options.address,
-					)
+				const aSYax = await yaxis?.contracts?.xYaxStaking.methods
+					.allowance(account, yaxis?.contracts?.swap.options.address)
 					.call()
 				setAllowanceSYAX(aSYax)
 				setLoadingAllowanceYAX(false)

@@ -122,7 +122,7 @@ export default function HomeExpandableOverview() {
 								</>
 							}
 						>
-							Yax Supply{' '}
+							Total YAXIS Supply{' '}
 							<img
 								src={info}
 								height="15"
