@@ -44,7 +44,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 	const { loading, onReward } = useReward(uniYaxEthLP.pid)
 
 	const mvRewards = useMemo(() => {
-		if (earnings.gt(0))
+		if (pendingYax.gt(0))
 			return (
 				<Step
 					title="Claim MetaVault rewards"
@@ -59,7 +59,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 								/>
 							}
 							loading={loading}
-							disabled={!earnings.toNumber()}
+							disabled={!pendingYax.toNumber()}
 						/>
 					}
 				/>
@@ -71,7 +71,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 				status="finish"
 			/>
 		)
-	}, [earnings, loading, onReward])
+	}, [pendingYax, loading, onReward])
 
 	const { isClaiming, onGetRewards } = useMetaVault()
 
@@ -95,7 +95,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 	const { onUnstake } = useUnstake(uniYaxEthLP?.pid, uniYaxEthLP?.name)
 
 	const uniswapLP = useMemo(() => {
-		if (pendingYax.gt(0))
+		if (earnings.gt(0))
 			return (
 				<Step
 					title="Claim Liquidity Pool rewards"
@@ -110,7 +110,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 								/>
 							}
 							loading={isClaiming}
-							disabled={!pendingYax.toNumber()}
+							disabled={!earnings.toNumber()}
 						/>
 					}
 				/>
@@ -175,7 +175,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 		onUnstake,
 		handleClaimRewards,
 		isClaiming,
-		pendingYax,
+		earnings,
 	])
 
 	const linkYaxEthLP = useMemo(
