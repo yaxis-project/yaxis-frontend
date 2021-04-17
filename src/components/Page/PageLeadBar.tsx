@@ -3,9 +3,10 @@ import logo from '../../assets/img/logo-ui.svg'
 import arrow from '../../assets/img/arrow-ui.svg'
 import { NavLink } from 'react-router-dom'
 import theme from '../../theme'
-import { Row, Col, Typography, Divider } from 'antd'
+import { Row, Col, Typography, Divider, Grid } from 'antd'
 import { LinkOutlined } from '@ant-design/icons'
 const { Title, Text } = Typography
+const { useBreakpoint } = Grid
 
 const StyledMain = styled.div<any>`
 	padding: 40px 10%;
@@ -43,6 +44,7 @@ interface PageLeadBarProps {
  * @param props PageLeadBarProps
  */
 const PageLeadBar = (props: PageLeadBarProps) => {
+	const { md, lg } = useBreakpoint()
 	const {
 		mainTitle,
 		secondaryText,
@@ -111,9 +113,13 @@ const PageLeadBar = (props: PageLeadBarProps) => {
 						</Text>
 					)}
 				</Col>
-				<Col xs={2} sm={2} md={1} style={{ marginTop: '8px' }}>
-					<Divider type={'vertical'} style={{ height: '80px' }} />
-				</Col>
+				{md || lg ? (
+					<Col md={1} style={{ marginTop: '8px' }}>
+						<Divider type={'vertical'} style={{ height: '80px' }} />
+					</Col>
+				) : (
+					<></>
+				)}
 				<Col xs={22} sm={22} md={12} style={{ marginTop: '8px' }}>
 					<Title
 						style={{
