@@ -118,7 +118,30 @@ export const configs: Record<number, Config> = {
 			strategy: '20% of MetaVault farming rewards',
 		},
 		pools: [
-
+			// {
+			// 	active: true,
+			// 	legacy: false,
+			// 	type: 'uni',
+			// 	liquidId: '/ETH',
+			// 	lpAddress: '',
+			// 	lpUrl: '',
+			// 	lpTokens: [
+			// 		{
+			// 			symbol: 'YAXIS',
+			// 			decimals: 18,
+			// 		},
+			// 		{
+			// 			symbol: 'ETH',
+			// 			decimals: 18,
+			// 		},
+			// 	],
+			// 	tokenAddress: '',
+			// 	name: 'Uniswap YAXIS/ETH',
+			// 	symbol: 'YAXIS/ETH UNI-V2 LP',
+			// 	tokenSymbol: 'YAXIS',
+			// 	icon: '',
+			// 	rewards: 'YaxisEth'
+			// },
 			{
 				legacy: true,
 				pid: 6,
