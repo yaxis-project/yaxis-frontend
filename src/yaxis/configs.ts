@@ -87,23 +87,23 @@ export const configs: Record<number, Config> = {
 	1: {
 		contractAddresses: {
 			multicall: '0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441',
-			yaxis: '0xb1dc9124c395c1e97773ab855d66e879f053a289',
+			yaxis: '0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73',
 			yax: '0xb1dc9124c395c1e97773ab855d66e879f053a289',
-			swap: '',
+			swap: '0xCdF398537adbF8617a8401B14DCEe7F67CF8c64b',
 			yaxisChef: '0xc330e7e73717cd13fb6ba068ee871584cf8a194f',
 			pickleChef: '0xbD17B1ce622d73bD438b9E658acA5996dc394b0d',
 			pickleJar: '0x1BB74b5DdC1f4fC91D6f9E7906cf68bc93538e33',
 			weth: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
 			xYaxStaking: '0xeF31Cb88048416E301Fee1eA13e7664b887BA7e8',
 			yAxisMetaVault: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
-			stableSwap3PoolConverter:
-				'0xA5c16eb6eBD72BC72c70Fca3e4faCf389AD4aBE7',
+			stableSwap3PoolConverter: '0x2eab685d85AA52E4d8b6699Ba5aAC3b0c3992C3B',
+			// '0xA5c16eb6eBD72BC72c70Fca3e4faCf389AD4aBE7',
 			uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 		},
 		rewards: {
-			MetaVault: '',
-			Yaxis: '',
-			YaxisEth: ''
+			MetaVault: '0x226f9954A1221cDe805C76CfB312A5d761630E14',
+			Yaxis: '0x3b09B9ADFe11f92225b4C55De89fa81456595CD9',
+			YaxisEth: '0xEDaFe410e2f07ab9D7F1B04316D29C2F49dCb104'
 		},
 		vault: {
 			usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -118,30 +118,30 @@ export const configs: Record<number, Config> = {
 			strategy: '20% of MetaVault farming rewards',
 		},
 		pools: [
-			// {
-			// 	active: true,
-			// 	legacy: false,
-			// 	type: 'uni',
-			// 	liquidId: '/ETH',
-			// 	lpAddress: '',
-			// 	lpUrl: '',
-			// 	lpTokens: [
-			// 		{
-			// 			symbol: 'YAXIS',
-			// 			decimals: 18,
-			// 		},
-			// 		{
-			// 			symbol: 'ETH',
-			// 			decimals: 18,
-			// 		},
-			// 	],
-			// 	tokenAddress: '',
-			// 	name: 'Uniswap YAXIS/ETH',
-			// 	symbol: 'YAXIS/ETH UNI-V2 LP',
-			// 	tokenSymbol: 'YAXIS',
-			// 	icon: '',
-			// 	rewards: 'YaxisEth'
-			// },
+			{
+				active: true,
+				legacy: false,
+				type: 'uni',
+				liquidId: '0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73/ETH',
+				lpAddress: '0xF0E3FdF48661CD10d56692f60BD4eCcd01E9CF64',
+				lpUrl: 'https://info.uniswap.org/pair/0xF0E3FdF48661CD10d56692f60BD4eCcd01E9CF64',
+				lpTokens: [
+					{
+						symbol: 'YAXIS',
+						decimals: 18,
+					},
+					{
+						symbol: 'ETH',
+						decimals: 18,
+					},
+				],
+				tokenAddress: '0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73',
+				name: 'Uniswap YAXIS/ETH',
+				symbol: 'YAXIS/ETH UNI-V2 LP',
+				tokenSymbol: 'YAXIS',
+				icon: '',
+				rewards: 'YaxisEth'
+			},
 			{
 				legacy: true,
 				pid: 6,
