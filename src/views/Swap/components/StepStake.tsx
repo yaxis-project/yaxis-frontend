@@ -10,10 +10,10 @@ import Button from '../../../components/Button'
 import useEnter from '../../../hooks/useEnter'
 import useGlobal from '../../../hooks/useGlobal'
 import useAllowance from '../../../hooks/useAllowance'
+import useTokenBalance from '../../../hooks/useTokenBalance'
 import useApprove from '../../../hooks/useApprove'
 import useContractWrite from '../../../hooks/useContractWrite'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
-import { NavLink } from 'react-router-dom'
 const { Step } = Steps
 const { useBreakpoint } = Grid
 
@@ -69,6 +69,19 @@ const StepStake: React.FC<StepStakeProps> = ({
 		() => config?.pools.find((pool) => pool.name === 'Uniswap YAXIS/ETH'),
 		[config],
 	)
+
+	const { balance: yaxisEthLPBalance } = useTokenBalance(
+		uniYaxisEthLP.lpAddress,
+	)
+
+	const {
+		call: handleStakeYaxisEthLP,
+		loading: loadingStakeYaxisEthLP,
+	} = useContractWrite({
+		contractName: `rewards.YaxisEth`,
+		method: 'stake',
+		description: `stake Uniswap YAXIS ETH LP token`,
+	})
 
 	const mvlt = useMemo(() => {
 		if (stakedMvlt.gt(0))
@@ -156,19 +169,55 @@ const StepStake: React.FC<StepStakeProps> = ({
 							description={'Obtain some ETH to fund the new LP'}
 							status="wait"
 						/>
+					) : yaxisEthLPBalance.gt(0) ? (
+						<Step
+							title={
+								<StyledButton
+									height={'40px'}
+									onClick={() =>
+										handleStakeYaxisEthLP({
+											amount: yaxisEthLPBalance.toString(),
+											args: [
+												yaxisEthLPBalance.toString(),
+											],
+										})
+									}
+									loading={loadingStakeYaxisEthLP}
+								>
+									Stake YAXIS ETH LP token
+								</StyledButton>
+							}
+							description={
+								'Stake your LP token to recieve emissions.'
+							}
+							icon={
+								<div style={{ position: 'relative' }}>
+									<StyledIcon />
+									<div
+										style={{
+											position: 'absolute',
+											bottom: xl ? '-42px' : '-32px',
+											fontWeight: 700,
+										}}
+									>
+										OR
+									</div>
+								</div>
+							}
+						/>
 					) : (
 						<Step
 							title={
-								<StyledButton height={'40px'}>
-									<NavLink
-										to={`/liquidity${
-											uniYaxisEthLP
-												? `/${uniYaxisEthLP.lpAddress}`
-												: ''
-										}`}
-									>
-										Provide Liquidity
-									</NavLink>
+								<StyledButton
+									height={'40px'}
+									onClick={() =>
+										window.open(
+											uniYaxisEthLP.lpUrl,
+											'_blank',
+										)
+									}
+								>
+									Provide Liquidity
 								</StyledButton>
 							}
 							description={
@@ -221,7 +270,17 @@ const StepStake: React.FC<StepStakeProps> = ({
 		return (
 			<Step title={'Stake YAXIS'} description="Done." status="finish" />
 		)
-	}, [yaxisBalance, loadingStakeYAXIS, onEnter, uniYaxisEthLP, xl, balance])
+	}, [
+		yaxisBalance,
+		loadingStakeYAXIS,
+		onEnter,
+		uniYaxisEthLP,
+		yaxisEthLPBalance,
+		handleStakeYaxisEthLP,
+		loadingStakeYaxisEthLP,
+		xl,
+		balance,
+	])
 
 	const message = useMemo(() => {
 		if (stakedMvlt.gt(0) || mvltBalance.gt(0) || yaxisBalance.gt(0))
