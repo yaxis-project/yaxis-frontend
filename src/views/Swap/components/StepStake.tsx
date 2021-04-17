@@ -82,6 +82,7 @@ const StepStake: React.FC<StepStakeProps> = ({
 								})
 							}}
 							loading={loadingUnstakeMVLT}
+							height={'40px'}
 						>
 							Unstake MVLT
 						</StyledButton>
@@ -99,6 +100,7 @@ const StepStake: React.FC<StepStakeProps> = ({
 							<StyledButton
 								onClick={() => onApprove()}
 								loading={loadingApproveMVLT}
+								height={'40px'}
 							>
 								Approve MVLT
 							</StyledButton>
@@ -118,6 +120,7 @@ const StepStake: React.FC<StepStakeProps> = ({
 									args: [mvltBalance.toString()],
 								})
 							}
+							height={'40px'}
 						>
 							Stake MVLT
 						</StyledButton>

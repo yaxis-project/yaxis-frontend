@@ -1,7 +1,8 @@
 import { useState, useMemo, useCallback, Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
-import { Row, notification, Steps, Button } from 'antd'
+import { Row, notification, Steps } from 'antd'
+import Button from '../../../components/Button'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { currentConfig } from '../../../yaxis/configs'
 import useReward from '../../../hooks/useReward'
@@ -53,6 +54,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 							onClick={async () => onReward()}
 							loading={loading}
 							disabled={!pendingYax.toNumber()}
+							height={'40px'}
 						>
 							Claim MetaVault rewards
 						</StyledButton>
@@ -102,6 +104,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 							}}
 							loading={isClaiming}
 							disabled={!earnings.toNumber()}
+							height={'40px'}
 						>
 							Claim Liquidity Pool rewards
 						</StyledButton>
@@ -125,6 +128,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 								}
 							}}
 							loading={loadingUnstakeUni}
+							height={'40px'}
 						>
 							Unstake Uniswap YAX / ETH
 						</StyledButton>
@@ -141,6 +145,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 							onClick={() =>
 								window.open(uniYaxEthLP.lpUrl, '_blank')
 							}
+							height={'40px'}
 						>
 							De-fund Uniswap YAX / ETH
 						</StyledButton>
@@ -178,6 +183,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 				<Step
 					title={
 						<StyledButton
+							height={'40px'}
 							onClick={() =>
 								window.open(linkYaxEthLP.lpUrl, '_blank')
 							}
@@ -233,6 +239,7 @@ const Description = styled(Row)`
 `
 const StyledButton = styled(Button)`
 	border: none;
+	margin-bottom: 10px;
 `
 const StyledIcon = styled(ExclamationCircleOutlined)`
 	font-size: 30px;
