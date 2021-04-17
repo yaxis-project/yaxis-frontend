@@ -18,6 +18,7 @@ export class Contracts {
 	private config: Config
 	public multicall: Contract
 	public vaultConverter: Contract
+	public uniswapRouter: Contract
 	public vault: {
 		usdc: Contract
 		dai: Contract
@@ -70,6 +71,8 @@ export class Contracts {
 			stakePool.tokenContract = new this.web3.eth.Contract(abis.ERC20Abi)
 			this.pools.push(stakePool)
 		}
+		this.uniswapRouter = new this.web3.eth.Contract(abis.UniswapRouterABI)
+
 		this.setProvider(provider, networkId)
 		this.setDefaultAccount(this.web3.eth.defaultAccount)
 	}
@@ -122,6 +125,8 @@ export class Contracts {
 		setProvider(this.vault.usdt, this.config.vault.usdt)
 		setProvider(this.vault.dai, this.config.vault.dai)
 		setProvider(this.vault.threeCrv, this.config.vault.threeCrv)
+
+		setProvider(this.uniswapRouter, this.config.contractAddresses.uniswapRouter)
 
 		this.pools.forEach(
 			({ lpContract, lpAddress, tokenContract, tokenAddress }) => {

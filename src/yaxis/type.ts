@@ -37,6 +37,7 @@ export interface Config {
 		stableSwap3PoolConverter: string
 		pickleChef: string
 		pickleJar: string
+		uniswapRouter: string
 	}
 	rewards: {
 		MetaVault: string
