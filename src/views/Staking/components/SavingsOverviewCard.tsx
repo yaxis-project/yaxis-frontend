@@ -7,12 +7,17 @@ import useStakingAPY from '../../../hooks/useStakingAPY'
 import phrases from './translations'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import { CardRow } from '../../../components/ExpandableSidePanel'
-
 import info from '../../../assets/img/info.svg'
+import APYCalculator from '../../../components/APYCalculator'
+import BigNumber from 'bignumber.js'
 
 const { Text } = Typography
+type Props = { totalUSDBalance: BigNumber; balanceLoading: boolean }
 
-export default function SavingsOverviewCard() {
+const SavingsOverviewCard: React.FC<Props> = ({
+	totalUSDBalance,
+	balanceLoading,
+}) => {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 
@@ -21,6 +26,7 @@ export default function SavingsOverviewCard() {
 	// const { yaxReturns, yaxReturnsUSD } = useAccountReturns()
 	const {
 		balances: { stakedBalance },
+		loading,
 	} = useYaxisStaking()
 
 	const { yaxAPY, metavaultAPY, totalApy } = useStakingAPY()
@@ -61,6 +67,12 @@ export default function SavingsOverviewCard() {
 					<Value value={totalApy.toFixed(2)} numberSuffix="%" />
 				}
 			/>
+			<APYCalculator
+				APY={totalApy.toNumber()}
+				balance={totalUSDBalance}
+				loading={loading || balanceLoading}
+			/>
 		</DetailOverviewCard>
 	)
 }
+export default SavingsOverviewCard
