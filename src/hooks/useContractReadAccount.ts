@@ -33,6 +33,7 @@ const useContractReadAccount = ({ contractName, method, args, result }: Params) 
     useEffect(() => {
         const get = async () => {
             const m = await contract?.methods[method]
+            if (!m) return
             const withArgs = args ? m(...args) : m()
             const response = await withArgs.call()
             result ? setData(response[result]) : setData(response)

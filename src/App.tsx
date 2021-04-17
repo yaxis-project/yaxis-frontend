@@ -91,8 +91,8 @@ const Providers: React.FC = ({ children }) => {
 		<Web3ReactProvider getLibrary={getLibrary}>
 			<Web3ReactProviderFallback getLibrary={getLibrary}>
 				<ThemeProvider theme={theme}>
-					<PricesProvider>
-						<YaxisProvider>
+					<YaxisProvider>
+						<PricesProvider>
 							<LanguageProvider>
 								<TransactionProvider>
 									<FarmsProvider>
@@ -102,8 +102,8 @@ const Providers: React.FC = ({ children }) => {
 									</FarmsProvider>
 								</TransactionProvider>
 							</LanguageProvider>
-						</YaxisProvider>
-					</PricesProvider>
+						</PricesProvider>
+					</YaxisProvider>
 				</ThemeProvider>
 			</Web3ReactProviderFallback>
 		</Web3ReactProvider>

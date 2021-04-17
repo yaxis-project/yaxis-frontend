@@ -1,4 +1,10 @@
-import React, { Fragment, useState, useEffect, useMemo, useCallback } from 'react'
+import React, {
+	Fragment,
+	useState,
+	useEffect,
+	useMemo,
+	useCallback,
+} from 'react'
 import { Card, Radio, Row, Col } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 import {
@@ -10,7 +16,8 @@ import useWindowWidth from '../../hooks/useWindowWidth'
 import styled from 'styled-components'
 import usePriceMap from '../../hooks/usePriceMap'
 import moment from 'moment'
-import theme from "../../theme"
+import theme from '../../theme'
+import BigNumber from 'bignumber.js'
 
 import {
 	WithTooltip,
@@ -69,12 +76,10 @@ const PriceGraph: React.FC = () => {
 
 	const { YAXIS: yaxisPrice } = usePriceMap()
 
-	const windowWidth = useWindowWidth();
+	const windowWidth = useWindowWidth()
 	const chartWidth = useMemo(() => {
-		if (windowWidth < 725)
-			return windowWidth
-		if (windowWidth < 992)
-			return Math.round(windowWidth * 0.74)
+		if (windowWidth < 725) return windowWidth
+		if (windowWidth < 992) return Math.round(windowWidth * 0.74)
 		if (windowWidth < theme.siteWidth + 300)
 			return Math.round(windowWidth * 0.53)
 
@@ -83,8 +88,9 @@ const PriceGraph: React.FC = () => {
 
 	const handleChange = (e: any) => {
 		const day =
-			dayOptions.find((day: SelectableDay) => day.name === e.target.value)
-			|| dayOptions[3]
+			dayOptions.find(
+				(day: SelectableDay) => day.name === e.target.value,
+			) || dayOptions[3]
 		if (day) setDate(day)
 	}
 
@@ -102,12 +108,10 @@ const PriceGraph: React.FC = () => {
 		<StyledCard
 			title={
 				<Row>
-					<Col style={{ paddingRight: "10px" }}>
-						<strong>Yax Price:</strong>
+					<Col style={{ paddingRight: '10px' }}>
+						<strong>YAXIS Price:</strong>
 					</Col>
-					<Col>
-						${yaxisPrice}
-					</Col>
+					<Col>${new BigNumber(yaxisPrice).toFixed(2)}</Col>
 				</Row>
 			}
 			extra={
