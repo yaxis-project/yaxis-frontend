@@ -25,6 +25,7 @@ interface StepProps {
 	step: number
 	current: number
 	setCurrent: Dispatch<SetStateAction<number>>
+	complete: boolean
 }
 
 interface StepSwapProps extends StepProps {
