@@ -132,13 +132,13 @@ function Stake({ pool }) {
 						disabled={depositDisabled}
 						onClick={async () =>
 							await handleStake({
-								amount: new BigNumber(
-									depositAmount,
-								).multipliedBy(10 ** currency.decimals),
+								amount: new BigNumber(depositAmount)
+									.multipliedBy(10 ** currency.decimals)
+									.toString(),
 								args: [
-									new BigNumber(depositAmount).multipliedBy(
-										10 ** currency.decimals,
-									),
+									new BigNumber(depositAmount)
+										.multipliedBy(10 ** currency.decimals)
+										.toString(),
 								],
 								cb: () => setDeposit('0'),
 							})
@@ -163,13 +163,13 @@ function Stake({ pool }) {
 						disabled={withdrawDisabled}
 						onClick={async () =>
 							await handleUnstake({
-								amount: new BigNumber(
-									withdrawAmount,
-								).multipliedBy(10 ** currency.decimals),
+								amount: new BigNumber(withdrawAmount)
+									.multipliedBy(10 ** currency.decimals)
+									.toString(),
 								args: [
-									new BigNumber(withdrawAmount).multipliedBy(
-										10 ** currency.decimals,
-									),
+									new BigNumber(withdrawAmount)
+										.multipliedBy(10 ** currency.decimals)
+										.toString(),
 								],
 								cb: () => setWithdraw('0'),
 							})

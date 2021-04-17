@@ -128,13 +128,13 @@ function Stake({ mvlt }) {
 						disabled={depositDisabled}
 						onClick={async () =>
 							await handleStake({
-								amount: new BigNumber(
-									depositAmount,
-								).multipliedBy(10 ** MVLT.decimals),
+								amount: new BigNumber(depositAmount)
+									.multipliedBy(10 ** MVLT.decimals)
+									.toString(),
 								args: [
-									new BigNumber(depositAmount).multipliedBy(
-										10 ** MVLT.decimals,
-									),
+									new BigNumber(depositAmount)
+										.multipliedBy(10 ** MVLT.decimals)
+										.toString(),
 								],
 								cb: () => setDeposit('0'),
 							})

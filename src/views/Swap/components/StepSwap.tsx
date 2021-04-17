@@ -234,7 +234,7 @@ const StepSwap: React.FC<StepSwapProps> = ({
 					</BalanceTitle>
 				) : (
 					<Row style={{ padding: '30px' }} justify="center">
-						All complete.
+						Step complete.
 					</Row>
 				)}
 				{button}
