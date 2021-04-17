@@ -1,28 +1,17 @@
-import {
-	useState,
-	useMemo,
-	useCallback,
-	useEffect,
-	Dispatch,
-	SetStateAction,
-} from 'react'
+import { useState, useMemo, useCallback, Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
-import { Row, Col, notification } from 'antd'
+import { Row, notification, Steps } from 'antd'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { currentConfig } from '../../../yaxis/configs'
 import useReward from '../../../hooks/useReward'
 import useMetaVault from '../../../hooks/useMetaVault'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
-import Value from '../../../components/Value'
 import Button from '../../../components/Button'
-import { getBalanceNumber } from '../../../utils/formatBalance'
-import Tooltip from '../../../components/Tooltip'
 import BigNumber from 'bignumber.js'
-
-const BalanceTitle = styled(Row)`
-	margin-bottom: 14px;
-`
+import useUnstake from '../../../hooks/useUnstake'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+const { Step } = Steps
 
 interface StepProps {
 	step: number
@@ -33,15 +22,18 @@ interface StepProps {
 interface StepClaimProps extends StepProps {
 	earnings: any
 	pendingYax: any
+	stakedUniLP: BigNumber
+	uniLPBalance: BigNumber
+	linkLPBalance: BigNumber
 }
 
 const StepClaim: React.FC<StepClaimProps> = ({
-	step,
-	setCurrent,
 	earnings = new BigNumber(0),
 	pendingYax = new BigNumber(0),
-}: any) => {
-	const [interacted, setInteracted] = useState(false)
+	stakedUniLP,
+	uniLPBalance,
+	linkLPBalance,
+}) => {
 	const { chainId } = useWeb3Provider()
 
 	const config = useMemo(() => currentConfig(chainId), [chainId])
@@ -50,7 +42,37 @@ const StepClaim: React.FC<StepClaimProps> = ({
 		[config],
 	)
 
-	const { loading, error, onReward } = useReward(uniYaxEthLP.pid)
+	const { loading, onReward } = useReward(uniYaxEthLP.pid)
+
+	const mvRewards = useMemo(() => {
+		if (earnings.gt(0))
+			return (
+				<Step
+					title="Claim MetaVault rewards"
+					description="Gather pending MetaVault rewards"
+					icon={
+						<StyledButton
+							icon={
+								<StyledIcon
+									onClick={async () => {
+										await onReward()
+									}}
+								/>
+							}
+							loading={loading}
+							disabled={!earnings.toNumber()}
+						/>
+					}
+				/>
+			)
+		return (
+			<Step
+				title="MetaVault rewards"
+				description="All complete."
+				status="finish"
+			/>
+		)
+	}, [earnings, loading, onReward])
 
 	const { isClaiming, onGetRewards } = useMetaVault()
 
@@ -69,69 +91,158 @@ const StepClaim: React.FC<StepClaimProps> = ({
 		}
 	}, [onFetchMetaVaultData, onGetRewards])
 
-	useEffect(() => {
-		if (interacted && !earnings.toNumber() && !pendingYax.toNumber())
-			setCurrent(step + 1)
-	}, [earnings, pendingYax, setCurrent, step, interacted])
+	const [loadingUnstakeUni, setLoadingUnstakeUni] = useState(false)
+
+	const { onUnstake } = useUnstake(uniYaxEthLP?.pid, uniYaxEthLP?.name)
+
+	const uniswapLP = useMemo(() => {
+		if (pendingYax.gt(0))
+			return (
+				<Step
+					title="Claim Liquidity Pool rewards"
+					description="Gather pending Uniswap YAX / ETH rewards"
+					icon={
+						<StyledButton
+							icon={
+								<StyledIcon
+									onClick={async () => {
+										await handleClaimRewards()
+									}}
+								/>
+							}
+							loading={isClaiming}
+							disabled={!pendingYax.toNumber()}
+						/>
+					}
+				/>
+			)
+		if (stakedUniLP.gt(0))
+			return (
+				<Step
+					title="Unstake Uniswap YAX / ETH"
+					description="Withdraw your LP token from the previous rewards contract."
+					icon={
+						<StyledButton
+							icon={
+								<StyledIcon
+									onClick={async () => {
+										try {
+											setLoadingUnstakeUni(true)
+											await onUnstake(
+												stakedUniLP.toString(),
+											)
+											setLoadingUnstakeUni(false)
+										} catch {
+											setLoadingUnstakeUni(false)
+										}
+									}}
+								/>
+							}
+							loading={loadingUnstakeUni}
+						/>
+					}
+				/>
+			)
+		if (uniLPBalance.gt(0))
+			return (
+				<Step
+					title="De-fund Uniswap YAX / ETH"
+					description="Remove liquidity from the old liquidity pool."
+					icon={
+						<StyledButton
+							icon={
+								<StyledIcon
+									onClick={() =>
+										window.open(uniYaxEthLP.lpUrl, '_blank')
+									}
+								/>
+							}
+						/>
+					}
+				/>
+			)
+		return (
+			<Step
+				title={'Uniswap YAX / ETH'}
+				description="All complete."
+				status="finish"
+			/>
+		)
+	}, [
+		uniLPBalance,
+		stakedUniLP,
+		loadingUnstakeUni,
+		uniYaxEthLP,
+		onUnstake,
+		handleClaimRewards,
+		isClaiming,
+		pendingYax,
+	])
+
+	const linkYaxEthLP = useMemo(
+		() => config.pools.find((pool) => pool.name === 'Linkswap YAX/ETH'),
+		[config],
+	)
+
+	const linkLP = useMemo(() => {
+		if (linkLPBalance.gt(0))
+			return (
+				<Step
+					title="De-fund Linkswap YAX / ETH"
+					description="Remove liquidity from the old liquidity pool."
+					icon={
+						<StyledButton
+							icon={
+								<StyledIcon
+									onClick={() =>
+										window.open(
+											linkYaxEthLP.lpUrl,
+											'_blank',
+										)
+									}
+								/>
+							}
+						/>
+					}
+				/>
+			)
+		return (
+			<Step
+				title={'Linkswap YAX / ETH'}
+				description="All complete."
+				status="finish"
+			/>
+		)
+	}, [linkLPBalance, linkYaxEthLP])
 
 	return (
 		<>
 			<DetailOverviewCardRow>
-				<BalanceTitle>MetaVault rewards</BalanceTitle>
-				<Row>
-					<Col xs={12} sm={12} md={12}>
-						<Value
-							value={getBalanceNumber(earnings)}
-							numberSuffix=" YAX"
-							decimals={2}
-						/>
-					</Col>
-					<Col xs={12} sm={12} md={12}>
-						<Tooltip title={error}>
-							<Button
-								disabled={!earnings.toNumber()}
-								onClick={async () => {
-									await onReward()
-									setInteracted(true)
-								}}
-								loading={loading}
-								height={'40px'}
-							>
-								Claim
-							</Button>
-						</Tooltip>
-					</Col>
-				</Row>
-			</DetailOverviewCardRow>
-			<DetailOverviewCardRow>
-				<BalanceTitle>LP rewards</BalanceTitle>
-				<Row>
-					<Col xs={12} sm={12} md={12}>
-						<Value
-							value={getBalanceNumber(pendingYax)}
-							numberSuffix=" YAX"
-							decimals={2}
-						/>
-					</Col>
-					<Col xs={12} sm={12} md={12}>
-						<Tooltip title={error}>
-							<Button
-								disabled={!pendingYax.toNumber()}
-								onClick={async () => {
-									await handleClaimRewards()
-									setInteracted(true)
-								}}
-								loading={isClaiming}
-								height={'40px'}
-							>
-								Claim
-							</Button>
-						</Tooltip>
-					</Col>
-				</Row>
+				<Description>First, gather up all of your YAX</Description>
+				<Steps direction="vertical">
+					{mvRewards}
+					{uniswapLP}
+					{linkLP}
+				</Steps>
 			</DetailOverviewCardRow>
 		</>
 	)
 }
 
 export default StepClaim
+
+const Description = styled(Row)`
+	font-size: 16px;
+	padding: 0 10px 20px 10px;
+`
+const StyledButton = styled(Button)`
+	border: none;
+`
+const StyledIcon = styled(ExclamationCircleOutlined)`
+	font-size: 30px;
+	color: gold;
+	&:hover {
+		transition: color 0.5s;
+		color: #e8b923;
+	}
+`
