@@ -8,16 +8,16 @@ import {
 	DetailOverviewCardRow,
 } from '../../../components/DetailOverviewCard'
 import Value from '../../../components/Value'
-import useReturns from '../../../hooks/useReturns'
+// import useReturns from '../../../hooks/useReturns'
 
 const { Text } = Typography
 
-const commas = (num: string) =>
-	Number(num).toLocaleString(
-		undefined, // leave undefined to use the browser's locale,
-		// or use a string like 'en-US' to override it.
-		{ minimumFractionDigits: 2 },
-	)
+// const commas = (num: string) =>
+// 	Number(num).toLocaleString(
+// 		undefined, // leave undefined to use the browser's locale,
+// 		// or use a string like 'en-US' to override it.
+// 		{ minimumFractionDigits: 2 },
+// 	)
 
 /**
  * Creates a loadable detail overview for users on the home page, showing financial returns and account balances.
@@ -28,9 +28,9 @@ export default function HomeOverviewCard() {
 
 	const t = (s: string) => phrases[s][language]
 
-	const {
-		returns: { metaVaultUSD, stakingUSD, totalUSD },
-	} = useReturns()
+	// const {
+	// 	returns: { metaVaultUSD, stakingUSD, totalUSD },
+	// } = useReturns()
 
 	return (
 		<DetailOverviewCard title={t('Your Lifetime Earnings')}>
@@ -40,8 +40,9 @@ export default function HomeOverviewCard() {
 				</Text>
 				<Col>
 					<Value
-						numberPrefix="$"
-						value={commas(totalUSD)}
+						// numberPrefix="$"
+						// value={commas(totalUSD)}
+						value={'Coming soon'}
 						decimals={2}
 					/>
 				</Col>
@@ -50,8 +51,9 @@ export default function HomeOverviewCard() {
 				<StyledText>MetaVault Account</StyledText>
 				<Col>
 					<Value
-						numberPrefix="$"
-						value={commas(metaVaultUSD)}
+						// numberPrefix="$"
+						value={'Coming soon'}
+						// value={commas(metaVaultUSD)}
 						decimals={2}
 					/>
 				</Col>
@@ -60,8 +62,9 @@ export default function HomeOverviewCard() {
 				<StyledText>Staking Account</StyledText>
 				<Col>
 					<Value
-						numberPrefix="$"
-						value={commas(stakingUSD)}
+						// numberPrefix="$"
+						// value={commas(stakingUSD)}
+						value={'Coming soon'}
 						decimals={2}
 					/>
 				</Col>

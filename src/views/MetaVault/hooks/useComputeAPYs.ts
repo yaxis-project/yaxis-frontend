@@ -37,7 +37,10 @@ export default function useComputeAPYs() {
 		fetchCurveApy()
 	}, [setCurveApy])
 
-	const yaxApyPercent = new BigNumber(metaVaultData?.apy || 0)
+	/* TODO: hook up new rewards APY */
+	// const yaxApyPercent = new BigNumber(metaVaultData?.apy || 0)
+	const yaxApyPercent = new BigNumber(0)
+
 	const pickleApyPercent = new BigNumber(0) // new BigNumber(pickleAPY).multipliedBy(0.8)
 	const lpApyPercent = new BigNumber(curveApy).times(100)
 	const threeCrvApyPercent = new BigNumber(
