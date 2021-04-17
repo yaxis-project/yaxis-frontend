@@ -35,22 +35,30 @@ interface StepSwapProps extends StepProps {
 }
 
 const StepSwap: React.FC<StepSwapProps> = ({
-	step,
-	current,
-	setCurrent,
 	balances: { stakedBalance, yaxBalance },
 }) => {
-	const [interacted, setInteracted] = useState(false)
-	const [loadingAllowance, setLoadingAllowance] = useState(true)
-	const [allowance, setAllowance] = useState('0')
 	const { account } = useWeb3Provider()
 	const { yaxis } = useGlobal()
 
-	const { onApprove, loading: loadingApprove } = useApprove(
+	const [allowanceYAX, setAllowanceYAX] = useState('0')
+	const [loadingAllowanceYAX, setLoadingAllowanceYAX] = useState(true)
+	const { onApprove: onApproveYAX, loading: loadingApproveYAX } = useApprove(
 		yaxis?.contracts?.yax,
 		yaxis?.contracts?.swap.options.address,
 		'YAX',
 	)
+
+	const [allowanceSYAX, setAllowanceSYAX] = useState('0')
+	const [loadingAllowanceSYAX, setLoadingAllowanceSYAX] = useState(true)
+	const {
+		onApprove: onApproveSYAX,
+		loading: loadingApproveSYAX,
+	} = useApprove(
+		yaxis?.contracts?.xYaxStaking,
+		yaxis?.contracts?.swap.options.address,
+		'sYAX',
+	)
+
 	const { call, loading: loadingSwap } = useContractWrite({
 		contractName: 'swap',
 		method: 'swap',
@@ -64,17 +72,30 @@ const StepSwap: React.FC<StepSwapProps> = ({
 
 	useEffect(() => {
 		const checkAllowance = async () => {
-			const a = await yaxis?.contracts?.yax.methods
-				.allowance(account, yaxis?.contracts?.swap.options.address)
-				.call()
-			setAllowance(a)
-			setLoadingAllowance(false)
+			try {
+				const aYax = await yaxis?.contracts?.yax.methods
+					.allowance(account, yaxis?.contracts?.swap.options.address)
+					.call()
+				setAllowanceYAX(aYax)
+				const aSYax = await yaxis?.contracts?.yax.methods
+					.allowance(
+						account,
+						yaxis?.contracts?.xYaxStaking.options.address,
+					)
+					.call()
+				setAllowanceSYAX(aSYax)
+				setLoadingAllowanceYAX(false)
+				setLoadingAllowanceSYAX(false)
+			} catch (err) {
+				console.log('Error checking YAX and sYAX allowance: ', err)
+			}
 		}
 		if (account && yaxis?.contracts) {
-			setLoadingAllowance(true)
+			setLoadingAllowanceYAX(true)
+			setLoadingAllowanceSYAX(true)
 			checkAllowance()
 		}
-	}, [account, yaxis?.contracts, loadingApprove])
+	}, [account, yaxis?.contracts])
 
 	const longWalletBalance = useMemo(
 		() => yaxBalance.toFixed(2).length > 8,
@@ -87,9 +108,54 @@ const StepSwap: React.FC<StepSwapProps> = ({
 		[stakedBalance],
 	)
 
-	useEffect(() => {
-		if (interacted && totalYAX.eq(0)) setCurrent(step + 1)
-	}, [totalYAX, setCurrent, step, interacted])
+	const button = useMemo(() => {
+		if (loadingAllowanceYAX || loadingAllowanceSYAX)
+			return <Button loading={true} disabled={true} />
+
+		if (ethers.constants.MaxUint256.gt(allowanceSYAX))
+			return (
+				<Button
+					loading={loadingApproveSYAX}
+					disabled={totalYAX.eq(0)}
+					onClick={() => onApproveSYAX()}
+				>
+					Approve sYAX
+				</Button>
+			)
+
+		if (ethers.constants.MaxUint256.gt(allowanceYAX))
+			return (
+				<Button
+					loading={loadingApproveYAX}
+					disabled={totalYAX.eq(0)}
+					onClick={() => onApproveYAX()}
+				>
+					Approve YAX
+				</Button>
+			)
+
+		return (
+			<Button
+				loading={loadingSwap}
+				disabled={totalYAX.eq(0)}
+				onClick={async () => await call()}
+			>
+				Swap
+			</Button>
+		)
+	}, [
+		loadingAllowanceYAX,
+		allowanceYAX,
+		onApproveYAX,
+		loadingApproveYAX,
+		allowanceSYAX,
+		loadingAllowanceSYAX,
+		loadingApproveSYAX,
+		onApproveSYAX,
+		loadingSwap,
+		call,
+		totalYAX,
+	])
 
 	return (
 		<>
@@ -168,34 +234,7 @@ const StepSwap: React.FC<StepSwapProps> = ({
 						All complete.
 					</Row>
 				)}
-				{loadingAllowance ? (
-					<Button
-						loading={loadingAllowance}
-						disabled={loadingAllowance}
-					></Button>
-				) : ethers.constants.MaxUint256.eq(allowance) ? (
-					<Button
-						loading={loadingSwap}
-						disabled={totalYAX.eq(0)}
-						onClick={async () => {
-							setInteracted(true)
-							await call()
-						}}
-					>
-						Swap
-					</Button>
-				) : (
-					<Button
-						loading={loadingApprove}
-						disabled={totalYAX.eq(0)}
-						onClick={() => {
-							setInteracted(true)
-							onApprove()
-						}}
-					>
-						Approve
-					</Button>
-				)}
+				{button}
 			</DetailOverviewCardRow>
 		</>
 	)
