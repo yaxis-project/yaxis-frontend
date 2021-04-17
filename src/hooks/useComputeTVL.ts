@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js'
 import useMetaVaultData from './useMetaVaultData'
 import usePriceMap from './usePriceMap'
 import useGlobal from './useGlobal'
+import useContractRead from './useContractRead'
 import { getTotalStaking } from '../yaxis/utils'
 
 /**
@@ -23,9 +24,25 @@ export default function useComputeTVL() {
 
 	const { farms, stakedValues } = useFarms()
 	const { yaxis, block } = useGlobal()
-	const { YAXIS: yaxisPrice } = usePriceMap()
+	const { ETH } = usePriceMap()
+
+	const {
+		data: reserves,
+	} = useContractRead({
+		contractName: `pools.0.lpContract`,
+		method: 'getReserves()',
+	})
 
 	const fetchData = useCallback(async () => {
+		let yaxisPrice = new BigNumber(0)
+		const { _reserve0, _reserve1 } = reserves
+		let t0 = new BigNumber(_reserve0)
+		let t1 = new BigNumber(_reserve1)
+		if (t0.gt(0) && t1.gt(0)) {
+			t0 = t0.dividedBy(10 ** 18)
+			t1 = t1.dividedBy(10 ** 18)
+			yaxisPrice = t1.dividedBy(t0).multipliedBy(ETH)
+		}
 		const stakedSupply = await getTotalStaking(yaxis)
 		const stakingTvl = new BigNumber(stakedSupply)
 			.div(1e18)
@@ -49,11 +66,11 @@ export default function useComputeTVL() {
 			yaxisPrice: new BigNumber(yaxisPrice),
 			// pricePerFullShare,
 		})
-	}, [farms, metaVaultData, stakedValues, yaxis, yaxisPrice])
+	}, [farms, metaVaultData, stakedValues, yaxis, ETH, reserves])
 
 	useEffect(() => {
-		if (yaxis && stakedValues && farms) fetchData()
-	}, [stakedValues, farms, yaxis, fetchData, block])
+		if (yaxis && stakedValues && farms && reserves) fetchData()
+	}, [stakedValues, farms, yaxis, fetchData, block, reserves])
 
 	return totalValues
 }

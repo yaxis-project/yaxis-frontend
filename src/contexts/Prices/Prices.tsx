@@ -7,6 +7,8 @@ import {
 } from 'react'
 import { getCoinGeckoPrices, Ticker } from './utils'
 import useGlobal from '../../hooks/useGlobal'
+import useContractRead from '../../hooks/useContractRead'
+import BigNumber from 'bignumber.js'
 
 export const defaultPriceMap: Record<Ticker, number> = {
 	YFI: 0,
@@ -41,17 +43,36 @@ export function PricesProvider({
 	const [value, setValue] = useState(defaultPriceMap)
 	const [isInitialized, setIsInitialized] = useState<boolean>(false)
 	const { block } = useGlobal()
+
+	const { data: reserves } = useContractRead({
+		contractName: `pools.0.lpContract`,
+		method: 'getReserves()',
+	})
+
 	useEffect(() => {
 		;(async () => {
-			try {
-				const priceMap = await getCoinGeckoPrices()
-				setValue(priceMap)
-				setIsInitialized(true)
-			} catch (e) {
-				console.log('Could net fetch prices', e)
-			}
+			if (reserves)
+				try {
+					const priceMap = await getCoinGeckoPrices()
+					// YAXIS price kludge
+					let yaxisPrice = new BigNumber(0)
+					const { _reserve0, _reserve1 } = reserves
+					let t0 = new BigNumber(_reserve0)
+					let t1 = new BigNumber(_reserve1)
+					if (t0.gt(0) && t1.gt(0)) {
+						t0 = t0.dividedBy(10 ** 18)
+						t1 = t1.dividedBy(10 ** 18)
+						yaxisPrice = t1.dividedBy(t0).multipliedBy(priceMap.ETH)
+					}
+					//
+					priceMap.YAXIS = yaxisPrice.toNumber()
+					setValue(priceMap)
+					setIsInitialized(true)
+				} catch (e) {
+					console.log('Could net fetch prices', e)
+				}
 		})()
-	}, [block])
+	}, [reserves, block])
 
 	return (
 		<Context.Provider value={{ initialized: isInitialized, ...value }}>

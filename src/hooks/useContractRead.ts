@@ -24,6 +24,7 @@ const useContractRead = ({ contractName, method, args }: Params) => {
     useEffect(() => {
         const get = async () => {
             const m = await contract?.methods[method]
+            if (!m) return
             const withArgs = args ? m(args) : m()
             const response = await withArgs.call()
             setData(response)
@@ -31,6 +32,7 @@ const useContractRead = ({ contractName, method, args }: Params) => {
         }
         get()
     }, [contract, method, args, block])
+
 
     return { loading, data }
 }
