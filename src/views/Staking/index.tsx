@@ -32,7 +32,7 @@ const Staking: React.FC = () => {
 
 	const { chainId } = useWeb3Provider()
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
-	const address = currentConfig(chainId).contractAddresses['xYaxStaking']
+	const address = currentConfig(chainId).rewards.Yaxis
 
 	return (
 		<div className="savings-view">
