@@ -1,7 +1,7 @@
 import { useState, useMemo, Dispatch, SetStateAction } from 'react'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import { Steps, Button, Grid } from 'antd'
+import { Steps, Button, Grid, Row } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { currentConfig } from '../../../yaxis/configs'
@@ -222,9 +222,17 @@ const StepStake: React.FC<StepStakeProps> = ({
 		)
 	}, [yaxisBalance, loadingStakeYAXIS, onEnter, uniYaxisEthLP, xl, balance])
 
+	const message = useMemo(() => {
+		if (stakedMvlt.gt(0) || mvltBalance.gt(0) || yaxisBalance.gt(0))
+			return 'Stake your tokens to recieve emissions!'
+
+		return 'All complete.'
+	}, [yaxisBalance, stakedMvlt, mvltBalance])
+
 	return (
 		<>
 			<DetailOverviewCardRow>
+				<Description>{message}</Description>
 				<Steps direction="vertical">
 					{mvlt}
 					{yaxis}
@@ -235,6 +243,11 @@ const StepStake: React.FC<StepStakeProps> = ({
 }
 
 export default StepStake
+
+const Description = styled(Row)`
+	font-size: 16px;
+	padding: 0 10px 20px 10px;
+`
 
 const StyledIcon = styled(ExclamationCircleOutlined)`
 	font-size: 30px;
