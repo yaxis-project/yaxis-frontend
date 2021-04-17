@@ -7,9 +7,12 @@ import useMyLiquidity from '../../../hooks/useMyLiquidity'
 import { StakePool } from '../../../yaxis/type'
 import Claim from './Claim'
 import LegacyClaim from './LegacyClaim'
+import APYCalculator from '../../../components/APYCalculator'
+import BigNumber from 'bignumber.js'
 
 interface LiquidityOverviewCardProps {
 	pool: StakePool
+	totalUSDBalance: BigNumber
 }
 
 /**
@@ -17,6 +20,7 @@ interface LiquidityOverviewCardProps {
  */
 const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 	pool,
+	totalUSDBalance,
 }) => {
 	const lpFarmAPY = useLPFarmAPY(pool.symbol)
 	const { userPoolShare } = useMyLiquidity(pool)
@@ -57,6 +61,10 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 						decimals={2}
 					/>
 				}
+			/>
+			<APYCalculator
+				APY={lpFarmAPY.toNumber()}
+				balance={totalUSDBalance}
 			/>
 		</DetailOverviewCard>
 	)

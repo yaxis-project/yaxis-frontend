@@ -24,6 +24,7 @@ const StyledCol = styled(Col)`
 const Staking: React.FC = () => {
 	const {
 		balances: { stakedBalanceUSD },
+		loading,
 	} = useYaxisStaking()
 
 	const languages = useContext(LanguageContext)
@@ -60,7 +61,10 @@ const Staking: React.FC = () => {
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<Row>
-							<SavingsOverviewCard />
+							<SavingsOverviewCard
+								totalUSDBalance={stakedBalanceUSD}
+								balanceLoading={loading}
+							/>
 						</Row>
 						<Row style={{ marginTop: 15 }}>
 							<VaultStatsCard />
