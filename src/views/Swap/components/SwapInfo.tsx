@@ -83,17 +83,19 @@ export default function SwapInfo() {
 									<br />
 									The first step is to claim any unclaimed
 									rewards that are pending on MetaVault or a
-									Liquidity Pool.
+									Liquidity Pool and unstake and exit any
+									Liqudity Pools that you are funding.
 									<br />
 									<br />
 									Next click the SWAP button!
-									<br />
 									<br />
 									No need to unstake your staked YAX. This
 									all-in-one action will swap your account
 									balance and swap your staking balance.
 									<br />
 									<br />
+									Finally re-stake your tokens for some juicy
+									emissions.
 								</Body>
 							</Panel>
 						</StyledCollapse>
@@ -184,10 +186,12 @@ export default function SwapInfo() {
 											Unstake the LP tokens from yAxis
 										</li>
 										<li>Withdraw your funds from the LP</li>
+										<li>Swap your YAX for YAXIS</li>
 										<li>
 											Add your funds to the new
 											corresponding YAXIS LP
 										</li>
+										<li>Stake your new LP tokens</li>
 									</ol>
 									The extra rewards will be well worth it!
 								</Body>
