@@ -109,7 +109,10 @@ const StepSwap: React.FC<StepSwapProps> = ({
 		if (loadingAllowanceYAX || loadingAllowanceSYAX)
 			return <Button loading={true} disabled={true} />
 
-		if (ethers.constants.MaxUint256.gt(allowanceSYAX))
+		if (
+			stakedBalance.gt(0) &&
+			ethers.constants.MaxUint256.gt(allowanceSYAX)
+		)
 			return (
 				<Button
 					loading={loadingApproveSYAX}
@@ -120,7 +123,7 @@ const StepSwap: React.FC<StepSwapProps> = ({
 				</Button>
 			)
 
-		if (ethers.constants.MaxUint256.gt(allowanceYAX))
+		if (yaxBalance.gt(0) && ethers.constants.MaxUint256.gt(allowanceYAX))
 			return (
 				<Button
 					loading={loadingApproveYAX}
@@ -152,6 +155,8 @@ const StepSwap: React.FC<StepSwapProps> = ({
 		loadingSwap,
 		call,
 		totalYAX,
+		stakedBalance,
+		yaxBalance,
 	])
 
 	return (
