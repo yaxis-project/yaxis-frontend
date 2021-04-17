@@ -1,5 +1,6 @@
 import { useContext, useState, useMemo, useCallback } from 'react'
 import * as currencies from '../../../utils/currencies'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useContractWrite from '../../../hooks/useContractWrite'
 import useAllowance from '../../../hooks/useAllowance'
 import useApprove from '../../../hooks/useApprove'
@@ -10,7 +11,7 @@ import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import Button from '../../../components/Button'
 import Input from '../../../components/Input'
-import { Row, Col, Typography, Card, Form } from 'antd'
+import { Row, Col, Typography, Card, Form, Result } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 const { Text } = Typography
@@ -184,6 +185,8 @@ function Stake({ pool }) {
 }
 
 export default function ApprovalWrapper({ pool }) {
+	const { account } = useWeb3Provider()
+
 	const languages = useContext(LanguageContext)
 	const t = useCallback(
 		(s: string) => phrases[s][languages?.state?.selected],
@@ -207,9 +210,19 @@ export default function ApprovalWrapper({ pool }) {
 		yaxis?.contracts?.rewards[pool.rewards].options.address,
 		pool.name,
 	)
-	return (
-		<Card className="staking-card" title={<strong>{t('Staking')}</strong>}>
-			{allowance.isEqualTo(0) ? (
+
+	const body = useMemo(() => {
+		if (!account)
+			return (
+				<Row justify="center">
+					<Result
+						status="warning"
+						title="Connect a wallet to start earning rewards."
+					/>
+				</Row>
+			)
+		if (allowance.isEqualTo(0))
+			return (
 				<>
 					<Row justify="center" style={{ paddingBottom: '20px' }}>
 						<Col>
@@ -225,9 +238,13 @@ export default function ApprovalWrapper({ pool }) {
 						</Col>
 					</Row>
 				</>
-			) : (
-				<Stake pool={pool} />
-			)}
+			)
+		return <Stake pool={pool} />
+	}, [account, allowance, loading, onApprove, pool, t])
+
+	return (
+		<Card className="staking-card" title={<strong>{t('Staking')}</strong>}>
+			{body}
 		</Card>
 	)
 }
