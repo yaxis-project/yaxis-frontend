@@ -114,6 +114,7 @@ const StyledLink = styled.a`
 	padding-right: ${(props) => props.theme.spacing[3]}px;
 	text-decoration: none;
 	font-size: 18px;
+	font-weight: 600;
 `
 
 const StyledLinkButton = styled.a`
