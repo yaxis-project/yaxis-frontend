@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import { Affix, Row, Steps, Result } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
@@ -11,7 +11,7 @@ import StepStake from './StepStake'
 const { Step } = Steps
 
 export default function SwapCard() {
-	const { chainId } = useWeb3Provider()
+	const { account, chainId } = useWeb3Provider()
 	const [current, setCurrent] = useState(3)
 	const [initialized, setInitialized] = useState(false)
 	const [toDo, setToDo] = useState([false, false, false])
@@ -25,6 +25,9 @@ export default function SwapCard() {
 				setCurrent={setCurrent}
 				earnings={data?.earnings}
 				pendingYax={new BigNumber(data?.mvEarnings || 0)}
+				stakedUniLP={data?.stakedUniLP}
+				uniLPBalance={data?.uniLPBalance}
+				linkLPBalance={data?.linkLPBalance}
 			/>
 		),
 		[data, current],
@@ -49,9 +52,6 @@ export default function SwapCard() {
 				current={current}
 				setCurrent={setCurrent}
 				yaxisBalance={data?.yaxisBalance}
-				stakedUniLP={data?.stakedUniLP}
-				uniLPBalance={data?.uniLPBalance}
-				linkLPBalance={data?.linkLPBalance}
 				mvltBalance={data?.mvltBalance}
 				stakedMvlt={data?.stakedMvlt}
 			/>
@@ -59,40 +59,51 @@ export default function SwapCard() {
 		[data, current],
 	)
 
+	const getStatus = useCallback((account, todo, current, index) => {
+		if (!account) return 'wait'
+		if (!todo) return 'finish'
+		if (current === index) return 'process'
+		console.log(current, index)
+		return 'wait'
+	}, [])
+
 	const steps = useMemo(
 		() => [
 			{
 				title: 'Claim',
 				content: ClaimContent,
-				status: toDo[1]
-					? current === 0
-						? 'process'
-						: 'wait'
-					: 'finish',
+				status: getStatus(account, toDo[0], current, 0),
 			},
 			{
 				title: 'Swap',
 				content: SwapContent,
-				status: toDo[1]
-					? current === 1
-						? 'process'
-						: 'wait'
-					: 'finish',
+				status: getStatus(account, toDo[1], current, 1),
 			},
 			{
 				title: 'Stake',
 				content: StakeContent,
-				status: toDo[2]
-					? current === 2
-						? 'process'
-						: 'wait'
-					: 'finish',
+				status: getStatus(account, toDo[2], current, 2),
 			},
 		],
-		[ClaimContent, SwapContent, StakeContent, toDo, current],
+		[
+			ClaimContent,
+			SwapContent,
+			StakeContent,
+			toDo,
+			current,
+			account,
+			getStatus,
+		],
 	)
 
 	const content = useMemo(() => {
+		if (!account)
+			return (
+				<Result
+					status="warning"
+					title="Connect a wallet to see if actions are needed."
+				/>
+			)
 		if (!initialized)
 			return (
 				<Row
@@ -105,7 +116,7 @@ export default function SwapCard() {
 			)
 		if (steps[current]) return steps[current].content
 		return <Result status="success" title="All up to date!" />
-	}, [current, initialized, steps])
+	}, [account, current, initialized, steps])
 
 	useEffect(() => {
 		const determineStep = () => {
@@ -121,18 +132,18 @@ export default function SwapCard() {
 				stakedMvlt,
 			} = data
 
-			const step1 = earnings.gt(0) || new BigNumber(mvEarnings).gt(0)
+			const step1 =
+				earnings.gt(0) ||
+				new BigNumber(mvEarnings).gt(0) ||
+				stakedUniLP.gt(0) ||
+				uniLPBalance.gt(0) ||
+				linkLPBalance.gt(0)
 
 			const step2 =
 				balances?.stakedBalance.gt(0) || balances?.yaxBalance.gt(0)
 
 			const step3 =
-				yaxisBalance.gt(0) ||
-				stakedUniLP.gt(0) ||
-				uniLPBalance.gt(0) ||
-				linkLPBalance.gt(0) ||
-				mvltBalance.gt(0) ||
-				stakedMvlt.gt(0)
+				yaxisBalance.gt(0) || mvltBalance.gt(0) || stakedMvlt.gt(0)
 
 			setToDo([step1, step2, step3])
 
@@ -167,6 +178,7 @@ export default function SwapCard() {
 										| 'finish'
 										| 'wait'
 								}
+								disabled={!account}
 							/>
 						))}
 					</Steps>
