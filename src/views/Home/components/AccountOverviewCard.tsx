@@ -27,9 +27,9 @@ interface AccountOverviewCardProps {
 // 	}
 // `
 const StyledImage = styled.img`
-@media only screen and (max-width: 575px) {
-	margin-left: 50px;
-}
+	@media only screen and (max-width: 575px) {
+		margin-left: 50px;
+	}
 `
 
 const StyledCard = styled(Card)`
@@ -40,7 +40,7 @@ const StyledTitle = styled.div`
 	display: inline-block;
 	font-size: 22px;
 	font-style: normal;
-	font-weight: 500;
+	font-weight: 600;
 	line-height: 29px;
 	letter-spacing: 0em;
 `
@@ -54,7 +54,7 @@ export default function AccountOverviewCard(props: AccountOverviewCardProps) {
 	return (
 		<StyledCard>
 			<Row gutter={16}>
-				<Col xs={6} sm={2} md={2} lg={3} >
+				<Col xs={6} sm={2} md={2} lg={3}>
 					<StyledImage src={logo} height="36" alt="logo" />
 				</Col>
 
