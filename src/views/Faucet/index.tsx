@@ -338,7 +338,6 @@ const Faucet: React.FC = () => {
 				</Row>
 				<Row gutter={16}>
 					{yaxis?.contracts.pools.map((pool) => {
-						console.log(pool)
 						return (
 							<StyledCol xs={24} sm={24} md={24} lg={8}>
 								<Card

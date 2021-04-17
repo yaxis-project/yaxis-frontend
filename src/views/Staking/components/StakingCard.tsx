@@ -50,9 +50,8 @@ export default function StakingCard() {
 		try {
 			setLoading(true)
 			notification.info({
-				message: t('Please approve staking transaction.'),
+				message: 'Please sign the staking transaction.',
 			})
-			console.log(depositAmount)
 			await onEnter(depositAmount)
 			setDeposit('0')
 			setLoading(false)
@@ -63,13 +62,15 @@ export default function StakingCard() {
 			})
 			setLoading(false)
 		}
-	}, [depositAmount, onEnter, t])
+	}, [depositAmount, onEnter])
 
-	const unstakeYAX = async () => {
+	const [withdrawAmount, setWithdraw] = useState<string>('')
+
+	const unstakeYAX = useCallback(async () => {
 		try {
 			setLoading(true)
 			notification.info({
-				message: t('Please approve YAXIS unstaking transaction.'),
+				message: 'Please sign YAXIS unstaking transaction.',
 			})
 			const sYax = new BigNumber(withdrawAmount).times(1e18)
 			await onLeave(sYax.toString())
@@ -82,7 +83,7 @@ export default function StakingCard() {
 			})
 			setLoading(false)
 		}
-	}
+	}, [onLeave, withdrawAmount])
 
 	const updateDeposit = (value: string) =>
 		!isNaN(Number(value)) && setDeposit(value)
@@ -100,7 +101,6 @@ export default function StakingCard() {
 	)
 	const maxDeposit = () => setDeposit(yaxisBalance.toString() || '0')
 
-	const [withdrawAmount, setWithdraw] = useState<string>('')
 	const updateWithdraw = (value: string) =>
 		!isNaN(Number(value)) && setWithdraw(value)
 	const errorWithdraw = useMemo(
