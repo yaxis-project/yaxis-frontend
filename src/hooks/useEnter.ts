@@ -20,7 +20,7 @@ const useEnter = () => {
 		async (a: string) => {
 			const rewardsYaxis = yaxis?.contracts?.rewards.Yaxis
 			const yaxisToken = yaxis?.contracts?.yaxis
-			const amount = new BigNumber(a).times(10 ** 18)
+			const amount = new BigNumber(a).times(10 ** 18).toString()
 			const txHash = await yaxisToken.methods
 				.transferAndCall(
 					rewardsYaxis.options.address,
