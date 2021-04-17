@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import useLPContractData from '../../../hooks/useLPContractData'
 import { getApy } from '../../../utils/number'
 import { getYaxisPrice } from '../../../yaxis/utils'
-import useRewardPerBlock from '../../../hooks/useRewardPerBlock'
+// import useRewardPerBlock from '../../../hooks/useRewardPerBlock'
 
 /**
  * Returns farm APY
@@ -14,7 +14,7 @@ import useRewardPerBlock from '../../../hooks/useRewardPerBlock'
 export default function useLPFarmAPY(farmID: string) {
 	const { farms, stakedValues } = useFarms()
 	const yaxisPrice = getYaxisPrice(stakedValues, farms)
-	const rewardPerBlock = useRewardPerBlock()
+	// const rewardPerBlock = useRewardPerBlock()
 	const {
 		farmData: { pid },
 	} = useLPContractData(farmID)
@@ -24,9 +24,12 @@ export default function useLPFarmAPY(farmID: string) {
 		let farmApy = getApy(
 			stakedValue?.tvl,
 			yaxisPrice.toNumber(),
-			rewardPerBlock,
+			// rewardPerBlock,
+			0,
 			poolWeight,
 		)
 		return new BigNumber(farmApy || '0')
-	}, [stakedValues, yaxisPrice, rewardPerBlock, pid])
+	}, [stakedValues, yaxisPrice,
+		// rewardPerBlock,
+		pid])
 }

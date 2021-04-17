@@ -95,7 +95,7 @@ const StepSwap: React.FC<StepSwapProps> = ({
 			setLoadingAllowanceSYAX(true)
 			checkAllowance()
 		}
-	}, [account, yaxis?.contracts])
+	}, [account, yaxis?.contracts, loadingApproveSYAX, loadingApproveYAX])
 
 	const longWalletBalance = useMemo(
 		() => yaxBalance.toFixed(2).length > 8,
