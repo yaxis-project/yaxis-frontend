@@ -15,6 +15,7 @@ export const configs: Record<number, Config> = {
 				'0x4981D4A898e1C503BFA06B751f932600E124108f',
 			pickleChef: '0x76f4A0CE3753F745e97e588F8423230B83f4a2F4',
 			pickleJar: '0x13F4cc6C239aBaD03EbD2deAA6A7107E9c6c9BEB',
+			uniswapRouter: '0x8D037Ea525f150BaD41D0caB990665fE944Cb2F7',
 		},
 		rewards: {
 			MetaVault: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8',
@@ -97,6 +98,7 @@ export const configs: Record<number, Config> = {
 			yAxisMetaVault: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
 			stableSwap3PoolConverter:
 				'0xA5c16eb6eBD72BC72c70Fca3e4faCf389AD4aBE7',
+			uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 		},
 		rewards: {
 			MetaVault: '',
@@ -116,6 +118,7 @@ export const configs: Record<number, Config> = {
 			strategy: '20% of MetaVault farming rewards',
 		},
 		pools: [
+
 			{
 				legacy: true,
 				pid: 6,
