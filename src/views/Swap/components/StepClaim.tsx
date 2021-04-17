@@ -215,10 +215,23 @@ const StepClaim: React.FC<StepClaimProps> = ({
 		)
 	}, [linkLPBalance, linkYaxEthLP])
 
+	const message = useMemo(() => {
+		if (
+			earnings.gt(0) ||
+			pendingYax.gt(0) ||
+			stakedUniLP.gt(0) ||
+			uniLPBalance.gt(0) ||
+			linkLPBalance.gt(0)
+		)
+			return 'First, gather up all of your YAX'
+
+		return 'All complete.'
+	}, [earnings, pendingYax, stakedUniLP, uniLPBalance, linkLPBalance])
+
 	return (
 		<>
 			<DetailOverviewCardRow>
-				<Description>First, gather up all of your YAX</Description>
+				<Description>{message}</Description>
 				<Steps direction="vertical">
 					{mvRewards}
 					{uniswapLP}
