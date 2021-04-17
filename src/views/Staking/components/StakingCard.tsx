@@ -57,7 +57,7 @@ export default function StakingCard() {
 			setLoading(false)
 		} catch (err) {
 			notification.info({
-				message: `An error occured duirng YAXIS staking:`,
+				message: `An error occured during YAXIS staking:`,
 				description: err.message,
 			})
 			setLoading(false)
