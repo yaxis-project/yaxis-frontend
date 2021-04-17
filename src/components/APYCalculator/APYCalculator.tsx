@@ -6,7 +6,7 @@ import info from '../../assets/img/info.svg'
 import BigNumber from 'bignumber.js'
 
 const { Text } = Typography
-type Props = { balance: BigNumber; APY: number; loading: boolean }
+type Props = { balance: BigNumber; APY: number; loading?: boolean }
 
 const marks = {
 	1: {
@@ -31,11 +31,7 @@ const marks = {
 	},
 }
 
-const APYCalculator: React.FC<Props> = ({
-	balance: walletBalance,
-	APY,
-	loading,
-}) => {
+const APYCalculator: React.FC<Props> = ({ balance: walletBalance, APY }) => {
 	const [value, setValue] = useState(12)
 
 	const handleOnChange = useCallback(
@@ -79,7 +75,11 @@ const APYCalculator: React.FC<Props> = ({
 									defaultValue={12}
 									min={1}
 									max={12}
-									tipFormatter={(value) => `${value} months`}
+									tipFormatter={(value) =>
+										value > 1
+											? `${value} months`
+											: `${value} month`
+									}
 									onChange={handleOnChange}
 								/>
 							</Col>
