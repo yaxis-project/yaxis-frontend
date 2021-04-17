@@ -1,11 +1,12 @@
 import { useState, useMemo, Dispatch, SetStateAction } from 'react'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import { Steps, Button, Grid, Row } from 'antd'
+import { Steps, Grid, Row } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { currentConfig } from '../../../yaxis/configs'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
+import Button from '../../../components/Button'
 import useEnter from '../../../hooks/useEnter'
 import useGlobal from '../../../hooks/useGlobal'
 import useAllowance from '../../../hooks/useAllowance'
@@ -73,68 +74,60 @@ const StepStake: React.FC<StepStakeProps> = ({
 		if (stakedMvlt.gt(0))
 			return (
 				<Step
-					title="MVLT Unstake"
+					title={
+						<StyledButton
+							onClick={async () => {
+								await handleUnstake({
+									args: [stakedMvlt],
+								})
+							}}
+							loading={loadingUnstakeMVLT}
+						>
+							Unstake MVLT
+						</StyledButton>
+					}
 					description="Withdraw your MVLT from the previous rewards contract."
 					status="wait"
-					icon={
-						<StyledButton
-							icon={
-								<StyledIcon
-									onClick={async () => {
-										await handleUnstake({
-											args: [stakedMvlt],
-										})
-									}}
-								/>
-							}
-							loading={loadingUnstakeMVLT}
-						/>
-					}
+					icon={<StyledIcon />}
 				/>
 			)
 		if (mvltBalance.gt(0)) {
 			if (allowance.isLessThan(ethers.constants.MaxUint256.toString()))
 				return (
 					<Step
-						title="Stake MVLT"
-						description="Approve the new rewards contract to use your MVLT."
-						icon={
+						title={
 							<StyledButton
-								icon={
-									<StyledIcon
-										onClick={() => {
-											onApprove()
-										}}
-									/>
-								}
+								onClick={() => onApprove()}
 								loading={loadingApproveMVLT}
-							/>
+							>
+								Approve MVLT
+							</StyledButton>
 						}
+						description="Approve the new rewards contract to use your MVLT."
+						icon={<StyledIcon />}
 					/>
 				)
 			return (
 				<Step
-					title="Stake MVLT"
-					description="Deposit your MVLT into the new rewards contract."
-					icon={
+					title={
 						<StyledButton
-							icon={
-								<StyledIcon
-									onClick={() => {
-										handleStake({
-											amount: mvltBalance,
-											args: [mvltBalance],
-										})
-									}}
-								/>
-							}
 							loading={loadingStakeMVLT}
-						/>
+							onClick={() =>
+								handleStake({
+									amount: mvltBalance.toString(),
+									args: [mvltBalance.toString()],
+								})
+							}
+						>
+							Stake MVLT
+						</StyledButton>
 					}
+					description="Deposit your MVLT into the new rewards contract."
+					icon={<StyledIcon />}
 				/>
 			)
 		}
-		return <Step title="MVLT" description="All complete." status="finish" />
+		return <Step title="Stake MVLT" description="Done." status="finish" />
 	}, [
 		stakedMvlt,
 		mvltBalance,
@@ -154,7 +147,7 @@ const StepStake: React.FC<StepStakeProps> = ({
 		if (yaxisBalance.gt(0))
 			return (
 				<>
-					{balance.gt(0) ? (
+					{balance.eq(0) ? (
 						<Step
 							title={'Provide Liquidity'}
 							description={'Obtain some ETH to fund the new LP'}
@@ -162,12 +155,8 @@ const StepStake: React.FC<StepStakeProps> = ({
 						/>
 					) : (
 						<Step
-							title={'Provide Liquidity'}
-							description={
-								'Fund the new YAXIS ETH LP for more rewards.'
-							}
-							icon={
-								<div style={{ position: 'relative' }}>
+							title={
+								<StyledButton height={'40px'}>
 									<NavLink
 										to={`/liquidity${
 											uniYaxisEthLP
@@ -175,8 +164,17 @@ const StepStake: React.FC<StepStakeProps> = ({
 												: ''
 										}`}
 									>
-										<StyledButton icon={<StyledIcon />} />
+										Provide Liquidity
 									</NavLink>
+								</StyledButton>
+							}
+							description={
+								'Fund the new YAXIS ETH LP for more rewards.'
+							}
+							icon={
+								<div style={{ position: 'relative' }}>
+									<StyledIcon />
+
 									<div
 										style={{
 											position: 'absolute',
@@ -191,35 +189,34 @@ const StepStake: React.FC<StepStakeProps> = ({
 						/>
 					)}
 					<Step
-						title={'Stake YAXIS'}
-						description="Lock up your YAXIS for extra APY and voting power."
-						icon={
+						title={
 							<StyledButton
-								icon={
-									<StyledIcon
-										onClick={async () => {
-											try {
-												setLoadingStakeYAXIS(true)
-												await onEnter(
-													yaxisBalance
-														.div(10 ** 18)
-														.toString(),
-												)
-												setLoadingStakeYAXIS(false)
-											} catch {
-												setLoadingStakeYAXIS(false)
-											}
-										}}
-									/>
-								}
+								onClick={async () => {
+									try {
+										setLoadingStakeYAXIS(true)
+										await onEnter(
+											yaxisBalance
+												.div(10 ** 18)
+												.toString(),
+										)
+										setLoadingStakeYAXIS(false)
+									} catch {
+										setLoadingStakeYAXIS(false)
+									}
+								}}
 								loading={loadingStakeYAXIS}
-							/>
+								height={'40px'}
+							>
+								Stake YAXIS
+							</StyledButton>
 						}
+						description="Lock up your YAXIS for extra APY and voting power."
+						icon={<StyledIcon />}
 					/>
 				</>
 			)
 		return (
-			<Step title={'YAXIS'} description="All complete." status="finish" />
+			<Step title={'Stake YAXIS'} description="Done." status="finish" />
 		)
 	}, [yaxisBalance, loadingStakeYAXIS, onEnter, uniYaxisEthLP, xl, balance])
 
@@ -227,7 +224,7 @@ const StepStake: React.FC<StepStakeProps> = ({
 		if (stakedMvlt.gt(0) || mvltBalance.gt(0) || yaxisBalance.gt(0))
 			return 'Stake your tokens to recieve emissions!'
 
-		return 'All complete.'
+		return 'Step complete.'
 	}, [yaxisBalance, stakedMvlt, mvltBalance])
 
 	return (
@@ -260,4 +257,5 @@ const StyledIcon = styled(ExclamationCircleOutlined)`
 `
 const StyledButton = styled(Button)`
 	border: none;
+	margin-bottom: 10px;
 `

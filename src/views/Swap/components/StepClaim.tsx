@@ -48,27 +48,23 @@ const StepClaim: React.FC<StepClaimProps> = ({
 		if (pendingYax.gt(0))
 			return (
 				<Step
-					title="Claim MetaVault rewards"
-					description="Gather pending MetaVault rewards"
-					icon={
+					title={
 						<StyledButton
-							icon={
-								<StyledIcon
-									onClick={async () => {
-										await onReward()
-									}}
-								/>
-							}
+							onClick={async () => onReward()}
 							loading={loading}
 							disabled={!pendingYax.toNumber()}
-						/>
+						>
+							Claim MetaVault rewards
+						</StyledButton>
 					}
+					description="Gather pending MetaVault rewards"
+					icon={<StyledIcon />}
 				/>
 			)
 		return (
 			<Step
 				title="MetaVault rewards"
-				description="All complete."
+				description="Done."
 				status="finish"
 			/>
 		)
@@ -99,72 +95,64 @@ const StepClaim: React.FC<StepClaimProps> = ({
 		if (earnings.gt(0))
 			return (
 				<Step
-					title="Claim Liquidity Pool rewards"
-					description="Gather pending Uniswap YAX / ETH rewards"
-					icon={
+					title={
 						<StyledButton
-							icon={
-								<StyledIcon
-									onClick={async () => {
-										await handleClaimRewards()
-									}}
-								/>
-							}
+							onClick={async () => {
+								await handleClaimRewards()
+							}}
 							loading={isClaiming}
 							disabled={!earnings.toNumber()}
-						/>
+						>
+							Claim Liquidity Pool rewards
+						</StyledButton>
 					}
+					description="Gather pending Uniswap YAX / ETH rewards"
+					icon={<StyledIcon />}
 				/>
 			)
 		if (stakedUniLP.gt(0))
 			return (
 				<Step
-					title="Unstake Uniswap YAX / ETH"
-					description="Withdraw your LP token from the previous rewards contract."
-					icon={
+					title={
 						<StyledButton
-							icon={
-								<StyledIcon
-									onClick={async () => {
-										try {
-											setLoadingUnstakeUni(true)
-											await onUnstake(
-												stakedUniLP.toString(),
-											)
-											setLoadingUnstakeUni(false)
-										} catch {
-											setLoadingUnstakeUni(false)
-										}
-									}}
-								/>
-							}
+							onClick={async () => {
+								try {
+									setLoadingUnstakeUni(true)
+									await onUnstake(stakedUniLP.toString())
+									setLoadingUnstakeUni(false)
+								} catch {
+									setLoadingUnstakeUni(false)
+								}
+							}}
 							loading={loadingUnstakeUni}
-						/>
+						>
+							Unstake Uniswap YAX / ETH
+						</StyledButton>
 					}
+					description="Withdraw your LP token from the previous rewards contract."
+					icon={<StyledIcon />}
 				/>
 			)
 		if (uniLPBalance.gt(0))
 			return (
 				<Step
-					title="De-fund Uniswap YAX / ETH"
-					description="Remove liquidity from the old liquidity pool."
-					icon={
+					title={
 						<StyledButton
-							icon={
-								<StyledIcon
-									onClick={() =>
-										window.open(uniYaxEthLP.lpUrl, '_blank')
-									}
-								/>
+							onClick={() =>
+								window.open(uniYaxEthLP.lpUrl, '_blank')
 							}
-						/>
+						>
+							De-fund Uniswap YAX / ETH
+						</StyledButton>
 					}
+					description="Remove liquidity from the old liquidity pool."
+					icon={<StyledIcon />}
 				/>
 			)
 		return (
 			<Step
 				title={'Uniswap YAX / ETH'}
-				description="All complete."
+				description="Done."
 				status="finish"
 			/>
 		)
@@ -188,28 +176,23 @@ const StepClaim: React.FC<StepClaimProps> = ({
 		if (linkLPBalance.gt(0))
 			return (
 				<Step
-					title="De-fund Linkswap YAX / ETH"
-					description="Remove liquidity from the old liquidity pool."
-					icon={
+					title={
 						<StyledButton
-							icon={
-								<StyledIcon
-									onClick={() =>
-										window.open(
-											linkYaxEthLP.lpUrl,
-											'_blank',
-										)
-									}
-								/>
+							onClick={() =>
+								window.open(linkYaxEthLP.lpUrl, '_blank')
 							}
-						/>
+						>
+							De-fund Linkswap YAX / ETH
+						</StyledButton>
 					}
+					description="Remove liquidity from the old liquidity pool."
+					icon={<StyledIcon />}
 				/>
 			)
 		return (
 			<Step
 				title={'Linkswap YAX / ETH'}
-				description="All complete."
+				description="Done."
 				status="finish"
 			/>
 		)
@@ -225,7 +208,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 		)
 			return 'First, gather up all of your YAX'
 
-		return 'All complete.'
+		return 'Step complete.'
 	}, [earnings, pendingYax, stakedUniLP, uniLPBalance, linkLPBalance])
 
 	return (
