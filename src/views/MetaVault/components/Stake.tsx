@@ -42,7 +42,7 @@ function Stake({ mvlt }) {
 	})
 	const { call: handleUnstake, loading: loadingUnstake } = useContractWrite({
 		contractName: `rewards.MetaVault`,
-		method: 'unstake',
+		method: 'withdraw',
 		description: `unstake MVLT`,
 	})
 	const {
