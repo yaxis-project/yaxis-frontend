@@ -270,7 +270,7 @@ export default function SwapInfo() {
 										<b>Growth for users - 8.8 million:</b>
 										<li>
 											4 million (36.4%) tokens towards
-											YAXIS staking and Liqudity Pools.
+											YAXIS staking and Liquidity Pools.
 										</li>
 										<li>
 											4 million (36.4%) tokens towards

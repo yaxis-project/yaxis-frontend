@@ -43,35 +43,6 @@ const StepClaim: React.FC<StepClaimProps> = ({
 		[config],
 	)
 
-	const { loading, onReward } = useReward(uniYaxEthLP.pid)
-
-	const mvRewards = useMemo(() => {
-		if (pendingYax.gt(0))
-			return (
-				<Step
-					title={
-						<StyledButton
-							onClick={async () => onReward()}
-							loading={loading}
-							disabled={!pendingYax.toNumber()}
-							height={'40px'}
-						>
-							Claim MetaVault rewards
-						</StyledButton>
-					}
-					description="Gather pending MetaVault rewards"
-					icon={<StyledIcon />}
-				/>
-			)
-		return (
-			<Step
-				title="MetaVault rewards"
-				description="Done."
-				status="finish"
-			/>
-		)
-	}, [pendingYax, loading, onReward])
-
 	const { isClaiming, onGetRewards } = useMetaVault()
 
 	const { onFetchMetaVaultData } = useMetaVaultData('V2')
@@ -89,8 +60,35 @@ const StepClaim: React.FC<StepClaimProps> = ({
 		}
 	}, [onFetchMetaVaultData, onGetRewards])
 
-	const [loadingUnstakeUni, setLoadingUnstakeUni] = useState(false)
+	const mvRewards = useMemo(() => {
+		if (pendingYax.gt(0))
+			return (
+				<Step
+					title={
+						<StyledButton
+							onClick={async () => handleClaimRewards()}
+							loading={isClaiming}
+							disabled={!pendingYax.toNumber()}
+							height={'40px'}
+						>
+							Claim MetaVault rewards
+						</StyledButton>
+					}
+					description="Gather pending MetaVault rewards"
+					icon={<StyledIcon />}
+				/>
+			)
+		return (
+			<Step
+				title="MetaVault rewards"
+				description="Done."
+				status="finish"
+			/>
+		)
+	}, [pendingYax, isClaiming, handleClaimRewards])
 
+	const [loadingUnstakeUni, setLoadingUnstakeUni] = useState(false)
+	const { loading, onReward } = useReward(uniYaxEthLP.pid)
 	const { onUnstake } = useUnstake(uniYaxEthLP?.pid, uniYaxEthLP?.name)
 
 	const uniswapLP = useMemo(() => {
@@ -100,9 +98,9 @@ const StepClaim: React.FC<StepClaimProps> = ({
 					title={
 						<StyledButton
 							onClick={async () => {
-								await handleClaimRewards()
+								await onReward()
 							}}
-							loading={isClaiming}
+							loading={loading}
 							disabled={!earnings.toNumber()}
 							height={'40px'}
 						>
@@ -167,8 +165,8 @@ const StepClaim: React.FC<StepClaimProps> = ({
 		loadingUnstakeUni,
 		uniYaxEthLP,
 		onUnstake,
-		handleClaimRewards,
-		isClaiming,
+		onReward,
+		loading,
 		earnings,
 	])
 

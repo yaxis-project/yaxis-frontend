@@ -23,7 +23,6 @@ const SavingsOverviewCard: React.FC<Props> = ({
 
 	const t = (s: string) => phrases[s][language]
 
-	// const { yaxReturns, yaxReturnsUSD } = useAccountReturns()
 	const {
 		balances: { stakedBalance },
 		loading,
