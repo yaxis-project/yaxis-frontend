@@ -91,7 +91,7 @@ const StepStake: React.FC<StepStakeProps> = ({
 						<StyledButton
 							onClick={async () => {
 								await handleUnstake({
-									args: [stakedMvlt],
+									args: [stakedMvlt.toString()],
 								})
 							}}
 							loading={loadingUnstakeMVLT}

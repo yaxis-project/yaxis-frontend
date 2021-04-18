@@ -160,13 +160,13 @@ function Stake({ mvlt }) {
 						disabled={withdrawDisabled}
 						onClick={async () =>
 							await handleUnstake({
-								amount: new BigNumber(
-									withdrawAmount,
-								).multipliedBy(10 ** MVLT.decimals),
+								amount: new BigNumber(withdrawAmount)
+									.multipliedBy(10 ** MVLT.decimals)
+									.toString(),
 								args: [
-									new BigNumber(withdrawAmount).multipliedBy(
-										10 ** MVLT.decimals,
-									),
+									new BigNumber(withdrawAmount)
+										.multipliedBy(10 ** MVLT.decimals)
+										.toString(),
 								],
 								cb: () => setWithdraw('0'),
 							})
