@@ -95,7 +95,6 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 			setUserBalances(nextState)
 		}
 	}, [stakedValues, userPoolShare, pool, id])
-
 	// const hasBalance = Object.values(userBalances).some(val => Number(val)) || Number(stakedBalance.toFixed(2))
 
 	return (
