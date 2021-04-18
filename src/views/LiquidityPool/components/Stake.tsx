@@ -103,7 +103,7 @@ function Stake({ pool }) {
 					<Value
 						value={getBalanceNumber(rawWalletBalance)}
 						decimals={2}
-						numberSuffix={` ${currency.name}`}
+						numberSuffix={` ${pool.symbol}`}
 					/>
 				</Col>
 				<Col span={12} className={'balance'}>
@@ -111,7 +111,7 @@ function Stake({ pool }) {
 					<Value
 						value={getBalanceNumber(rawStakedBalance)}
 						decimals={2}
-						numberSuffix={` ${currency.name}`}
+						numberSuffix={` ${pool.symbol}`}
 					/>
 				</Col>
 			</Row>
