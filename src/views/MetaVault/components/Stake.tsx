@@ -142,7 +142,7 @@ function Stake({ mvlt }) {
 						}
 						loading={loadingStake}
 					>
-						{t('Deposit')}
+						{t('Stake')}
 					</Button>
 				</Col>
 				<Col span={12}>
@@ -173,7 +173,7 @@ function Stake({ mvlt }) {
 						}
 						loading={loadingUnstake}
 					>
-						{t('Withdraw')}
+						{t('Unstake')}
 					</Button>
 				</Col>
 			</Row>

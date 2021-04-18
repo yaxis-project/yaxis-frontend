@@ -145,7 +145,7 @@ function Stake({ pool }) {
 						}
 						loading={loadingStake}
 					>
-						{t('Deposit')}
+						{t('Stake')}
 					</Button>
 				</Col>
 				<Col span={12}>
@@ -176,7 +176,7 @@ function Stake({ pool }) {
 						}
 						loading={loadingUnstake}
 					>
-						{t('Withdraw')}
+						{t('Unstake')}
 					</Button>
 				</Col>
 			</Row>
