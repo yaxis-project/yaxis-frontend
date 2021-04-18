@@ -237,7 +237,7 @@ const StepSwap: React.FC<StepSwapProps> = ({
 				{stakedBalance.plus(yaxBalance).gt(0) ? (
 					<BalanceTitle justify="center">
 						<Col>
-							You will recieve{' '}
+							You will receive{' '}
 							{formatBN(stakedBalance.plus(yaxBalance))} YAXIS
 						</Col>
 					</BalanceTitle>
