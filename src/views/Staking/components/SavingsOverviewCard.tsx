@@ -2,10 +2,10 @@ import { useContext } from 'react'
 import { Typography, Tooltip, Row } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import Value from '../../../components/Value'
-import useYaxisStaking from '../../../hooks/useYAXISStaking'
 import useStakingAPY from '../../../hooks/useStakingAPY'
 import phrases from './translations'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
+import Claim from '../../../components/Claim'
 import { CardRow } from '../../../components/ExpandableSidePanel'
 import info from '../../../assets/img/info.svg'
 import APYCalculator from '../../../components/APYCalculator'
@@ -23,24 +23,11 @@ const SavingsOverviewCard: React.FC<Props> = ({
 
 	const t = (s: string) => phrases[s][language]
 
-	const {
-		balances: { stakedBalance },
-		loading,
-	} = useYaxisStaking()
-
 	const { yaxAPY, metavaultAPY, totalApy } = useStakingAPY()
 
 	return (
 		<DetailOverviewCard title={t('Account Overview')}>
-			<CardRow
-				main={t('YAXIS Staked')}
-				secondary={
-					<Value
-						value={stakedBalance.toFixed(3)}
-						numberSuffix=" YAXIS"
-					/>
-				}
-			/>
+			<Claim rewardsContract="Yaxis" />
 			<CardRow
 				main={
 					<Tooltip
@@ -69,7 +56,6 @@ const SavingsOverviewCard: React.FC<Props> = ({
 			<APYCalculator
 				APY={totalApy.toNumber()}
 				balance={totalUSDBalance}
-				loading={loading || balanceLoading}
 			/>
 		</DetailOverviewCard>
 	)

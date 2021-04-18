@@ -6,7 +6,7 @@ import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import { CardRow } from '../../../components/ExpandableSidePanel'
-import Claim from './Claim'
+import Claim from '../../../components/Claim'
 import info from '../../../assets/img/info.svg'
 import APYCalculator from '../../../components/APYCalculator'
 import useComputeAPYs from '../hooks/useComputeAPYs'
@@ -36,7 +36,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 
 	return (
 		<DetailOverviewCard title={t('Account Overview')}>
-			<Claim />
+			<Claim rewardsContract="MetaVault" />
 			<CardRow
 				main={
 					<Tooltip

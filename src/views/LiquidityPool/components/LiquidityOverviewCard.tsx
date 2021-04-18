@@ -5,7 +5,7 @@ import Value from '../../../components/Value'
 import useLPFarmAPY from '../hooks/useLPFarmAPY'
 import useMyLiquidity from '../../../hooks/useMyLiquidity'
 import { StakePool } from '../../../yaxis/type'
-import Claim from './Claim'
+import Claim from '../../../components/Claim'
 import LegacyClaim from './LegacyClaim'
 import APYCalculator from '../../../components/APYCalculator'
 import BigNumber from 'bignumber.js'
@@ -27,7 +27,11 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 
 	return (
 		<DetailOverviewCard title="Overview">
-			{pool?.legacy ? <LegacyClaim pool={pool} /> : <Claim pool={pool} />}
+			{pool?.legacy ? (
+				<LegacyClaim pool={pool} />
+			) : (
+				<Claim rewardsContract={pool.rewards} />
+			)}
 			<CardRow
 				main="Share of Pool"
 				secondary={

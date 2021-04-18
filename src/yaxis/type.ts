@@ -1,5 +1,11 @@
 import { Contract } from 'web3-eth-contract'
 
+export interface RewardsContracts {
+	MetaVault: string
+	Yaxis: string
+	YaxisEth: string
+}
+
 export interface StakePool {
 	pid?: number
 	active: boolean
@@ -21,7 +27,7 @@ export interface StakePool {
 	icon: string
 	lpUrl: string
 	legacy?: boolean
-	rewards?: string
+	rewards?: keyof RewardsContracts
 }
 
 export interface Config {
@@ -39,11 +45,7 @@ export interface Config {
 		pickleJar: string
 		uniswapRouter: string
 	}
-	rewards: {
-		MetaVault: string
-		Yaxis: string
-		YaxisEth: string
-	},
+	rewards: RewardsContracts
 	pools: StakePool[]
 	vault: {
 		usdc: string
