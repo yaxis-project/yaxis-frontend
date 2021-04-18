@@ -12,9 +12,9 @@ interface Params {
 }
 
 interface CallOptions {
-	amount?: any
+	amount?: string
 	cb?: Function
-	args?: any[]
+	args?: string[]
 }
 
 const useContractWrite = ({ contractName, method, description }: Params) => {
