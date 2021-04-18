@@ -45,7 +45,7 @@ function Stake({ pool }) {
 	})
 	const { call: handleUnstake, loading: loadingUnstake } = useContractWrite({
 		contractName: `rewards.${pool.rewards}`,
-		method: 'unstake',
+		method: 'withdraw',
 		description: `unstake ${pool.name}`,
 	})
 	const {

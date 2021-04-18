@@ -37,7 +37,7 @@ const Farms: React.FC = ({ children }) => {
 							wethContact,
 							priceMap,
 							farm,
-							yaxis.contracts,
+							yaxis?.contracts,
 						),
 					),
 				)
@@ -50,7 +50,7 @@ const Farms: React.FC = ({ children }) => {
 		farms,
 		setBalance,
 		priceMap,
-		yaxis.contracts,
+		yaxis?.contracts,
 	])
 
 	useEffect(() => {
