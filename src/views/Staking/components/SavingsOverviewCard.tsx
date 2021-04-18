@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { Typography, Tooltip, Row } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import Value from '../../../components/Value'
-import useStakingAPY from '../../../hooks/useStakingAPY'
+import useAPY from '../../../hooks/useAPY'
 import phrases from './translations'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import Claim from '../../../components/Claim'
@@ -23,7 +23,10 @@ const SavingsOverviewCard: React.FC<Props> = ({
 
 	const t = (s: string) => phrases[s][language]
 
-	const { yaxAPY, metavaultAPY, totalApy } = useStakingAPY()
+	const {
+		data: { threeCrvApyPercent, yaxisApyPercent, lpApyPercent, totalAPY },
+		loading,
+	} = useAPY('Yaxis', 0.2)
 
 	return (
 		<DetailOverviewCard title={t('Account Overview')}>
@@ -33,10 +36,12 @@ const SavingsOverviewCard: React.FC<Props> = ({
 					<Tooltip
 						title={
 							<>
-								<Row>YAXIS APY:</Row>
-								<Row>{yaxAPY?.toFixed(2)}%</Row>
+								<Row>Curve LP APY (20%):</Row>
+								<Row>{lpApyPercent?.toFixed(2)}%</Row>
 								<Row>CRV APY (20%):</Row>
-								<Row>{metavaultAPY?.toFixed(2)}%</Row>
+								<Row>{threeCrvApyPercent?.toFixed(2)}%</Row>
+								<Row>YAXIS rewards APY:</Row>
+								<Row>{yaxisApyPercent?.toFixed(2)}%</Row>
 							</>
 						}
 					>
@@ -50,12 +55,13 @@ const SavingsOverviewCard: React.FC<Props> = ({
 					</Tooltip>
 				}
 				secondary={
-					<Value value={totalApy.toFixed(2)} numberSuffix="%" />
+					<Value value={totalAPY.toFixed(2)} numberSuffix="%" />
 				}
 			/>
 			<APYCalculator
-				APY={totalApy.toNumber()}
+				APY={totalAPY.toNumber()}
 				balance={totalUSDBalance}
+				loading={balanceLoading || loading}
 			/>
 		</DetailOverviewCard>
 	)

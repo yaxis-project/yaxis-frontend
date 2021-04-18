@@ -44,24 +44,24 @@ const Value: React.FC<ValueProps> = ({
 			{typeof value == 'string' ? (
 				value
 			) : (
-					<>
-						<CountUp
-							start={start}
-							end={end}
-							decimals={
-								decimals !== undefined
-									? decimals
-									: end < 0
-										? 4
-										: end > 1e5
-											? 0
-											: 3
-							}
-							duration={1}
-							separator=","
-						/>
-					</>
-				)}
+				<>
+					<CountUp
+						start={start}
+						end={end}
+						decimals={
+							decimals !== undefined
+								? decimals
+								: end < 0
+								? 4
+								: end > 1e5
+								? 0
+								: 3
+						}
+						duration={1}
+						separator=","
+					/>
+				</>
+			)}
 			{numberSuffix && <span className="suffix">{numberSuffix}</span>}
 			{extra && <span className="extra">{extra}</span>}
 		</StyledValue>
@@ -74,9 +74,7 @@ const StyledValue = styled.div<{
 	secondary?: boolean
 }>`
 	font-size: ${({ fontSize }) => fontSize ?? '18px'};
-	${(props) =>
-		props.secondary ? "" :
-			"font-weight: 700;"}
+	${(props) => (props.secondary ? '' : 'font-weight: 700;')}
 	display: ${({ inline }) => inline && 'inline-block'};
 
 	.extra {
