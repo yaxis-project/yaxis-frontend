@@ -51,7 +51,7 @@ export default function SwapInfo() {
 					</TextLink>{' '}
 					through at least 1 year of staking rewards emissions. This
 					involves locking up your tokens in a smart contract to
-					recieve extra YAXIS token on every block. They can be
+					receive extra YAXIS token on every block. They can be
 					removed at any time. The token will have a maximum supply of
 					11 million YAXIS tokens - with 1 million of those coming
 					from the token swap. The full proposal is detailed{' '}
@@ -84,7 +84,7 @@ export default function SwapInfo() {
 									The first step is to claim any unclaimed
 									rewards that are pending on MetaVault or a
 									Liquidity Pool and unstake and exit any
-									Liqudity Pools that you are funding.
+									Liquidity Pools that you are funding.
 									<br />
 									<br />
 									Next click the SWAP button!
@@ -112,12 +112,12 @@ export default function SwapInfo() {
 								key="5"
 							>
 								<Body>
-									To recieve emissions for being a MetaVault
+									To receive emissions for being a MetaVault
 									user you will now have to stake. The
 									MetaVault has a form of "IOU" token, called
 									MVLT, to represent funds that are deposited.
 									These must be locked up in the rewards smart
-									contract to recieve APY.
+									contract to receive APY.
 									<br />
 									<br />
 									If you have already completed all of the
@@ -169,7 +169,7 @@ export default function SwapInfo() {
 							active={active.includes('1')}
 						>
 							<Panel
-								header={'What about the Liqudity Pools?'}
+								header={'What about the Liquidity Pools?'}
 								key="1"
 							>
 								<Body>

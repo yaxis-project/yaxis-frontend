@@ -119,7 +119,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 			/>
 			{pool.lpTokens.map(({ symbol }, i) => (
 				<LiquidityRow
-					key={`LiqudityRow-${symbol}-${i}`}
+					key={`LiquidityRow-${symbol}-${i}`}
 					icon={
 						typeof currencies[symbol] === 'function'
 							? currencies[symbol]()?.icon

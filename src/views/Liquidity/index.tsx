@@ -16,7 +16,7 @@ const columns = [
 	},
 ]
 
-const Liqudity: React.FC = () => {
+const Liquidity: React.FC = () => {
 	const { farms } = useFarms()
 	const activePools = useMemo(() => farms.filter((pool) => pool.active), [
 		farms,
@@ -100,4 +100,4 @@ const Liqudity: React.FC = () => {
 	)
 }
 
-export default Liqudity
+export default Liquidity

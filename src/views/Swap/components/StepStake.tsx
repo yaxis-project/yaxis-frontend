@@ -188,7 +188,7 @@ const StepStake: React.FC<StepStakeProps> = ({
 								</StyledButton>
 							}
 							description={
-								'Stake your LP token to recieve emissions.'
+								'Stake your LP token to receive emissions.'
 							}
 							icon={
 								<div style={{ position: 'relative' }}>
@@ -284,7 +284,7 @@ const StepStake: React.FC<StepStakeProps> = ({
 
 	const message = useMemo(() => {
 		if (stakedMvlt.gt(0) || mvltBalance.gt(0) || yaxisBalance.gt(0))
-			return 'Stake your tokens to recieve emissions!'
+			return 'Stake your tokens to receive emissions!'
 
 		return 'Step complete.'
 	}, [yaxisBalance, stakedMvlt, mvltBalance])
