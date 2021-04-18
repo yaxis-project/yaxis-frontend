@@ -6,7 +6,7 @@ import {
 	Tooltip as BaseTooltip,
 	TooltipProps as BaseTooltipProps,
 } from 'antd'
-import useStakingAPY from '../../../hooks/useStakingAPY'
+import useAPY from '../../../hooks/useAPY'
 import { ArrowRightOutlined } from '@ant-design/icons'
 import { NavLink } from 'react-router-dom'
 
@@ -20,12 +20,14 @@ const Link = styled(NavLink)`
 `
 
 const Title: React.FC = () => {
-	const { totalApy } = useStakingAPY()
+	const {
+		data: { totalAPY },
+	} = useAPY('Yaxis', 0.2)
 	return (
 		<Link to="/staking">
 			<Row>
 				<Col span={22}>
-					Earn <b>{totalApy.toFixed(2)}% APY</b> by staking! 💰
+					Earn <b>{totalAPY.toFixed(2)}% APY</b> by staking! 💰
 				</Col>
 				<Col span={1}>
 					<ArrowRightOutlined style={{ marginRight: '10px' }} />

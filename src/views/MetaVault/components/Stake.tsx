@@ -1,8 +1,9 @@
 import { useContext, useState, useMemo, useCallback } from 'react'
 import { MVLT } from '../../../utils/currencies'
+import { LoadingOutlined } from '@ant-design/icons'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useContractWrite from '../../../hooks/useContractWrite'
-import useAllowance from '../../../hooks/useAllowance'
+import useContractReadAccount from '../../../hooks/useContractReadAccount'
 import useApprove from '../../../hooks/useApprove'
 import useGlobal from '../../../hooks/useGlobal'
 import useRewardsContract from '../../../hooks/useRewardsContract'
@@ -191,10 +192,14 @@ export default function ApprovalWrapper() {
 
 	const { yaxis } = useGlobal()
 
-	const allowance = useAllowance(
-		yaxis?.contracts.yaxisMetaVault,
-		yaxis?.contracts?.rewards.MetaVault.options.address,
-	)
+	const {
+		loading: loadingAllowance,
+		data: allowance,
+	} = useContractReadAccount({
+		contractName: `yaxisMetaVault`,
+		method: 'allowance',
+		args: [account, yaxis?.contracts?.rewards.MetaVault.options.address],
+	})
 
 	const { onApprove, loading } = useApprove(
 		yaxis?.contracts.yaxisMetaVault,
@@ -209,10 +214,17 @@ export default function ApprovalWrapper() {
 					<Result
 						status="warning"
 						title="Connect a wallet to start earning rewards."
+						style={{ height: '202px' }}
 					/>
 				</Row>
 			)
-		if (allowance.isEqualTo(0))
+		if (loadingAllowance)
+			return (
+				<Row justify="center" style={{ height: '202px' }}>
+					<LoadingOutlined style={{ fontSize: 54 }} spin />
+				</Row>
+			)
+		if (new BigNumber(allowance).isEqualTo(0))
 			return (
 				<>
 					<Row justify="center" style={{ paddingBottom: '20px' }}>
@@ -233,6 +245,7 @@ export default function ApprovalWrapper() {
 		return <Stake mvlt={yaxis?.contracts?.yaxisMetaVault.options.address} />
 	}, [
 		account,
+		loadingAllowance,
 		allowance,
 		loading,
 		onApprove,

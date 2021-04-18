@@ -1,9 +1,8 @@
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import { CardRow } from '../../../components/ExpandableSidePanel'
-// import useAccountReturns from '../../../hooks/useAccountReturns'
 import Value from '../../../components/Value'
-import useLPFarmAPY from '../hooks/useLPFarmAPY'
 import useMyLiquidity from '../../../hooks/useMyLiquidity'
+import useAPY from '../../../hooks/useAPY'
 import { StakePool } from '../../../yaxis/type'
 import Claim from '../../../components/Claim'
 import LegacyClaim from './LegacyClaim'
@@ -22,7 +21,11 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 	pool,
 	totalUSDBalance,
 }) => {
-	const lpFarmAPY = useLPFarmAPY(pool.symbol)
+	const {
+		data: { yaxisApyPercent },
+		loading,
+	} = useAPY('Yaxis', 0.2)
+
 	const { userPoolShare } = useMyLiquidity(pool)
 
 	return (
@@ -60,15 +63,16 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 				}
 				secondary={
 					<Value
-						value={lpFarmAPY.toNumber()}
+						value={yaxisApyPercent.toNumber()}
 						numberSuffix="%"
 						decimals={2}
 					/>
 				}
 			/>
 			<APYCalculator
-				APY={lpFarmAPY.toNumber()}
+				APY={yaxisApyPercent.toNumber()}
 				balance={totalUSDBalance}
+				loading={loading}
 			/>
 		</DetailOverviewCard>
 	)
