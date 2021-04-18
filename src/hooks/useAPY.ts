@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import useYAxisAPY from './useYAxisAPY'
 import useContractRead from './useContractRead'
+import useComputeTVL from './useComputeTVL'
 import BigNumber from 'bignumber.js'
 import { getCurveApyApi } from '../yaxis/utils'
 import { RewardsContracts } from '../yaxis/type'
@@ -19,6 +20,19 @@ export default function useAPY(
 ) {
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState(defaultState)
+
+
+    const { stakingTvl,
+        liquidityTvl,
+        metavaultTvl,
+        yaxisPrice
+    } = useComputeTVL()
+
+    const tvl = useMemo(() => {
+        if (rewardsContract === 'Yaxis') return stakingTvl
+        if (rewardsContract === 'YaxisEth') return liquidityTvl
+        return metavaultTvl
+    }, [stakingTvl, liquidityTvl, metavaultTvl, rewardsContract])
 
     /* Curve.fi gauges */
     const { yAxisAPY, isInitialized } = useYAxisAPY()
@@ -46,11 +60,17 @@ export default function useAPY(
 
     useEffect(() => {
         const getData = () => {
-            const blocksPerDay = 6467
-            const yaxisApyPercent = new BigNumber(blocksPerDay).multipliedBy(
-                yaxisRewardPerBlock,
-            )
-            console.log('curveApy', curveApy)
+            const BLOCKS_PER_DAY = new BigNumber(6467)
+            const BLOCKS_PER_YEAR = BLOCKS_PER_DAY.multipliedBy(365)
+
+            const yaxisPerBlock = new BigNumber(yaxisRewardPerBlock).dividedBy(10 ** 18)
+            const yaxisApyPercent =
+                new BigNumber(yaxisPrice)
+                    .multipliedBy(yaxisPerBlock)
+                    .multipliedBy(BLOCKS_PER_YEAR)
+                    .dividedBy(tvl.isZero() ? 1 : tvl)
+                    .multipliedBy(100)
+
             let lpApyPercent = new BigNumber(curveApy).times(100)
             if (strategyPercentage) lpApyPercent = lpApyPercent.multipliedBy(strategyPercentage)
 
@@ -92,6 +112,8 @@ export default function useAPY(
         curveApy,
         yAxisAPY,
         yaxisRewardPerBlock,
+        yaxisPrice,
+        tvl,
     ])
 
     return {
