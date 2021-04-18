@@ -86,7 +86,7 @@ export default function AdvancedNavigation() {
 
 	return activePools.length > 0 ? (
 		<Collapse expandIconPosition="right">
-			<Panel header={'Advanced'} key="1">
+			<Panel header={'Liquidity Pools'} key="1">
 				{activePools.map((pool) => (
 					<AdvancedNavigationRow
 						key={pool.name}

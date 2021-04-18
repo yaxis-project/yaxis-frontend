@@ -120,10 +120,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 
 				<StyledSubMenu
 					key={'/liquidity'}
-					title={
-						// TODO: to: /liquidity
-						<StyledSpan>Advanced</StyledSpan>
-					}
+					title={<StyledSpan>Liquidity</StyledSpan>}
 				>
 					<ItemGroup title="Provide Liquidity" />
 					{activePools.map((farm) => (
