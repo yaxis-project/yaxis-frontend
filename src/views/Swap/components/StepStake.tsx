@@ -63,26 +63,6 @@ const StepStake: React.FC<StepStakeProps> = ({
 		description: `stake MVLT`,
 	})
 
-	const config = useMemo(() => currentConfig(chainId), [chainId])
-
-	const uniYaxisEthLP = useMemo(
-		() => config?.pools.find((pool) => pool.name === 'Uniswap YAXIS/ETH'),
-		[config],
-	)
-
-	const { balance: yaxisEthLPBalance } = useTokenBalance(
-		uniYaxisEthLP.lpAddress,
-	)
-
-	const {
-		call: handleStakeYaxisEthLP,
-		loading: loadingStakeYaxisEthLP,
-	} = useContractWrite({
-		contractName: `rewards.YaxisEth`,
-		method: 'stake',
-		description: `stake Uniswap YAXIS ETH LP token`,
-	})
-
 	const mvlt = useMemo(() => {
 		if (stakedMvlt.gt(0))
 			return (
@@ -120,6 +100,7 @@ const StepStake: React.FC<StepStakeProps> = ({
 						}
 						description="Approve the new rewards contract to use your MVLT."
 						icon={<StyledIcon />}
+						status="wait"
 					/>
 				)
 			return (
@@ -156,90 +137,163 @@ const StepStake: React.FC<StepStakeProps> = ({
 		onApprove,
 	])
 
+	const config = useMemo(() => currentConfig(chainId), [chainId])
+
+	const uniYaxisEthLP = useMemo(
+		() => config?.pools.find((pool) => pool.name === 'Uniswap YAXIS/ETH'),
+		[config],
+	)
+
+	const { balance: yaxisEthLPBalance } = useTokenBalance(
+		uniYaxisEthLP.lpAddress,
+	)
+
+	const {
+		call: handleStakeYaxisEthLP,
+		loading: loadingStakeYaxisEthLP,
+	} = useContractWrite({
+		contractName: `rewards.YaxisEth`,
+		method: 'stake',
+		description: `stake Uniswap YAXIS ETH LP token`,
+	})
+
+	const allowanceLP = useAllowance(
+		uniYaxisEthLP.lpContract,
+		global?.contracts?.rewards.YaxisEth.options.address,
+	)
+
+	const { onApprove: onApproveLP, loading: loadingApproveLP } = useApprove(
+		uniYaxisEthLP.lpContract,
+		global?.contracts?.rewards.YaxisEth.options.address,
+		'Uniswap YAXIS/ETH LP token',
+	)
+
 	const [loadingStakeYAXIS, setLoadingStakeYAXIS] = useState(false)
 	const { onEnter } = useEnter()
+
+	const uniLP = useMemo(() => {
+		if (balance.eq(0))
+			return (
+				<Step
+					title={'Provide Liquidity'}
+					description={'Obtain some ETH to fund the new LP'}
+					status="wait"
+				/>
+			)
+		if (yaxisEthLPBalance.gt(0)) {
+			if (allowanceLP.isLessThan(ethers.constants.MaxUint256.toString()))
+				return (
+					<Step
+						title={
+							<StyledButton
+								height={'40px'}
+								onClick={() => onApproveLP()}
+								loading={loadingApproveLP}
+							>
+								Approve YAXIS ETH LP token
+							</StyledButton>
+						}
+						description={
+							'Approve the new rewards contract to use your LP tokens.'
+						}
+						icon={
+							<div style={{ position: 'relative' }}>
+								<StyledIcon />
+								<div
+									style={{
+										position: 'absolute',
+										bottom: xl ? '-42px' : '-32px',
+										fontWeight: 700,
+									}}
+								>
+									OR
+								</div>
+							</div>
+						}
+					/>
+				)
+			return (
+				<Step
+					title={
+						<StyledButton
+							height={'40px'}
+							onClick={() =>
+								handleStakeYaxisEthLP({
+									amount: yaxisEthLPBalance.toString(),
+									args: [yaxisEthLPBalance.toString()],
+								})
+							}
+							loading={loadingStakeYaxisEthLP}
+						>
+							Stake YAXIS ETH LP token
+						</StyledButton>
+					}
+					description={'Stake your LP token to receive emissions.'}
+					icon={
+						<div style={{ position: 'relative' }}>
+							<StyledIcon />
+							<div
+								style={{
+									position: 'absolute',
+									bottom: xl ? '-42px' : '-32px',
+									fontWeight: 700,
+								}}
+							>
+								OR
+							</div>
+						</div>
+					}
+				/>
+			)
+		}
+
+		return (
+			<Step
+				title={
+					<StyledButton
+						height={'40px'}
+						onClick={() =>
+							window.open(uniYaxisEthLP.lpUrl, '_blank')
+						}
+					>
+						Provide Liquidity
+					</StyledButton>
+				}
+				description={'Fund the new YAXIS ETH LP for more rewards.'}
+				icon={
+					<div style={{ position: 'relative' }}>
+						<StyledIcon />
+
+						<div
+							style={{
+								position: 'absolute',
+								bottom: xl ? '-42px' : '-32px',
+								fontWeight: 700,
+							}}
+						>
+							OR
+						</div>
+					</div>
+				}
+			/>
+		)
+	}, [
+		balance,
+		yaxisEthLPBalance,
+		handleStakeYaxisEthLP,
+		loadingStakeYaxisEthLP,
+		xl,
+		uniYaxisEthLP,
+		allowanceLP,
+		onApproveLP,
+		loadingApproveLP,
+	])
 
 	const yaxis = useMemo(() => {
 		if (yaxisBalance.gt(0))
 			return (
 				<>
-					{balance.eq(0) ? (
-						<Step
-							title={'Provide Liquidity'}
-							description={'Obtain some ETH to fund the new LP'}
-							status="wait"
-						/>
-					) : yaxisEthLPBalance.gt(0) ? (
-						<Step
-							title={
-								<StyledButton
-									height={'40px'}
-									onClick={() =>
-										handleStakeYaxisEthLP({
-											amount: yaxisEthLPBalance.toString(),
-											args: [
-												yaxisEthLPBalance.toString(),
-											],
-										})
-									}
-									loading={loadingStakeYaxisEthLP}
-								>
-									Stake YAXIS ETH LP token
-								</StyledButton>
-							}
-							description={
-								'Stake your LP token to receive emissions.'
-							}
-							icon={
-								<div style={{ position: 'relative' }}>
-									<StyledIcon />
-									<div
-										style={{
-											position: 'absolute',
-											bottom: xl ? '-42px' : '-32px',
-											fontWeight: 700,
-										}}
-									>
-										OR
-									</div>
-								</div>
-							}
-						/>
-					) : (
-						<Step
-							title={
-								<StyledButton
-									height={'40px'}
-									onClick={() =>
-										window.open(
-											uniYaxisEthLP.lpUrl,
-											'_blank',
-										)
-									}
-								>
-									Provide Liquidity
-								</StyledButton>
-							}
-							description={
-								'Fund the new YAXIS ETH LP for more rewards.'
-							}
-							icon={
-								<div style={{ position: 'relative' }}>
-									<StyledIcon />
-
-									<div
-										style={{
-											position: 'absolute',
-											bottom: xl ? '-42px' : '-32px',
-											fontWeight: 700,
-										}}
-									>
-										OR
-									</div>
-								</div>
-							}
-						/>
-					)}
+					{uniLP}
 					<Step
 						title={
 							<StyledButton
@@ -270,17 +324,7 @@ const StepStake: React.FC<StepStakeProps> = ({
 		return (
 			<Step title={'Stake YAXIS'} description="Done." status="finish" />
 		)
-	}, [
-		yaxisBalance,
-		loadingStakeYAXIS,
-		onEnter,
-		uniYaxisEthLP,
-		yaxisEthLPBalance,
-		handleStakeYaxisEthLP,
-		loadingStakeYaxisEthLP,
-		xl,
-		balance,
-	])
+	}, [yaxisBalance, loadingStakeYAXIS, onEnter, uniLP])
 
 	const message = useMemo(() => {
 		if (stakedMvlt.gt(0) || mvltBalance.gt(0) || yaxisBalance.gt(0))
