@@ -49,6 +49,12 @@ const translations = {
 	Approve: {
 		ENG: 'Approve',
 	},
+	Stake: {
+		ENG: 'Stake',
+	},
+	Unstake: {
+		ENG: 'Unstake',
+	},
 } as Dictionary
 
 export default translations

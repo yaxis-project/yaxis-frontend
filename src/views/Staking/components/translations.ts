@@ -70,6 +70,12 @@ const translations = {
 	'An error occurred during YAXIS unstaking. Please try again.': {
 		ENG: 'An error occurred during YAXIS unstaking. Please try again.',
 	},
+	'Stake': {
+		ENG: 'Stake'
+	},
+	'Unstake': {
+		ENG: 'Unstake'
+	}
 } as Dictionary
 
 export default translations
