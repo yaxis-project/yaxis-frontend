@@ -161,7 +161,7 @@ export default function StakingCard() {
 						onClick={stakeYAX}
 						loading={loading}
 					>
-						{t('Deposit')}
+						{t('Stake')}
 					</Button>
 				</Col>
 				<Col span={12}>
@@ -181,7 +181,7 @@ export default function StakingCard() {
 						onClick={unstakeYAX}
 						loading={loading}
 					>
-						{t('Withdraw')}
+						{t('Unstake')}
 					</Button>
 				</Col>
 			</Row>

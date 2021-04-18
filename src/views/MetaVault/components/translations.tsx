@@ -82,6 +82,12 @@ const translations = {
 	Staking: {
 		ENG: 'Staking',
 	},
+	Stake: {
+		ENG: 'Stake',
+	},
+	Unstake: {
+		ENG: 'Unstake',
+	},
 } as Dictionary
 
 export default translations
