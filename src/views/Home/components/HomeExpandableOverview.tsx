@@ -100,7 +100,7 @@ export default function HomeExpandableOverview() {
 					rightContent={
 						<Col lg={18} md={12} sm={12} xs={12}>
 							<a
-								href={`https://app.uniswap.org/#/swap?outputCurrency=${yaxis?.contracts.yaxis.options.address}}`}
+								href={`https://app.uniswap.org/#/swap?outputCurrency=${yaxis?.contracts.yaxis.options.address}`}
 								target="_blank"
 								rel="noreferrer"
 							>
