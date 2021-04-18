@@ -23,7 +23,7 @@ const StyledCol = styled(Col)`
 	}
 `
 
-const Liqudity: React.FC<Props> = ({ pool }) => {
+const Liquidity: React.FC<Props> = ({ pool }) => {
 	// should use this method to get 'stakedBalance' rather than 'userBalance' below
 	// as it's hooked up to block updates & other internal data
 	const { stakedBalance } = useLPContractData(pool.symbol)
@@ -74,4 +74,4 @@ const Liqudity: React.FC<Props> = ({ pool }) => {
 	)
 }
 
-export default Liqudity
+export default Liquidity
