@@ -43,7 +43,7 @@ const Nav: React.FC = (props) => {
 				key={'/liquidity'}
 				title={
 					<StyledLink activeClassName="active" to="/liquidity">
-						Advanced <CaretDownFilled style={{ margin: 0 }} />
+						Liquidity <CaretDownFilled style={{ margin: 0 }} />
 					</StyledLink>
 				}
 			>
