@@ -85,6 +85,7 @@ export const getPoolWeight = async (
 	yaxisChefContract: Contract,
 	pid: number,
 ) => {
+	if (!pid) return new BigNumber(1)
 	const { allocPoint } = await yaxisChefContract.methods.poolInfo(pid).call()
 	const totalAllocPoint = await yaxisChefContract.methods
 		.totalAllocPoint()
@@ -154,7 +155,7 @@ async function getLinkPoolInfo(
 	}
 }
 
-async function getUniPoolInfo(
+async function getLegacyUniPoolInfo(
 	yaxisChefContract: Contract,
 	priceMap: any,
 	farm: Farm,
@@ -200,6 +201,54 @@ async function getUniPoolInfo(
 		lpPrice,
 		tvl,
 		poolWeight: await getPoolWeight(yaxisChefContract, pid),
+	}
+}
+
+async function getUniPoolInfo(
+	farm: Farm,
+	contracts: any,
+	priceMap: any
+): Promise<StakedValue> {
+	const lpContract = farm.lpContract
+	const reserveTokens = farm.lpTokens
+	const {
+		_reserve0,
+		_reserve1,
+	} = await lpContract.methods.getReserves().call()
+	const reserve = [
+		numberToFloat(_reserve0, reserveTokens[0].decimals),
+		numberToFloat(_reserve1, reserveTokens[1].decimals),
+	]
+	let totalSupply = numberToFloat(
+		await lpContract.methods.totalSupply().call(),
+	)
+
+	const balance = numberToFloat(
+		await lpContract.methods
+			.balanceOf(contracts.rewards[farm.rewards].options.address)
+			.call(),
+	)
+	const prices = [
+		priceMap[reserveTokens[0].symbol],
+		priceMap[reserveTokens[1].symbol],
+	]
+	if (prices[1]) {
+		prices[0] = (prices[1] * reserve[1]) / reserve[0]
+	} else if (prices[0]) {
+		prices[1] = (prices[0] * reserve[0]) / reserve[1]
+	}
+	const totalLpValue = reserve[0] * prices[0] + reserve[1] * prices[1]
+	const lpPrice = new BigNumber(totalLpValue).div(totalSupply).toNumber()
+	const tvl = balance * lpPrice
+	return {
+		...farm,
+		totalSupply,
+		reserve,
+		balance,
+		prices,
+		lpPrice,
+		tvl,
+		poolWeight: new BigNumber(1),
 	}
 }
 
@@ -265,9 +314,9 @@ export const getTotalLPWethValue = async (
 	wethContract: Contract,
 	priceMap: any,
 	farm: Farm,
+	contracts: any,
 ): Promise<StakedValue> => {
 	if (!farm.active) return stakedValueFactory()
-
 	let type = farm.type || 'uni'
 	if (type === 'balancer') {
 		return await getBalPoolInfo(yaxisChefContract, priceMap, farm)
@@ -275,7 +324,7 @@ export const getTotalLPWethValue = async (
 	if (type === 'link') {
 		return await getLinkPoolInfo(priceMap, farm)
 	}
-	return await getUniPoolInfo(yaxisChefContract, priceMap, farm)
+	return farm.legacy ? await getLegacyUniPoolInfo(yaxisChefContract, priceMap, farm) : await await getUniPoolInfo(farm, contracts, priceMap)
 }
 
 export const approve = async (

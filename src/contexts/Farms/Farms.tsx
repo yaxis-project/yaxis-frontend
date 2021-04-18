@@ -25,7 +25,6 @@ const Farms: React.FC = ({ children }) => {
 		() => [getYaxisChefContract(yaxis), getWethContract(yaxis)],
 		[yaxis],
 	)
-
 	const priceMap = usePriceMap()
 
 	const fetchStakedValue = useCallback(async () => {
@@ -38,13 +37,21 @@ const Farms: React.FC = ({ children }) => {
 							wethContact,
 							priceMap,
 							farm,
+							yaxis.contracts,
 						),
 					),
 				)
 				setBalance(balances)
 			} catch {}
 		}
-	}, [wethContact, yaxisChefContract, farms, setBalance, priceMap])
+	}, [
+		wethContact,
+		yaxisChefContract,
+		farms,
+		setBalance,
+		priceMap,
+		yaxis.contracts,
+	])
 
 	useEffect(() => {
 		if (wethContact && yaxisChefContract) {
