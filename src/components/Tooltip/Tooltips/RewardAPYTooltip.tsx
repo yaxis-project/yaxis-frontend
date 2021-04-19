@@ -21,13 +21,25 @@ const Link = styled(NavLink)`
 
 const Title: React.FC = () => {
 	const {
-		data: { totalAPY },
+		data: { yaxisAprPercent },
 	} = useAPY('Yaxis', 0.2)
 	return (
 		<Link to="/staking">
 			<Row>
 				<Col span={22}>
-					Earn <b>{totalAPY.toFixed(2)}% APY</b> by staking! 💰
+					Earn{' '}
+					<b>
+						{yaxisAprPercent
+							.div(100)
+							.dividedBy(52)
+							.plus(1)
+							.pow(52)
+							.minus(1)
+							.multipliedBy(100)
+							.toFixed(2)}
+						% APY
+					</b>{' '}
+					by staking! 💰
 				</Col>
 				<Col span={1}>
 					<ArrowRightOutlined style={{ marginRight: '10px' }} />
