@@ -22,7 +22,7 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 	totalUSDBalance,
 }) => {
 	const {
-		data: { yaxisApyPercent, yaxisAprPercent },
+		data: { yaxisAprPercent },
 		loading,
 	} = useAPY(pool?.rewards)
 
@@ -63,14 +63,28 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 				}
 				secondary={
 					<Value
-						value={yaxisApyPercent.toNumber()}
+						value={yaxisAprPercent
+							.div(100)
+							.dividedBy(12)
+							.plus(1)
+							.pow(12)
+							.minus(1)
+							.multipliedBy(100)
+							.toNumber()}
 						numberSuffix="%"
 						decimals={2}
 					/>
 				}
 			/>
 			<APYCalculator
-				APY={yaxisAprPercent.toNumber()}
+				APY={yaxisAprPercent
+					.div(100)
+					.dividedBy(12)
+					.plus(1)
+					.pow(12)
+					.minus(1)
+					.multipliedBy(100)
+					.toNumber()}
 				balance={totalUSDBalance}
 				loading={loading}
 			/>

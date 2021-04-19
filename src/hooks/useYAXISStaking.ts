@@ -1,8 +1,8 @@
-import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import BigNumber from 'bignumber.js'
 import useWeb3Provider from './useWeb3Provider'
 import useGlobal from './useGlobal'
-import useTokenBalance from './useTokenBalance'
+import useContractReadAccount from './useContractReadAccount'
 import usePriceMap from './usePriceMap'
 
 const defaultState = {
@@ -21,27 +21,33 @@ export default function useYaxisStaking() {
     const [loading, setLoading] = useState(true)
 
     const { account } = useWeb3Provider()
-    const { block, yaxis } = useGlobal()
+    const { block } = useGlobal()
 
-    const address = useMemo(() => yaxis?.contracts?.yaxis?.options?.address, [yaxis])
-    const { balance: walletBalance, loading: loadingWalletBalance } = useTokenBalance(address)
+    const { data: walletBalance, loading: loadingWalletBalance } = useContractReadAccount({
+        contractName: `yaxis`,
+        method: 'balanceOf',
+        args: [account],
+    })
 
-    const stakingAddress = useMemo(() => yaxis?.contracts?.rewards?.Yaxis?.options?.address, [yaxis])
-    const { balance: sBalance, loading: sBalanceLoading } = useTokenBalance(stakingAddress)
+    const { data: sBalance, loading: sBalanceLoading } = useContractReadAccount({
+        contractName: `rewards.Yaxis`,
+        method: 'balanceOf',
+        args: [account],
+    })
 
     const priceMap = usePriceMap()
 
     const getData = useCallback(async () => {
         try {
             const data = {
-                sYaxisBalance: sBalance,
-                stakedBalance: sBalance.div(1e18),
-                walletBalance,
+                sYaxisBalance: new BigNumber(sBalance),
+                stakedBalance: new BigNumber(sBalance).div(1e18),
+                walletBalance: new BigNumber(walletBalance),
                 stakedBalanceUSD:
-                    sBalance
+                    new BigNumber(sBalance)
                         .div(1e18)
                         .multipliedBy(priceMap?.YAXIS),
-                yaxisBalance: walletBalance.div(1e18),
+                yaxisBalance: new BigNumber(walletBalance).div(1e18),
             }
             setBalances(data)
             setLoading(false)

@@ -25,7 +25,6 @@ const SavingsOverviewCard: React.FC<Props> = ({
 
 	const {
 		data: {
-			yaxisAprPercent,
 			yaxisApyPercent,
 			// threeCrvApyPercent,
 			// lpApyPercent,
@@ -66,14 +65,15 @@ const SavingsOverviewCard: React.FC<Props> = ({
 							// lpApyPercent
 							// .plus(threeCrvApyPercent)
 							// .plus(
-							yaxisApyPercent.toFixed(2)
+							yaxisApyPercent.toNumber()
 						}
 						numberSuffix="%"
+						decimals={2}
 					/>
 				}
 			/>
 			<APYCalculator
-				APY={yaxisAprPercent.toNumber()}
+				APY={yaxisApyPercent.toNumber()}
 				balance={totalUSDBalance}
 				loading={balanceLoading || loading}
 			/>
