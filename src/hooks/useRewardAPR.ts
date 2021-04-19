@@ -28,10 +28,7 @@ const useRewardAPY = ({ rewardsContract }: Params) => {
     }, [yaxis, rewardsContract])
 
     const pool = useMemo(
-        () =>
-            yaxis?.contracts.pools.find((p) =>
-                p.rewards === rewardsContract
-            ),
+        () => yaxis?.contracts.pools.find((p) => p.rewards === rewardsContract),
         [yaxis, rewardsContract],
     )
 
@@ -45,7 +42,15 @@ const useRewardAPY = ({ rewardsContract }: Params) => {
                 .balanceOf(contract.options.address)
                 .call()
             const reserves = await pool?.lpContract.methods.getReserves().call()
-            const tvl = pool ? reserves['_reserve0'] : totalSupply
+            const tvl = pool
+                ? new BigNumber(reserves['_reserve0']).plus(
+                    new BigNumber(reserves['_reserve1']).multipliedBy(
+                        new BigNumber(reserves['_reserve0']).dividedBy(
+                            new BigNumber(reserves['_reserve1']),
+                        ),
+                    ),
+                )
+                : totalSupply
             const funding = new BigNumber(balance).minus(tvl)
             if (funding.lt(0)) {
                 setData(new BigNumber(0))
