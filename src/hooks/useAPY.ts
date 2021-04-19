@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import useYAxisAPY from './useYAxisAPY'
-import useContractRead from './useContractRead'
+import useRewardAPR from './useRewardAPR'
 import useComputeTVL from './useComputeTVL'
 import BigNumber from 'bignumber.js'
 import { getCurveApyApi } from '../yaxis/utils'
@@ -52,35 +52,22 @@ export default function useAPY(
 
     /* YAXIS Rewards  */
     const {
-        data: yaxisRewardPerBlock,
-        loading: loadingYaxisRewardPerBlock,
-    } = useContractRead({
-        contractName: `rewards.${rewardsContract}`,
-        method: 'rewardPerToken',
-    })
+        data: rewardsAPR,
+        loading: loadingRewardPerToken,
+    } = useRewardAPR(
+        { rewardsContract },
+    )
+
 
     useEffect(() => {
         const getData = () => {
-            const BLOCKS_PER_DAY = new BigNumber(6467)
-            const BLOCKS_PER_YEAR = BLOCKS_PER_DAY.multipliedBy(365)
-
-            const yaxisPerBlock = new BigNumber(yaxisRewardPerBlock).dividedBy(10 ** 18)
-
-            const supply = tvl.dividedBy(yaxisPrice)
-            const yaxisAprPercent = yaxisPerBlock
-                .multipliedBy(BLOCKS_PER_YEAR)
-                .multipliedBy(yaxisPrice)
-                .dividedBy(supply)
-                .multipliedBy(100)
-
-            const yaxisApyPercent = yaxisAprPercent
+            const yaxisApyPercent = rewardsAPR
                 .div(100)
                 .dividedBy(52)
                 .plus(1)
                 .pow(52)
                 .minus(1)
                 .multipliedBy(100)
-
             let lpApyPercent = new BigNumber(curveApy).times(100)
             if (strategyPercentage)
                 lpApyPercent = lpApyPercent.multipliedBy(strategyPercentage)
@@ -104,31 +91,31 @@ export default function useAPY(
                 .times(100)
                 .decimalPlaces(18)
 
-            const totalAPR = yaxisAprPercent.plus(strategyAPR)
+            const totalAPR = rewardsAPR.plus(strategyAPR)
             const totalAPY = yaxisApyPercent.plus(strategyAPY)
 
             setData({
                 lpApyPercent,
                 threeCrvApyPercent,
-                yaxisAprPercent,
+                yaxisAprPercent: rewardsAPR,
                 yaxisApyPercent,
                 totalAPY,
                 totalAPR,
             })
             setLoading(false)
         }
-        if (isInitialized && !loadingCurveAPY && !loadingYaxisRewardPerBlock)
+        if (isInitialized && !loadingCurveAPY && !loadingRewardPerToken)
             getData()
     }, [
         strategyPercentage,
         isInitialized,
         loadingCurveAPY,
-        loadingYaxisRewardPerBlock,
         curveApy,
         yAxisAPY,
-        yaxisRewardPerBlock,
         yaxisPrice,
         tvl,
+        loadingRewardPerToken,
+        rewardsAPR
     ])
 
     return {
