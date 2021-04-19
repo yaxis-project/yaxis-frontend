@@ -51,12 +51,13 @@ const useRewardAPY = ({ rewardsContract }: Params) => {
                     ),
                 )
                 : totalSupply
-            const funding = new BigNumber(balance).minus(tvl)
+            const funding = pool ? new BigNumber(balance) : new BigNumber(balance).minus(tvl)
             if (funding.lt(0)) {
                 setData(new BigNumber(0))
                 setLoading(false)
                 return
             }
+
             const period = new BigNumber(duration).dividedBy(86400)
             const rewardPerToken = funding.dividedBy(tvl)
             const apr = rewardPerToken
