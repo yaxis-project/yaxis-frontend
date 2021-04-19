@@ -22,7 +22,7 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 	totalUSDBalance,
 }) => {
 	const {
-		data: { yaxisApyPercent },
+		data: { yaxisApyPercent, yaxisAprPercent },
 		loading,
 	} = useAPY('Yaxis', 0.2)
 
@@ -70,7 +70,7 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 				}
 			/>
 			<APYCalculator
-				APY={yaxisApyPercent.toNumber()}
+				APY={yaxisAprPercent.toNumber()}
 				balance={totalUSDBalance}
 				loading={loading}
 			/>

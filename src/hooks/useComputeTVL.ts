@@ -5,7 +5,7 @@ import useMetaVaultData from './useMetaVaultData'
 import usePriceMap from './usePriceMap'
 import useGlobal from './useGlobal'
 import useContractRead from './useContractRead'
-import { getTotalStaking } from '../yaxis/utils'
+// import { getTotalStaking } from '../yaxis/utils'
 
 /**
  * Compute the TVL in the Metavault system using current farms and data.
@@ -24,7 +24,7 @@ export default function useComputeTVL() {
 
 	const { farms, stakedValues } = useFarms()
 	const { yaxis, block } = useGlobal()
-	const { ETH } = usePriceMap()
+	const { ETH, YAXIS } = usePriceMap()
 
 	const {
 		data: reserves,
@@ -33,8 +33,15 @@ export default function useComputeTVL() {
 		method: 'getReserves()',
 	})
 
+	const {
+		data: stakedSupply,
+	} = useContractRead({
+		contractName: `rewards.Yaxis`,
+		method: 'totalSupply',
+	})
+
 	const fetchData = useCallback(async () => {
-		let yaxisPrice = new BigNumber(0)
+		let yaxisPrice = new BigNumber(YAXIS)
 		const { _reserve0, _reserve1 } = reserves
 		let t0 = new BigNumber(_reserve0)
 		let t1 = new BigNumber(_reserve1)
@@ -43,7 +50,6 @@ export default function useComputeTVL() {
 			t1 = t1.dividedBy(10 ** 18)
 			yaxisPrice = t1.dividedBy(t0).multipliedBy(ETH)
 		}
-		const stakedSupply = await getTotalStaking(yaxis)
 		const stakingTvl = new BigNumber(stakedSupply)
 			.div(1e18)
 			.times(yaxisPrice)
@@ -66,7 +72,7 @@ export default function useComputeTVL() {
 			yaxisPrice: new BigNumber(yaxisPrice),
 			// pricePerFullShare,
 		})
-	}, [farms, metaVaultData, stakedValues, yaxis, ETH, reserves])
+	}, [farms, metaVaultData, stakedValues, ETH, YAXIS, reserves, stakedSupply])
 
 	useEffect(() => {
 		if (yaxis && stakedValues && farms && reserves) fetchData()

@@ -10,6 +10,7 @@ const defaultState = {
     lpApyPercent: new BigNumber(0),
     threeCrvApyPercent: new BigNumber(0),
     yaxisApyPercent: new BigNumber(0),
+    yaxisAprPercent: new BigNumber(0),
     totalAPY: new BigNumber(0),
     totalAPR: new BigNumber(0),
 }
@@ -21,11 +22,11 @@ export default function useAPY(
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState(defaultState)
 
-
-    const { stakingTvl,
+    const {
+        stakingTvl,
         liquidityTvl,
         metavaultTvl,
-        yaxisPrice
+        yaxisPrice,
     } = useComputeTVL()
 
     const tvl = useMemo(() => {
@@ -64,38 +65,52 @@ export default function useAPY(
             const BLOCKS_PER_YEAR = BLOCKS_PER_DAY.multipliedBy(365)
 
             const yaxisPerBlock = new BigNumber(yaxisRewardPerBlock).dividedBy(10 ** 18)
-            const yaxisApyPercent =
-                new BigNumber(yaxisPrice)
-                    .multipliedBy(yaxisPerBlock)
-                    .multipliedBy(BLOCKS_PER_YEAR)
-                    .dividedBy(tvl.isZero() ? 1 : tvl)
-                    .multipliedBy(100)
+
+            const supply = tvl.dividedBy(yaxisPrice)
+            const yaxisAprPercent = yaxisPerBlock
+                .multipliedBy(BLOCKS_PER_YEAR)
+                .multipliedBy(yaxisPrice)
+                .dividedBy(supply)
+                .multipliedBy(100)
+
+            const yaxisApyPercent = yaxisAprPercent
+                .div(100)
+                .dividedBy(52)
+                .plus(1)
+                .pow(52)
+                .minus(1)
+                .multipliedBy(100)
 
             let lpApyPercent = new BigNumber(curveApy).times(100)
-            if (strategyPercentage) lpApyPercent = lpApyPercent.multipliedBy(strategyPercentage)
+            if (strategyPercentage)
+                lpApyPercent = lpApyPercent.multipliedBy(strategyPercentage)
 
             let threeCrvApyPercent = new BigNumber(
                 (yAxisAPY && yAxisAPY['3crv']) || 0,
             )
-            if (strategyPercentage) threeCrvApyPercent = threeCrvApyPercent.multipliedBy(strategyPercentage)
+            if (strategyPercentage)
+                threeCrvApyPercent = threeCrvApyPercent.multipliedBy(
+                    strategyPercentage,
+                )
 
             const strategyAPR = lpApyPercent.plus(threeCrvApyPercent)
 
             const strategyAPY = strategyAPR
                 .div(100)
-                .div(365)
+                .div(12)
                 .plus(1)
-                .pow(365)
+                .pow(12)
                 .minus(1)
                 .times(100)
                 .decimalPlaces(18)
 
-            const totalAPR = yaxisApyPercent.plus(strategyAPR)
+            const totalAPR = yaxisAprPercent.plus(strategyAPR)
             const totalAPY = yaxisApyPercent.plus(strategyAPY)
 
             setData({
                 lpApyPercent,
                 threeCrvApyPercent,
+                yaxisAprPercent,
                 yaxisApyPercent,
                 totalAPY,
                 totalAPR,

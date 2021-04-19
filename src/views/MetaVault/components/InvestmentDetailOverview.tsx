@@ -25,7 +25,13 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 	const t = (s: string) => phrases[s][language]
 
 	const {
-		data: { threeCrvApyPercent, yaxisApyPercent, lpApyPercent, totalAPY },
+		data: {
+			threeCrvApyPercent,
+			yaxisApyPercent,
+			lpApyPercent,
+			totalAPY,
+			totalAPR,
+		},
 		loading,
 	} = useAPY('MetaVault', 0.8)
 
@@ -64,7 +70,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 				}
 			/>
 			<APYCalculator
-				APY={totalAPY.toNumber()}
+				APY={totalAPR.toNumber()}
 				balance={new BigNumber(totalUSDBalance)}
 				loading={loading || balanceLoading}
 			/>
