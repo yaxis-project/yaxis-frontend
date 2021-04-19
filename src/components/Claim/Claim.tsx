@@ -25,9 +25,10 @@ const Claim: React.FC<Props> = ({ rewardsContract }) => {
 		data: claimable,
 	} = useContractReadAccount({
 		contractName: `rewards.${rewardsContract}`,
-		method: 'rewards',
+		method: 'earned',
 		args: [account],
 	})
+
 	const [claimVisible, setClaimVisible] = useState(false)
 	return (
 		<CardRow
