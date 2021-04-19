@@ -26,6 +26,7 @@ const SavingsOverviewCard: React.FC<Props> = ({
 	const {
 		data: {
 			yaxisAprPercent,
+			yaxisApyPercent,
 			// threeCrvApyPercent,
 			// lpApyPercent,
 			// totalAPR
@@ -46,17 +47,7 @@ const SavingsOverviewCard: React.FC<Props> = ({
 								<Row>CRV APY (20%):</Row>
 								<Row>{threeCrvApyPercent?.toFixed(2)}%</Row> */}
 								<Row>YAXIS rewards APY:</Row>
-								<Row>
-									{yaxisAprPercent
-										?.div(100)
-										.dividedBy(12)
-										.plus(1)
-										.pow(12)
-										.minus(1)
-										.multipliedBy(100)
-										.toFixed(2)}
-									%
-								</Row>
+								<Row>{yaxisApyPercent.toFixed(2)}%</Row>
 							</>
 						}
 					>
@@ -75,29 +66,14 @@ const SavingsOverviewCard: React.FC<Props> = ({
 							// lpApyPercent
 							// .plus(threeCrvApyPercent)
 							// .plus(
-							yaxisAprPercent
-								?.div(100)
-								.dividedBy(12)
-								.plus(1)
-								.pow(12)
-								.minus(1)
-								.multipliedBy(100)
-								// )
-								.toFixed(2)
+							yaxisApyPercent.toFixed(2)
 						}
 						numberSuffix="%"
 					/>
 				}
 			/>
 			<APYCalculator
-				APY={yaxisAprPercent
-					?.div(100)
-					.dividedBy(12)
-					.plus(1)
-					.pow(12)
-					.minus(1)
-					.multipliedBy(100)
-					.toNumber()}
+				APY={yaxisAprPercent.toNumber()}
 				balance={totalUSDBalance}
 				loading={balanceLoading || loading}
 			/>
