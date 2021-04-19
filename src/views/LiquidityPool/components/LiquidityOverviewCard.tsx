@@ -24,7 +24,7 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 	const {
 		data: { yaxisApyPercent, yaxisAprPercent },
 		loading,
-	} = useAPY('Yaxis', 0.2)
+	} = useAPY('Yaxis')
 
 	const { userPoolShare } = useMyLiquidity(pool)
 

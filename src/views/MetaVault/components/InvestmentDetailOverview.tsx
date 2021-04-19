@@ -33,7 +33,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 			totalAPR,
 		},
 		loading,
-	} = useAPY('MetaVault', 0.8)
+	} = useAPY('MetaVault')
 
 	return (
 		<DetailOverviewCard title={t('Account Overview')}>
@@ -45,7 +45,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 							<>
 								<Row>Curve LP APY:</Row>
 								<Row>{lpApyPercent?.toFixed(2)}%</Row>
-								<Row>CRV APY (80%):</Row>
+								<Row>CRV APY:</Row>
 								<Row>{threeCrvApyPercent?.toFixed(2)}%</Row>
 								<Row>YAXIS rewards APY:</Row>
 								<Row>{yaxisApyPercent?.toFixed(2)}%</Row>

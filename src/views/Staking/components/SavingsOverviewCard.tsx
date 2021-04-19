@@ -24,7 +24,12 @@ const SavingsOverviewCard: React.FC<Props> = ({
 	const t = (s: string) => phrases[s][language]
 
 	const {
-		data: { threeCrvApyPercent, yaxisAprPercent, lpApyPercent, totalAPR },
+		data: {
+			yaxisAprPercent,
+			// threeCrvApyPercent,
+			// lpApyPercent,
+			// totalAPR
+		},
 		loading,
 	} = useAPY('Yaxis', 0.2)
 
@@ -36,10 +41,10 @@ const SavingsOverviewCard: React.FC<Props> = ({
 					<Tooltip
 						title={
 							<>
-								<Row>Curve LP APY (20%):</Row>
+								{/* <Row>Curve LP APY (20%):</Row>
 								<Row>{lpApyPercent?.toFixed(2)}%</Row>
 								<Row>CRV APY (20%):</Row>
-								<Row>{threeCrvApyPercent?.toFixed(2)}%</Row>
+								<Row>{threeCrvApyPercent?.toFixed(2)}%</Row> */}
 								<Row>YAXIS rewards APY:</Row>
 								<Row>
 									{yaxisAprPercent
@@ -66,24 +71,33 @@ const SavingsOverviewCard: React.FC<Props> = ({
 				}
 				secondary={
 					<Value
-						value={lpApyPercent
-							.plus(threeCrvApyPercent)
-							.plus(
-								yaxisAprPercent
-									?.div(100)
-									.dividedBy(12)
-									.plus(1)
-									.pow(12)
-									.minus(1)
-									.multipliedBy(100),
-							)
-							.toFixed(2)}
+						value={
+							// lpApyPercent
+							// .plus(threeCrvApyPercent)
+							// .plus(
+							yaxisAprPercent
+								?.div(100)
+								.dividedBy(12)
+								.plus(1)
+								.pow(12)
+								.minus(1)
+								.multipliedBy(100)
+								// )
+								.toFixed(2)
+						}
 						numberSuffix="%"
 					/>
 				}
 			/>
 			<APYCalculator
-				APY={totalAPR.toNumber()}
+				APY={yaxisAprPercent
+					?.div(100)
+					.dividedBy(12)
+					.plus(1)
+					.pow(12)
+					.minus(1)
+					.multipliedBy(100)
+					.toNumber()}
 				balance={totalUSDBalance}
 				loading={balanceLoading || loading}
 			/>

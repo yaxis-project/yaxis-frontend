@@ -17,7 +17,7 @@ const defaultState = {
 
 export default function useAPY(
     rewardsContract: keyof RewardsContracts,
-    strategyPercentage: number,
+    strategyPercentage?: number,
 ) {
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState(defaultState)
