@@ -8,6 +8,7 @@ import VaultStatsCard from './components/VaultStatsCard'
 import Stake from './components/Stake'
 import RecentTransactionsCard from './components/RecentTransactionsCard'
 import useMetaVaultData from '../../hooks/useMetaVaultData'
+import useContractReadAccount from '../../hooks/useContractReadAccount'
 import './index.less'
 import BigNumber from 'bignumber.js'
 import { currentConfig } from '../../yaxis/configs'
@@ -22,16 +23,24 @@ const StyledCol = styled(Col)`
 `
 
 const MetaVault: React.FC = () => {
+	const { account, chainId } = useWeb3Provider()
+
+	const { data: stakedBalance } = useContractReadAccount({
+		contractName: `rewards.MetaVault`,
+		method: 'balanceOf',
+		args: [account],
+	})
+
 	const {
 		metaVaultData: { totalBalance, mvltPrice },
 		loading,
 	} = useMetaVaultData('v1')
 
 	const totalUSDBalance = new BigNumber(totalBalance || '0')
+		.plus(stakedBalance || '0')
 		.multipliedBy(mvltPrice || '0')
 		.toFixed(2)
 
-	const { chainId } = useWeb3Provider()
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 	const address = currentConfig(chainId).contractAddresses['yAxisMetaVault']
 
