@@ -6,7 +6,12 @@ import info from '../../assets/img/info.svg'
 import BigNumber from 'bignumber.js'
 
 const { Text } = Typography
-type Props = { balance: BigNumber; APY: number; loading?: boolean }
+type Props = {
+	balance: BigNumber
+	APR: number
+	yearlyCompounds?: number
+	loading?: boolean
+}
 
 const marks = {
 	1: {
@@ -31,23 +36,43 @@ const marks = {
 	},
 }
 
-const APYCalculator: React.FC<Props> = ({ balance: walletBalance, APY }) => {
+const APYCalculator: React.FC<Props> = ({
+	balance: walletBalance,
+	APR,
+	yearlyCompounds = 365,
+}) => {
 	const [value, setValue] = useState(12)
 
 	const handleOnChange = useCallback(
 		(value) => {
 			setValue(value)
-			const monthlyAPY = new BigNumber(APY).div(100).div(12)
-			const displayAPY = monthlyAPY.multipliedBy(value)
+			const monthlyAPR = new BigNumber(APR).div(12)
+			const displayAPR = monthlyAPR.multipliedBy(value)
+			const adjustedCompounds = Math.round((value / 12) * yearlyCompounds)
+			const displayAPY = displayAPR
+				.div(100)
+				.dividedBy(adjustedCompounds)
+				.plus(1)
+				.pow(adjustedCompounds)
+				.minus(1)
 			const earnings = walletBalance.multipliedBy(displayAPY)
 			const futureBalance = walletBalance.plus(earnings)
 			setBalance(futureBalance)
 		},
-		[walletBalance, APY],
+		[walletBalance, APR, yearlyCompounds],
 	)
 	const [balance, setBalance] = useState(() => {
-		const monthlyAPY = new BigNumber(APY).div(100)
-		const earnings = walletBalance.multipliedBy(monthlyAPY)
+		const monthlyAPR = new BigNumber(APR).div(100).div(12)
+		const displayAPR = monthlyAPR.multipliedBy(value)
+		const adjustedCompounds = Math.round((value / 12) * yearlyCompounds)
+		const displayAPY = displayAPR
+			.div(100)
+			.dividedBy(adjustedCompounds)
+			.plus(1)
+			.pow(adjustedCompounds)
+			.minus(1)
+			.multipliedBy(100)
+		const earnings = walletBalance.multipliedBy(displayAPY)
 		const futureBalance = walletBalance.plus(earnings)
 		return futureBalance
 	})

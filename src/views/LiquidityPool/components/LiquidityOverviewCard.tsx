@@ -77,14 +77,8 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 				}
 			/>
 			<APYCalculator
-				APY={yaxisAprPercent
-					.div(100)
-					.dividedBy(12)
-					.plus(1)
-					.pow(12)
-					.minus(1)
-					.multipliedBy(100)
-					.toNumber()}
+				APR={yaxisAprPercent.toNumber()}
+				yearlyCompounds={12}
 				balance={totalUSDBalance}
 				loading={loading}
 			/>
