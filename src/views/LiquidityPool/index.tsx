@@ -36,7 +36,7 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 				value={
 					pool?.legacy
 						? 'No longer supported.'
-						: `${numberToFloat(stakedBalance)} LPT`
+						: `${numberToFloat(stakedBalance)} LP tokens`
 				}
 				valueInfo={
 					pool?.legacy
