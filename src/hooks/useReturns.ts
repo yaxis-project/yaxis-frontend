@@ -76,9 +76,9 @@ const useReturns = () => {
 			)
 
 			const [
-				governance,
-				lp,
 				metaVault,
+				lp,
+				governance,
 			] = Object.values(yaxis.contracts.rewards).map((c) =>
 				new BN(rewards[c.options.address]).plus(
 					paidRewards[c.options.address],
