@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import styled from 'styled-components'
-import { Typography, Col } from 'antd'
+import { Typography, Col, Tooltip } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import {
@@ -8,16 +8,28 @@ import {
 	DetailOverviewCardRow,
 } from '../../../components/DetailOverviewCard'
 import Value from '../../../components/Value'
-// import useReturns from '../../../hooks/useReturns'
+import useReturns from '../../../hooks/useReturns'
+import info from '../../../assets/img/info.svg'
 
 const { Text } = Typography
 
-// const commas = (num: string) =>
-// 	Number(num).toLocaleString(
-// 		undefined, // leave undefined to use the browser's locale,
-// 		// or use a string like 'en-US' to override it.
-// 		{ minimumFractionDigits: 2 },
-// 	)
+interface TooltipRowProps {
+	main: string
+	value: any
+}
+
+const TooltipRow = ({ main, value }: TooltipRowProps) => (
+	<>
+		<div
+			style={{ textDecoration: 'underline', textUnderlineOffset: '4px' }}
+		>
+			{main}
+		</div>
+		<div>
+			<Value value={value} numberPrefix="$" decimals={2} />
+		</div>
+	</>
+)
 
 /**
  * Creates a loadable detail overview for users on the home page, showing financial returns and account balances.
@@ -28,9 +40,14 @@ export default function HomeOverviewCard() {
 
 	const t = (s: string) => phrases[s][language]
 
-	// const {
-	// 	returns: { metaVaultUSD, stakingUSD, totalUSD },
-	// } = useReturns()
+	const {
+		returns: {
+			metaVaultUSD,
+			rewardsUSD,
+			totalUSD,
+			rewards: { governance, lp, metaVault },
+		},
+	} = useReturns()
 
 	return (
 		<DetailOverviewCard title={t('Your Lifetime Earnings')}>
@@ -40,9 +57,8 @@ export default function HomeOverviewCard() {
 				</Text>
 				<Col>
 					<Value
-						// numberPrefix="$"
-						// value={commas(totalUSD)}
-						value={'Coming soon'}
+						numberPrefix="$"
+						value={totalUSD.toNumber()}
 						decimals={2}
 					/>
 				</Col>
@@ -51,20 +67,57 @@ export default function HomeOverviewCard() {
 				<StyledText>MetaVault Account</StyledText>
 				<Col>
 					<Value
-						// numberPrefix="$"
-						value={'Coming soon'}
-						// value={commas(metaVaultUSD)}
+						numberPrefix="$"
+						value={metaVaultUSD.toNumber()}
 						decimals={2}
 					/>
 				</Col>
 			</DetailOverviewCardRow>
 			<DetailOverviewCardRow inline>
-				<StyledText>Staking Account</StyledText>
+				<StyledText>
+					Rewards Earned
+					<Tooltip
+						title={
+							<>
+								<div
+									style={{
+										fontSize: '16px',
+										fontWeight: 700,
+									}}
+								>
+									Your YAXIS rewards:
+								</div>
+								<TooltipRow
+									main="MetaVault staking"
+									value={metaVault.toNumber()}
+								/>
+								<TooltipRow
+									main="Governance (YAXIS) staking"
+									value={governance.toNumber()}
+								/>
+								<TooltipRow
+									main="Liquidity Pool token staking"
+									value={lp.toNumber()}
+								/>
+							</>
+						}
+					>
+						<img
+							style={{
+								position: 'relative',
+								top: -1,
+								marginLeft: '5px',
+							}}
+							src={info}
+							height="15"
+							alt="YAXIS Rewards"
+						/>
+					</Tooltip>
+				</StyledText>
 				<Col>
 					<Value
-						// numberPrefix="$"
-						// value={commas(stakingUSD)}
-						value={'Coming soon'}
+						numberPrefix="$"
+						value={rewardsUSD.toNumber()}
 						decimals={2}
 					/>
 				</Col>

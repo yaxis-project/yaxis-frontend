@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import useAPY from '../../../hooks/useAPY'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
-import { Row, Typography, Tooltip } from 'antd'
+import { Typography, Tooltip } from 'antd'
 import APYCalculator from '../../../components/APYCalculator'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import Value from '../../../components/Value'
@@ -12,6 +12,24 @@ import info from '../../../assets/img/info.svg'
 import BigNumber from 'bignumber.js'
 
 const { Text } = Typography
+
+interface TooltipRowProps {
+	main: string
+	value: any
+}
+
+const TooltipRow = ({ main, value }: TooltipRowProps) => (
+	<>
+		<div
+			style={{ textDecoration: 'underline', textUnderlineOffset: '4px' }}
+		>
+			{main}
+		</div>
+		<div>
+			<Value value={value} numberPrefix="$" decimals={2} />
+		</div>
+	</>
+)
 
 type Props = { totalUSDBalance: string; balanceLoading: boolean }
 
@@ -37,12 +55,18 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 					<Tooltip
 						title={
 							<>
-								<Row>Curve LP APY:</Row>
-								<Row>{lpApyPercent?.toFixed(2)}%</Row>
-								<Row>CRV APY:</Row>
-								<Row>{threeCrvApyPercent?.toFixed(2)}%</Row>
-								<Row>YAXIS rewards APY:</Row>
-								<Row>{yaxisApyPercent?.toFixed(2)}%</Row>
+								<TooltipRow
+									main={'Curve LP APY:'}
+									value={lpApyPercent.toNumber()}
+								/>
+								<TooltipRow
+									main={'CRV APY:'}
+									value={threeCrvApyPercent.toNumber()}
+								/>
+								<TooltipRow
+									main={'YAXIS rewards APY:'}
+									value={yaxisApyPercent.toNumber()}
+								/>
 							</>
 						}
 					>

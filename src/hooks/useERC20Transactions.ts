@@ -50,6 +50,7 @@ const useERC20Transactions = () => {
                                 curr.to ===
                                 config.contractAddresses.stableSwap3PoolConverter.toLowerCase()
                             ) {
+                                console.log(2, curr)
                                 acc.metaVault.USD = acc.metaVault.USD.minus(
                                     new BN(curr.value).div(
                                         10 **
@@ -68,6 +69,7 @@ const useERC20Transactions = () => {
                                 curr.from ===
                                 config.contractAddresses.yAxisMetaVault.toLowerCase()
                             ) {
+                                console.log(1, curr)
                                 acc.metaVault.USD = acc.metaVault.USD.plus(
                                     new BN(curr.value).div(
                                         10 **
@@ -114,12 +116,25 @@ const useERC20Transactions = () => {
                             )
                         }
 
+                        // SWAP 
+                        if (
+                            curr.tokenSymbol === 'YAXIS' &&
+                            // curr.from === account.toLowerCase() &&
+                            curr.to ===
+                            config.rewards.Yaxis.toLowerCase()
+                        ) {
+                            // acc.staking.YAXIS = acc.staking.YAXIS.minus(
+                            //     new BN(curr.value).div(10 ** 18),
+                            // )
+                            // console.log(curr)
+                        }
+
                         // DEPOSIT STAKING NEW
                         if (
                             curr.tokenSymbol === 'YAXIS' &&
                             curr.from === account.toLowerCase() &&
                             curr.to ===
-                            config.contractAddresses.xYaxStaking.toLowerCase()
+                            config.rewards.Yaxis.toLowerCase()
                         ) {
                             acc.staking.YAXIS = acc.staking.YAXIS.minus(
                                 new BN(curr.value).div(10 ** 18),
@@ -131,7 +146,7 @@ const useERC20Transactions = () => {
                             curr.tokenSymbol === 'YAXIS' &&
                             curr.to === account.toLowerCase() &&
                             curr.from ===
-                            config.contractAddresses.xYaxStaking.toLowerCase()
+                            config.rewards.Yaxis.toLowerCase()
                         ) {
                             acc.staking.YAXIS = acc.staking.YAXIS.plus(
                                 new BN(curr.value).div(10 ** 18),
@@ -157,6 +172,7 @@ const useERC20Transactions = () => {
         config.contractAddresses.stableSwap3PoolConverter,
         config.contractAddresses.xYaxStaking,
         config.contractAddresses.yAxisMetaVault,
+        config.rewards,
     ])
 
     useEffect(() => {

@@ -40,14 +40,14 @@ export default function useYaxisStaking() {
     const getData = useCallback(async () => {
         try {
             const data = {
-                sYaxisBalance: new BigNumber(sBalance),
-                stakedBalance: new BigNumber(sBalance).div(1e18),
-                walletBalance: new BigNumber(walletBalance),
+                sYaxisBalance: new BigNumber(sBalance || 0),
+                stakedBalance: new BigNumber(sBalance || 0).div(1e18),
+                walletBalance: new BigNumber(walletBalance || 0),
                 stakedBalanceUSD:
-                    new BigNumber(sBalance)
+                    sBalance ? new BigNumber(sBalance)
                         .div(1e18)
-                        .multipliedBy(priceMap?.YAXIS),
-                yaxisBalance: new BigNumber(walletBalance).div(1e18),
+                        .multipliedBy(priceMap?.YAXIS) : new BigNumber(0),
+                yaxisBalance: walletBalance ? new BigNumber(walletBalance).div(1e18) : new BigNumber(0),
             }
             setBalances(data)
             setLoading(false)

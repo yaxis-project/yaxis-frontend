@@ -4,16 +4,23 @@ import useYAXISStaking from './useYAXISStaking'
 import useMetaVaultData from '../hooks/useMetaVaultData'
 import useERC20Transactions from '../hooks/useERC20Transactions'
 import usePriceMap from '../hooks/usePriceMap'
-import BN from 'bignumber.js'
+import useWeb3Provider from '../hooks/useWeb3Provider'
+import BN, { BigNumber } from 'bignumber.js'
 
 const defaultState = {
-	metaVaultUSD: '0',
-	stakingUSD: '0',
-	totalUSD: '0',
+	rewards: {
+		lp: new BigNumber(0),
+		metaVault: new BigNumber(0),
+		governance: new BigNumber(0),
+	},
+	metaVaultUSD: new BigNumber(0),
+	rewardsUSD: new BigNumber(0),
+	totalUSD: new BigNumber(0),
 }
 
 const useReturns = () => {
-	const { block } = useGlobal()
+	const { account } = useWeb3Provider()
+	const { block, yaxis } = useGlobal()
 	const [state, setState] = useState(defaultState)
 	const [loading, setLoading] = useState(true)
 
@@ -29,21 +36,85 @@ const useReturns = () => {
 	const priceMap = usePriceMap()
 
 	useEffect(() => {
-		if (!loadingStaking && !loadingMetaVaultData && !loadingERC20) {
+		const getData = async () => {
+			const rewards = Object.fromEntries(
+				await Promise.all(
+					Object.values(yaxis.contracts.rewards).map((c) =>
+						c.methods
+							.earned(account)
+							.call()
+							.then((r) => [c.options.address, r]),
+					),
+				),
+			)
+
+			const paidRewards = Object.fromEntries(
+				await Promise.all(
+					Object.values(yaxis.contracts.rewards).map((c) =>
+						c
+							.getPastEvents('RewardPaid', {
+								filter: {
+									user: account,
+								},
+								fromBlock: 12250000,
+								toBlock: 'latest',
+							})
+							.then((events) => [
+								c.options.address,
+								events.reduce(
+									(
+										accumulator,
+										{ returnValues: { reward } },
+									) => {
+										return accumulator.plus(reward)
+									},
+									new BN(0),
+								),
+							]),
+					),
+				),
+			)
+
+			const [
+				governance,
+				lp,
+				metaVault,
+			] = Object.values(yaxis.contracts.rewards).map((c) =>
+				new BN(rewards[c.options.address]).plus(
+					paidRewards[c.options.address],
+				).dividedBy(10 ** 18),
+			)
+
 			const investingBalance = new BN(totalBalance || '0').multipliedBy(
 				mvltPrice || '0',
 			)
 			const mvReUSD = erc20.metaVault.USD.plus(investingBalance)
-			const mvReYAX = erc20.metaVault.YAX.plus(erc20.metaVault.YAXIS)
-			const mvReturn = mvReUSD.plus(mvReYAX.multipliedBy(priceMap?.YAXIS))
-			const stReYAX = erc20.staking.YAX.plus(erc20.staking.YAXIS).plus(stakedBalance)
-			const stReturn = stReYAX.multipliedBy(priceMap?.YAXIS)
+			// const mvReYAX = erc20.metaVault.YAX.plus(erc20.metaVault.YAXIS)
+			// const mvReturn = mvReUSD.plus(mvReYAX.multipliedBy(priceMap?.YAXIS))
+			// const stReYAX = erc20.staking.YAX.plus(erc20.staking.YAXIS).plus(
+			// 	stakedBalance,
+			// )
+			const rewardsReturn = governance.plus(lp).plus(metaVault).multipliedBy(priceMap?.YAXIS)
+
 			setState({
-				metaVaultUSD: mvReturn.toFixed(2),
-				stakingUSD: stReturn.toFixed(2),
-				totalUSD: mvReturn.plus(stReturn).toFixed(2),
+				rewards: {
+					lp: lp.multipliedBy(priceMap?.YAXIS),
+					metaVault: metaVault.multipliedBy(priceMap?.YAXIS),
+					governance: governance.multipliedBy(priceMap?.YAXIS),
+				},
+				metaVaultUSD: mvReUSD,
+				rewardsUSD: rewardsReturn,
+				totalUSD: mvReUSD.plus(rewardsReturn),
 			})
 			setLoading(false)
+		}
+		if (
+			!loadingStaking &&
+			!loadingMetaVaultData &&
+			!loadingERC20 &&
+			yaxis
+		) {
+			getData()
 		}
 	}, [
 		block,
@@ -54,7 +125,9 @@ const useReturns = () => {
 		mvltPrice,
 		totalBalance,
 		stakedBalance,
-		priceMap
+		priceMap,
+		account,
+		yaxis,
 	])
 
 	return { loading, returns: state }

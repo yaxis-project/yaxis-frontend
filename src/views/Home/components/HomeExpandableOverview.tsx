@@ -14,8 +14,6 @@ import {
 	CardRow,
 } from '../../../components/ExpandableSidePanel'
 import { Tooltip } from 'antd'
-import useMetaVaultData from '../../../hooks/useMetaVaultData'
-import { formatBN } from '../../../yaxis/utils'
 import Button from '../../../components/Button'
 
 interface TooltipRowProps {
@@ -30,7 +28,9 @@ const TooltipRow = ({ main, value }: TooltipRowProps) => (
 		>
 			{main}
 		</div>
-		<div>{value}</div>
+		<div>
+			<Value value={value} numberPrefix="$" decimals={2} />
+		</div>
 	</>
 )
 
@@ -45,7 +45,6 @@ export default function HomeExpandableOverview() {
 
 	const { tvl, stakingTvl, metavaultTvl, liquidityTvl, yaxisPrice } = useTVL()
 	const totalSupply = useTotalSupply()
-	const { metaVaultData } = useMetaVaultData('v1')
 
 	const hrPrice = yaxisPrice ? new BigNumber(yaxisPrice).toNumber() : 0
 
@@ -62,15 +61,15 @@ export default function HomeExpandableOverview() {
 								<>
 									<TooltipRow
 										main="Total MetaVault 2.0 value"
-										value={'$' + formatBN(metavaultTvl)}
+										value={metavaultTvl.toNumber()}
 									/>
 									<TooltipRow
 										main="Total YAXIS Staking value"
-										value={'$' + formatBN(stakingTvl)}
+										value={stakingTvl.toNumber()}
 									/>
 									<TooltipRow
 										main="Total Liquidity Pool value"
-										value={'$' + formatBN(liquidityTvl)}
+										value={liquidityTvl.toNumber()}
 									/>
 								</>
 							}
@@ -111,25 +110,7 @@ export default function HomeExpandableOverview() {
 				/>
 
 				<CardRow
-					main={
-						<Tooltip
-							title={
-								<>
-									<TooltipRow
-										main="New rewards per block"
-										value={`${metaVaultData?.rewardPerBlock} YAXIS`}
-									/>
-								</>
-							}
-						>
-							Total YAXIS Supply{' '}
-							<img
-								src={info}
-								height="15"
-								alt="YAXIS Supply Rewards"
-							/>
-						</Tooltip>
-					}
+					main={'Max YAXIS Supply'}
 					secondary={
 						<Value
 							value={
