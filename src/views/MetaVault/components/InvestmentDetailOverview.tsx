@@ -26,7 +26,7 @@ const TooltipRow = ({ main, value }: TooltipRowProps) => (
 			{main}
 		</div>
 		<div>
-			<Value value={value} numberPrefix="$" decimals={2} />
+			<Value value={value} numberSuffix="%" decimals={2} />
 		</div>
 	</>
 )
