@@ -16,6 +16,7 @@ export const configs: Record<number, Config> = {
 			pickleChef: '0x76f4A0CE3753F745e97e588F8423230B83f4a2F4',
 			pickleJar: '0x13F4cc6C239aBaD03EbD2deAA6A7107E9c6c9BEB',
 			uniswapRouter: '0x8D037Ea525f150BaD41D0caB990665fE944Cb2F7',
+			zap3pool: '0xE2C2a45850375c0A8B92b853fcd0a110463ed5Ab',
 		},
 		rewards: {
 			MetaVault: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8',
@@ -97,8 +98,8 @@ export const configs: Record<number, Config> = {
 			xYaxStaking: '0xeF31Cb88048416E301Fee1eA13e7664b887BA7e8',
 			yAxisMetaVault: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
 			stableSwap3PoolConverter: '0x2eab685d85AA52E4d8b6699Ba5aAC3b0c3992C3B',
-			// '0xA5c16eb6eBD72BC72c70Fca3e4faCf389AD4aBE7',
-			uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
+			uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+			zap3pool: '0xA79828DF1850E8a3A3064576f380D90aECDD3359',
 		},
 		rewards: {
 			MetaVault: '0x226f9954A1221cDe805C76CfB312A5d761630E14',

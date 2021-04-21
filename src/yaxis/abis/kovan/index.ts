@@ -17,4 +17,5 @@ export const abis = {
     ConverterABI: require('./converter.json') as AbiItem[],
     RewardsABI: require('./Rewards.json') as AbiItem[],
     UniswapRouterABI: require('./UniswapRouter.json') as AbiItem[],
+    Zap3PoolABI: require('./Zap3Pool.json') as AbiItem[],
 }

@@ -44,6 +44,7 @@ export interface Config {
 		pickleChef: string
 		pickleJar: string
 		uniswapRouter: string
+		zap3pool: string
 	}
 	rewards: RewardsContracts
 	pools: StakePool[]
