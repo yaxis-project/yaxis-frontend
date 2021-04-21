@@ -130,7 +130,7 @@ const APYCalculator: React.FC<Props> = ({
 								</StyledRow>
 								<StyledRadio
 									options={options}
-									defaultValue="365"
+									defaultValue={`${yearlyCompounds}`}
 									onChange={({ target: { value } }) => {
 										setCompoundFrequency(Number(value))
 									}}
