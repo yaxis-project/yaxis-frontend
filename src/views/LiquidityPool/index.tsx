@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import Page from '../../components/Page/Page'
 import { Row, Col } from 'antd'
@@ -7,12 +7,12 @@ import LiquidityOverviewCard from './components/LiquidityOverviewCard'
 import PairStatsCard from './components/PairStatsCard'
 import './index.less'
 import useLPContractData from '../../hooks/useLPContractData'
-import { numberToFloat } from '../../yaxis/utils'
+import usePriceMap from '../../hooks/usePriceMap'
 import { StakePool } from '../../yaxis/type'
 import Stake from './components/Stake'
 import LegacyStake from './components/LegacyStake'
 import { red } from '../../theme/colors'
-
+import BigNumber from 'bignumber.js'
 type Props = {
 	pool: StakePool
 }
@@ -24,7 +24,20 @@ const StyledCol = styled(Col)`
 `
 
 const Liquidity: React.FC<Props> = ({ pool }) => {
-	const { stakedBalance } = useLPContractData(pool)
+	const { stakedBalance, reserves, totalSupply } = useLPContractData(pool)
+	const { YAXIS, ETH } = usePriceMap()
+	const balanceUSD = useMemo(() => {
+		if (!reserves || !ETH || !YAXIS || !totalSupply || !stakedBalance)
+			return new BigNumber(0)
+		const share = new BigNumber(stakedBalance).div(totalSupply)
+		const shareT0 = new BigNumber(reserves['_reserve0'])
+			.multipliedBy(share)
+			.dividedBy(10 ** 18)
+		const shareT1 = new BigNumber(reserves['_reserve1'])
+			.multipliedBy(share)
+			.dividedBy(10 ** 18)
+		return shareT0.multipliedBy(YAXIS).plus(shareT1.multipliedBy(ETH))
+	}, [YAXIS, ETH, reserves, totalSupply, stakedBalance])
 	return (
 		<div className="liquidity-view">
 			<Page
@@ -36,7 +49,12 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 				value={
 					pool?.legacy
 						? 'No longer supported.'
-						: `${numberToFloat(stakedBalance)} LP tokens`
+						: '$' +
+						  Number(balanceUSD).toLocaleString(
+								undefined, // leave undefined to use the browser's locale,
+								// or use a string like 'en-US' to override it.
+								{ minimumFractionDigits: 2 },
+						  )
 				}
 				valueInfo={
 					pool?.legacy
@@ -61,7 +79,7 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 						<Row>
 							<LiquidityOverviewCard
 								pool={pool}
-								totalUSDBalance={stakedBalance}
+								totalUSDBalance={balanceUSD}
 							/>
 							<PairStatsCard farmID={pool.symbol} />
 						</Row>
