@@ -40,16 +40,16 @@ export default function useLP(pool: StakePool): LiquidityPoolData {
 	const { balance } = useTokenBalance(farm?.lpContract?.options?.address)
 	const { balance: legacyStakedBalance } = useStakedBalance(pool.pid)
 
-	const {
-		data: newStakedBalance,
-	} = useContractReadAccount({
-		contractName: `yaxisMetaVault`,
-		method: 'pendingYax',
+	const { data: newStakedBalance } = useContractReadAccount({
+		contractName: `rewards.${pool.rewards}`,
+		method: 'balanceOf',
 		args: [account],
 	})
 
-	const stakedBalance = useMemo(() => pool?.legacy ? legacyStakedBalance
-		: newStakedBalance, [pool, legacyStakedBalance, newStakedBalance])
+	const stakedBalance = useMemo(
+		() => (pool?.legacy ? legacyStakedBalance : newStakedBalance),
+		[pool, legacyStakedBalance, newStakedBalance],
+	)
 
 	const getData = useCallback(async () => {
 		if (!(farm && farm.lpContract)) return
