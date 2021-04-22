@@ -31,9 +31,9 @@ const Title: React.FC = () => {
 					<b>
 						{yaxisAprPercent
 							.div(100)
-							.dividedBy(52)
+							.dividedBy(365)
 							.plus(1)
-							.pow(52)
+							.pow(365)
 							.minus(1)
 							.multipliedBy(100)
 							.toFixed(2)}
