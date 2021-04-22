@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { find } from 'lodash'
 import { Currency } from '../../../utils/currencies'
 import usePriceMap from '../../../hooks/usePriceMap'
@@ -15,7 +15,7 @@ interface DepositAssetRowProps {
 	currency: Currency
 	onChange: Function
 	value: string
-	disabled: boolean
+	containerStyle?: any
 }
 
 /**
@@ -23,38 +23,53 @@ interface DepositAssetRowProps {
  * signed in user.
  * @param props DepositAssetRowProps
  */
-export default function DepositAssetRow(props: DepositAssetRowProps) {
-	const { currency, onChange, value, disabled } = props
+const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
+	currency,
+	onChange,
+	value,
+	containerStyle,
+}) => {
 	const { currenciesData } = useMetaVaultData('v1')
 
-	const currencyData = find(
-		currenciesData,
-		(curr) => curr['name'] === currency.name,
+	const currencyData = useMemo(
+		() => find(currenciesData, (curr) => curr['name'] === currency.name),
+		[currenciesData, currency],
 	)
-	const balance = currencyData
-		? new BigNumber(currencyData.balance)
-		: new BigNumber('0')
+	const balance = useMemo(
+		() =>
+			currencyData
+				? new BigNumber(currencyData.balance)
+				: new BigNumber('0'),
+		[currencyData],
+	)
 
 	const { [currency.priceMapKey]: price } = usePriceMap()
 
-	const balanceUSD = new BigNumber(price).times(balance).toFixed(2)
+	const balanceUSD = useMemo(
+		() => new BigNumber(price).times(balance).toFixed(2),
+		[balance, price],
+	)
 
 	const [inputError, setInputError] = useState<boolean>(false)
 
 	return (
 		<>
-			<Row className="deposit-asset-row">
-				<Col xs={12} sm={6} md={5} className="currency">
+			<Row
+				className="deposit-asset-row"
+				justify="center"
+				style={containerStyle ? containerStyle : {}}
+			>
+				<Col xs={7} sm={6} md={6} className="currency">
 					<img src={currency.icon} height="36" alt="logo" />
 					<Text>{currency.name}</Text>
 				</Col>
-				<Col xs={12} sm={8} md={7} className="balance">
+				<Col xs={11} sm={6} md={6} className="balance">
 					<Value value={balanceUSD} numberPrefix="$" decimals={2} />
 					<Text type="secondary">
 						{balance.toFixed(2)} {currency.name}
 					</Text>
 				</Col>
-				<Col xs={24} sm={24} md={12} className="amount">
+				<Col xs={18} sm={12} md={12}>
 					<Form.Item
 						validateStatus={inputError && 'error'}
 						style={{ marginBottom: 0 }}
@@ -71,7 +86,7 @@ export default function DepositAssetRow(props: DepositAssetRowProps) {
 							value={value}
 							min={'0'}
 							placeholder="0"
-							disabled={disabled || balance.isZero()}
+							disabled={balance.isZero()}
 							suffix={currency.name}
 							onClickMax={() =>
 								onChange(
@@ -86,3 +101,5 @@ export default function DepositAssetRow(props: DepositAssetRowProps) {
 		</>
 	)
 }
+
+export default DepositAssetRow

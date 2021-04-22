@@ -19,7 +19,7 @@ export class Contracts {
 	public multicall: Contract
 	public vaultConverter: Contract
 	public uniswapRouter: Contract
-	public zap3pool: Contract
+	public curve3Pool: Contract
 	public vault: {
 		usdc: Contract
 		dai: Contract
@@ -51,7 +51,7 @@ export class Contracts {
 		this.pickleChef = new this.web3.eth.Contract(abis.PickleChefABI)
 		this.pickleJar = new this.web3.eth.Contract(abis.PickleJarABI)
 
-		this.zap3pool = new this.web3.eth.Contract(abis.Zap3PoolABI)
+		this.curve3Pool = new this.web3.eth.Contract(abis.Curve3PoolABI)
 		this.xYaxStaking = new this.web3.eth.Contract(abis.XYaxABI)
 		this.yaxisMetaVault = new this.web3.eth.Contract(abis.YaxisMetaVaultABI)
 		this.multicall = new this.web3.eth.Contract(abis.MulticallABI)
@@ -103,7 +103,7 @@ export class Contracts {
 		setProvider(this.multicall, this.config.contractAddresses.multicall)
 
 		setProvider(this.xYaxStaking, this.config.contractAddresses.xYaxStaking)
-		setProvider(this.zap3pool, this.config.contractAddresses.zap3pool)
+		setProvider(this.curve3Pool, this.config.contractAddresses.curve3pool)
 		setProvider(
 			this.yaxisMetaVault,
 			this.config.contractAddresses.yAxisMetaVault,

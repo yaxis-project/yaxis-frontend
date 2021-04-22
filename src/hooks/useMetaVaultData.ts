@@ -173,7 +173,7 @@ function useMetaVaultData(id: string): IHookReturn {
 		currentConfig(chainId).contractAddresses.yAxisMetaVault,
 	)
 	const [daiApprove, usdcApprove, usdtApprove, threeCrvApprove] = allowances
-	// const [daiMaxWithdraw, usdcMaxWithdraw, usdtMaxWithdraw, threeCrvMaxWithdraw] = maxWithdraws;
+
 	const [
 		daiWithdrawal,
 		usdcWithdrawal,
@@ -282,7 +282,7 @@ function useMetaVaultData(id: string): IHookReturn {
 	}))
 
 	useEffect(() => {
-		; (async () => {
+		;(async () => {
 			try {
 				setErrorMsg(undefined)
 				setError(false)
@@ -322,14 +322,16 @@ function useMetaVaultData(id: string): IHookReturn {
 					yaxPerBlock,
 					rewardMultiplier,
 				]: any[] = await Promise.all([
-					account ? contract.methods.balanceOf(account).call() : "0",
-					account ? contract.methods.userInfo(account).call() : {
-						accEarned: "0",
-						amount: "0",
-						yaxRewardDebt: "0"
-					},
+					account ? contract.methods.balanceOf(account).call() : '0',
+					account
+						? contract.methods.userInfo(account).call()
+						: {
+								accEarned: '0',
+								amount: '0',
+								yaxRewardDebt: '0',
+						  },
 					contract.methods.balance().call(),
-					account ? contract.methods.pendingYax(account).call() : "0",
+					account ? contract.methods.pendingYax(account).call() : '0',
 					contract.methods.totalSupply().call(),
 					contract.methods.yaxPerBlock().call(),
 					contract.methods.getMultiplier(block, block + 1).call(),
@@ -419,8 +421,8 @@ function useMetaVaultData(id: string): IHookReturn {
 							const value = isCrv
 								? r
 								: await contract.methods
-									.calc_token_amount_withdraw(r, addr)
-									.call()
+										.calc_token_amount_withdraw(r, addr)
+										.call()
 							let real = new BigNumber(value)
 								.times(withdrawnFee)
 								.times(isCrv ? 1 : 1 - slippage)
@@ -451,9 +453,7 @@ function useMetaVaultData(id: string): IHookReturn {
 	useEffect(() => {
 		setMetaVaultData({} as MetaVaultData)
 		if (account) setLoading(true)
-	}, [
-		account,
-	])
+	}, [account])
 
 	useEffect(() => {
 		if (
@@ -463,7 +463,8 @@ function useMetaVaultData(id: string): IHookReturn {
 			yaxPrice &&
 			cure3CrvPrice &&
 			block
-		) fetchMetaVaultData()
+		)
+			fetchMetaVaultData()
 	}, [
 		account,
 		library,

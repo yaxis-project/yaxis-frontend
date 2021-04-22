@@ -16,12 +16,12 @@ export const configs: Record<number, Config> = {
 			pickleChef: '0x76f4A0CE3753F745e97e588F8423230B83f4a2F4',
 			pickleJar: '0x13F4cc6C239aBaD03EbD2deAA6A7107E9c6c9BEB',
 			uniswapRouter: '0x8D037Ea525f150BaD41D0caB990665fE944Cb2F7',
-			zap3pool: '0xE2C2a45850375c0A8B92b853fcd0a110463ed5Ab',
+			curve3pool: '0xE2C2a45850375c0A8B92b853fcd0a110463ed5Ab',
 		},
 		rewards: {
 			MetaVault: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8',
 			Yaxis: '0x8Dd07469b35C02cfa294071D456a2d98b5D42Fa9',
-			YaxisEth: '0x71d8189DF0515ac3E2339599FeC1627e6e3AFB72'
+			YaxisEth: '0x71d8189DF0515ac3E2339599FeC1627e6e3AFB72',
 		},
 		vault: {
 			usdc: '0x39B8a63F0c5b65Da458e6fDc5C2e543A80A15Abc',
@@ -57,7 +57,7 @@ export const configs: Record<number, Config> = {
 				symbol: 'YAXIS/ETH UNI-V2 LP',
 				tokenSymbol: 'YAXIS',
 				icon: '',
-				rewards: 'YaxisEth'
+				rewards: 'YaxisEth',
 			},
 			{
 				pid: 6,
@@ -97,14 +97,15 @@ export const configs: Record<number, Config> = {
 			weth: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
 			xYaxStaking: '0xeF31Cb88048416E301Fee1eA13e7664b887BA7e8',
 			yAxisMetaVault: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
-			stableSwap3PoolConverter: '0x2eab685d85AA52E4d8b6699Ba5aAC3b0c3992C3B',
+			stableSwap3PoolConverter:
+				'0x2eab685d85AA52E4d8b6699Ba5aAC3b0c3992C3B',
 			uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-			zap3pool: '0xA79828DF1850E8a3A3064576f380D90aECDD3359',
+			curve3pool: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
 		},
 		rewards: {
 			MetaVault: '0x226f9954A1221cDe805C76CfB312A5d761630E14',
 			Yaxis: '0x3b09B9ADFe11f92225b4C55De89fa81456595CD9',
-			YaxisEth: '0xEDaFe410e2f07ab9D7F1B04316D29C2F49dCb104'
+			YaxisEth: '0xEDaFe410e2f07ab9D7F1B04316D29C2F49dCb104',
 		},
 		vault: {
 			usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -125,7 +126,8 @@ export const configs: Record<number, Config> = {
 				type: 'uni',
 				liquidId: '0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73/ETH',
 				lpAddress: '0xF0E3FdF48661CD10d56692f60BD4eCcd01E9CF64',
-				lpUrl: 'https://info.uniswap.org/pair/0xF0E3FdF48661CD10d56692f60BD4eCcd01E9CF64',
+				lpUrl:
+					'https://info.uniswap.org/pair/0xF0E3FdF48661CD10d56692f60BD4eCcd01E9CF64',
 				lpTokens: [
 					{
 						symbol: 'YAXIS',
@@ -141,7 +143,7 @@ export const configs: Record<number, Config> = {
 				symbol: 'YAXIS/ETH UNI-V2 LP',
 				tokenSymbol: 'YAXIS',
 				icon: '',
-				rewards: 'YaxisEth'
+				rewards: 'YaxisEth',
 			},
 			{
 				legacy: true,

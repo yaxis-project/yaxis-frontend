@@ -14,7 +14,7 @@ interface Params {
 interface CallOptions {
 	amount?: string
 	cb?: Function
-	args?: string[]
+	args?: any[]
 }
 
 const useContractWrite = ({ contractName, method, description }: Params) => {
@@ -49,7 +49,7 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				if (cb) cb()
 				setData(response)
 				setLoading(false)
-				return true
+				return response
 			} catch (e) {
 				console.error(e)
 				notification.error({
