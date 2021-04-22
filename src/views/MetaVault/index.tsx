@@ -36,10 +36,14 @@ const MetaVault: React.FC = () => {
 		loading,
 	} = useMetaVaultData('v1')
 
-	const totalUSDBalance = new BigNumber(totalBalance || '0')
-		.plus(stakedBalance || '0')
-		.multipliedBy(mvltPrice || '0')
-		.toFixed(2)
+	const totalUSDBalance = useMemo(() => {
+		const sBalance = new BigNumber(stakedBalance || 0).dividedBy(10 ** 18)
+		const balance = new BigNumber(totalBalance || '0')
+		return balance
+			.plus(sBalance)
+			.multipliedBy(mvltPrice || '0')
+			.toFixed(2)
+	}, [mvltPrice, stakedBalance, totalBalance])
 
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 	const address = currentConfig(chainId).contractAddresses['yAxisMetaVault']
