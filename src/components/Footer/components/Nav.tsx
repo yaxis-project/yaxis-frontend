@@ -50,7 +50,10 @@ const Nav: React.FC = () => {
 
 			<StyledCol3 xs={24} sm={24} md={8}>
 				<Row justify={xs || sm ? 'center' : 'end'}>
-					<StyledLink target="_blank" href="https://yaxis.ghost.io">
+					<StyledLink
+						target="_blank"
+						href="https://yaxis.medium.com/"
+					>
 						<ReadOutlined style={{ fontSize: '25px' }} />
 					</StyledLink>
 					<StyledLink
