@@ -5,7 +5,7 @@ import { ReactComponent as discord } from '../../../assets/img/icons/discord.svg
 import { ReactComponent as github } from '../../../assets/img/icons/github.svg'
 import { ReactComponent as twitter } from '../../../assets/img/icons/twitter.svg'
 import quantstamp from '../../../assets/img/icons/quantstamp.svg'
-import Icon, { ReadOutlined } from '@ant-design/icons'
+import Icon, { MediumOutlined } from '@ant-design/icons'
 const { useBreakpoint } = Grid
 
 const Nav: React.FC = () => {
@@ -54,7 +54,7 @@ const Nav: React.FC = () => {
 						target="_blank"
 						href="https://yaxis.medium.com/"
 					>
-						<ReadOutlined style={{ fontSize: '25px' }} />
+						<MediumOutlined style={{ fontSize: '25px' }} />
 					</StyledLink>
 					<StyledLink
 						target="_blank"

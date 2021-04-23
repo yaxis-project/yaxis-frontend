@@ -12,7 +12,7 @@ import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import Button from '../../../components/Button'
 import Input from '../../../components/Input'
-import { Row, Col, Typography, Card, Form, Result } from 'antd'
+import { Row, Col, Typography, Card, Form, Result, Spin } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 const { Text } = Typography
@@ -220,8 +220,16 @@ export default function ApprovalWrapper() {
 			)
 		if (loadingAllowance)
 			return (
-				<Row justify="center" style={{ height: '202px' }}>
-					<LoadingOutlined style={{ fontSize: 54 }} spin />
+				<Row
+					justify="center"
+					align="middle"
+					style={{ height: '202px' }}
+				>
+					<Spin
+						indicator={
+							<LoadingOutlined style={{ fontSize: 54 }} spin />
+						}
+					/>
 				</Row>
 			)
 		if (new BigNumber(allowance).isEqualTo(0))
