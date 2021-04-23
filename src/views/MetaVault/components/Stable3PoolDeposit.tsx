@@ -1,5 +1,5 @@
 import { useState, useContext, useMemo, useCallback } from 'react'
-import { Zap3PoolCurrencies } from '../../../utils/currencies'
+import { Currencies3Pool } from '../../../utils/currencies'
 import DepositAssetRow from './DepositAssetRow'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
 import usePriceMap from '../../../hooks/usePriceMap'
@@ -24,7 +24,7 @@ const { Title, Text } = Typography
 const { useBreakpoint } = Grid
 
 const initialCurrencyValues: CurrencyValues = reduce(
-	Zap3PoolCurrencies,
+	Currencies3Pool,
 	(prev, curr) => ({
 		...prev,
 		[curr.tokenId]: '',
@@ -35,7 +35,7 @@ const initialCurrencyValues: CurrencyValues = reduce(
 /**
  * Creates a deposit table for the savings account.
  */
-export default function Stable3Pool({ set3crvValue, value3crv }) {
+export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
 	const { md } = useBreakpoint()
 	const { yaxis } = useGlobal()
 	const priceMap = usePriceMap()
@@ -51,12 +51,7 @@ export default function Stable3Pool({ set3crvValue, value3crv }) {
 	)
 
 	const totalDepositing = useMemo(
-		() =>
-			computeTotalDepositing(
-				Zap3PoolCurrencies,
-				currencyValues,
-				priceMap,
-			),
+		() => computeTotalDepositing(Currencies3Pool, currencyValues, priceMap),
 		[currencyValues, priceMap],
 	)
 
@@ -71,7 +66,7 @@ export default function Stable3Pool({ set3crvValue, value3crv }) {
 
 	const handleSubmit = useCallback(async () => {
 		try {
-			const amounts = Zap3PoolCurrencies.map((c) => {
+			const amounts = Currencies3Pool.map((c) => {
 				const _v = currencyValues[c.tokenId]
 				if (_v) {
 					return numberToDecimal(_v, c.decimals)
@@ -97,7 +92,7 @@ export default function Stable3Pool({ set3crvValue, value3crv }) {
 
 	return (
 		<>
-			{Zap3PoolCurrencies.map((currency) => (
+			{Currencies3Pool.map((currency) => (
 				<DepositAssetRow
 					key={currency.name}
 					currency={currency}

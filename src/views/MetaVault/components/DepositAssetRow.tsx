@@ -6,6 +6,7 @@ import useMetaVaultData from '../../../hooks/useMetaVaultData'
 import Value from '../../../components/Value'
 import BigNumber from 'bignumber.js'
 import Input from '../../../components/Input'
+import styled from 'styled-components'
 
 import { Row, Col, Typography, Form } from 'antd'
 
@@ -57,11 +58,14 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 			<Row
 				className="deposit-asset-row"
 				justify="center"
+				align="middle"
 				style={containerStyle ? containerStyle : {}}
 			>
-				<Col xs={7} sm={6} md={6} className="currency">
-					<img src={currency.icon} height="36" alt="logo" />
-					<Text>{currency.name}</Text>
+				<Col xs={7} sm={6} md={6}>
+					<Row align="middle">
+						<img src={currency.icon} height="36" alt="logo" />
+						<StyledText>{currency.name}</StyledText>
+					</Row>
 				</Col>
 				<Col xs={11} sm={6} md={6} className="balance">
 					<Value value={balanceUSD} numberPrefix="$" decimals={2} />
@@ -103,3 +107,9 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 }
 
 export default DepositAssetRow
+
+const StyledText = styled(Text)`
+	margin-left: 16px;
+	font-size: 18px;
+	line-height: 1em;
+`

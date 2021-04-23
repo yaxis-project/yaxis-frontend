@@ -18,11 +18,11 @@ export const handleFormInputChange = (setCurrencyValues: Function) => (
 	key: string,
 	value: string,
 ) => {
-	// !isNaN(Number(value)) &&
-	setCurrencyValues((prev: any) => ({
-		...prev,
-		[key]: value,
-	}))
+	!isNaN(Number(value)) &&
+		setCurrencyValues((prev: any) => ({
+			...prev,
+			[key]: value,
+		}))
 }
 
 /**

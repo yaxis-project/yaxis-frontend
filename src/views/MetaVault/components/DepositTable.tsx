@@ -1,7 +1,7 @@
 import { useState, useContext, useMemo, useCallback } from 'react'
 import { InvestingDepositCurrencies } from '../../../utils/currencies'
 import DepositAssetRow from './DepositAssetRow'
-import Stable3Pool from './Stable3Pool'
+import Stable3PoolDeposit from './Stable3PoolDeposit'
 import useMetaVault from '../../../hooks/useMetaVault'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
 import usePriceMap from '../../../hooks/usePriceMap'
@@ -128,7 +128,7 @@ export default function DepositTable() {
 					<Text type="secondary">{phrases['Amount'][language]}</Text>
 				</StyledCol>
 			</HeaderRow>
-			<Stable3Pool
+			<Stable3PoolDeposit
 				set3crvValue={handleFormInputChange(setCurrencyValues)}
 				value3crv={currencyValues}
 			/>

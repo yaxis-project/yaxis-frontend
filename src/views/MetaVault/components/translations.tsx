@@ -10,6 +10,12 @@ const translations = {
 	'To Wallet': {
 		ENG: 'To Wallet',
 	},
+	Convert: {
+		ENG: 'Convert',
+	},
+	'You have': {
+		ENG: 'You have',
+	},
 	'Total APY': {
 		ENG: 'Total APY',
 	},
