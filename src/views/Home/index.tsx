@@ -71,7 +71,7 @@ const SavingsAccountOverview: React.FC = () => {
  */
 const InvestmentAccountOverview: React.FC = () => {
 	const { lastUpdated } = useGlobal()
-	const { account, chainId } = useWeb3Provider()
+	const { account } = useWeb3Provider()
 
 	const { data: stakedBalance } = useContractReadAccount({
 		contractName: `rewards.MetaVault`,
