@@ -10,6 +10,7 @@ import useMetaVault from '../../../hooks/useMetaVault'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
 import BigNumber from 'bignumber.js'
 import useUnstake from '../../../hooks/useUnstake'
+import useContractWrite from '../../../hooks/useContractWrite'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 const { Step } = Steps
 
@@ -26,6 +27,7 @@ interface StepClaimProps extends StepProps {
 	stakedUniLP: BigNumber
 	uniLPBalance: BigNumber
 	linkLPBalance: BigNumber
+	stakedMvlt: BigNumber
 }
 
 const StepClaim: React.FC<StepClaimProps> = ({
@@ -34,6 +36,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 	stakedUniLP,
 	uniLPBalance,
 	linkLPBalance,
+	stakedMvlt,
 }) => {
 	const { chainId } = useWeb3Provider()
 
@@ -46,6 +49,15 @@ const StepClaim: React.FC<StepClaimProps> = ({
 	const { isClaiming, onGetRewards } = useMetaVault()
 
 	const { onFetchMetaVaultData } = useMetaVaultData('V2')
+
+	const {
+		call: handleUnstake,
+		loading: loadingUnstakeMVLT,
+	} = useContractWrite({
+		contractName: `yaxisMetaVault`,
+		method: 'unstake',
+		description: `unstake MVLT`,
+	})
 
 	const handleClaimRewards = useCallback(async () => {
 		try {
@@ -61,6 +73,27 @@ const StepClaim: React.FC<StepClaimProps> = ({
 	}, [onFetchMetaVaultData, onGetRewards])
 
 	const mvRewards = useMemo(() => {
+		if (stakedMvlt.gt(0))
+			return (
+				<Step
+					title={
+						<StyledButton
+							onClick={async () => {
+								await handleUnstake({
+									args: [stakedMvlt.toString()],
+								})
+							}}
+							loading={loadingUnstakeMVLT}
+							height={'40px'}
+						>
+							Unstake MVLT
+						</StyledButton>
+					}
+					description="Withdraw your MVLT from the previous rewards contract."
+					status="wait"
+					icon={<StyledIcon />}
+				/>
+			)
 		if (pendingYax.gt(0))
 			return (
 				<Step
@@ -85,32 +118,20 @@ const StepClaim: React.FC<StepClaimProps> = ({
 				status="finish"
 			/>
 		)
-	}, [pendingYax, isClaiming, handleClaimRewards])
+	}, [
+		pendingYax,
+		isClaiming,
+		handleClaimRewards,
+		stakedMvlt,
+		handleUnstake,
+		loadingUnstakeMVLT,
+	])
 
 	const [loadingUnstakeUni, setLoadingUnstakeUni] = useState(false)
 	const { loading, onReward } = useReward(uniYaxEthLP.pid)
 	const { onUnstake } = useUnstake(uniYaxEthLP?.pid, uniYaxEthLP?.name)
 
 	const uniswapLP = useMemo(() => {
-		if (earnings.gt(0))
-			return (
-				<Step
-					title={
-						<StyledButton
-							onClick={async () => {
-								await onReward()
-							}}
-							loading={loading}
-							disabled={!earnings.toNumber()}
-							height={'40px'}
-						>
-							Claim Liquidity Pool rewards
-						</StyledButton>
-					}
-					description="Gather pending Uniswap YAX / ETH rewards"
-					icon={<StyledIcon />}
-				/>
-			)
 		if (stakedUniLP.gt(0))
 			return (
 				<Step
@@ -132,6 +153,25 @@ const StepClaim: React.FC<StepClaimProps> = ({
 						</StyledButton>
 					}
 					description="Withdraw your LP token from the previous rewards contract."
+					icon={<StyledIcon />}
+				/>
+			)
+		if (earnings.gt(0))
+			return (
+				<Step
+					title={
+						<StyledButton
+							onClick={async () => {
+								await onReward()
+							}}
+							loading={loading}
+							disabled={!earnings.toNumber()}
+							height={'40px'}
+						>
+							Claim Liquidity Pool rewards
+						</StyledButton>
+					}
+					description="Gather pending Uniswap YAX / ETH rewards"
 					icon={<StyledIcon />}
 				/>
 			)
@@ -204,6 +244,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 
 	const message = useMemo(() => {
 		if (
+			stakedMvlt.gt(0) ||
 			earnings.gt(0) ||
 			pendingYax.gt(0) ||
 			stakedUniLP.gt(0) ||
@@ -213,7 +254,14 @@ const StepClaim: React.FC<StepClaimProps> = ({
 			return 'First, gather up all of your YAX'
 
 		return 'Step complete.'
-	}, [earnings, pendingYax, stakedUniLP, uniLPBalance, linkLPBalance])
+	}, [
+		stakedMvlt,
+		earnings,
+		pendingYax,
+		stakedUniLP,
+		uniLPBalance,
+		linkLPBalance,
+	])
 
 	return (
 		<>

@@ -130,6 +130,8 @@ export const currencyMap = {
  */
 export const InvestingDepositCurrencies = [DAI, USDC, USDT, CRV3]
 
+export const Currencies3Pool = [DAI, USDC, USDT]
+
 export enum Currencies {
 	DAI,
 	CRV3,

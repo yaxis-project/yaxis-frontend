@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Col } from 'antd'
+import { Row, Col } from 'antd'
 import { CardRow } from '../../components/ExpandableSidePanel'
 import Value from '../../components/Value'
 import Button from '../../components/Button'
@@ -41,23 +41,27 @@ const Claim: React.FC<Props> = ({ rewardsContract }) => {
 				/>
 			}
 			rightContent={
-				<Col xs={12} sm={12} md={12}>
-					<RewardAPYTooltip visible={claimVisible} title="">
-						<Button
-							disabled={
-								loadingClaimable ||
-								new BigNumber(claimable).isZero()
-							}
-							onClick={() =>
-								handleClaim({ cb: () => setClaimVisible(true) })
-							}
-							loading={loadingClaim}
-							height={'40px'}
-						>
-							Claim
-						</Button>
-					</RewardAPYTooltip>
-				</Col>
+				<Row justify="center">
+					<Col xs={14} sm={14} md={14}>
+						<RewardAPYTooltip visible={claimVisible} title="">
+							<Button
+								disabled={
+									loadingClaimable ||
+									new BigNumber(claimable).isZero()
+								}
+								onClick={() =>
+									handleClaim({
+										cb: () => setClaimVisible(true),
+									})
+								}
+								loading={loadingClaim}
+								height={'40px'}
+							>
+								Claim
+							</Button>
+						</RewardAPYTooltip>
+					</Col>
+				</Row>
 			}
 		/>
 	)

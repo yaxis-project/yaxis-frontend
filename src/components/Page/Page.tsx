@@ -40,12 +40,13 @@ const StyledContent = styled(Content)`
 const BGUnderlay = styled.div`
 	width: 100%;
 	height: 80px;
-	background: linear-gradient(180deg, #016eac 20.17%, #52b2dc 100%);
+	background: linear-gradient(180deg, #016eac 50.17%, #328ec1 100%);
 	position: absolute;
 `
 
 const BGHomeUnderlay = styled(BGUnderlay)`
 	height: 400px;
+	background: linear-gradient(180deg, #016eac 20.17%, #52b2dc 100%);
 `
 
 interface PageProps {

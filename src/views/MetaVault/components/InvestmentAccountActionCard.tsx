@@ -1,4 +1,3 @@
-import React from 'react'
 import { Card, Tabs } from 'antd'
 import DepositTable from './DepositTable'
 import WithdrawTable from './WithdrawTable'

@@ -41,7 +41,7 @@ const StepSwap: React.FC<StepSwapProps> = ({
 	const { account } = useWeb3Provider()
 	const { yaxis } = useGlobal()
 
-	const [allowanceYAX, setAllowanceYAX] = useState('0')
+	const [allowanceYAX, setAllowanceYAX] = useState(0)
 	const [loadingAllowanceYAX, setLoadingAllowanceYAX] = useState(true)
 	const { onApprove: onApproveYAX, loading: loadingApproveYAX } = useApprove(
 		yaxis?.contracts?.yax,
@@ -109,16 +109,6 @@ const StepSwap: React.FC<StepSwapProps> = ({
 	const button = useMemo(() => {
 		if (loadingAllowanceYAX || loadingAllowanceSYAX)
 			return <Button loading={true} disabled={true} />
-		console.log('balances:', {
-			showApproveSYAX: ethers.constants.MaxUint256.gt(allowanceSYAX),
-			sYAXApproved: allowanceSYAX.toString(),
-			sYAX: stakedBalance.toString(),
-			stakedGt0: stakedBalance.gt(0),
-			YAX: yaxBalance.toString(),
-			walletGt0: yaxBalance.gt(0),
-			showApproveYAX: ethers.constants.MaxUint256.gt(allowanceYAX),
-			YAXApproved: allowanceYAX.toString(),
-		})
 		if (
 			stakedBalance.gt(0) &&
 			ethers.constants.MaxUint256.gt(allowanceSYAX)
@@ -133,7 +123,7 @@ const StepSwap: React.FC<StepSwapProps> = ({
 				</Button>
 			)
 
-		if (yaxBalance.gt(0) && ethers.constants.MaxUint256.gt(allowanceYAX))
+		if (yaxBalance.gt(0) && allowanceYAX < 2 ** 256 - 1)
 			return (
 				<Button
 					loading={loadingApproveYAX}

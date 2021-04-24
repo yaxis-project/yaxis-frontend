@@ -4,12 +4,11 @@ import {
 	Col,
 	Typography,
 	Divider,
-	Select,
 	notification,
 	Form,
 	Tooltip,
 } from 'antd'
-import { Currency, USD, CRV3 } from '../../../utils/currencies'
+import { USD, CRV3 } from '../../../utils/currencies'
 import logo from '../../../assets/img/logo-ui.svg'
 import { find } from 'lodash'
 import { numberToDecimal } from '../../../yaxis/utils'
@@ -26,108 +25,18 @@ import { ArrowDownOutlined } from '@ant-design/icons'
 import info from '../../../assets/img/info.svg'
 import usePriceMap from '../../../hooks/usePriceMap'
 import Input from '../../../components/Input'
-
-const { Option } = Select
-
+import Stable3PoolWithdraw from './Stable3PoolWithdraw'
+import styled from 'styled-components'
 const { Title, Text } = Typography
 
-interface WithdrawalSelectorProps {
-	withdrawValueUSD: BigNumber
-	withdrawDisabled: boolean
-	availableCurrencies: Currency[]
-	handleSubmit: any
-	setWithdrawCurrency: any
-	withdrawalCurrency: any
-	submitting: any
-}
-
-const WithdrawalSelector = (props: WithdrawalSelectorProps) => {
-	const {
-		availableCurrencies,
-		withdrawValueUSD,
-		withdrawDisabled,
-		handleSubmit,
-		withdrawalCurrency,
-		setWithdrawCurrency,
-		submitting,
-	} = props
+/**
+ * Generates the withdraw component, allowing a user to select investment currency to withdraw from.
+ */
+export default function WithdrawTable() {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 	const t = (s: string) => phrases[s][language]
 
-	const prices = usePriceMap()
-
-	const withdrawTokenAmount = useMemo(() => {
-		const price = prices[withdrawalCurrency.priceMapKey]
-		if (price) {
-			return withdrawValueUSD.div(price)
-		}
-		return new BigNumber(0)
-	}, [withdrawalCurrency, withdrawValueUSD, prices])
-
-	return (
-		<Row className="to-wallet">
-			<Col xs={24} sm={8}>
-				<Title level={5}>{t('To Wallet')}</Title>
-			</Col>
-			<Col xs={24} sm={14}>
-				<Select
-					defaultValue={CRV3.name}
-					disabled={submitting}
-					onSelect={(selected) =>
-						setWithdrawCurrency(
-							find(
-								availableCurrencies,
-								(curr) => curr.name === selected,
-							),
-						)
-					}
-				>
-					{availableCurrencies.map((currency) => (
-						<Option value={currency.name} key={currency.name}>
-							<Row gutter={10} align={'middle'}>
-								<Col>
-									<img
-										src={currency.icon}
-										height="36"
-										alt="logo"
-									/>
-								</Col>
-								<Col>
-									<Text>{currency.name}</Text>
-								</Col>
-							</Row>
-						</Option>
-					))}
-				</Select>
-
-				<Text className="title" type="secondary">
-					{t("You'll receive an estimate of")}
-				</Text>
-				<Value
-					value={withdrawTokenAmount.times(0.999).toFixed(2)}
-					numberSuffix={` ${withdrawalCurrency.name}`}
-					extra={'$' + withdrawValueUSD.times(0.999).toFixed(2)}
-				/>
-				<br />
-				<Button
-					className="investing-btn"
-					disabled={withdrawDisabled}
-					loading={submitting}
-					onClick={handleSubmit}
-				>
-					{t('Withdraw')}
-				</Button>
-				<Text type="secondary">{t('Withdraw Fee')}: 0.1%</Text>
-			</Col>
-		</Row>
-	)
-}
-
-/**
- * Takes USD value and converts to appropriate MVLT shares amount.
- */
-const useWithdrawValueHandler = () => {
 	const {
 		metaVaultData: { totalBalance, mvltPrice },
 		currenciesData,
@@ -145,32 +54,6 @@ const useWithdrawValueHandler = () => {
 		[withdrawValueUSD, mvltPrice],
 	)
 
-	return {
-		withdrawValueUSD,
-		setWithdrawValueUSD,
-		withdrawValueShares,
-		totalAvailableInUSD,
-		totalBalance,
-		currenciesData,
-	}
-}
-
-/**
- * Generates the withdraw component, allowing a user to select investment currency to withdraw from.
- */
-export default function WithdrawTable() {
-	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
-
-	const {
-		withdrawValueUSD,
-		setWithdrawValueUSD,
-		withdrawValueShares,
-		totalAvailableInUSD,
-		totalBalance,
-		currenciesData,
-	} = useWithdrawValueHandler()
-
 	const updateWithdraw = (value: string) => setWithdrawValueUSD(value)
 	const withdrawalError = new BigNumber(withdrawValueUSD).gt(
 		totalAvailableInUSD,
@@ -181,28 +64,18 @@ export default function WithdrawTable() {
 		withdrawalError
 
 	const [submitting, setSubmitting] = useState(false)
-	const [withdrawalCurrency, setWithdrawCurrency] = useState<
-		Currency | undefined
-	>(CRV3)
 
-	const t = (s: string) => phrases[s][language]
 	const { onAddTransaction } = useTransactionAdder()
 	const { onWithdraw } = useMetaVault()
 
 	const handleSubmit = async () => {
-		if (!withdrawalCurrency) {
-			notification.error({
-				message: `[withdraw] Invalid currency`,
-			})
-			return
-		}
 		const sharesAmount = numberToDecimal(withdrawValueShares, 18)
 		notification.info({
 			message: t('Please confirm withdraw transaction.'),
 		})
 		const selectedCurrency = find(
 			currenciesData,
-			(c) => c.tokenId === withdrawalCurrency.tokenId,
+			(c) => c.tokenId === CRV3.tokenId,
 		)
 		try {
 			setSubmitting(true)
@@ -210,11 +83,13 @@ export default function WithdrawTable() {
 				sharesAmount,
 				selectedCurrency.address,
 			)
-			setWithdrawValueUSD('')
-			onAddTransaction({
-				hash: receipt.transactionHash,
-				description: 'Withdraw|$' + withdrawValueUSD,
-			} as Transaction)
+			if (receipt) {
+				setWithdrawValueUSD('')
+				onAddTransaction({
+					hash: receipt.transactionHash,
+					description: 'Withdraw|$' + withdrawValueUSD,
+				} as Transaction)
+			}
 			setSubmitting(false)
 		} catch (error) {
 			notification.info({
@@ -225,41 +100,59 @@ export default function WithdrawTable() {
 		}
 	}
 
+	const prices = usePriceMap()
+
+	const withdrawTokenAmount = useMemo(() => {
+		const price = prices[CRV3.priceMapKey]
+		if (price) return new BigNumber(withdrawValueUSD || 0).div(price)
+		return new BigNumber(0)
+	}, [withdrawValueUSD, prices])
+
 	return (
-		<div className="withdraw-table">
-			<Row className="withdraw-from">
+		<>
+			<WithdrawRow>
 				<Col xs={24} sm={8}>
 					<Title level={5}>{phrases['From'][language]}</Title>
 				</Col>
-				<Col xs={24} sm={14}>
-					<Text className="title">
-						<img src={logo} height="36" alt="logo" />
-						{phrases['Investment Account'][language]}
-					</Text>
-
-					<Text type="secondary" className="available">
-						{phrases['Available'][language]}:
-						<Tooltip
-							title={
-								<>
-									{new BigNumber(totalBalance || 0).toFixed(
-										2,
-									) + ' MVLT'}
-								</>
-							}
-						>
-							{' $' + totalAvailableInUSD.toFixed(2)}{' '}
-							<img
-								src={info}
-								style={{ position: 'relative', top: -2 }}
-								height="15"
-								alt="Withdraw Token Breakdown"
-							/>
-						</Tooltip>
-					</Text>
+				<Col xs={24} sm={16}>
+					<Row align="middle" gutter={14}>
+						<Col>
+							<img src={logo} height="36" alt="logo" />
+						</Col>
+						<Col>
+							<Text>
+								{phrases['Investment Account'][language]}
+							</Text>
+						</Col>
+					</Row>
+					<Row style={{ padding: '6px 0' }}>
+						<Text type="secondary">
+							{phrases['Available'][language]}:
+							<Tooltip
+								title={
+									<>
+										{new BigNumber(
+											totalBalance || 0,
+										).toFixed(2) + ' MVLT'}
+									</>
+								}
+							>
+								{' $' + totalAvailableInUSD.toFixed(2)}{' '}
+								<img
+									src={info}
+									style={{ position: 'relative', top: -2 }}
+									height="15"
+									alt="Withdraw Token Breakdown"
+								/>
+							</Tooltip>
+						</Text>
+					</Row>
 					<Form.Item validateStatus={withdrawalError && 'error'}>
 						<Input
-							onChange={(e) => updateWithdraw(e.target.value)}
+							onChange={(e) =>
+								!isNaN(Number(e.target.value)) &&
+								updateWithdraw(e.target.value)
+							}
 							value={withdrawValueUSD}
 							min={'0'}
 							placeholder="0"
@@ -273,25 +166,93 @@ export default function WithdrawTable() {
 						/>
 					</Form.Item>
 				</Col>
-			</Row>
-			<div className="divider-group">
-				<Divider />
-				<ArrowDownOutlined className="divider-arrow" />
-			</div>
+			</WithdrawRow>
 
-			<WithdrawalSelector
-				handleSubmit={handleSubmit}
-				withdrawValueUSD={
-					withdrawValueUSD === ''
-						? new BigNumber(0)
-						: new BigNumber(withdrawValueUSD)
-				}
-				withdrawDisabled={withdrawDisabled}
-				availableCurrencies={[CRV3]}
-				withdrawalCurrency={withdrawalCurrency}
-				setWithdrawCurrency={setWithdrawCurrency}
-				submitting={submitting}
-			/>
-		</div>
+			<DividerGroup>
+				<Divider />
+				<DividerArrow />
+			</DividerGroup>
+
+			<WithdrawRow>
+				<Col xs={24} sm={8}>
+					<Title level={5}>{phrases['To Wallet'][language]}</Title>
+				</Col>
+				<Col xs={24} sm={16}>
+					<Row align="middle">
+						<Col span={3}>
+							<Row>
+								<img src={CRV3.icon} height="36" alt="logo" />
+							</Row>
+						</Col>
+						<Col span={14}>
+							<Row>
+								<Text type="secondary">
+									{t("You'll receive an estimate of")}
+								</Text>
+							</Row>
+							<Row>
+								<Value
+									value={withdrawTokenAmount
+										.times(0.999)
+										.toFixed(2)}
+									numberSuffix={` 3CRV`}
+									extra={
+										'$' +
+										new BigNumber(withdrawValueUSD || 0)
+											.times(0.999)
+											.toFixed(2)
+									}
+								/>
+							</Row>
+						</Col>
+					</Row>
+					<Row style={{ margin: '10px 0' }}>
+						<Button
+							disabled={withdrawDisabled}
+							loading={submitting}
+							onClick={handleSubmit}
+						>
+							{t('Withdraw')}
+						</Button>
+					</Row>
+					<Text type="secondary">{t('Withdraw Fee')}: 0.1%</Text>
+				</Col>
+			</WithdrawRow>
+
+			<DividerGroup>
+				<Divider />
+				<DividerArrow />
+			</DividerGroup>
+
+			<WithdrawRow>
+				<Col xs={24} sm={8}>
+					<Title level={5}>{t('Convert')}</Title>
+				</Col>
+				<Col xs={24} sm={16}>
+					<Stable3PoolWithdraw />
+				</Col>
+			</WithdrawRow>
+		</>
 	)
 }
+
+const WithdrawRow = styled(Row)`
+	margin: 28px 22px;
+	position: relative;
+`
+
+const DividerGroup = styled.div`
+	position: relative;
+`
+const DividerArrow = styled(ArrowDownOutlined)`
+	position: absolute;
+	font-size: 24px;
+	top: 0;
+	transform: translateY(-45%);
+	left: 50%;
+	background: white;
+	border: 8px solid white;
+	svg {
+		opacity: 0.3;
+	}
+`

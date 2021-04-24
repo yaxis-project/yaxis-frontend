@@ -50,7 +50,6 @@ const useERC20Transactions = () => {
                                 curr.to ===
                                 config.contractAddresses.stableSwap3PoolConverter.toLowerCase()
                             ) {
-                                console.log(2, curr)
                                 acc.metaVault.USD = acc.metaVault.USD.minus(
                                     new BN(curr.value).div(
                                         10 **
@@ -69,7 +68,6 @@ const useERC20Transactions = () => {
                                 curr.from ===
                                 config.contractAddresses.yAxisMetaVault.toLowerCase()
                             ) {
-                                console.log(1, curr)
                                 acc.metaVault.USD = acc.metaVault.USD.plus(
                                     new BN(curr.value).div(
                                         10 **

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { Typography, Card, Button } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import transactionIn from '../../../assets/img/icons/transaction-in.svg'

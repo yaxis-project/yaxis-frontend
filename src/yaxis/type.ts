@@ -44,6 +44,7 @@ export interface Config {
 		pickleChef: string
 		pickleJar: string
 		uniswapRouter: string
+		curve3pool: string
 	}
 	rewards: RewardsContracts
 	pools: StakePool[]

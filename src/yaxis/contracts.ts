@@ -19,6 +19,7 @@ export class Contracts {
 	public multicall: Contract
 	public vaultConverter: Contract
 	public uniswapRouter: Contract
+	public curve3Pool: Contract
 	public vault: {
 		usdc: Contract
 		dai: Contract
@@ -50,6 +51,7 @@ export class Contracts {
 		this.pickleChef = new this.web3.eth.Contract(abis.PickleChefABI)
 		this.pickleJar = new this.web3.eth.Contract(abis.PickleJarABI)
 
+		this.curve3Pool = new this.web3.eth.Contract(abis.Curve3PoolABI)
 		this.xYaxStaking = new this.web3.eth.Contract(abis.XYaxABI)
 		this.yaxisMetaVault = new this.web3.eth.Contract(abis.YaxisMetaVaultABI)
 		this.multicall = new this.web3.eth.Contract(abis.MulticallABI)
@@ -92,24 +94,16 @@ export class Contracts {
 		setProvider(this.yax, this.config.contractAddresses.yax)
 		setProvider(this.swap, this.config.contractAddresses.swap)
 
-		setProvider(
-			this.rewards.Yaxis,
-			this.config.rewards.Yaxis,
-		)
-		setProvider(
-			this.rewards.YaxisEth,
-			this.config.rewards.YaxisEth,
-		)
-		setProvider(
-			this.rewards.MetaVault,
-			this.config.rewards.MetaVault,
-		)
+		setProvider(this.rewards.Yaxis, this.config.rewards.Yaxis)
+		setProvider(this.rewards.YaxisEth, this.config.rewards.YaxisEth)
+		setProvider(this.rewards.MetaVault, this.config.rewards.MetaVault)
 
 		setProvider(this.yaxisChef, this.config.contractAddresses.yaxisChef)
 		setProvider(this.weth, this.config.contractAddresses.weth)
 		setProvider(this.multicall, this.config.contractAddresses.multicall)
 
 		setProvider(this.xYaxStaking, this.config.contractAddresses.xYaxStaking)
+		setProvider(this.curve3Pool, this.config.contractAddresses.curve3pool)
 		setProvider(
 			this.yaxisMetaVault,
 			this.config.contractAddresses.yAxisMetaVault,
@@ -126,7 +120,10 @@ export class Contracts {
 		setProvider(this.vault.dai, this.config.vault.dai)
 		setProvider(this.vault.threeCrv, this.config.vault.threeCrv)
 
-		setProvider(this.uniswapRouter, this.config.contractAddresses.uniswapRouter)
+		setProvider(
+			this.uniswapRouter,
+			this.config.contractAddresses.uniswapRouter,
+		)
 
 		this.pools.forEach(
 			({ lpContract, lpAddress, tokenContract, tokenAddress }) => {

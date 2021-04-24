@@ -54,7 +54,6 @@ export function PricesProvider({
 			if (reserves)
 				try {
 					const priceMap = await getCoinGeckoPrices()
-					// YAXIS price kludge
 					let yaxisPrice = new BigNumber(0)
 					const { _reserve0, _reserve1 } = reserves
 					let t0 = new BigNumber(_reserve0)
@@ -64,8 +63,10 @@ export function PricesProvider({
 						t1 = t1.dividedBy(10 ** 18)
 						yaxisPrice = t1.dividedBy(t0).multipliedBy(priceMap.ETH)
 					}
-					//
-					priceMap.YAXIS = yaxisPrice.toNumber()
+					// YAXIS price kludge
+					priceMap.YAXIS = yaxisPrice.isZero()
+						? 60
+						: yaxisPrice.toNumber()
 					setValue(priceMap)
 					setIsInitialized(true)
 				} catch (e) {
