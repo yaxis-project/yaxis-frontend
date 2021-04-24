@@ -27,26 +27,13 @@ interface StepProps {
 interface StepStakeProps extends StepProps {
 	yaxisBalance: BigNumber
 	mvltBalance: BigNumber
-	stakedMvlt: BigNumber
 }
 
-const StepStake: React.FC<StepStakeProps> = ({
-	yaxisBalance,
-	mvltBalance,
-	stakedMvlt,
-}) => {
+const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 	const { yaxis: global, balance } = useGlobal()
 	const { chainId } = useWeb3Provider()
 	const { xl } = useBreakpoint()
 
-	const {
-		call: handleUnstake,
-		loading: loadingUnstakeMVLT,
-	} = useContractWrite({
-		contractName: `yaxisMetaVault`,
-		method: 'unstake',
-		description: `unstake MVLT`,
-	})
 	const allowance = useAllowance(
 		global?.contracts.yaxisMetaVault,
 		global?.contracts?.rewards.MetaVault.options.address,
@@ -64,29 +51,8 @@ const StepStake: React.FC<StepStakeProps> = ({
 	})
 
 	const mvlt = useMemo(() => {
-		if (stakedMvlt.gt(0))
-			return (
-				<Step
-					title={
-						<StyledButton
-							onClick={async () => {
-								await handleUnstake({
-									args: [stakedMvlt.toString()],
-								})
-							}}
-							loading={loadingUnstakeMVLT}
-							height={'40px'}
-						>
-							Unstake MVLT
-						</StyledButton>
-					}
-					description="Withdraw your MVLT from the previous rewards contract."
-					status="wait"
-					icon={<StyledIcon />}
-				/>
-			)
 		if (mvltBalance.gt(0)) {
-			if (allowance.isLessThan(ethers.constants.MaxUint256.toString()))
+			if (allowance.isLessThan(2 ** 256 - 1))
 				return (
 					<Step
 						title={
@@ -126,10 +92,7 @@ const StepStake: React.FC<StepStakeProps> = ({
 		}
 		return <Step title="Stake MVLT" description="Done." status="finish" />
 	}, [
-		stakedMvlt,
 		mvltBalance,
-		handleUnstake,
-		loadingUnstakeMVLT,
 		allowance,
 		handleStake,
 		loadingApproveMVLT,
@@ -327,11 +290,11 @@ const StepStake: React.FC<StepStakeProps> = ({
 	}, [yaxisBalance, loadingStakeYAXIS, onEnter, uniLP])
 
 	const message = useMemo(() => {
-		if (stakedMvlt.gt(0) || mvltBalance.gt(0) || yaxisBalance.gt(0))
+		if (mvltBalance.gt(0) || yaxisBalance.gt(0))
 			return 'Stake your tokens to receive emissions!'
 
 		return 'Step complete.'
-	}, [yaxisBalance, stakedMvlt, mvltBalance])
+	}, [yaxisBalance, mvltBalance])
 
 	return (
 		<>

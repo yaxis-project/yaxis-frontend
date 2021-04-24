@@ -23,8 +23,6 @@ import {
 	computeInsufficientBalance,
 	computeTotalDepositing,
 } from '../utils'
-import BigNumber from 'bignumber.js'
-import { ethers } from 'ethers'
 
 const { Title, Text } = Typography
 const { useBreakpoint } = Grid

@@ -78,7 +78,7 @@ export default function SwapInfo() {
 							<Panel header={'What do I need to do?'} key="0">
 								<Body>
 									It's as easy as following the Steps section
-									on this page
+									on this page.
 									<br />
 									<br />
 									The first step is to claim any unclaimed
@@ -88,6 +88,7 @@ export default function SwapInfo() {
 									<br />
 									<br />
 									Next click the SWAP button!
+									<br />
 									<br />
 									No need to unstake your staked YAX. This
 									all-in-one action will swap your account
