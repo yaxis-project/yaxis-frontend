@@ -38,7 +38,7 @@ const Nav: React.FC = () => {
 						target="_blank"
 						href="https://certificate.quantstamp.com/full/meta-vault-v-2"
 					>
-						Secured by{' '}
+						<span style={{ color: 'black' }}>Secured by</span>{' '}
 						<img
 							src={quantstamp}
 							height="17"

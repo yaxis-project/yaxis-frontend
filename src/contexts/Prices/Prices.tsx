@@ -64,7 +64,7 @@ export function PricesProvider({
 						yaxisPrice = t1.dividedBy(t0).multipliedBy(priceMap.ETH)
 					}
 					// YAXIS price kludge
-					priceMap.YAXIS = yaxisPrice.isZero
+					priceMap.YAXIS = yaxisPrice.isZero()
 						? 60
 						: yaxisPrice.toNumber()
 					setValue(priceMap)
