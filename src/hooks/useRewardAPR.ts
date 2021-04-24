@@ -7,12 +7,16 @@ import { Contract } from 'web3-eth-contract'
 import objectPath from 'object-path'
 import BigNumber from 'bignumber.js'
 
+const defaultState = {
+	apr: new BigNumber(0),
+	rewardsPerBlock: new BigNumber(0),
+}
 interface Params {
 	rewardsContract: keyof RewardsContracts
 }
 
 const useRewardAPY = ({ rewardsContract }: Params) => {
-	const [data, setData] = useState(new BigNumber(0))
+	const [data, setData] = useState(defaultState)
 	const [loading, setLoading] = useState(true)
 
 	const { yaxis } = useGlobal()
@@ -63,18 +67,22 @@ const useRewardAPY = ({ rewardsContract }: Params) => {
 					? new BigNumber(balance).minus(tvl)
 					: new BigNumber(balance)
 			if (funding.lt(0)) {
-				setData(new BigNumber(0))
 				setLoading(false)
 				return
 			}
 
 			const period = new BigNumber(duration).dividedBy(86400)
+			const AVERAGE_BLOCKS_PER_DAY = 6450
+			const rewardsPerBlock = funding
+				.dividedBy(period)
+				.dividedBy(AVERAGE_BLOCKS_PER_DAY)
+				.dividedBy(10 ** 18)
 			const rewardPerToken = funding.dividedBy(tvl)
 			const apr = rewardPerToken
 				.dividedBy(period)
 				.multipliedBy(365)
 				.multipliedBy(100)
-			setData(apr)
+			setData({ apr, rewardsPerBlock })
 			setLoading(false)
 		}
 		if (contract) get()
