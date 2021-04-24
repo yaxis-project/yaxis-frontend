@@ -98,6 +98,8 @@ export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
 					currency={currency}
 					onChange={handleFormInputChange(setCurrencyValues)}
 					value={currencyValues[currency.tokenId]}
+					contractName={`vault.${currency.tokenId}`}
+					approvee={yaxis?.contracts?.curve3Pool.options.address}
 				/>
 			))}
 			<Row

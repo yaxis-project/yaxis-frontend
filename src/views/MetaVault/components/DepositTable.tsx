@@ -13,7 +13,6 @@ import styled from 'styled-components'
 import { numberToDecimal } from '../../../yaxis/utils'
 import useTransactionAdder from '../../../hooks/useTransactionAdder'
 import { Transaction } from '../../../contexts/Transactions/types'
-import useContractWrite from '../../../hooks/useContractWrite'
 import useContractReadAccount from '../../../hooks/useContractReadAccount'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useGlobal from '../../../hooks/useGlobal'
@@ -57,9 +56,21 @@ export default function DepositTable() {
 
 	const { currenciesData } = useMetaVaultData('v1')
 
+	const {
+		loading: loading3crvAllowance,
+		data: allowance3crv,
+	} = useContractReadAccount({
+		contractName: 'vault.threeCrv',
+		method: 'allowance',
+		args: [account, yaxis?.contracts?.yaxisMetaVault.options.address],
+	})
+
 	const disabled = useMemo(
-		() => computeInsufficientBalance(currencyValues, currenciesData),
-		[currencyValues, currenciesData],
+		() =>
+			loading3crvAllowance ||
+			allowance3crv < 2 ** 256 - 1 ||
+			computeInsufficientBalance(currencyValues, currenciesData),
+		[currencyValues, currenciesData, allowance3crv, loading3crvAllowance],
 	)
 
 	const totalDepositing = useMemo(
@@ -95,21 +106,6 @@ export default function DepositTable() {
 		}
 	}, [currencyValues, onAddTransaction, onDepositAll, totalDepositing])
 
-	const {
-		loading: loading3crvAllowance,
-		data: allowance3crv,
-	} = useContractReadAccount({
-		contractName: 'vault.threeCrv',
-		method: 'allowance',
-		args: [account, yaxis?.contracts?.yaxisMetaVault.options.address],
-	})
-
-	const { call: handleApprove, loading: loadingApprove } = useContractWrite({
-		contractName: 'vault.threeCrv',
-		method: 'approve',
-		description: `approve MetaVault to use 3CRV`,
-	})
-
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 
@@ -139,42 +135,23 @@ export default function DepositTable() {
 					onChange={handleFormInputChange(setCurrencyValues)}
 					value={currencyValues[currency.tokenId]}
 					containerStyle={{ borderTop: '1px solid #eceff1' }}
+					contractName={`vault.threeCrv`}
+					approvee={yaxis?.contracts?.yaxisMetaVault.options.address}
 				/>
 			))}
 			<Row className="total" style={md ? {} : { padding: '0 10%' }}>
 				<Col offset={md ? 12 : 0} xs={24} sm={24} md={11}>
 					<Text type="secondary">{phrases['Total'][language]}</Text>
 					<Title level={3}>${totalDepositing}</Title>
-					{new BigNumber(allowance3crv).lt(
-						ethers.constants.MaxUint256.toString(),
-					) ? (
-						<Button
-							className="investing-btn"
-							disabled={loading3crvAllowance}
-							loading={loadingApprove}
-							onClick={() =>
-								handleApprove({
-									args: [
-										yaxis?.contracts?.yaxisMetaVault.options
-											.address,
-										ethers.constants.MaxUint256.toString(),
-									],
-								})
-							}
-						>
-							{phrases['Approve'][language]}
-						</Button>
-					) : (
-						<Button
-							className="investing-btn"
-							disabled={disabled}
-							loading={isSubmitting}
-							onClick={handleSubmit}
-							style={{ fontSize: '18px' }}
-						>
-							{phrases['Deposit'][language]}
-						</Button>
-					)}
+					<Button
+						className="investing-btn"
+						disabled={disabled}
+						loading={isSubmitting}
+						onClick={handleSubmit}
+						style={{ fontSize: '18px' }}
+					>
+						{phrases['Deposit'][language]}
+					</Button>
 					<Text
 						type="secondary"
 						style={{ marginTop: '10px', display: 'block' }}

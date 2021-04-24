@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { Currency, Currencies3Pool } from '../../../utils/currencies'
 import usePriceMap from '../../../hooks/usePriceMap'
 import Value from '../../../components/Value'
+import ApprovalCover from '../../../components/ApprovalCover'
 import BigNumber from 'bignumber.js'
 import Input from '../../../components/Input'
 import styled from 'styled-components'
@@ -18,6 +19,7 @@ interface WithdrawAssetRowProps {
 	error: boolean
 	balance: BigNumber
 	inputBalance: BigNumber
+	approvee: string
 	containerStyle?: any
 }
 
@@ -33,6 +35,7 @@ const WithdrawAssetRow: React.FC<WithdrawAssetRowProps> = ({
 	error,
 	balance,
 	inputBalance,
+	approvee,
 	containerStyle,
 }) => {
 	const currencyIndex = useMemo(
@@ -71,25 +74,32 @@ const WithdrawAssetRow: React.FC<WithdrawAssetRowProps> = ({
 				style={containerStyle ? containerStyle : {}}
 			>
 				<Col xs={18} sm={12} md={12}>
-					<Form.Item
-						validateStatus={error && 'error'}
-						style={{ marginBottom: 0 }}
+					<ApprovalCover
+						contractName={`vault.${currency.tokenId}`}
+						approvee={approvee}
+						hidden={balance.eq(0)}
 					>
-						<Input
-							onChange={(e) => {
-								onChange(currency.tokenId, e.target.value)
-							}}
-							value={value}
-							min={'0'}
-							placeholder="0"
-							disabled={balance.isZero()}
-							suffix={'3CRV'}
-							onClickMax={() => {
-								const max = balance.minus(inputBalance)
-								if (max.gt(0)) onChange(currency.tokenId, max)
-							}}
-						/>
-					</Form.Item>
+						<Form.Item
+							validateStatus={error && 'error'}
+							style={{ marginBottom: 0 }}
+						>
+							<Input
+								onChange={(e) => {
+									onChange(currency.tokenId, e.target.value)
+								}}
+								value={value}
+								min={'0'}
+								placeholder="0"
+								disabled={balance.isZero()}
+								suffix={'3CRV'}
+								onClickMax={() => {
+									const max = balance.minus(inputBalance)
+									if (max.gt(0))
+										onChange(currency.tokenId, max)
+								}}
+							/>
+						</Form.Item>
+					</ApprovalCover>
 				</Col>
 				<Col xs={7} sm={7} md={7}>
 					<Row align="middle" style={{ paddingLeft: '8px' }}>

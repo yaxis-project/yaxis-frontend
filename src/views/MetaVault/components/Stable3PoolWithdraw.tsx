@@ -151,6 +151,7 @@ export default function Stable3PoolWithdraw() {
 						error={error}
 						balance={balance3CRV}
 						inputBalance={input3CRV}
+						approvee={yaxis?.contracts?.curve3Pool.options.address}
 					/>
 				</PaddedRow>
 			))}

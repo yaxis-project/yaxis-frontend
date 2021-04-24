@@ -4,8 +4,9 @@ import { Currency } from '../../../utils/currencies'
 import usePriceMap from '../../../hooks/usePriceMap'
 import useMetaVaultData from '../../../hooks/useMetaVaultData'
 import Value from '../../../components/Value'
-import BigNumber from 'bignumber.js'
 import Input from '../../../components/Input'
+import ApprovalCover from '../../../components/ApprovalCover'
+import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 
 import { Row, Col, Typography, Form } from 'antd'
@@ -16,6 +17,8 @@ interface DepositAssetRowProps {
 	currency: Currency
 	onChange: Function
 	value: string
+	contractName: string
+	approvee: string
 	containerStyle?: any
 }
 
@@ -28,6 +31,8 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 	currency,
 	onChange,
 	value,
+	contractName,
+	approvee,
 	containerStyle,
 }) => {
 	const { currenciesData } = useMetaVaultData('v1')
@@ -74,32 +79,38 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 					</Text>
 				</Col>
 				<Col xs={18} sm={12} md={12}>
-					<Form.Item
-						validateStatus={inputError && 'error'}
-						style={{ marginBottom: 0 }}
+					<ApprovalCover
+						contractName={contractName}
+						approvee={approvee}
+						hidden={balance.eq(0)}
 					>
-						<Input
-							onChange={(e) => {
-								onChange(currency.tokenId, e.target.value)
-								setInputError(
-									new BigNumber(e.target.value).gt(
-										new BigNumber(balance),
-									),
-								)
-							}}
-							value={value}
-							min={'0'}
-							placeholder="0"
-							disabled={balance.isZero()}
-							suffix={currency.name}
-							onClickMax={() =>
-								onChange(
-									currency.tokenId,
-									currencyData?.maxDeposit || '0',
-								)
-							}
-						/>
-					</Form.Item>
+						<Form.Item
+							validateStatus={inputError && 'error'}
+							style={{ marginBottom: 0 }}
+						>
+							<Input
+								onChange={(e) => {
+									onChange(currency.tokenId, e.target.value)
+									setInputError(
+										new BigNumber(e.target.value).gt(
+											new BigNumber(balance),
+										),
+									)
+								}}
+								value={value}
+								min={'0'}
+								placeholder="0"
+								disabled={balance.isZero()}
+								suffix={currency.name}
+								onClickMax={() =>
+									onChange(
+										currency.tokenId,
+										currencyData?.maxDeposit || '0',
+									)
+								}
+							/>
+						</Form.Item>
+					</ApprovalCover>
 				</Col>
 			</Row>
 		</>
