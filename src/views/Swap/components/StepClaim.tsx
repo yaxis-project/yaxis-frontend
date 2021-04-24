@@ -132,25 +132,6 @@ const StepClaim: React.FC<StepClaimProps> = ({
 	const { onUnstake } = useUnstake(uniYaxEthLP?.pid, uniYaxEthLP?.name)
 
 	const uniswapLP = useMemo(() => {
-		if (earnings.gt(0))
-			return (
-				<Step
-					title={
-						<StyledButton
-							onClick={async () => {
-								await onReward()
-							}}
-							loading={loading}
-							disabled={!earnings.toNumber()}
-							height={'40px'}
-						>
-							Claim Liquidity Pool rewards
-						</StyledButton>
-					}
-					description="Gather pending Uniswap YAX / ETH rewards"
-					icon={<StyledIcon />}
-				/>
-			)
 		if (stakedUniLP.gt(0))
 			return (
 				<Step
@@ -172,6 +153,25 @@ const StepClaim: React.FC<StepClaimProps> = ({
 						</StyledButton>
 					}
 					description="Withdraw your LP token from the previous rewards contract."
+					icon={<StyledIcon />}
+				/>
+			)
+		if (earnings.gt(0))
+			return (
+				<Step
+					title={
+						<StyledButton
+							onClick={async () => {
+								await onReward()
+							}}
+							loading={loading}
+							disabled={!earnings.toNumber()}
+							height={'40px'}
+						>
+							Claim Liquidity Pool rewards
+						</StyledButton>
+					}
+					description="Gather pending Uniswap YAX / ETH rewards"
 					icon={<StyledIcon />}
 				/>
 			)
