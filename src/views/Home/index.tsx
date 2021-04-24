@@ -1,5 +1,5 @@
 import './index.less'
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { HomePage } from '../../components/Page'
 import YaxisPriceGraph from '../../components/YaxisPriceGraph'
@@ -8,11 +8,13 @@ import HomeOverviewCard from './components/HomeOverviewCard'
 import AdvancedNavigation from './components/AdvancedNavigation'
 import HomeExpandableOverview from './components/HomeExpandableOverview'
 import { Row, Col, Grid } from 'antd'
-import useMetaVaultData from '../../hooks/useMetaVaultData'
 import BigNumber from 'bignumber.js'
 import useYaxisStaking from '../../hooks/useYAXISStaking'
 import useGlobal from '../../hooks/useGlobal'
 import { formatBN } from '../../yaxis/utils'
+import useMetaVaultData from '../../hooks/useMetaVaultData'
+import useWeb3Provider from '../../hooks/useWeb3Provider'
+import useContractReadAccount from '../../hooks/useContractReadAccount'
 
 const { useBreakpoint } = Grid
 
@@ -69,20 +71,30 @@ const SavingsAccountOverview: React.FC = () => {
  */
 const InvestmentAccountOverview: React.FC = () => {
 	const { lastUpdated } = useGlobal()
+	const { account, chainId } = useWeb3Provider()
+
+	const { data: stakedBalance } = useContractReadAccount({
+		contractName: `rewards.MetaVault`,
+		method: 'balanceOf',
+		args: [account],
+	})
+
 	const {
 		metaVaultData: { totalBalance, mvltPrice },
 	} = useMetaVaultData('v1')
 
-	const totalInvestingBalance = new BigNumber(
-		totalBalance || '0',
-	).multipliedBy(mvltPrice || '0')
+	const totalUSDBalance = useMemo(() => {
+		const sBalance = new BigNumber(stakedBalance || 0).dividedBy(10 ** 18)
+		const balance = new BigNumber(totalBalance || '0')
+		return balance.plus(sBalance).multipliedBy(mvltPrice || '0')
+	}, [mvltPrice, stakedBalance, totalBalance])
 
 	return (
 		<AccountOverviewCard
 			loading={false}
 			mainTitle={'MetaVault Account'}
 			secondaryText={'Metavault 2.0'}
-			value={'$' + formatBN(totalInvestingBalance)}
+			value={'$' + formatBN(totalUSDBalance)}
 			time={lastUpdated.fromNow()}
 		/>
 	)
