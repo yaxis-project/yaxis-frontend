@@ -9,11 +9,13 @@ import StakingCard from './components/StakingCard'
 import SavingsOverviewCard from './components/SavingsOverviewCard'
 import VaultStatsCard from './components/VaultStatsCard'
 import './index.less'
-import useYaxisStaking from '../../hooks/useYAXISStaking'
-import { currentConfig } from '../../yaxis/configs'
-import { etherscanUrl } from '../../yaxis/utils'
+import { currentConfig } from '../../constants/configs'
+import { etherscanUrl } from '../../utils'
+import { formatBN } from '../../utils/number'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { NETWORK_NAMES } from '../../connectors'
+import { useStakedBalances } from '../../state/wallet/hooks'
+import { usePrices } from '../../state/prices/hooks'
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -22,17 +24,24 @@ const StyledCol = styled(Col)`
 `
 
 const Staking: React.FC = () => {
+	const { Yaxis } = useStakedBalances()
 	const {
-		balances: { stakedBalanceUSD },
-		loading,
-	} = useYaxisStaking()
+		prices: { yaxis },
+	} = usePrices()
+
+	const balance = useMemo(() => Yaxis.amount.multipliedBy(yaxis), [
+		Yaxis,
+		yaxis,
+	])
 
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 
 	const { chainId } = useWeb3Provider()
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
-	const address = currentConfig(chainId).rewards.Yaxis
+	const address = useMemo(() => currentConfig(chainId).rewards.Yaxis, [
+		chainId,
+	])
 
 	return (
 		<div className="savings-view">
@@ -44,14 +53,7 @@ const Staking: React.FC = () => {
 					address &&
 					etherscanUrl(`/address/${address}#code`, networkName)
 				}
-				value={
-					'$' +
-					Number(stakedBalanceUSD.toFixed(2)).toLocaleString(
-						undefined, // leave undefined to use the browser's locale,
-						// or use a string like 'en-US' to override it.
-						{ minimumFractionDigits: 2 },
-					)
-				}
+				value={'$' + formatBN(balance)}
 				valueInfo={phrases['Balance'][language]}
 			>
 				<Row gutter={16}>
@@ -62,8 +64,8 @@ const Staking: React.FC = () => {
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<Row>
 							<SavingsOverviewCard
-								totalUSDBalance={stakedBalanceUSD}
-								balanceLoading={loading}
+								totalUSDBalance={balance}
+								balanceLoading={false}
 							/>
 						</Row>
 						<Row style={{ marginTop: 15 }}>

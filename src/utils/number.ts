@@ -1,4 +1,7 @@
 import BigNumber from 'bignumber.js/bignumber'
+import { BigNumber as BN } from '@ethersproject/bignumber'
+
+export const MAX_UINT = 2 ^ (256 - 1)
 
 const ONE_MINUTE_IN_SECONDS = new BigNumber(60)
 const ONE_HOUR_IN_SECONDS = ONE_MINUTE_IN_SECONDS.times(60)
@@ -39,4 +42,59 @@ export function getApy(
 		)
 	}
 	return 0
+}
+
+// add 10%
+export function calculateGasMargin(value: BN): BN {
+	return value.mul(BN.from(10000).add(BN.from(1000))).div(BN.from(10000))
+}
+
+type FormatBNOptions = {
+	places?: number
+	hideOnWhole?: boolean
+	showDust?: boolean
+}
+export const formatBN = (BN: BigNumber, options: FormatBNOptions = {}) => {
+	const { places = 2, hideOnWhole = true, showDust = false } = options
+
+	const isWhole = BN.toString() === BN.toFixed(0).toString()
+	const formattedString = Number(BN.toFixed(places)).toLocaleString(
+		undefined, // leave undefined to use the browser's locale,
+		// or use a string like 'en-US' to override it.
+		{ minimumFractionDigits: places },
+	)
+	const split = BN.toString().split('.')
+	if (hideOnWhole && isWhole) return split[0]
+	if (showDust && split.length === 2 && !isWhole) {
+		const dust = split[1].length
+		if (dust > places) return formattedString.concat('..')
+	}
+	return formattedString
+}
+
+BigNumber.config({
+	EXPONENTIAL_AT: 1000,
+	DECIMAL_PLACES: 80,
+})
+
+export function collapseDecimals(value: any, decimal = 18) {
+	return value
+		? new BigNumber(value).div(new BigNumber(10).pow(decimal)).toString()
+		: '0'
+}
+
+export function numberToFloat(value: any, decimal = 18, fixNumber = 3) {
+	return Number(
+		new BigNumber(value)
+			.div(new BigNumber(10).pow(decimal))
+			.toFixed(fixNumber),
+	)
+}
+
+export function getCurrentUnixTime() {
+	return Math.floor(new Date().getTime() / 1000)
+}
+
+export function numberToDecimal(value: any, decimal = 18): string {
+	return new BigNumber(value).times(new BigNumber(10).pow(decimal)).toFixed()
 }

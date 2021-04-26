@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { Typography, Tooltip, Row } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import Value from '../../../components/Value'
-import useAPY from '../../../hooks/useAPY'
+import { useAPY } from '../../../state/internal/hooks'
 import phrases from './translations'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import Claim from '../../../components/Claim'
@@ -44,14 +44,11 @@ const SavingsOverviewCard: React.FC<Props> = ({
 	const t = (s: string) => phrases[s][language]
 
 	const {
-		data: {
-			yaxisApyPercent,
-			yaxisAprPercent,
-			// threeCrvApyPercent,
-			// lpApyPercent,
-			// totalAPR
-		},
-		loading,
+		yaxisApyPercent,
+		yaxisAprPercent,
+		// threeCrvApyPercent,
+		// lpApyPercent,
+		// totalAPR
 	} = useAPY('Yaxis', 0.2)
 
 	return (
@@ -127,7 +124,7 @@ const SavingsOverviewCard: React.FC<Props> = ({
 			<APYCalculator
 				APR={yaxisAprPercent.toNumber()}
 				balance={totalUSDBalance}
-				loading={balanceLoading || loading}
+				loading={balanceLoading}
 			/>
 		</DetailOverviewCard>
 	)

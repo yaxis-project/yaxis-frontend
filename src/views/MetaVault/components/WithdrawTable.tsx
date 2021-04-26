@@ -1,32 +1,22 @@
-import { useState, useContext, useMemo } from 'react'
-import {
-	Row,
-	Col,
-	Typography,
-	Divider,
-	notification,
-	Form,
-	Tooltip,
-} from 'antd'
-import { USD, CRV3 } from '../../../utils/currencies'
-import logo from '../../../assets/img/logo-ui.svg'
-import { find } from 'lodash'
-import { numberToDecimal } from '../../../yaxis/utils'
+import { useState, useContext, useCallback, useMemo } from 'react'
+import { Row, Col, Typography, Divider, Form, Tooltip } from 'antd'
+import { threeCRV, MVLT } from '../../../constants/currencies'
+import { numberToDecimal } from '../../../utils/number'
 import { LanguageContext } from '../../../contexts/Language'
-import useMetaVault from '../../../hooks/useMetaVault'
 import phrases from './translations'
-import useMetaVaultData from '../../../hooks/useMetaVaultData'
 import BigNumber from 'bignumber.js'
-import useTransactionAdder from '../../../hooks/useTransactionAdder'
-import { Transaction } from '../../../contexts/Transactions/types'
+import useContractWrite from '../../../hooks/useContractWrite'
 import Value from '../../../components/Value'
 import Button from '../../../components/Button'
 import { ArrowDownOutlined } from '@ant-design/icons'
 import info from '../../../assets/img/info.svg'
-import usePriceMap from '../../../hooks/usePriceMap'
+import { usePrices } from '../../../state/prices/hooks'
 import Input from '../../../components/Input'
 import Stable3PoolWithdraw from './Stable3PoolWithdraw'
 import styled from 'styled-components'
+import { useAccountMetaVaultData } from '../../../state/wallet/hooks'
+import { useMetaVaultData } from '../../../state/internal/hooks'
+import { useContracts } from '../../../contexts/Contracts'
 const { Title, Text } = Typography
 
 /**
@@ -35,18 +25,17 @@ const { Title, Text } = Typography
 export default function WithdrawTable() {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
-	const t = (s: string) => phrases[s][language]
+	const t = useCallback((s: string) => phrases[s][language], [language])
 
-	const {
-		metaVaultData: { totalBalance, mvltPrice },
-		currenciesData,
-	} = useMetaVaultData('v1')
+	const { contracts } = useContracts()
+	const { mvltPrice } = useMetaVaultData()
+	const { deposited } = useAccountMetaVaultData()
 
 	const [withdrawValueUSD, setWithdrawValueUSD] = useState('')
 
 	const totalAvailableInUSD = useMemo(
-		() => new BigNumber(totalBalance || '0').multipliedBy(mvltPrice || '0'),
-		[totalBalance, mvltPrice],
+		() => new BigNumber(deposited || '0').multipliedBy(mvltPrice || '0'),
+		[deposited, mvltPrice],
 	)
 
 	const withdrawValueShares = useMemo(
@@ -63,47 +52,41 @@ export default function WithdrawTable() {
 		new BigNumber(withdrawValueUSD).isLessThanOrEqualTo(new BigNumber(0)) ||
 		withdrawalError
 
-	const [submitting, setSubmitting] = useState(false)
+	const { call: handleWithdraw, loading: submitting } = useContractWrite({
+		contractName: 'internal.yAxisMetaVault',
+		method: 'withdraw',
+		description: `MetaVault withdraw`,
+	})
 
-	const { onAddTransaction } = useTransactionAdder()
-	const { onWithdraw } = useMetaVault()
+	const onWithdraw = useCallback(
+		async (
+			sharesAmount: string,
+			currencyAddress: string,
+			usdValue: string,
+		) => {
+			const args = [
+				new BigNumber(sharesAmount).toFixed(0),
+				currencyAddress,
+			]
+			await handleWithdraw({ args, descriptionExtra: usdValue })
+		},
+		[handleWithdraw],
+	)
 
-	const handleSubmit = async () => {
+	const handleSubmit = useCallback(async () => {
 		const sharesAmount = numberToDecimal(withdrawValueShares, 18)
-		notification.info({
-			message: t('Please confirm withdraw transaction.'),
-		})
-		const selectedCurrency = find(
-			currenciesData,
-			(c) => c.tokenId === CRV3.tokenId,
+		await onWithdraw(
+			sharesAmount,
+			contracts?.currencies.ERC20['3crv'].contract.address,
+			withdrawValueUSD,
 		)
-		try {
-			setSubmitting(true)
-			const receipt = await onWithdraw(
-				sharesAmount,
-				selectedCurrency.address,
-			)
-			if (receipt) {
-				setWithdrawValueUSD('')
-				onAddTransaction({
-					hash: receipt.transactionHash,
-					description: 'Withdraw|$' + withdrawValueUSD,
-				} as Transaction)
-			}
-			setSubmitting(false)
-		} catch (error) {
-			notification.info({
-				message: t('Error while withdrawing:'),
-				description: error.message,
-			})
-			setSubmitting(false)
-		}
-	}
+		setWithdrawValueUSD('')
+	}, [contracts, onWithdraw, withdrawValueShares, withdrawValueUSD])
 
-	const prices = usePriceMap()
+	const { prices } = usePrices()
 
 	const withdrawTokenAmount = useMemo(() => {
-		const price = prices.Cure3Crv
+		const price = prices['3crv']
 		if (price)
 			return new BigNumber(withdrawValueUSD || 0)
 				.multipliedBy(0.999)
@@ -120,7 +103,7 @@ export default function WithdrawTable() {
 				<Col xs={24} sm={16}>
 					<Row align="middle" gutter={14}>
 						<Col>
-							<img src={logo} height="36" alt="logo" />
+							<img src={MVLT.icon} height="36" alt="logo" />
 						</Col>
 						<Col>
 							<Text>
@@ -134,9 +117,9 @@ export default function WithdrawTable() {
 							<Tooltip
 								title={
 									<>
-										{new BigNumber(
-											totalBalance || 0,
-										).toFixed(2) + ' MVLT'}
+										{new BigNumber(deposited || 0).toFixed(
+											2,
+										) + ' MVLT'}
 									</>
 								}
 							>
@@ -162,7 +145,7 @@ export default function WithdrawTable() {
 							disabled={
 								submitting || totalAvailableInUSD.isZero()
 							}
-							suffix={USD.name}
+							suffix={'USD'}
 							onClickMax={() =>
 								updateWithdraw(totalAvailableInUSD.toString())
 							}
@@ -184,7 +167,11 @@ export default function WithdrawTable() {
 					<Row align="middle">
 						<Col span={3}>
 							<Row>
-								<img src={CRV3.icon} height="36" alt="logo" />
+								<img
+									src={threeCRV.icon}
+									height="36"
+									alt="logo"
+								/>
 							</Row>
 						</Col>
 						<Col span={14}>

@@ -5,29 +5,29 @@ import Value from '../../components/Value'
 import Button from '../../components/Button'
 import RewardAPYTooltip from '../../components/Tooltip/Tooltips/RewardAPYTooltip'
 import useContractWrite from '../../hooks/useContractWrite'
-import useContractReadAccount from '../../hooks/useContractReadAccount'
+import { useSingleCallResultByName } from '../../state/onchain/hooks'
 import { getBalanceNumber } from '../../utils/formatBalance'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import BigNumber from 'bignumber.js'
-import { RewardsContracts } from '../../yaxis/type'
+import { TRewardsContracts } from '../../constants/type'
 
-type Props = { rewardsContract: keyof RewardsContracts }
+type Props = { rewardsContract: TRewardsContracts }
 
 const Claim: React.FC<Props> = ({ rewardsContract }) => {
 	const { account } = useWeb3Provider()
+
 	const { call: handleClaim, loading: loadingClaim } = useContractWrite({
 		contractName: `rewards.${rewardsContract}`,
 		method: 'getReward',
 		description: `claim YAXIS`,
 	})
+
 	const {
 		loading: loadingClaimable,
-		data: claimable,
-	} = useContractReadAccount({
-		contractName: `rewards.${rewardsContract}`,
-		method: 'earned',
-		args: [account],
-	})
+		result: claimable,
+	} = useSingleCallResultByName(`rewards.${rewardsContract}`, 'earned', [
+		account,
+	])
 
 	const [claimVisible, setClaimVisible] = useState(false)
 	return (
@@ -35,7 +35,9 @@ const Claim: React.FC<Props> = ({ rewardsContract }) => {
 			main="Rewards"
 			secondary={
 				<Value
-					value={getBalanceNumber(new BigNumber(claimable))}
+					value={getBalanceNumber(
+						new BigNumber(claimable?.toString() || 0),
+					)}
 					numberSuffix=" YAXIS"
 					decimals={2}
 				/>
@@ -47,7 +49,9 @@ const Claim: React.FC<Props> = ({ rewardsContract }) => {
 							<Button
 								disabled={
 									loadingClaimable ||
-									new BigNumber(claimable).isZero()
+									new BigNumber(
+										claimable?.toString() || 0,
+									).isZero()
 								}
 								onClick={() =>
 									handleClaim({

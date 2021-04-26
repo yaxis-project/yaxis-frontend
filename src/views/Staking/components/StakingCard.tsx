@@ -1,16 +1,19 @@
 import { useContext, useState, useMemo, useCallback } from 'react'
-import { YAXIS } from '../../../utils/currencies'
-import useEnter from '../../../hooks/useEnter'
-import useLeave from '../../../hooks/useLeave'
-import useYaxisStaking from '../../../hooks/useYAXISStaking'
+import { YAXIS } from '../../../constants/currencies'
+import { useContracts } from '../../../contexts/Contracts'
+import useContractWrite from '../../../hooks/useContractWrite'
 import Value from '../../../components/Value'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import Button from '../../../components/Button'
 import Input from '../../../components/Input'
-import { Row, Col, Typography, Card, Form, notification } from 'antd'
+import { Row, Col, Typography, Card, Form } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
+import {
+	useStakedBalances,
+	useAllTokenBalances,
+} from '../../../state/wallet/hooks'
 const { Text } = Typography
 
 /**
@@ -30,59 +33,63 @@ const TableHeader = (props: any) => (
  */
 export default function StakingCard() {
 	const languages = useContext(LanguageContext)
+	const { contracts } = useContracts()
 	const t = useCallback(
 		(s: string) => phrases[s][languages?.state?.selected],
 		[languages],
 	)
-	const { onEnter } = useEnter()
-	const { onLeave } = useLeave()
-	const {
-		balances: { stakedBalance, walletBalance, yaxisBalance },
-	} = useYaxisStaking()
 
-	const [loading, setLoading] = useState(false)
+	const [{ yaxis }] = useAllTokenBalances()
+	const { Yaxis } = useStakedBalances()
+	const yaxisBalance = useMemo(() => yaxis?.amount || new BigNumber(0), [
+		yaxis,
+	])
+	const stakedBalance = useMemo(() => Yaxis?.amount || new BigNumber(0), [
+		Yaxis,
+	])
+	const walletBalance = useMemo(() => yaxis?.value || new BigNumber(0), [
+		yaxis,
+	])
+
+	const { call: onEnter, loading: loadingEnter } = useContractWrite({
+		contractName: 'currencies.ERC677.yaxis.contract',
+		method: 'transferAndCall',
+		description: `stake YAXIS`,
+	})
+
+	const { call: onLeave, loading: loadingLeave } = useContractWrite({
+		contractName: 'rewards.Yaxis',
+		method: 'withdraw',
+		description: `unstake YAXIS`,
+	})
+
 	const [depositAmount, setDeposit] = useState<string>('')
 
 	/**
 	 * Computes
 	 */
-	const stakeYAX = useCallback(async () => {
-		try {
-			setLoading(true)
-			notification.info({
-				message: 'Please sign the staking transaction.',
-			})
-			await onEnter(depositAmount)
-			setDeposit('0')
-			setLoading(false)
-		} catch (err) {
-			notification.info({
-				message: `An error occured during YAXIS staking:`,
-				description: err.message,
-			})
-			setLoading(false)
-		}
-	}, [depositAmount, onEnter])
+	const stakeYAXIS = useCallback(() => {
+		const Yaxis = new BigNumber(depositAmount).times(1e18).toString()
+		onEnter({
+			args: [
+				contracts?.rewards.Yaxis.address,
+				Yaxis,
+				contracts?.rewards.Yaxis.interface.encodeFunctionData('stake', [
+					Yaxis,
+				]),
+			],
+			cb: () => setDeposit('0'),
+		})
+	}, [depositAmount, onEnter, contracts])
 
 	const [withdrawAmount, setWithdraw] = useState<string>('')
 
-	const unstakeYAX = useCallback(async () => {
-		try {
-			setLoading(true)
-			notification.info({
-				message: 'Please sign YAXIS unstaking transaction.',
-			})
-			const sYax = new BigNumber(withdrawAmount).times(1e18)
-			await onLeave(sYax.toString())
-			setWithdraw('0')
-			setLoading(false)
-		} catch (err) {
-			notification.info({
-				message: `An error occured during YAXIS unstaking:`,
-				description: err.message,
-			})
-			setLoading(false)
-		}
+	const unstakeYAXIS = useCallback(async () => {
+		const sYaxis = new BigNumber(withdrawAmount).times(1e18)
+		onLeave({
+			args: [sYaxis.toString()],
+			cb: () => setWithdraw('0'),
+		})
 	}, [onLeave, withdrawAmount])
 
 	const updateDeposit = (value: string) =>
@@ -151,15 +158,15 @@ export default function StakingCard() {
 							value={depositAmount}
 							min={'0'}
 							placeholder="0"
-							disabled={loading || walletBalance.isZero()}
+							disabled={loadingEnter || walletBalance.isZero()}
 							suffix={YAXIS.name}
 							onClickMax={maxDeposit}
 						/>
 					</Form.Item>
 					<Button
 						disabled={depositDisabled}
-						onClick={stakeYAX}
-						loading={loading}
+						onClick={stakeYAXIS}
+						loading={loadingEnter}
 					>
 						{t('Stake')}
 					</Button>
@@ -171,15 +178,15 @@ export default function StakingCard() {
 							value={withdrawAmount}
 							min={'0'}
 							placeholder="0"
-							disabled={loading || stakedBalance.isZero()}
+							disabled={loadingLeave || stakedBalance.isZero()}
 							suffix="YAXIS"
 							onClickMax={maxWithdraw}
 						/>
 					</Form.Item>
 					<Button
 						disabled={withdrawDisabled}
-						onClick={unstakeYAX}
-						loading={loading}
+						onClick={unstakeYAXIS}
+						loading={loadingLeave}
 					>
 						{t('Unstake')}
 					</Button>

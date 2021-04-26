@@ -2,9 +2,10 @@ import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import { CardRow } from '../../../components/ExpandableSidePanel'
 import { Typography, Tooltip, Row } from 'antd'
 import Value from '../../../components/Value'
-import useMyLiquidity from '../../../hooks/useMyLiquidity'
-import useAPY from '../../../hooks/useAPY'
-import { StakePool } from '../../../yaxis/type'
+import { useAPY } from '../../../state/internal/hooks'
+import { useAccountLP } from '../../../state/wallet/hooks'
+
+import { LiquidityPool } from '../../../constants/type'
 import Claim from '../../../components/Claim'
 import LegacyClaim from './LegacyClaim'
 import APYCalculator from '../../../components/APYCalculator'
@@ -14,7 +15,7 @@ import info from '../../../assets/img/info.svg'
 const { Text } = Typography
 
 interface LiquidityOverviewCardProps {
-	pool: StakePool
+	pool: LiquidityPool
 	totalUSDBalance: BigNumber
 }
 
@@ -45,12 +46,9 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 	pool,
 	totalUSDBalance,
 }) => {
-	const {
-		data: { yaxisAprPercent },
-		loading,
-	} = useAPY(pool?.rewards)
+	const { yaxisAprPercent } = useAPY(pool?.rewards)
 
-	const { userPoolShare } = useMyLiquidity(pool)
+	const { poolShare } = useAccountLP(pool)
 
 	return (
 		<DetailOverviewCard title="Overview">
@@ -63,7 +61,7 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 				main="Share of Pool"
 				secondary={
 					<Value
-						value={userPoolShare.times(100).toNumber()}
+						value={poolShare.times(100).toNumber()}
 						numberSuffix="%"
 						decimals={2}
 					/>
@@ -154,7 +152,7 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 				APR={yaxisAprPercent.toNumber()}
 				yearlyCompounds={12}
 				balance={totalUSDBalance}
-				loading={loading}
+				loading={false}
 			/>
 		</DetailOverviewCard>
 	)

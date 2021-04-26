@@ -6,7 +6,7 @@ import {
 	Tooltip as BaseTooltip,
 	TooltipProps as BaseTooltipProps,
 } from 'antd'
-import useAPY from '../../../hooks/useAPY'
+import { useAPY } from '../../../state/internal/hooks'
 import { ArrowRightOutlined } from '@ant-design/icons'
 import { NavLink } from 'react-router-dom'
 
@@ -20,9 +20,9 @@ const Link = styled(NavLink)`
 `
 
 const Title: React.FC = () => {
-	const {
-		data: { yaxisAprPercent },
-	} = useAPY('Yaxis', 0.2)
+	const { yaxisAprPercent } = useAPY('Yaxis', 0.2)
+
+	// TODO
 	return (
 		<Link to="/staking">
 			<Row>

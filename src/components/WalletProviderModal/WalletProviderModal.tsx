@@ -4,8 +4,6 @@ import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { Button, Pagination } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import Modal, { ModalProps } from '../Modal'
-import ModalContent from '../ModalContent'
-import ModalTitle from '../ModalTitle'
 import WalletCard from './components/WalletCard'
 import { Col, Row } from 'antd'
 
@@ -35,7 +33,7 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 				icon={<CloseOutlined style={{ fontSize: '25px' }} />}
 				onClick={onDismiss}
 			/>
-			<ModalTitle text="Select a wallet provider." />
+			<ModalTitle>Select a wallet provider.</ModalTitle>
 			{error && <ErrorText>{getErrorMessage(error)}</ErrorText>}
 			<ModalContent>
 				<StyledWalletsWrapper
@@ -83,6 +81,23 @@ const CloseButton = styled(Button)`
 	top: 5%;
 	right: 5%;
 	border: none;
+`
+const ModalTitle = styled.div`
+	align-items: center;
+	color: ${(props) => props.theme.color.grey[600]};
+	display: flex;
+	font-size: 18px;
+	font-weight: 700;
+	height: ${(props) => props.theme.topBarSize}px;
+	justify-content: center;
+`
+
+const ModalContent = styled.div`
+	padding: ${(props) => props.theme.spacing[4]}px;
+	@media (max-width: ${(props) => props.theme.breakpoints.mobile}px) {
+		flex: 1;
+		overflow: auto;
+	}
 `
 
 export default WalletProviderModal

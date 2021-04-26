@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Currency, YAXIS, PICKLE } from '../../../utils/currencies'
+import { Currency, YAXIS, PICKLE } from '../../../constants/currencies'
 
 import theme from '../../../theme'
 import { LanguageContext } from '../../../contexts/Language'

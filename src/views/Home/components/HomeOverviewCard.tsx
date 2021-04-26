@@ -8,7 +8,7 @@ import {
 	DetailOverviewCardRow,
 } from '../../../components/DetailOverviewCard'
 import Value from '../../../components/Value'
-import useReturns from '../../../hooks/useReturns'
+import { useReturns } from '../../../state/wallet/hooks'
 import info from '../../../assets/img/info.svg'
 
 const { Text } = Typography
@@ -41,12 +41,8 @@ export default function HomeOverviewCard() {
 	const t = (s: string) => phrases[s][language]
 
 	const {
-		returns: {
-			// metaVaultUSD,
-			rewardsUSD,
-			// totalUSD,
-			rewards: { governance, lp, metaVault },
-		},
+		rewardsUSD,
+		rewards: { governance, lp, metaVault },
 	} = useReturns()
 
 	return (

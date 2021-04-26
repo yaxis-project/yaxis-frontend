@@ -1,20 +1,20 @@
 import { useContext, useState, useMemo, useCallback } from 'react'
-import { MVLT } from '../../../utils/currencies'
+import { MVLT } from '../../../constants/currencies'
 import { LoadingOutlined } from '@ant-design/icons'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useContractWrite from '../../../hooks/useContractWrite'
-import useContractReadAccount from '../../../hooks/useContractReadAccount'
 import useApprove from '../../../hooks/useApprove'
-import useGlobal from '../../../hooks/useGlobal'
-import useRewardsContract from '../../../hooks/useRewardsContract'
+import { useContracts } from '../../../contexts/Contracts'
+import { useRewardsBalances } from '../../../state/wallet/hooks'
 import Value from '../../../components/Value'
-import { LanguageContext } from '../../../contexts/Language'
-import phrases from './translations'
 import Button from '../../../components/Button'
 import Input from '../../../components/Input'
+import { LanguageContext } from '../../../contexts/Language'
+import phrases from './translations'
 import { Row, Col, Typography, Card, Form, Result, Spin } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
+import { useApprovals } from '../../../state/wallet/hooks'
 const { Text } = Typography
 
 /**
@@ -45,14 +45,13 @@ function Stake({ mvlt }) {
 		method: 'withdraw',
 		description: `unstake MVLT`,
 	})
+
 	const {
-		balances: {
-			rawWalletBalance,
-			walletBalance,
-			stakedBalance,
-			rawStakedBalance,
-		},
-	} = useRewardsContract(mvlt, 'MetaVault')
+		rawWalletBalance,
+		walletBalance,
+		stakedBalance,
+		rawStakedBalance,
+	} = useRewardsBalances('mvlt', 'MetaVault')
 
 	const [depositAmount, setDeposit] = useState<string>('')
 	const updateDeposit = (value: string) =>
@@ -129,9 +128,6 @@ function Stake({ mvlt }) {
 						disabled={depositDisabled}
 						onClick={async () =>
 							await handleStake({
-								amount: new BigNumber(depositAmount)
-									.multipliedBy(10 ** MVLT.decimals)
-									.toString(),
 								args: [
 									new BigNumber(depositAmount)
 										.multipliedBy(10 ** MVLT.decimals)
@@ -160,9 +156,6 @@ function Stake({ mvlt }) {
 						disabled={withdrawDisabled}
 						onClick={async () =>
 							await handleUnstake({
-								amount: new BigNumber(withdrawAmount)
-									.multipliedBy(10 ** MVLT.decimals)
-									.toString(),
 								args: [
 									new BigNumber(withdrawAmount)
 										.multipliedBy(10 ** MVLT.decimals)
@@ -183,6 +176,9 @@ function Stake({ mvlt }) {
 
 export default function ApprovalWrapper() {
 	const { account } = useWeb3Provider()
+	const {
+		metavault: { loadingStaking: loadingAllowance, staking: allowance },
+	} = useApprovals()
 
 	const languages = useContext(LanguageContext)
 	const t = useCallback(
@@ -190,20 +186,11 @@ export default function ApprovalWrapper() {
 		[languages],
 	)
 
-	const { yaxis } = useGlobal()
-
-	const {
-		loading: loadingAllowance,
-		data: allowance,
-	} = useContractReadAccount({
-		contractName: `yaxisMetaVault`,
-		method: 'allowance',
-		args: [account, yaxis?.contracts?.rewards.MetaVault.options.address],
-	})
+	const { contracts } = useContracts()
 
 	const { onApprove, loading } = useApprove(
-		yaxis?.contracts.yaxisMetaVault,
-		yaxis?.contracts?.rewards.MetaVault.options.address,
+		contracts?.internal?.yAxisMetaVault,
+		contracts?.rewards.MetaVault.address,
 		'MVLT',
 	)
 
@@ -250,16 +237,8 @@ export default function ApprovalWrapper() {
 					</Row>
 				</>
 			)
-		return <Stake mvlt={yaxis?.contracts?.yaxisMetaVault.options.address} />
-	}, [
-		account,
-		loadingAllowance,
-		allowance,
-		loading,
-		onApprove,
-		t,
-		yaxis?.contracts?.yaxisMetaVault.options.address,
-	])
+		return <Stake mvlt={contracts?.internal.yAxisMetaVault.address} />
+	}, [account, loadingAllowance, allowance, loading, onApprove, t, contracts])
 
 	return (
 		<Card className="staking-card" title={<strong>{t('Staking')}</strong>}>

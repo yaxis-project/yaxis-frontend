@@ -7,14 +7,17 @@ import InvestmentAccountActionCard from './components/InvestmentAccountActionCar
 import VaultStatsCard from './components/VaultStatsCard'
 import Stake from './components/Stake'
 import RecentTransactionsCard from './components/RecentTransactionsCard'
-import useMetaVaultData from '../../hooks/useMetaVaultData'
-import useContractReadAccount from '../../hooks/useContractReadAccount'
 import './index.less'
-import BigNumber from 'bignumber.js'
-import { currentConfig } from '../../yaxis/configs'
-import { etherscanUrl } from '../../yaxis/utils'
+import { currentConfig } from '../../constants/configs'
+import { etherscanUrl } from '../../utils'
+import { formatBN } from '../../utils/number'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { NETWORK_NAMES } from '../../connectors'
+import {
+	useStakedBalances,
+	useAccountMetaVaultData,
+} from '../../state/wallet/hooks'
+import { useMetaVaultData } from '../../state/internal/hooks'
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -23,30 +26,19 @@ const StyledCol = styled(Col)`
 `
 
 const MetaVault: React.FC = () => {
-	const { account, chainId } = useWeb3Provider()
+	const { chainId } = useWeb3Provider()
 
-	const { data: stakedBalance } = useContractReadAccount({
-		contractName: `rewards.MetaVault`,
-		method: 'balanceOf',
-		args: [account],
-	})
+	const { MetaVault } = useStakedBalances()
+	const { deposited } = useAccountMetaVaultData()
+	const { mvltPrice } = useMetaVaultData()
 
-	const {
-		metaVaultData: { totalBalance, mvltPrice },
-		loading,
-	} = useMetaVaultData('v1')
-
-	const totalUSDBalance = useMemo(() => {
-		const sBalance = new BigNumber(stakedBalance || 0).dividedBy(10 ** 18)
-		const balance = new BigNumber(totalBalance || '0')
-		return balance
-			.plus(sBalance)
-			.multipliedBy(mvltPrice || '0')
-			.toFixed(2)
-	}, [mvltPrice, stakedBalance, totalBalance])
+	const balanceUSD = useMemo(() => {
+		const totalMVLT = MetaVault.amount.plus(deposited)
+		return totalMVLT.multipliedBy(mvltPrice)
+	}, [MetaVault, deposited, mvltPrice])
 
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
-	const address = currentConfig(chainId).contractAddresses['yAxisMetaVault']
+	const address = currentConfig(chainId).internal.yAxisMetaVault
 
 	return (
 		<div className="investing-view">
@@ -58,14 +50,7 @@ const MetaVault: React.FC = () => {
 					address &&
 					etherscanUrl(`/address/${address}#code`, networkName)
 				}
-				value={
-					'$' +
-					Number(totalUSDBalance).toLocaleString(
-						undefined, // leave undefined to use the browser's locale,
-						// or use a string like 'en-US' to override it.
-						{ minimumFractionDigits: 2 },
-					)
-				}
+				value={'$' + formatBN(balanceUSD)}
 				valueInfo="Balance"
 			>
 				<Row gutter={16}>
@@ -75,8 +60,8 @@ const MetaVault: React.FC = () => {
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<InvestmentDetailOverview
-							totalUSDBalance={totalUSDBalance}
-							balanceLoading={loading}
+							totalUSDBalance={balanceUSD.toString()}
+							balanceLoading={false}
 						/>
 						<VaultStatsCard />
 						<RecentTransactionsCard />

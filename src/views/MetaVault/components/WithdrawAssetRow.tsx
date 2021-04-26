@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react'
-import { Currency, Currencies3Pool } from '../../../utils/currencies'
-import usePriceMap from '../../../hooks/usePriceMap'
+import { Currency, Currencies3Pool } from '../../../constants/currencies'
+import { usePrices } from '../../../state/prices/hooks'
 import Value from '../../../components/Value'
 import ApprovalCover from '../../../components/ApprovalCover'
 import BigNumber from 'bignumber.js'
 import Input from '../../../components/Input'
 import styled from 'styled-components'
-import useContractRead from '../../../hooks/useContractRead'
+import { useContracts } from '../../../contexts/Contracts'
+import { useSingleCallResult } from '../../../state/onchain/hooks'
 
 import { Row, Col, Typography, Form } from 'antd'
 
@@ -42,19 +43,25 @@ const WithdrawAssetRow: React.FC<WithdrawAssetRowProps> = ({
 		() => Currencies3Pool.findIndex((c) => c.tokenId === currency.tokenId),
 		[currency],
 	)
+	const { contracts } = useContracts()
 
-	const { data: rate } = useContractRead({
-		contractName: 'curve3Pool',
-		method: 'calc_withdraw_one_coin',
-		args: [new BigNumber(1).multipliedBy(10 ** 18), currencyIndex],
-	})
+	const { result: rate } = useSingleCallResult(
+		contracts?.external.curve3pool,
+		'calc_withdraw_one_coin',
+		[new BigNumber(1).multipliedBy(10 ** 18).toString(), currencyIndex],
+	)
 
 	const conversionRate = useMemo(
-		() => new BigNumber(rate || 0).dividedBy(10 ** currency.decimals),
+		() =>
+			new BigNumber(rate?.toString() || 0).dividedBy(
+				10 ** currency.decimals,
+			),
 		[rate, currency],
 	)
 
-	const { [currency.priceMapKey]: price } = usePriceMap()
+	const {
+		prices: { [currency.priceMapKey]: price },
+	} = usePrices()
 
 	const balanceUSD = useMemo(
 		() =>
@@ -75,7 +82,7 @@ const WithdrawAssetRow: React.FC<WithdrawAssetRowProps> = ({
 			>
 				<Col xs={18} sm={12} md={12}>
 					<ApprovalCover
-						contractName={`vault.${currency.tokenId}`}
+						contractName={`currencies.ERC20.${currency.tokenId}.contract`}
 						approvee={approvee}
 						hidden={balance.eq(0)}
 					>

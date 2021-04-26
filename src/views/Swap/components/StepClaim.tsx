@@ -1,15 +1,11 @@
-import { useState, useMemo, useCallback, Dispatch, SetStateAction } from 'react'
+import { useMemo, useCallback, Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
-import { Row, notification, Steps } from 'antd'
+import { Row, Steps } from 'antd'
 import Button from '../../../components/Button'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
-import { currentConfig } from '../../../yaxis/configs'
-import useReward from '../../../hooks/useReward'
-import useMetaVault from '../../../hooks/useMetaVault'
-import useMetaVaultData from '../../../hooks/useMetaVaultData'
+import { currentConfig } from '../../../constants/configs'
 import BigNumber from 'bignumber.js'
-import useUnstake from '../../../hooks/useUnstake'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 const { Step } = Steps
@@ -41,34 +37,24 @@ const StepClaim: React.FC<StepClaimProps> = ({
 	const { chainId } = useWeb3Provider()
 
 	const config = useMemo(() => currentConfig(chainId), [chainId])
-	const uniYaxEthLP = useMemo(
-		() => config.pools.find((pool) => pool.name === 'Uniswap YAX/ETH'),
-		[config],
-	)
+	const uniYaxEthLP = useMemo(() => config.pools['Uniswap YAX/ETH'], [config])
 
-	const { isClaiming, onGetRewards } = useMetaVault()
-
-	const { onFetchMetaVaultData } = useMetaVaultData('V2')
+	const { call: onGetRewards, loading: isClaiming } = useContractWrite({
+		contractName: 'internal.yAxisMetaVault',
+		method: 'unstake',
+		description: `claiming MetaVault rewards`,
+	})
 
 	const { call: handleUnstake, loading: loadingUnstakeMVLT } =
 		useContractWrite({
-			contractName: `yaxisMetaVault`,
+			contractName: `internal.yAxisMetaVault`,
 			method: 'unstake',
 			description: `unstake MVLT`,
 		})
 
 	const handleClaimRewards = useCallback(async () => {
-		try {
-			await onGetRewards()
-			onFetchMetaVaultData()
-		} catch (e) {
-			console.error(e)
-			notification.error({
-				message: `Error claiming rewards:`,
-				description: e.message,
-			})
-		}
-	}, [onFetchMetaVaultData, onGetRewards])
+		await onGetRewards({ args: ['0'] })
+	}, [onGetRewards])
 
 	const mvRewards = useMemo(() => {
 		if (stakedMvlt.gt(0))
@@ -125,9 +111,17 @@ const StepClaim: React.FC<StepClaimProps> = ({
 		loadingUnstakeMVLT,
 	])
 
-	const [loadingUnstakeUni, setLoadingUnstakeUni] = useState(false)
-	const { loading, onReward } = useReward(uniYaxEthLP.pid)
-	const { onUnstake } = useUnstake(uniYaxEthLP?.pid, uniYaxEthLP?.name)
+	const { call: onReward, loading } = useContractWrite({
+		contractName: 'internal.yaxisChef',
+		method: 'deposit',
+		description: `claim rewards`,
+	})
+
+	const { call: onUnstake, loading: unstakeLoading } = useContractWrite({
+		contractName: 'internal.yaxisChef',
+		method: 'unstake',
+		description: `unstake ${uniYaxEthLP?.name}`,
+	})
 
 	const uniswapLP = useMemo(() => {
 		if (stakedUniLP.gt(0))
@@ -136,19 +130,14 @@ const StepClaim: React.FC<StepClaimProps> = ({
 					title={
 						<StyledButton
 							onClick={async () => {
-								try {
-									setLoadingUnstakeUni(true)
-									await onUnstake(
-										stakedUniLP
-											.dividedBy(10 ** 18)
-											.toString(),
-									)
-									setLoadingUnstakeUni(false)
-								} catch {
-									setLoadingUnstakeUni(false)
-								}
+								onUnstake({
+									args: [
+										uniYaxEthLP?.pid,
+										stakedUniLP.toString(),
+									],
+								})
 							}}
-							loading={loadingUnstakeUni}
+							loading={unstakeLoading}
 							height={'40px'}
 						>
 							Unstake Uniswap YAX / ETH
@@ -204,16 +193,16 @@ const StepClaim: React.FC<StepClaimProps> = ({
 	}, [
 		uniLPBalance,
 		stakedUniLP,
-		loadingUnstakeUni,
 		uniYaxEthLP,
 		onUnstake,
 		onReward,
 		loading,
 		earnings,
+		unstakeLoading,
 	])
 
 	const linkYaxEthLP = useMemo(
-		() => config.pools.find((pool) => pool.name === 'Linkswap YAX/ETH'),
+		() => config.pools['Linkswap YAX/ETH'],
 		[config],
 	)
 

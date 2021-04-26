@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { Typography, Card, Button } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import transactionIn from '../../../assets/img/icons/transaction-in.svg'
@@ -6,9 +6,8 @@ import transactionOut from '../../../assets/img/icons/transaction-out.svg'
 import { LanguageContext } from '../../../contexts/Language'
 import { Languages } from '../../../utils/languages'
 import phrases from './translations'
-import useTransactionAdder from '../../../hooks/useTransactionAdder'
+import { useAllTransactions } from '../../../state/transactions/hooks'
 import { map } from 'lodash'
-import { Transaction } from '../../../contexts/Transactions/types'
 import styled from 'styled-components'
 
 const { Text, Title } = Typography
@@ -86,38 +85,44 @@ const RecentTransactionRow = (props: RecentTransactionRowProps) => {
 	)
 }
 
-function generateTransactionRow(transaction: Transaction) {
-	const [type, value] = transaction.description.split('|')
+function generateTransactionRow([hash, val]) {
 	return (
 		<RecentTransactionRow
-			key={transaction.hash}
-			main={type}
-			secondary={value}
+			key={hash}
+			main={val.summary}
+			secondary={'$' + val.amount}
 		/>
 	)
 }
 
 export default function RecentTransactionsCard() {
-	const { onClearTransactions, transactions } = useTransactionAdder()
-
+	const transactions = useAllTransactions()
+	const mvTxs = useMemo(
+		() =>
+			Object.entries(transactions || {}).filter(
+				([_, t]) =>
+					t.contract === 'rewards.MetaVault' &&
+					(t.method === 'depositAll' || t.method === 'withdraw'),
+			),
+		[transactions],
+	)
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
-	const txCount = map(transactions, (t) => t).length > 0
+	const txCount = mvTxs.length > 0
 
 	if (!txCount) return null
-
 	return (
 		<Card
 			title={
 				<CardTitle
-					showClear={true}
-					onClearTransactions={onClearTransactions}
+					showClear={false}
+					onClearTransactions={() => {}}
 					language={language}
 				/>
 			}
 			style={{ marginTop: 10 }}
 		>
-			{map(transactions, generateTransactionRow)}
+			{map(mvTxs, generateTransactionRow)}
 		</Card>
 	)
 }
