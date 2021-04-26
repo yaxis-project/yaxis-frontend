@@ -11,11 +11,62 @@ import StepStake from './StepStake'
 const { Step } = Steps
 
 export default function SwapCard() {
-	const { account, chainId } = useWeb3Provider()
+	const { account } = useWeb3Provider()
 	const [current, setCurrent] = useState(3)
 	const [initialized, setInitialized] = useState(false)
 	const [toDo, setToDo] = useState([false, false, false])
-	const { data, loading: loadingData } = useSwapData()
+	const {
+		loading,
+		earnings,
+		mvEarnings,
+		balances,
+		yaxisBalance,
+		stakedUniLP,
+		uniLPBalance,
+		linkLPBalance,
+		mvltBalance,
+		stakedMvlt,
+	} = useSwapData()
+
+	const step1 = useMemo(
+		() =>
+			earnings.gt(0) ||
+			new BigNumber(mvEarnings).gt(0) ||
+			stakedUniLP.gt(0) ||
+			uniLPBalance.gt(0) ||
+			linkLPBalance.gt(0) ||
+			stakedMvlt.gt(0),
+		[
+			earnings,
+			linkLPBalance,
+			mvEarnings,
+			stakedMvlt,
+			stakedUniLP,
+			uniLPBalance,
+		],
+	)
+
+	const step2 = useMemo(
+		() => balances?.stakedBalance.gt(0) || balances?.yaxBalance.gt(0),
+		[balances],
+	)
+
+	const step3 = useMemo(() => yaxisBalance.gt(0) || mvltBalance.gt(0), [
+		yaxisBalance,
+		mvltBalance,
+	])
+
+	useEffect(() => {
+		if (!loading) {
+			setToDo([step1, step2, step3])
+			if (!initialized) {
+				setInitialized(true)
+				if (step1) setCurrent(0)
+				if (step2) setCurrent(1)
+				if (step3) setCurrent(2)
+			}
+		}
+	}, [initialized, loading, step1, step2, step3])
 
 	const ClaimContent = useMemo(
 		() => (
@@ -24,15 +75,24 @@ export default function SwapCard() {
 				current={current}
 				setCurrent={setCurrent}
 				complete={toDo[0]}
-				earnings={data?.earnings}
-				pendingYax={new BigNumber(data?.mvEarnings || 0)}
-				stakedUniLP={data?.stakedUniLP}
-				uniLPBalance={data?.uniLPBalance}
-				linkLPBalance={data?.linkLPBalance}
-				stakedMvlt={data?.stakedMvlt}
+				earnings={earnings}
+				pendingYax={new BigNumber(mvEarnings || 0)}
+				stakedUniLP={stakedUniLP}
+				uniLPBalance={uniLPBalance}
+				linkLPBalance={linkLPBalance}
+				stakedMvlt={stakedMvlt}
 			/>
 		),
-		[data, current, toDo],
+		[
+			earnings,
+			mvEarnings,
+			stakedUniLP,
+			uniLPBalance,
+			linkLPBalance,
+			stakedMvlt,
+			current,
+			toDo,
+		],
 	)
 
 	const SwapContent = useMemo(
@@ -42,10 +102,10 @@ export default function SwapCard() {
 				current={current}
 				setCurrent={setCurrent}
 				complete={toDo[1]}
-				balances={data?.balances}
+				balances={balances}
 			/>
 		),
-		[data, current, toDo],
+		[balances, current, toDo],
 	)
 
 	const StakeContent = useMemo(
@@ -55,11 +115,11 @@ export default function SwapCard() {
 				current={current}
 				setCurrent={setCurrent}
 				complete={toDo[2]}
-				yaxisBalance={data?.yaxisBalance}
-				mvltBalance={data?.mvltBalance}
+				yaxisBalance={yaxisBalance}
+				mvltBalance={mvltBalance}
 			/>
 		),
-		[data, current, toDo],
+		[yaxisBalance, mvltBalance, current, toDo],
 	)
 
 	const getStatus = useCallback((account, todo, current, index) => {
@@ -119,50 +179,6 @@ export default function SwapCard() {
 		if (steps[current]) return steps[current].content
 		return <Result status="success" title="All up to date!" />
 	}, [account, current, initialized, steps])
-
-	useEffect(() => {
-		const determineStep = () => {
-			const {
-				earnings,
-				mvEarnings,
-				balances,
-				yaxisBalance,
-				stakedUniLP,
-				uniLPBalance,
-				linkLPBalance,
-				mvltBalance,
-				stakedMvlt,
-			} = data
-
-			const step1 =
-				earnings.gt(0) ||
-				new BigNumber(mvEarnings).gt(0) ||
-				stakedUniLP.gt(0) ||
-				uniLPBalance.gt(0) ||
-				linkLPBalance.gt(0) ||
-				stakedMvlt.gt(0)
-
-			const step2 =
-				balances?.stakedBalance.gt(0) || balances?.yaxBalance.gt(0)
-
-			const step3 = yaxisBalance.gt(0) || mvltBalance.gt(0)
-
-			setToDo([step1, step2, step3])
-
-			if (!initialized) {
-				if (step1) setCurrent(0)
-				else if (step2) setCurrent(1)
-				else if (step3) setCurrent(2)
-				else setCurrent(3)
-			}
-
-			setInitialized(true)
-		}
-
-		if (!loadingData) {
-			determineStep()
-		}
-	}, [chainId, loadingData, data, initialized])
 
 	return (
 		<Affix offsetTop={80}>

@@ -1,11 +1,10 @@
 import { useContext, useState, useMemo, useCallback } from 'react'
-import * as currencies from '../../../utils/currencies'
+import * as currencies from '../../../constants/currencies'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useContractWrite from '../../../hooks/useContractWrite'
-import useAllowance from '../../../hooks/useAllowance'
+import { useContracts } from '../../../contexts/Contracts'
 import useApprove from '../../../hooks/useApprove'
-import useGlobal from '../../../hooks/useGlobal'
-import useRewardsContract from '../../../hooks/useRewardsContract'
+import { useAccountLP } from '../../../state/wallet/hooks'
 import Value from '../../../components/Value'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
@@ -14,6 +13,7 @@ import Input from '../../../components/Input'
 import { Row, Col, Typography, Card, Form, Result } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
+import { useApprovals } from '../../../state/wallet/hooks'
 const { Text } = Typography
 
 /**
@@ -48,21 +48,15 @@ function Stake({ pool }) {
 		method: 'withdraw',
 		description: `unstake ${pool.name}`,
 	})
-	const {
-		balances: {
-			rawWalletBalance,
-			walletBalance,
-			stakedBalance,
-			rawStakedBalance,
-		},
-	} = useRewardsContract(pool.lpAddress, pool.rewards)
+
+	const { walletBalance, stakedBalance } = useAccountLP(pool)
 
 	const [depositAmount, setDeposit] = useState<string>('')
 	const updateDeposit = (value: string) =>
 		!isNaN(Number(value)) && setDeposit(value)
 	const errorDeposit = useMemo(
-		() => new BigNumber(depositAmount).gt(rawWalletBalance.div(1e18)),
-		[rawWalletBalance, depositAmount],
+		() => new BigNumber(depositAmount).gt(walletBalance?.value.div(1e18)),
+		[walletBalance, depositAmount],
 	)
 	const depositDisabled = useMemo(
 		() =>
@@ -71,14 +65,15 @@ function Stake({ pool }) {
 			errorDeposit,
 		[depositAmount, errorDeposit],
 	)
-	const onMaxDeposit = () => setDeposit(walletBalance.toString() || '0')
+	const onMaxDeposit = () =>
+		setDeposit(walletBalance?.amount.toString() || '0')
 
 	const [withdrawAmount, setWithdraw] = useState<string>('')
 	const updateWithdraw = (value: string) =>
 		!isNaN(Number(value)) && setWithdraw(value)
 	const errorWithdraw = useMemo(
-		() => new BigNumber(withdrawAmount).gt(rawStakedBalance),
-		[rawStakedBalance, withdrawAmount],
+		() => new BigNumber(withdrawAmount).gt(stakedBalance?.amount),
+		[stakedBalance?.amount, withdrawAmount],
 	)
 	const withdrawDisabled = useMemo(
 		() =>
@@ -88,7 +83,8 @@ function Stake({ pool }) {
 		[withdrawAmount, errorWithdraw],
 	)
 
-	const onMaxWithdraw = () => setWithdraw(stakedBalance.toString() || '0')
+	const onMaxWithdraw = () =>
+		setWithdraw(stakedBalance?.amount.toString() || '0')
 
 	return (
 		<>
@@ -101,7 +97,7 @@ function Stake({ pool }) {
 				<Col span={12} className={'balance'}>
 					<img src={currency.icon} height="24" alt="logo" />
 					<Value
-						value={getBalanceNumber(rawWalletBalance)}
+						value={getBalanceNumber(walletBalance?.value)}
 						decimals={2}
 						numberSuffix={` ${pool.symbol}`}
 					/>
@@ -109,7 +105,7 @@ function Stake({ pool }) {
 				<Col span={12} className={'balance'}>
 					<img src={currency.icon} height="24" alt="logo" />
 					<Value
-						value={getBalanceNumber(rawStakedBalance)}
+						value={getBalanceNumber(stakedBalance?.value)}
 						decimals={2}
 						numberSuffix={` ${pool.symbol}`}
 					/>
@@ -124,7 +120,9 @@ function Stake({ pool }) {
 							value={depositAmount}
 							min={'0'}
 							placeholder="0"
-							disabled={loadingStake || walletBalance.isZero()}
+							disabled={
+								loadingStake || walletBalance?.value.isZero()
+							}
 							onClickMax={onMaxDeposit}
 						/>
 					</Form.Item>
@@ -132,9 +130,6 @@ function Stake({ pool }) {
 						disabled={depositDisabled}
 						onClick={async () =>
 							await handleStake({
-								amount: new BigNumber(depositAmount)
-									.multipliedBy(10 ** currency.decimals)
-									.toString(),
 								args: [
 									new BigNumber(depositAmount)
 										.multipliedBy(10 ** currency.decimals)
@@ -155,7 +150,9 @@ function Stake({ pool }) {
 							value={withdrawAmount}
 							min={'0'}
 							placeholder="0"
-							disabled={loadingUnstake || stakedBalance.isZero()}
+							disabled={
+								loadingUnstake || stakedBalance?.value.isZero()
+							}
 							onClickMax={onMaxWithdraw}
 						/>
 					</Form.Item>
@@ -163,9 +160,6 @@ function Stake({ pool }) {
 						disabled={withdrawDisabled}
 						onClick={async () =>
 							await handleUnstake({
-								amount: new BigNumber(withdrawAmount)
-									.multipliedBy(10 ** currency.decimals)
-									.toString(),
 								args: [
 									new BigNumber(withdrawAmount)
 										.multipliedBy(10 ** currency.decimals)
@@ -193,21 +187,20 @@ export default function ApprovalWrapper({ pool }) {
 		[languages],
 	)
 
-	const { yaxis } = useGlobal()
-	const LPContract = useMemo(
-		() =>
-			yaxis?.contracts.pools.find((p) => pool.lpAddress === p.lpAddress)
-				?.lpContract,
-		[yaxis?.contracts, pool.lpAddress],
-	)
-	const allowance = useAllowance(
-		LPContract,
-		yaxis?.contracts?.rewards[pool.rewards].options.address,
-	)
+	const { contracts } = useContracts()
+
+	const LPContract = useMemo(() => contracts?.pools[pool.name]?.lpContract, [
+		contracts,
+		pool.name,
+	])
+
+	const {
+		uniYaxisEth: { staking },
+	} = useApprovals()
 
 	const { onApprove, loading } = useApprove(
 		LPContract,
-		yaxis?.contracts?.rewards[pool.rewards].options.address,
+		contracts?.rewards[pool.rewards].address,
 		pool.name,
 	)
 
@@ -221,7 +214,7 @@ export default function ApprovalWrapper({ pool }) {
 					/>
 				</Row>
 			)
-		if (allowance.isEqualTo(0))
+		if (staking.isEqualTo(0))
 			return (
 				<>
 					<Row justify="center" style={{ paddingBottom: '20px' }}>
@@ -240,7 +233,7 @@ export default function ApprovalWrapper({ pool }) {
 				</>
 			)
 		return <Stake pool={pool} />
-	}, [account, allowance, loading, onApprove, pool, t])
+	}, [account, staking, loading, onApprove, pool, t])
 
 	return (
 		<Card className="staking-card" title={<strong>{t('Staking')}</strong>}>

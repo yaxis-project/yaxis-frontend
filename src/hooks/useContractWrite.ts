@@ -1,9 +1,11 @@
 import { useCallback, useMemo, useState } from 'react'
 import { notification } from 'antd'
-import useGlobal from './useGlobal'
+import { useContracts } from '../contexts/Contracts'
 import useWeb3Provider from './useWeb3Provider'
-import { Contract } from 'web3-eth-contract'
+import { Contract } from '@ethersproject/contracts'
 import objectPath from 'object-path'
+import { useTransactionAdder } from '../state/transactions/hooks'
+import { calculateGasMargin } from '../utils/number'
 
 interface Params {
 	contractName: string
@@ -15,41 +17,58 @@ interface CallOptions {
 	amount?: string
 	cb?: Function
 	args?: any[]
+	descriptionExtra?: string
 }
 
 const useContractWrite = ({ contractName, method, description }: Params) => {
 	const [data, setData] = useState(null)
 	const [loading, setLoading] = useState(false)
 
-	const { account } = useWeb3Provider()
-	const { yaxis } = useGlobal()
+	const { account, library } = useWeb3Provider()
+	const { contracts } = useContracts()
+
 	const contract = useMemo(() => {
-		const c = objectPath.get(yaxis?.contracts, contractName) as Contract
-		if (!c) console.log(`Unable to initialize contract: ${contractName}`)
-		return c
-	}, [yaxis, contractName])
+		if (contracts) {
+			const c = objectPath.get(contracts, contractName) as Contract
+			if (!c)
+				console.error(`Unable to initialize contract: ${contractName}`)
+			return c
+		}
+		return null
+	}, [contracts, contractName])
+
+	const addTransaction = useTransactionAdder()
 
 	const call = useCallback(
-		async ({ args, amount, cb }: CallOptions = {}) => {
+		async ({ args, amount, cb, descriptionExtra }: CallOptions = {}) => {
 			try {
+				if (!library || !account) return
+				if (!contract) throw new Error('Contract not loaded')
+				const c = contract.connect(
+					library.getSigner(account).connectUnchecked(),
+				)
 				setLoading(true)
 				notification.info({
 					message: `Please confirm ${description}.`,
 				})
-				const m = contract.methods[method]
-				const withArgs = args ? m(...args) : m()
-				const config: any = { from: account }
-				if (amount) config.amount = amount
-				const response = await withArgs
-					.send(config)
-					.on('transactionHash', (tx: any) => {
-						console.log(tx)
-						return tx.transactionHash
-					})
+				const gasCost = await c.estimateGas[method](...(args || []), {})
+				const config: any = {
+					gasLimit: calculateGasMargin(gasCost),
+				}
+				if (amount) config.value = amount
+				const m = c[method]
+				const receipt = await m(...(args || []), config)
+				await receipt.wait()
 				if (cb) cb()
-				setData(response)
+				addTransaction(receipt, {
+					method,
+					summary: description,
+					contract: contractName,
+					amount: descriptionExtra,
+				})
+				setData(receipt)
 				setLoading(false)
-				return response
+				return receipt
 			} catch (e) {
 				console.error(e)
 				notification.error({
@@ -60,7 +79,15 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				return false
 			}
 		},
-		[account, contract, description, method],
+		[
+			account,
+			library,
+			contract,
+			description,
+			method,
+			contractName,
+			addTransaction,
+		],
 	)
 
 	return { loading, data, call }

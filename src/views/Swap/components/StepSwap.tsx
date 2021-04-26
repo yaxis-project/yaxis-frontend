@@ -1,15 +1,14 @@
-import { useState, useMemo, useEffect, Dispatch, SetStateAction } from 'react'
+import { useMemo, Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
 import { Row, Col } from 'antd'
-import useGlobal from '../../../hooks/useGlobal'
+import { useContracts } from '../../../contexts/Contracts'
+import { useSwapApprovals } from '../../../state/wallet/hooks'
 import useApprove from '../../../hooks/useApprove'
 import useContractWrite from '../../../hooks/useContractWrite'
 import Button from '../../../components/Button'
 import { ArrowRightOutlined, ArrowDownOutlined } from '@ant-design/icons'
-import { formatBN } from '../../../yaxis/utils'
-import useWeb3Provider from '../../../hooks/useWeb3Provider'
-import { ethers } from 'ethers'
+import { formatBN, MAX_UINT } from '../../../utils/number'
 import BigNumber from 'bignumber.js'
 
 const BalanceTitle = styled(Row)`
@@ -38,30 +37,32 @@ interface StepSwapProps extends StepProps {
 const StepSwap: React.FC<StepSwapProps> = ({
 	balances: { stakedBalance, yaxBalance },
 }) => {
-	const { account } = useWeb3Provider()
-	const { yaxis } = useGlobal()
+	const { contracts } = useContracts()
 
-	const [allowanceYAX, setAllowanceYAX] = useState(0)
-	const [loadingAllowanceYAX, setLoadingAllowanceYAX] = useState(true)
+	const {
+		YAX: allowanceYAX,
+		loadingYAX: loadingAllowanceYAX,
+		SYAX: allowanceSYAX,
+		loadingSYAX: loadingAllowanceSYAX,
+	} = useSwapApprovals()
+
 	const { onApprove: onApproveYAX, loading: loadingApproveYAX } = useApprove(
-		yaxis?.contracts?.yax,
-		yaxis?.contracts?.swap.options.address,
+		contracts?.currencies.ERC20.yax.contract,
+		contracts?.internal.swap.address,
 		'YAX',
 	)
 
-	const [allowanceSYAX, setAllowanceSYAX] = useState('0')
-	const [loadingAllowanceSYAX, setLoadingAllowanceSYAX] = useState(true)
 	const {
 		onApprove: onApproveSYAX,
 		loading: loadingApproveSYAX,
 	} = useApprove(
-		yaxis?.contracts?.xYaxStaking,
-		yaxis?.contracts?.swap.options.address,
+		contracts?.internal.xYaxStaking,
+		contracts?.internal.swap.address,
 		'sYAX',
 	)
 
 	const { call, loading: loadingSwap } = useContractWrite({
-		contractName: 'swap',
+		contractName: 'internal.swap',
 		method: 'swap',
 		description: 'Token Swap',
 	})
@@ -70,30 +71,6 @@ const StepSwap: React.FC<StepSwapProps> = ({
 		stakedBalance,
 		yaxBalance,
 	])
-
-	useEffect(() => {
-		const checkAllowance = async () => {
-			try {
-				const aYax = await yaxis?.contracts?.yax.methods
-					.allowance(account, yaxis?.contracts?.swap.options.address)
-					.call()
-				setAllowanceYAX(aYax)
-				const aSYax = await yaxis?.contracts?.xYaxStaking.methods
-					.allowance(account, yaxis?.contracts?.swap.options.address)
-					.call()
-				setAllowanceSYAX(aSYax)
-				setLoadingAllowanceYAX(false)
-				setLoadingAllowanceSYAX(false)
-			} catch (err) {
-				console.log('Error checking YAX and sYAX allowance: ', err)
-			}
-		}
-		if (account && yaxis?.contracts) {
-			setLoadingAllowanceYAX(true)
-			setLoadingAllowanceSYAX(true)
-			checkAllowance()
-		}
-	}, [account, yaxis?.contracts, loadingApproveSYAX, loadingApproveYAX])
 
 	const longWalletBalance = useMemo(
 		() => yaxBalance.toFixed(2).length > 8,
@@ -109,10 +86,7 @@ const StepSwap: React.FC<StepSwapProps> = ({
 	const button = useMemo(() => {
 		if (loadingAllowanceYAX || loadingAllowanceSYAX)
 			return <Button loading={true} disabled={true} />
-		if (
-			stakedBalance.gt(0) &&
-			ethers.constants.MaxUint256.gt(allowanceSYAX)
-		)
+		if (stakedBalance.gt(0) && allowanceSYAX.lt(MAX_UINT))
 			return (
 				<Button
 					loading={loadingApproveSYAX}
@@ -123,7 +97,7 @@ const StepSwap: React.FC<StepSwapProps> = ({
 				</Button>
 			)
 
-		if (yaxBalance.gt(0) && allowanceYAX < 2 ** 256 - 1)
+		if (yaxBalance.gt(0) && allowanceYAX.lt(MAX_UINT))
 			return (
 				<Button
 					loading={loadingApproveYAX}

@@ -1,12 +1,11 @@
 import React from 'react'
+import styled from 'styled-components'
 import { Row, Col, Card } from 'antd'
 import Button from '../../../components/Button'
-import Tooltip from '../../../components/Tooltip'
-import Label from '../../../components/Label'
 import Value from '../../../components/Value'
 import useModal from '../../../hooks/useModal'
-import useStakedBalance from '../../../hooks/useStakedBalance'
-import useUnstake from '../../../hooks/useUnstake'
+import { useLegacyReturns } from '../../../state/wallet/hooks'
+import useContractWrite from '../../../hooks/useContractWrite'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import WithdrawModal from './WithdrawModal'
 import BigNumber from 'bignumber.js'
@@ -17,18 +16,29 @@ interface StakeProps {
 }
 
 const LegacyStake: React.FC<StakeProps> = ({ pid, tokenName }) => {
-	const { balance: stakedBalance } = useStakedBalance(pid)
-
 	const {
-		onUnstake,
-		loading: unstakeLoading,
-		error: unstakeError,
-	} = useUnstake(pid, tokenName)
+		lp: { staked: stakedBalance },
+	} = useLegacyReturns(pid)
+
+	const { call: onUnstake, loading: unstakeLoading } = useContractWrite({
+		contractName: 'internal.yaxisChef',
+		method: 'unstake',
+		description: `unstake ${tokenName}`,
+	})
 
 	const [onPresentWithdraw] = useModal(
 		<WithdrawModal
 			max={stakedBalance}
-			onConfirm={onUnstake}
+			onConfirm={(amount: string) =>
+				onUnstake({
+					args: [
+						pid,
+						new BigNumber(amount)
+							.times(new BigNumber(10).pow(18))
+							.toString(),
+					],
+				})
+			}
 			tokenName={tokenName}
 		/>,
 	)
@@ -42,21 +52,19 @@ const LegacyStake: React.FC<StakeProps> = ({ pid, tokenName }) => {
 					<Value value={getBalanceNumber(stakedBalance)} />
 				</Col>
 				<Col>
-					<Label text={`${tokenName} Tokens Staked`} />
+					<Label>{tokenName} Tokens Staked</Label>
 				</Col>
 			</Row>
 
 			<Row justify="center">
 				<Col span={12}>
-					<Tooltip title={unstakeError}>
-						<Button
-							disabled={stakedBalance.eq(new BigNumber(0))}
-							onClick={onPresentWithdraw}
-							loading={unstakeLoading}
-						>
-							Unstake
-						</Button>
-					</Tooltip>
+					<Button
+						disabled={stakedBalance.eq(new BigNumber(0))}
+						onClick={onPresentWithdraw}
+						loading={unstakeLoading}
+					>
+						Unstake
+					</Button>
 				</Col>
 			</Row>
 		</Card>
@@ -64,3 +72,7 @@ const LegacyStake: React.FC<StakeProps> = ({ pid, tokenName }) => {
 }
 
 export default LegacyStake
+
+const Label = styled.div`
+	color: ${(props) => props.theme.color.grey[400]};
+`

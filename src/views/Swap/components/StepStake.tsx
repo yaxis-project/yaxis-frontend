@@ -1,19 +1,20 @@
-import { useState, useMemo, Dispatch, SetStateAction } from 'react'
+import { useMemo, Dispatch, SetStateAction } from 'react'
 import BigNumber from 'bignumber.js'
-import { ethers } from 'ethers'
 import { Steps, Grid, Row } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
-import { currentConfig } from '../../../yaxis/configs'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
 import Button from '../../../components/Button'
-import useEnter from '../../../hooks/useEnter'
-import useGlobal from '../../../hooks/useGlobal'
-import useAllowance from '../../../hooks/useAllowance'
-import useTokenBalance from '../../../hooks/useTokenBalance'
+import {
+	useETHBalances,
+	useApprovals,
+	useAllTokenBalances,
+} from '../../../state/wallet/hooks'
+import { useContracts } from '../../../contexts/Contracts'
 import useApprove from '../../../hooks/useApprove'
 import useContractWrite from '../../../hooks/useContractWrite'
-import useWeb3Provider from '../../../hooks/useWeb3Provider'
+import { MAX_UINT } from '../../../utils/number'
+
 const { Step } = Steps
 const { useBreakpoint } = Grid
 
@@ -30,17 +31,17 @@ interface StepStakeProps extends StepProps {
 }
 
 const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
-	const { yaxis: global, balance } = useGlobal()
-	const { chainId } = useWeb3Provider()
 	const { xl } = useBreakpoint()
+	const { eth } = useETHBalances()
+	const { contracts } = useContracts()
+	const {
+		metavault: { staking: allowance },
+		uniYaxisEth: { staking: allowanceLP },
+	} = useApprovals()
 
-	const allowance = useAllowance(
-		global?.contracts.yaxisMetaVault,
-		global?.contracts?.rewards.MetaVault.options.address,
-	)
 	const { onApprove, loading: loadingApproveMVLT } = useApprove(
-		global?.contracts.yaxisMetaVault,
-		global?.contracts?.rewards.MetaVault.options.address,
+		contracts?.internal.yAxisMetaVault,
+		contracts?.rewards.MetaVault.address,
 		'MVLT',
 	)
 
@@ -52,7 +53,7 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 
 	const mvlt = useMemo(() => {
 		if (mvltBalance.gt(0)) {
-			if (allowance.isLessThan(2 ** 256 - 1))
+			if (allowance.isLessThan(MAX_UINT))
 				return (
 					<Step
 						title={
@@ -76,8 +77,11 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 							loading={loadingStakeMVLT}
 							onClick={() =>
 								handleStake({
-									amount: mvltBalance.toString(),
-									args: [mvltBalance.toString()],
+									args: [
+										mvltBalance
+											.multipliedBy(10 ** 18)
+											.toString(),
+									],
 								})
 							}
 							height={'40px'}
@@ -100,42 +104,35 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 		onApprove,
 	])
 
-	const config = useMemo(() => currentConfig(chainId), [chainId])
+	const uniYaxisEthLP = useMemo(() => contracts?.pools['Uniswap YAXIS/ETH'], [
+		contracts,
+	])
 
-	const uniYaxisEthLP = useMemo(
-		() => config?.pools.find((pool) => pool.name === 'Uniswap YAXIS/ETH'),
-		[config],
-	)
-
-	const { balance: yaxisEthLPBalance } = useTokenBalance(
-		uniYaxisEthLP.lpAddress,
-	)
+	const [{ YAXIS_ETH_UNISWAP_LP }] = useAllTokenBalances()
 
 	const {
 		call: handleStakeYaxisEthLP,
 		loading: loadingStakeYaxisEthLP,
 	} = useContractWrite({
-		contractName: `rewards.YaxisEth`,
+		contractName: `rewards.Uniswap YAXIS/ETH`,
 		method: 'stake',
 		description: `stake Uniswap YAXIS ETH LP token`,
 	})
 
-	const allowanceLP = useAllowance(
-		uniYaxisEthLP.lpContract,
-		global?.contracts?.rewards.YaxisEth.options.address,
-	)
-
 	const { onApprove: onApproveLP, loading: loadingApproveLP } = useApprove(
-		uniYaxisEthLP.lpContract,
-		global?.contracts?.rewards.YaxisEth.options.address,
+		uniYaxisEthLP?.lpContract,
+		contracts?.rewards['Uniswap YAXIS/ETH'].address,
 		'Uniswap YAXIS/ETH LP token',
 	)
 
-	const [loadingStakeYAXIS, setLoadingStakeYAXIS] = useState(false)
-	const { onEnter } = useEnter()
+	const { call: onEnter, loading: loadingStakeYAXIS } = useContractWrite({
+		contractName: 'currencies.ERC677.yaxis.contract',
+		method: 'transferAndCall',
+		description: `stake Yaxis`,
+	})
 
 	const uniLP = useMemo(() => {
-		if (balance.eq(0))
+		if (eth?.amount.eq(0))
 			return (
 				<Step
 					title={'Provide Liquidity'}
@@ -143,8 +140,8 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 					status="wait"
 				/>
 			)
-		if (yaxisEthLPBalance.gt(0)) {
-			if (allowanceLP.isLessThan(ethers.constants.MaxUint256.toString()))
+		if (YAXIS_ETH_UNISWAP_LP?.amount.gt(0)) {
+			if (allowanceLP.isLessThan(MAX_UINT))
 				return (
 					<Step
 						title={
@@ -182,8 +179,9 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 							height={'40px'}
 							onClick={() =>
 								handleStakeYaxisEthLP({
-									amount: yaxisEthLPBalance.toString(),
-									args: [yaxisEthLPBalance.toString()],
+									args: [
+										YAXIS_ETH_UNISWAP_LP?.value.toString(),
+									],
 								})
 							}
 							loading={loadingStakeYaxisEthLP}
@@ -241,8 +239,8 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 			/>
 		)
 	}, [
-		balance,
-		yaxisEthLPBalance,
+		eth,
+		YAXIS_ETH_UNISWAP_LP,
 		handleStakeYaxisEthLP,
 		loadingStakeYaxisEthLP,
 		xl,
@@ -261,17 +259,19 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 						title={
 							<StyledButton
 								onClick={async () => {
-									try {
-										setLoadingStakeYAXIS(true)
-										await onEnter(
-											yaxisBalance
-												.div(10 ** 18)
-												.toString(),
-										)
-										setLoadingStakeYAXIS(false)
-									} catch {
-										setLoadingStakeYAXIS(false)
-									}
+									const amount = yaxisBalance
+										.multipliedBy(10 ** 18)
+										.toString()
+									onEnter({
+										args: [
+											contracts?.rewards.Yaxis.address,
+											amount,
+											contracts?.rewards.Yaxis.interface.encodeFunctionData(
+												'stake',
+												[amount],
+											),
+										],
+									})
 								}}
 								loading={loadingStakeYAXIS}
 								height={'40px'}
@@ -287,7 +287,13 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 		return (
 			<Step title={'Stake YAXIS'} description="Done." status="finish" />
 		)
-	}, [yaxisBalance, loadingStakeYAXIS, onEnter, uniLP])
+	}, [
+		yaxisBalance,
+		loadingStakeYAXIS,
+		onEnter,
+		uniLP,
+		contracts?.rewards.Yaxis,
+	])
 
 	const message = useMemo(() => {
 		if (mvltBalance.gt(0) || yaxisBalance.gt(0))

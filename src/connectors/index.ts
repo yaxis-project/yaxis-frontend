@@ -1,4 +1,4 @@
-import Web3 from 'web3'
+import { Web3Provider } from '@ethersproject/providers'
 import { NetworkConnector } from '@web3-react/network-connector'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
@@ -15,7 +15,8 @@ import { FrameConnector } from '@web3-react/frame-connector'
 import { AuthereumConnector } from '@web3-react/authereum-connector'
 
 export function getLibrary(provider: any) {
-	const library = new Web3(provider)
+	const library = new Web3Provider(provider, 'any')
+	library.pollingInterval = 15000
 	return library
 }
 
@@ -93,7 +94,7 @@ export const authereum = new AuthereumConnector({ chainId: 1 })
 export const magic = new MagicConnector({
 	apiKey: process.env.REACT_APP_MAGIC_KEY as string,
 	chainId: 4,
-	email: 'hello@example.org'
+	email: 'hello@example.org',
 })
 
 export const torus = new TorusConnector({ chainId: 1 })

@@ -1,14 +1,14 @@
 import { useState, useContext, useMemo, useCallback } from 'react'
-import { Currencies3Pool } from '../../../utils/currencies'
+import { Currencies3Pool } from '../../../constants/currencies'
 import DepositAssetRow from './DepositAssetRow'
-import useMetaVaultData from '../../../hooks/useMetaVaultData'
-import usePriceMap from '../../../hooks/usePriceMap'
-import useGlobal from '../../../hooks/useGlobal'
+import { useAllTokenBalances } from '../../../state/wallet/hooks'
+import { usePrices } from '../../../state/prices/hooks'
+import { useContracts } from '../../../contexts/Contracts'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import { reduce } from 'lodash'
 import { Row, Col, Grid, Typography } from 'antd'
-import { numberToDecimal } from '../../../yaxis/utils'
+import { numberToDecimal } from '../../../utils/number'
 import useContractWrite from '../../../hooks/useContractWrite'
 import Button from '../../../components/Button'
 import { ArrowDownOutlined } from '@ant-design/icons'
@@ -36,30 +36,30 @@ const initialCurrencyValues: CurrencyValues = reduce(
  * Creates a deposit table for the savings account.
  */
 export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
+	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
-	const { yaxis } = useGlobal()
-	const priceMap = usePriceMap()
+	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		initialCurrencyValues,
 	)
 
-	const { currenciesData } = useMetaVaultData('v1')
+	const [tokenBalances] = useAllTokenBalances()
 
 	const disabled = useMemo(
-		() => computeInsufficientBalance(currencyValues, currenciesData),
-		[currencyValues, currenciesData],
+		() => computeInsufficientBalance(currencyValues, tokenBalances),
+		[currencyValues, tokenBalances],
 	)
 
 	const totalDepositing = useMemo(
-		() => computeTotalDepositing(Currencies3Pool, currencyValues, priceMap),
-		[currencyValues, priceMap],
+		() => computeTotalDepositing(Currencies3Pool, currencyValues, prices),
+		[currencyValues, prices],
 	)
 
 	const {
 		call: handleDeposit3Pool,
 		loading: loadingDeposit3Pool,
 	} = useContractWrite({
-		contractName: 'curve3Pool',
+		contractName: 'external.curve3pool',
 		method: 'add_liquidity',
 		description: `get 3CRV`,
 	})
@@ -74,18 +74,17 @@ export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
 				return '0'
 			})
 			const expected =
-				(await yaxis?.contracts.curve3Pool.methods
-					.calc_token_amount(amounts, true)
-					.call()) * 0.99
-			const reciept = await handleDeposit3Pool({
+				(await contracts?.external.curve3pool.calc_token_amount(
+					amounts,
+					true,
+				)) * 0.99
+			await handleDeposit3Pool({
 				args: [amounts, new BigNumber(expected).toString()],
 			})
-			console.log(reciept)
 			setCurrencyValues(initialCurrencyValues)
-			set3crvValue('3CRV', value3crv['3CRV'] + reciept)
-			// set deposit
+			set3crvValue('3CRV', value3crv['3CRV'])
 		} catch {}
-	}, [currencyValues, handleDeposit3Pool, yaxis, value3crv, set3crvValue])
+	}, [currencyValues, handleDeposit3Pool, contracts, value3crv, set3crvValue])
 
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
@@ -98,8 +97,8 @@ export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
 					currency={currency}
 					onChange={handleFormInputChange(setCurrencyValues)}
 					value={currencyValues[currency.tokenId]}
-					contractName={`vault.${currency.tokenId}`}
-					approvee={yaxis?.contracts?.curve3Pool.options.address}
+					contractName={`currencies.ERC20.${currency.tokenId}.contract`}
+					approvee={contracts?.external.curve3pool.address}
 				/>
 			))}
 			<Row

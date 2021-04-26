@@ -1,20 +1,20 @@
-import React, { useState, useContext, useEffect, useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
-import { Row, Col, Typography, Card, Button } from 'antd'
-import BigNumber from 'bignumber.js'
+import { Row, Col, Typography, Card, Divider } from 'antd'
+import Button from '../../../components/Button'
 import Value from '../../../components/Value'
-import useLP from '../../../hooks/useMyLiquidity'
-import useFarms from '../../../hooks/useFarms'
-import { StakePool } from '../../../yaxis/type'
+import { LiquidityPool } from '../../../constants/type'
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
-import * as currencies from '../../../utils/currencies'
+import { Currencies } from '../../../constants/currencies'
 import { getFullDisplayBalance } from '../../../utils/formatBalance'
+import { useAccountLP } from '../../../state/wallet/hooks'
+import { useLP } from '../../../state/external/hooks'
 
 const { Text } = Typography
 
 const TableHeader = (props: any) => (
-	<Col span={props.span}>
+	<Col span={props.span} style={{ padding: '15px 22px' }}>
 		<Text type="secondary">{props.value}</Text>
 	</Col>
 )
@@ -33,7 +33,12 @@ interface LiquidityRowProps {
 const LiquidityRow = (props: LiquidityRowProps) => {
 	const { icon, name, balance, symbol } = props
 	return (
-		<Row className="liquidity-row">
+		<Row
+			style={{
+				padding: '28px 22px',
+				fontSize: '18px',
+			}}
+		>
 			<Col span={9}>
 				<img src={icon} height="36" alt="logo" />
 				<Text>{name}</Text>
@@ -57,90 +62,66 @@ const LiquidityRow = (props: LiquidityRowProps) => {
  */
 
 type Props = {
-	pool: StakePool
+	pool: LiquidityPool
 }
 
 const LiquidityCard: React.FC<Props> = ({ pool }) => {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 
-	const {
-		farm: { lpUrl, id },
-		userBalance,
-		userPoolShare,
-		stakedBalance,
-	} = useLP(pool)
-	const totalBalance = userBalance.plus(stakedBalance)
+	const { lpUrl, reserves } = useLP(pool.name)
+	const { walletBalance, poolShare, stakedBalance } = useAccountLP(pool)
 
-	const defaultUserBalances = useMemo(() => {
-		const output = {}
-		pool.lpTokens.forEach((token) => (output[token.symbol] = 0))
-		return output
-	}, [pool])
-	const [userBalances, setUserBalances] = useState(defaultUserBalances)
+	const accountBalances = useMemo(
+		() =>
+			Object.values(reserves).map((reserves) =>
+				poolShare.multipliedBy(reserves),
+			),
+		[reserves, poolShare],
+	)
 
-	const { stakedValues } = useFarms()
-	useEffect(() => {
-		const stakedValue = stakedValues.find((farm) => farm.id === id)
-		if (stakedValue) {
-			const nextState = {}
-			pool.lpTokens.forEach(
-				(token, i) =>
-					(nextState[token.symbol] = new BigNumber(
-						stakedValue?.reserve[i],
-					)
-						.times(userPoolShare)
-						.toFixed(2)),
-			)
-			setUserBalances(nextState)
-		}
-	}, [stakedValues, userPoolShare, pool, id])
-	// const hasBalance = Object.values(userBalances).some(val => Number(val)) || Number(stakedBalance.toFixed(2))
+	const currency = useMemo(() => Currencies[pool.tokenSymbol], [pool])
 
 	return (
 		<Card
 			className="liquidity-card"
 			title={<strong>Your Liquidity</strong>}
 		>
-			<Row className="title-row">
+			<Row>
 				<TableHeader value={phrases['Asset'][language]} span={9} />
 				<TableHeader value={phrases['Balance'][language]} span={15} />
 			</Row>
+			<Divider style={{ margin: '0' }} />
 
 			<LiquidityRow
-				// TODO: Make a dynamic currency icon component with fallback
-				icon={
-					currencies.currencyMap[pool.symbol]?.icon ||
-					currencies.UNI_ETH_YAX_LP.icon
-				}
+				icon={currency?.icon}
 				name={'Pool Tokens'}
-				balance={getFullDisplayBalance(totalBalance)}
+				balance={getFullDisplayBalance(
+					walletBalance?.value.plus(stakedBalance?.value),
+				)}
 				symbol={pool.symbol}
 			/>
-			{pool.lpTokens.map(({ symbol }, i) => (
-				<LiquidityRow
-					key={`LiquidityRow-${symbol}-${i}`}
-					icon={
-						typeof currencies[symbol] === 'function'
-							? currencies[symbol]()?.icon
-							: currencies[symbol]?.icon
-					}
-					name={symbol}
-					balance={userBalances[symbol]}
-					symbol={symbol}
-				/>
+			<Divider style={{ margin: '0' }}>REPRESENTING:</Divider>
+			{pool.lpTokens.map(({ tokenId }, i) => (
+				<>
+					<LiquidityRow
+						key={`LiquidityRow-${tokenId}-${i}`}
+						icon={Currencies[tokenId.toUpperCase()]?.icon}
+						name={tokenId.toUpperCase()}
+						balance={accountBalances[i].toString()}
+						// balance={userBalances[i]}
+						symbol={tokenId.toUpperCase()}
+					/>
+					<Divider style={{ margin: '0' }} />
+				</>
 			))}
 
-			<Row gutter={18} justify="center">
+			<Row gutter={18} justify="center" style={{ padding: '20px' }}>
 				<Col span={12}>
 					<Button
-						className="staking-btn-link"
-						block
-						type="primary"
-						disabled={!lpUrl || !userBalance.toNumber()}
+						disabled={!lpUrl || !walletBalance?.amount.toNumber()}
 						icon={<MinusOutlined />}
-						href={lpUrl}
-						target="_blank"
+						onClick={() => window.open(lpUrl, '_blank')}
 					>
 						Remove
 					</Button>
@@ -148,13 +129,9 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 				{!pool?.legacy && (
 					<Col span={12}>
 						<Button
-							className="staking-btn-link"
-							block
-							type="primary"
 							disabled={!lpUrl}
 							icon={<PlusOutlined />}
-							href={lpUrl}
-							target="_blank"
+							onClick={() => window.open(lpUrl, '_blank')}
 						>
 							Add
 						</Button>

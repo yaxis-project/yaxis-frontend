@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { Menu, Typography } from 'antd'
 import styled from 'styled-components'
-import { currentConfig } from '../../../yaxis/configs'
+import { currentConfig } from '../../../constants/configs'
 import { CaretDownFilled } from '@ant-design/icons'
 import { useWeb3React } from '@web3-react/core'
 
@@ -13,9 +13,10 @@ import { useWeb3React } from '@web3-react/core'
 
 const Nav: React.FC = (props) => {
 	const { chainId } = useWeb3React()
-	const activePools = currentConfig(chainId)?.pools.filter(
-		(pool) => pool?.active,
+	const activePools = Object.values(currentConfig(chainId).pools).filter(
+		(pool) => pool.active,
 	)
+
 	return (
 		<StyledMenu
 			mode="horizontal"

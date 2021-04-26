@@ -7,14 +7,10 @@ import React, {
 } from 'react'
 import { Card, Radio, Row, Col } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
-import {
-	getYAXPriceData,
-	SelectableDay,
-	dayOptions,
-} from '../../hooks/useYAXPriceData'
+import { getYAXPriceData, SelectableDay, dayOptions } from './utils'
 import useWindowWidth from '../../hooks/useWindowWidth'
 import styled from 'styled-components'
-import usePriceMap from '../../hooks/usePriceMap'
+import { usePrices } from '../../state/prices/hooks'
 import moment from 'moment'
 import theme from '../../theme'
 import BigNumber from 'bignumber.js'
@@ -74,7 +70,9 @@ const PriceGraph: React.FC = () => {
 	const [isLoading, setLoading] = useState(true)
 	const [selectedDay, setDate] = useState<SelectableDay>(dayOptions[3])
 
-	const { YAXIS: yaxisPrice } = usePriceMap()
+	const {
+		prices: { yaxis: yaxisPrice },
+	} = usePrices()
 
 	const windowWidth = useWindowWidth()
 	const chartWidth = useMemo(() => {

@@ -1,4 +1,4 @@
-import { Currency } from '../../../utils/currencies'
+import { Currency, CurrencyValue } from '../../../constants/currencies'
 import { BigNumber } from 'bignumber.js'
 
 /**
@@ -32,18 +32,17 @@ export const handleFormInputChange = (setCurrencyValues: Function) => (
  */
 export const computeInsufficientBalance = (
 	currencyValues: CurrencyValues,
-	currenciesData: any,
+	currenciesData: { [tokenId: string]: CurrencyValue | undefined },
 ): boolean => {
+	// TODO
 	const noValue = !Object.values(currencyValues).find(
 		(v) => parseFloat(v) > 0,
 	)
 	const insufficientBalance = !!Object.entries(currencyValues).find(
 		([tokenId, v]) => {
 			const value = new BigNumber(v || 0)
-			const currency = currenciesData.find(
-				(c: any) => c.tokenId === tokenId,
-			)
-			return !!!currency || value.gt(currency.balance || 0)
+			const currency = currenciesData[tokenId]
+			return !!!currency || value.gt(currency?.amount || 0)
 		},
 	)
 	return noValue || insufficientBalance

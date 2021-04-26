@@ -2,21 +2,19 @@ import {
 	ExpandableSidePanel,
 	CardRow,
 } from '../../../components/ExpandableSidePanel'
-import useTVL from '../../../hooks/useComputeTVL'
+import { useTVL } from '../../../state/internal/hooks'
 import Value from '../../../components/Value'
-import useAPY from '../../../hooks/useAPY'
-import useMetaVault from '../../../hooks/useMetaVault'
+import { useAPY } from '../../../state/internal/hooks'
+import { useMetaVaultData } from '../../../state/internal/hooks'
 
 /**
  * Generates investing vault stats card for the current signed in user.
  */
 export default function VaultStatsCard() {
 	const { metavaultTvl } = useTVL()
-	const {
-		data: { rewardsPerBlock },
-	} = useAPY('MetaVault')
+	const { rewardsPerBlock } = useAPY('MetaVault')
 
-	const { strategy } = useMetaVault()
+	const { strategy } = useMetaVaultData()
 	return (
 		<>
 			<ExpandableSidePanel header="Vault Stats" key="1">

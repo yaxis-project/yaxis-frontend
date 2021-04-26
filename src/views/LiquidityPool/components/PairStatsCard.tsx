@@ -1,33 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
-import useFarm from '../../../hooks/useFarm'
 import Value from '../../../components/Value'
 import { CardRow } from '../../../components/ExpandableSidePanel'
-// import useLPContractData from '../../../hooks/useLPContractData'
-import useFarms from '../../../hooks/useFarms'
-import { BigNumber } from 'bignumber.js'
-import { defaultStakedValue, StakedValue } from '../../../contexts/Farms/types'
+import { LiquidityPool } from '../../../constants/type'
+import { useLP } from '../../../state/external/hooks'
 
 type Props = {
-	farmID: string
+	pool: LiquidityPool
 }
 
 /**
  * Shows details of the liquidity pools locked in the system.
  */
-const LiquidityOverviewCard: React.FC<Props> = ({ farmID }) => {
-	const props = useFarm(farmID)
-	const [stakedValue, setStakedValue] = useState<StakedValue>(
-		defaultStakedValue,
-	)
-	const { stakedValues } = useFarms()
-
-	useEffect(() => {
-		const stakedValue = stakedValues.find((farm) => farm.id === farmID)
-		if (stakedValue) {
-			setStakedValue(stakedValue)
-		}
-	}, [stakedValues, farmID])
+const PairStatsCard: React.FC<Props> = ({ pool }) => {
+	const { reserves, tvl, lpTokens } = useLP(pool.name)
 
 	return (
 		<DetailOverviewCard title="Pool Stats">
@@ -35,7 +21,7 @@ const LiquidityOverviewCard: React.FC<Props> = ({ farmID }) => {
 				main="Total Value Locked"
 				secondary={
 					<Value
-						value={new BigNumber(stakedValue.tvl).toNumber()}
+						value={tvl.toNumber()}
 						numberPrefix="$"
 						decimals={2}
 					/>
@@ -57,20 +43,16 @@ const LiquidityOverviewCard: React.FC<Props> = ({ farmID }) => {
 				main="Pooled Tokens"
 				secondary={
 					<>
-						{props?.lpTokens[0] && (
-							<Value
-								value={stakedValue?.reserve[0]}
-								decimals={0}
-								numberSuffix={` ${props?.lpTokens[0].symbol}`}
-							/>
-						)}
-						{props?.lpTokens[1] && (
-							<Value
-								value={stakedValue?.reserve[1]}
-								decimals={0}
-								numberSuffix={` ${props?.lpTokens[1].symbol}`}
-							/>
-						)}
+						<Value
+							value={Number(reserves?.['_reserve0']?.toFixed(2))}
+							decimals={0}
+							numberSuffix={` ${lpTokens?.[0]?.name}`}
+						/>
+						<Value
+							value={Number(reserves?.['_reserve1']?.toFixed(2))}
+							decimals={0}
+							numberSuffix={` ${lpTokens?.[1]?.name}`}
+						/>
 					</>
 				}
 			/>
@@ -78,4 +60,4 @@ const LiquidityOverviewCard: React.FC<Props> = ({ farmID }) => {
 	)
 }
 
-export default LiquidityOverviewCard
+export default PairStatsCard

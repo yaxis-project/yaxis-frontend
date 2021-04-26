@@ -2,7 +2,7 @@ import React, { useMemo, useCallback } from 'react'
 import styled from 'styled-components'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { NavLink } from 'react-router-dom'
-import { currentConfig } from '../../../yaxis/configs'
+import { currentConfig } from '../../../constants/configs'
 import AccountInfo from './AccountInfo'
 import { Menu, Dropdown, Button, Typography } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
@@ -83,7 +83,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 		activate(network)
 	}, [activate, deactivate, account])
 
-	const activePools = currentConfig(chainId).pools.filter(
+	const activePools = Object.values(currentConfig(chainId).pools).filter(
 		(pool) => pool.active,
 	)
 

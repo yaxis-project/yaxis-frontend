@@ -7,18 +7,20 @@ import {
 } from '../../../components/ExpandableSidePanel'
 import CountUp from 'react-countup'
 import Value from '../../../components/Value'
-import useComputeAnnualProfits from '../../../hooks/useComputeAnnualProfits'
-import useComputeTVL from '../../../hooks/useComputeTVL'
-import useMetaVault from '../../../hooks/useMetaVault'
-import BigNumber from 'bignumber.js'
+import {
+	useMetaVaultData,
+	useTVL,
+	useAnnualProfits,
+} from '../../../state/internal/hooks'
 
 export default function VaultStatsCard() {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 	const t = (s: string) => phrases[s][language]
-	const { stakingTvl } = useComputeTVL()
-	const annualProfits = useComputeAnnualProfits()
-	const { strategy } = useMetaVault()
+	const { stakingTvl } = useTVL()
+
+	const annualProfits = useAnnualProfits()
+	const { strategy } = useMetaVaultData()
 
 	return (
 		<>
@@ -53,7 +55,10 @@ export default function VaultStatsCard() {
 					main={t('Distributed Interest (annually)')}
 					secondary={
 						<Value
-							value={new BigNumber(annualProfits).toNumber()}
+							// TODO: Profit sharing from strategy
+							value={Number(
+								annualProfits.multipliedBy(0).toFixed(2),
+							)}
 							numberPrefix="$"
 							decimals={0}
 						/>
