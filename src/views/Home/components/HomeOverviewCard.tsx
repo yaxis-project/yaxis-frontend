@@ -42,16 +42,16 @@ export default function HomeOverviewCard() {
 
 	const {
 		returns: {
-			metaVaultUSD,
+			// metaVaultUSD,
 			rewardsUSD,
-			totalUSD,
+			// totalUSD,
 			rewards: { governance, lp, metaVault },
 		},
 	} = useReturns()
 
 	return (
 		<DetailOverviewCard title={t('Your Lifetime Earnings')}>
-			<DetailOverviewCardRow inline>
+			{/* <DetailOverviewCardRow inline>
 				<Text>
 					<strong>Total</strong>
 				</Text>
@@ -72,7 +72,7 @@ export default function HomeOverviewCard() {
 						decimals={2}
 					/>
 				</Col>
-			</DetailOverviewCardRow>
+			</DetailOverviewCardRow> */}
 			<DetailOverviewCardRow inline>
 				<StyledText>
 					Rewards Earned
