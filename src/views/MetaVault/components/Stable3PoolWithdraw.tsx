@@ -47,7 +47,7 @@ export default function Stable3PoolWithdraw() {
 		loading: loadingWithdraw3Pool,
 	} = useContractWrite({
 		contractName: 'curve3Pool',
-		method: 'remove_liquidity',
+		method: 'remove_liquidity_imbalance',
 		description: `convert 3CRV`,
 	})
 
@@ -87,9 +87,9 @@ export default function Stable3PoolWithdraw() {
 					Currencies3Pool.map(async (c, i) => {
 						const conversion = await yaxis.contracts.curve3Pool.methods
 							.calc_withdraw_one_coin(
-								new BigNumber(1).multipliedBy(
-									10 ** CRV3.decimals,
-								),
+								new BigNumber(1)
+									.multipliedBy(10 ** CRV3.decimals)
+									.toString(),
 								i,
 							)
 							.call()
@@ -102,15 +102,15 @@ export default function Stable3PoolWithdraw() {
 				if (_v)
 					return new BigNumber(_v)
 						.multipliedBy(conversions[c.tokenId])
-						.times(10 ** c.decimals)
 						.multipliedBy(0.99) // Account for slippage
+						.toFixed(0)
 						.toString()
 				return '0'
 			})
 			const reciept = await handleWithdraw3Pool({
 				args: [
-					input3CRV.multipliedBy(10 ** CRV3.decimals).toString(),
 					amounts,
+					input3CRV.multipliedBy(10 ** CRV3.decimals).toString(),
 				],
 			})
 

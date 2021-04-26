@@ -49,6 +49,7 @@ const ApprovalCover: React.FC<Props> = ({
 				<Col span={7}>
 					<Button
 						height={'40px'}
+						style={{ minWidth: '100px' }}
 						loading={loadingApprove}
 						onClick={async () => {
 							await handleApprove({
