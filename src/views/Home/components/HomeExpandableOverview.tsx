@@ -2,10 +2,10 @@ import { useContext } from 'react'
 import { Col } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
-import useGlobal from '../../../hooks/useGlobal'
-import useTVL from '../../../hooks/useComputeTVL'
-import useTotalSupply from '../../../hooks/useTotalSupply'
-import BigNumber from 'bignumber.js'
+import { useContracts } from '../../../contexts/Contracts'
+import { useTVL } from '../../../state/internal/hooks'
+import { useYaxisSupply } from '../../../state/internal/hooks'
+import { usePrices } from '../../../state/prices/hooks'
 import Value from '../../../components/Value'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import info from '../../../assets/img/info.svg'
@@ -38,15 +38,13 @@ const TooltipRow = ({ main, value }: TooltipRowProps) => (
  * Generates an expandable side panel that shows basic overview data for the home page.
  */
 export default function HomeExpandableOverview() {
-	const { yaxis } = useGlobal()
-
+	const { contracts } = useContracts()
+	const { prices } = usePrices()
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 
-	const { tvl, stakingTvl, metavaultTvl, liquidityTvl, yaxisPrice } = useTVL()
-	const totalSupply = useTotalSupply()
-
-	const hrPrice = yaxisPrice ? new BigNumber(yaxisPrice).toNumber() : 0
+	const { tvl, stakingTvl, metavaultTvl, liquidityTvl } = useTVL()
+	const { totalSupply } = useYaxisSupply()
 
 	return (
 		<>
@@ -94,12 +92,16 @@ export default function HomeExpandableOverview() {
 				<CardRow
 					main="Price of YAXIS"
 					secondary={
-						<Value value={hrPrice} numberPrefix="$" decimals={2} />
+						<Value
+							value={prices.yaxis}
+							numberPrefix="$"
+							decimals={2}
+						/>
 					}
 					rightContent={
 						<Col lg={18} md={12} sm={12} xs={12}>
 							<a
-								href={`https://app.uniswap.org/#/swap?outputCurrency=${yaxis?.contracts.yaxis.options.address}`}
+								href={`https://app.uniswap.org/#/swap?outputCurrency=${contracts?.currencies.ERC677.yaxis?.contract.address}`}
 								target="_blank"
 								rel="noreferrer"
 							>

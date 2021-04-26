@@ -5,7 +5,7 @@ import {
 	BlockOutlined,
 	CheckCircleTwoTone,
 } from '@ant-design/icons'
-import { etherscanUrl } from '../../../yaxis/utils'
+import { etherscanUrl } from '../../../utils'
 
 const { Text } = Typography
 

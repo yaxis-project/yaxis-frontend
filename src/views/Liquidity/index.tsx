@@ -5,7 +5,7 @@ import Tooltip from '../../components/Tooltip'
 import { Collapse, Card, Table, Row, Col } from 'antd'
 import info from '../../assets/img/info.svg'
 import './index.less'
-import useFarms from '../../hooks/useFarms'
+import { useContracts } from '../../contexts/Contracts'
 const { Panel } = Collapse
 
 const columns = [
@@ -17,13 +17,15 @@ const columns = [
 ]
 
 const Liquidity: React.FC = () => {
-	const { farms } = useFarms()
-	const activePools = useMemo(() => farms.filter((pool) => pool.active), [
-		farms,
-	])
-	const legacyPools = useMemo(() => farms.filter((pool) => pool.legacy), [
-		farms,
-	])
+	const { contracts } = useContracts()
+	const activePools = useMemo(
+		() => Object.values(contracts.pools).filter((pool) => pool.active),
+		[contracts],
+	)
+	const legacyPools = useMemo(
+		() => Object.values(contracts.pools).filter((pool) => pool.legacy),
+		[contracts],
+	)
 	const history = useHistory()
 	return (
 		<div className="liquidity-view">

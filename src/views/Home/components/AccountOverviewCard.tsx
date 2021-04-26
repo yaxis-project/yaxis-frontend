@@ -1,4 +1,3 @@
-import React from 'react'
 import logo from '../../../assets/img/logo-ui.svg'
 import { Row, Col, Typography, Card } from 'antd'
 import styled from 'styled-components'
@@ -10,22 +9,8 @@ interface AccountOverviewCardProps {
 	mainTitle: string
 	secondaryText: string
 	value: string
-	time: string
 }
 
-// const StyledRiskBadge = styled.div`
-// 	background: #bca52e;
-// 	opacity: 0.6;
-// 	color: white;
-// 	display: inline-block;
-// 	border-radius: 4px;
-// 	padding: 3px 4px;
-// 	font-size: 12px;
-// 	margin-left: 16px;
-// 	@media only screen and (max-width: 575px) {
-// 		margin-left: 0;
-// 	}
-// `
 const StyledImage = styled.img`
 	@media only screen and (max-width: 575px) {
 		margin-left: 50px;
@@ -50,7 +35,7 @@ const StyledTitle = styled.div`
  * @param props AccountOverviewCardProps
  */
 export default function AccountOverviewCard(props: AccountOverviewCardProps) {
-	const { mainTitle, secondaryText, value, time } = props
+	const { mainTitle, secondaryText, value } = props
 	return (
 		<StyledCard>
 			<Row gutter={16}>
@@ -65,20 +50,12 @@ export default function AccountOverviewCard(props: AccountOverviewCardProps) {
 								{mainTitle}
 							</StyledTitle>
 						</Col>
-						<Col xs={24} sm={9}>
-							{/* <StyledRiskBadge>LOWER RISK</StyledRiskBadge> */}
-						</Col>
 					</Row>
 					<Row>
 						<Text type="secondary">{secondaryText}</Text>
 					</Row>
 				</Col>
 				<Col xs={24} sm={24} md={7}>
-					<Row>
-						<Text style={{ marginLeft: 'auto' }} type="secondary">
-							{time}
-						</Text>
-					</Row>
 					<Row>
 						<Title
 							style={{

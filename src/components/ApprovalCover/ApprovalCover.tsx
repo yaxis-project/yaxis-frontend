@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
-import useContractReadAccount from '../../hooks/useContractReadAccount'
+import { useSingleCallResultByName } from '../../state/onchain/hooks'
 import useContractWrite from '../../hooks/useContractWrite'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import Button from '../Button'
-
+import BigNumber from 'bignumber.js'
+import { MAX_UINT } from '../../utils/number'
 import { ethers } from 'ethers'
 
 type Props = {
@@ -24,13 +25,11 @@ const ApprovalCover: React.FC<Props> = ({
 
 	const {
 		loading: loadingAllowance,
-		data: allowance,
-	} = useContractReadAccount({
-		contractName,
-		method: 'allowance',
-		args: [account, approvee],
-	})
-
+		result: allowance,
+	} = useSingleCallResultByName(contractName, 'allowance', [
+		account,
+		approvee,
+	])
 	const { call: handleApprove, loading: loadingApprove } = useContractWrite({
 		contractName,
 		method: 'approve',
@@ -42,9 +41,11 @@ const ApprovalCover: React.FC<Props> = ({
 			<Cover
 				align="middle"
 				justify="center"
-				visible={
-					!hidden && !loadingAllowance && allowance < 2 ** 256 - 1
-				}
+				visible={String(
+					!hidden &&
+						!loadingAllowance &&
+						new BigNumber(allowance?.toString() || 0).lt(MAX_UINT),
+				)}
 			>
 				<Col span={7}>
 					<Button
@@ -98,5 +99,6 @@ const Cover = styled(Row)<any>`
 	background-color: rgb(128, 128, 128, 0.3);
 	z-index: 2;
 	text-align: center;
-	visibility: ${(props) => (props.visible ? 'visibile' : 'hidden')};
+	visibility: ${(props) =>
+		props.visible === 'true' ? 'visibile' : 'hidden'};
 `

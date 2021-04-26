@@ -2,7 +2,6 @@ import React from 'react'
 import { Row } from 'antd'
 import { useWeb3React } from '@web3-react/core'
 import Button from '../../Button'
-import CardIcon from '../../CardIcon'
 import { WalletInfo } from '../../../connectors'
 import { setRecentProvider } from '../../../connectors/utils'
 import styled from 'styled-components'
@@ -49,4 +48,18 @@ const StyledCardTitle = styled.div`
 	font-weight: 700;
 	text-align: center;
 	padding: ${(props) => props.theme.spacing[2]}px 0;
+`
+
+const CardIcon = styled.div`
+	background-color: ${(props) => props.theme.color.grey[200]};
+	font-size: 36px;
+	height: 80px;
+	width: 80px;
+	border-radius: 40px;
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	box-shadow: inset 4px 4px 8px ${(props) => props.theme.color.grey[300]},
+		inset -6px -6px 12px ${(props) => props.theme.color.grey[100]};
+	margin: 0 auto ${(props) => props.theme.spacing[1]}px;
 `

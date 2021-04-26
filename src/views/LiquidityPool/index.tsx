@@ -6,15 +6,18 @@ import LiquidityCard from './components/LiquidityCard'
 import LiquidityOverviewCard from './components/LiquidityOverviewCard'
 import PairStatsCard from './components/PairStatsCard'
 import './index.less'
-import useLPContractData from '../../hooks/useLPContractData'
-import usePriceMap from '../../hooks/usePriceMap'
-import { StakePool } from '../../yaxis/type'
+import { useAccountLP } from '../../state/wallet/hooks'
+import { usePrices } from '../../state/prices/hooks'
+import { LiquidityPool } from '../../constants/type'
 import Stake from './components/Stake'
 import LegacyStake from './components/LegacyStake'
 import { red } from '../../theme/colors'
 import BigNumber from 'bignumber.js'
+import { useLP } from '../../state/external/hooks'
+import { formatBN } from '../../utils/number'
+
 type Props = {
-	pool: StakePool
+	pool: LiquidityPool
 }
 
 const StyledCol = styled(Col)`
@@ -24,20 +27,28 @@ const StyledCol = styled(Col)`
 `
 
 const Liquidity: React.FC<Props> = ({ pool }) => {
-	const { stakedBalance, reserves, totalSupply } = useLPContractData(pool)
-	const { YAXIS, ETH } = usePriceMap()
+	const { stakedBalance, walletBalance } = useAccountLP(pool)
+	const { reserves, totalSupply } = useLP(pool.name)
+
+	const {
+		prices: { yaxis, eth },
+	} = usePrices()
+
 	const balanceUSD = useMemo(() => {
-		if (!reserves || !ETH || !YAXIS || !totalSupply || !stakedBalance)
+		if (!reserves || !eth || !yaxis || !totalSupply || !stakedBalance)
 			return new BigNumber(0)
-		const share = new BigNumber(stakedBalance).div(totalSupply)
-		const shareT0 = new BigNumber(reserves['_reserve0'])
+		const share = new BigNumber(stakedBalance?.value || 0)
+			.plus(new BigNumber(walletBalance?.value || 0))
+			.div(totalSupply.toString())
+		const shareT0 = new BigNumber(reserves?.['_reserve0']?.toString() || 0)
 			.multipliedBy(share)
 			.dividedBy(10 ** 18)
-		const shareT1 = new BigNumber(reserves['_reserve1'])
+		const shareT1 = new BigNumber(reserves?.['_reserve1']?.toString() || 0)
 			.multipliedBy(share)
 			.dividedBy(10 ** 18)
-		return shareT0.multipliedBy(YAXIS).plus(shareT1.multipliedBy(ETH))
-	}, [YAXIS, ETH, reserves, totalSupply, stakedBalance])
+		return shareT0.multipliedBy(yaxis).plus(shareT1.multipliedBy(eth))
+	}, [yaxis, eth, reserves, totalSupply, stakedBalance, walletBalance])
+
 	return (
 		<div className="liquidity-view">
 			<Page
@@ -49,12 +60,7 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 				value={
 					pool?.legacy
 						? 'No longer supported.'
-						: '$' +
-						  Number(balanceUSD).toLocaleString(
-								undefined, // leave undefined to use the browser's locale,
-								// or use a string like 'en-US' to override it.
-								{ minimumFractionDigits: 2 },
-						  )
+						: '$' + formatBN(balanceUSD)
 				}
 				valueInfo={
 					pool?.legacy
@@ -81,7 +87,7 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 								pool={pool}
 								totalUSDBalance={balanceUSD}
 							/>
-							<PairStatsCard farmID={pool.symbol} />
+							<PairStatsCard pool={pool} />
 						</Row>
 					</StyledCol>
 				</Row>

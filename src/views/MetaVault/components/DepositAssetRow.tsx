@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from 'react'
-import { find } from 'lodash'
-import { Currency } from '../../../utils/currencies'
-import usePriceMap from '../../../hooks/usePriceMap'
-import useMetaVaultData from '../../../hooks/useMetaVaultData'
+import { Currency } from '../../../constants/currencies'
+import { usePrices } from '../../../state/prices/hooks'
+import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import Value from '../../../components/Value'
 import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
@@ -35,21 +34,19 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 	approvee,
 	containerStyle,
 }) => {
-	const { currenciesData } = useMetaVaultData('v1')
+	const [{ [currency.tokenId]: currencyData }] = useAllTokenBalances()
 
-	const currencyData = useMemo(
-		() => find(currenciesData, (curr) => curr['name'] === currency.name),
-		[currenciesData, currency],
-	)
 	const balance = useMemo(
 		() =>
 			currencyData
-				? new BigNumber(currencyData.balance)
-				: new BigNumber('0'),
+				? new BigNumber(currencyData?.amount || 0)
+				: new BigNumber(0),
 		[currencyData],
 	)
 
-	const { [currency.priceMapKey]: price } = usePriceMap()
+	const {
+		prices: { [currency.priceMapKey]: price },
+	} = usePrices()
 
 	const balanceUSD = useMemo(
 		() => new BigNumber(price).times(balance).toFixed(2),
@@ -105,7 +102,7 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 								onClickMax={() =>
 									onChange(
 										currency.tokenId,
-										currencyData?.maxDeposit || '0',
+										currencyData?.amount || '0',
 									)
 								}
 							/>

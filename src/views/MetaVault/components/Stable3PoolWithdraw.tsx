@@ -1,10 +1,10 @@
 import { useState, useContext, useMemo, useCallback } from 'react'
 import styled from 'styled-components'
-import { CRV3, Currencies3Pool } from '../../../utils/currencies'
+import { threeCRV, Currencies3Pool } from '../../../constants/currencies'
 import WithdrawAssetRow from './WithdrawAssetRow'
-import useMetaVaultData from '../../../hooks/useMetaVaultData'
-import usePriceMap from '../../../hooks/usePriceMap'
-import useGlobal from '../../../hooks/useGlobal'
+import { useAllTokenBalances } from '../../../state/wallet/hooks'
+import { usePrices } from '../../../state/prices/hooks'
+import { useContracts } from '../../../contexts/Contracts'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import { reduce } from 'lodash'
@@ -34,36 +34,17 @@ export default function Stable3PoolWithdraw() {
 	const language = languages.state.selected
 
 	const { md } = useBreakpoint()
-	const { yaxis } = useGlobal()
-	const priceMap = usePriceMap()
+	const { contracts } = useContracts()
+	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		initialCurrencyValues,
 	)
 
-	const { currenciesData } = useMetaVaultData('v1')
+	const [tokenBalances] = useAllTokenBalances()
 
-	const {
-		call: handleWithdraw3Pool,
-		loading: loadingWithdraw3Pool,
-	} = useContractWrite({
-		contractName: 'curve3Pool',
-		method: 'remove_liquidity_imbalance',
-		description: `convert 3CRV`,
-	})
-
-	const currency3CRV = useMemo(
-		() => currenciesData.find((c) => c.tokenId === '3crv'),
-		[currenciesData],
-	)
-
-	const balance3CRV = useMemo(() => {
-		if (!currency3CRV) return new BigNumber(0)
-		return new BigNumber(currency3CRV.balance)
-	}, [currency3CRV])
-
-	const usdBalance3CRV = useMemo(
-		() => balance3CRV.multipliedBy(priceMap?.Cure3Crv),
-		[balance3CRV, priceMap],
+	const balance3CRV = useMemo(
+		() => tokenBalances['3crv']?.amount || new BigNumber(0),
+		[tokenBalances],
 	)
 
 	const input3CRV = useMemo(
@@ -73,6 +54,20 @@ export default function Stable3PoolWithdraw() {
 				new BigNumber(0),
 			),
 		[currencyValues],
+	)
+
+	const {
+		call: handleWithdraw3Pool,
+		loading: loadingWithdraw3Pool,
+	} = useContractWrite({
+		contractName: 'external.curve3pool',
+		method: 'remove_liquidity_imbalance',
+		description: `convert 3CRV`,
+	})
+
+	const usdBalance3CRV = useMemo(
+		() => balance3CRV.multipliedBy(prices?.['3crv']),
+		[balance3CRV, prices],
 	)
 
 	const error = useMemo(() => input3CRV.gt(balance3CRV), [
@@ -85,14 +80,15 @@ export default function Stable3PoolWithdraw() {
 			const conversions = Object.fromEntries(
 				await Promise.all(
 					Currencies3Pool.map(async (c, i) => {
-						const conversion = await yaxis.contracts.curve3Pool.methods
-							.calc_withdraw_one_coin(
-								new BigNumber(1)
-									.multipliedBy(10 ** CRV3.decimals)
-									.toString(),
-								i,
-							)
-							.call()
+						const conversion = await contracts?.external.curve3pool[
+							'calc_withdraw_one_coin'
+						](
+							new BigNumber(1)
+								.multipliedBy(10 ** threeCRV.decimals)
+								.toString(),
+							`${i}`,
+							{},
+						)
 						return [c?.tokenId, conversion]
 					}),
 				),
@@ -101,7 +97,7 @@ export default function Stable3PoolWithdraw() {
 				const _v = currencyValues[c.tokenId]
 				if (_v)
 					return new BigNumber(_v)
-						.multipliedBy(conversions[c.tokenId])
+						.multipliedBy(conversions[c.tokenId].toString())
 						.toFixed(0)
 						.toString()
 				return '0'
@@ -109,13 +105,15 @@ export default function Stable3PoolWithdraw() {
 			const reciept = await handleWithdraw3Pool({
 				args: [
 					amounts,
-					input3CRV.multipliedBy(10 ** CRV3.decimals).toString(),
+					input3CRV.multipliedBy(10 ** threeCRV.decimals).toString(),
 				],
 			})
 
 			if (reciept) setCurrencyValues(initialCurrencyValues)
-		} catch {}
-	}, [currencyValues, input3CRV, handleWithdraw3Pool, yaxis])
+		} catch (e) {
+			console.log(e)
+		}
+	}, [currencyValues, input3CRV, handleWithdraw3Pool, contracts])
 
 	return (
 		<>
@@ -124,7 +122,7 @@ export default function Stable3PoolWithdraw() {
 					<Text>{phrases['You have'][language]}</Text>
 				</Col>
 				<Col span={3}>
-					<img src={CRV3.icon} height="36" alt="logo" />
+					<img src={threeCRV.icon} height="36" alt="logo" />
 				</Col>
 				<Col>
 					<Title
@@ -150,7 +148,7 @@ export default function Stable3PoolWithdraw() {
 						error={error}
 						balance={balance3CRV}
 						inputBalance={input3CRV}
-						approvee={yaxis?.contracts?.curve3Pool.options.address}
+						approvee={contracts?.external.curve3pool.address}
 					/>
 				</PaddedRow>
 			))}

@@ -1,21 +1,17 @@
 import { useState, useContext, useMemo, useCallback } from 'react'
-import { InvestingDepositCurrencies } from '../../../utils/currencies'
+import { InvestingDepositCurrencies } from '../../../constants/currencies'
 import DepositAssetRow from './DepositAssetRow'
 import Stable3PoolDeposit from './Stable3PoolDeposit'
-import useMetaVault from '../../../hooks/useMetaVault'
-import useMetaVaultData from '../../../hooks/useMetaVaultData'
-import usePriceMap from '../../../hooks/usePriceMap'
+import { useAllTokenBalances, useApprovals } from '../../../state/wallet/hooks'
+import { usePrices } from '../../../state/prices/hooks'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import { reduce } from 'lodash'
 import { Row, Col, Grid, Typography, notification } from 'antd'
 import styled from 'styled-components'
-import { numberToDecimal } from '../../../yaxis/utils'
-import useTransactionAdder from '../../../hooks/useTransactionAdder'
-import { Transaction } from '../../../contexts/Transactions/types'
-import useContractReadAccount from '../../../hooks/useContractReadAccount'
-import useWeb3Provider from '../../../hooks/useWeb3Provider'
-import useGlobal from '../../../hooks/useGlobal'
+import { numberToDecimal } from '../../../utils/number'
+import useContractWrite from '../../../hooks/useContractWrite'
+import { useContracts } from '../../../contexts/Contracts'
 import Button from '../../../components/Button'
 import {
 	CurrencyValues,
@@ -23,6 +19,8 @@ import {
 	computeInsufficientBalance,
 	computeTotalDepositing,
 } from '../utils'
+import { MAX_UINT } from '../../../utils/number'
+import { BigNumber } from 'bignumber.js'
 
 const { Title, Text } = Typography
 const { useBreakpoint } = Grid
@@ -40,35 +38,73 @@ const initialCurrencyValues: CurrencyValues = reduce(
  * Creates a deposit table for the savings account.
  */
 export default function DepositTable() {
-	const { account } = useWeb3Provider()
-	const { yaxis } = useGlobal()
+	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
 
-	const { onDepositAll, isSubmitting } = useMetaVault()
-	const { onAddTransaction } = useTransactionAdder()
+	const { call: handleDepositAll, loading: isSubmitting } = useContractWrite({
+		contractName: 'internal.yAxisMetaVault',
+		method: 'depositAll',
+		description: `MetaVault deposit`,
+	})
 
-	const priceMap = usePriceMap()
+	const contract = useMemo(() => contracts?.internal.yAxisMetaVault, [
+		contracts,
+	])
+
+	const calcMinTokenAmount = useCallback(
+		async (amounts: string[]) => {
+			const threeCrvIndex = 3 // Index from InvestingDepositCurrencies that DepositAll expects
+			const defaultSlippage = 0.001 // 0.1%
+
+			try {
+				if (contract) {
+					const params = [...amounts]
+					params.splice(threeCrvIndex, 1)
+					const tokensDeposit = await contract.methods
+						.calc_token_amount_deposit(params)
+						.call()
+					const threeCrvDeposit = amounts[threeCrvIndex] || '0'
+					return new BigNumber(tokensDeposit)
+						.plus(threeCrvDeposit)
+						.times(1 - defaultSlippage)
+						.integerValue(BigNumber.ROUND_DOWN)
+						.toFixed()
+				}
+			} catch (e) {}
+			return '0'
+		},
+		[contract],
+	)
+
+	const onDepositAll = useCallback(
+		async (amounts: string[], usdValue: string) => {
+			const minMintAmount = await calcMinTokenAmount(amounts)
+			const args = [amounts, minMintAmount, false]
+			handleDepositAll({ args, descriptionExtra: usdValue })
+		},
+		[calcMinTokenAmount, handleDepositAll],
+	)
+
+	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		initialCurrencyValues,
 	)
 
-	const { currenciesData } = useMetaVaultData('v1')
+	const [tokenBalances] = useAllTokenBalances()
 
 	const {
-		loading: loading3crvAllowance,
-		data: allowance3crv,
-	} = useContractReadAccount({
-		contractName: 'vault.threeCrv',
-		method: 'allowance',
-		args: [account, yaxis?.contracts?.yaxisMetaVault.options.address],
-	})
+		metavault: {
+			deposit: allowance3crv,
+			loadingDeposit: loading3crvAllowance,
+		},
+	} = useApprovals()
 
 	const disabled = useMemo(
 		() =>
 			loading3crvAllowance ||
-			allowance3crv < 2 ** 256 - 1 ||
-			computeInsufficientBalance(currencyValues, currenciesData),
-		[currencyValues, currenciesData, allowance3crv, loading3crvAllowance],
+			allowance3crv.lt(MAX_UINT) ||
+			computeInsufficientBalance(currencyValues, tokenBalances),
+		[currencyValues, tokenBalances, allowance3crv, loading3crvAllowance],
 	)
 
 	const totalDepositing = useMemo(
@@ -76,9 +112,9 @@ export default function DepositTable() {
 			computeTotalDepositing(
 				InvestingDepositCurrencies,
 				currencyValues,
-				priceMap,
+				prices,
 			),
-		[currencyValues, priceMap],
+		[currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
@@ -90,19 +126,15 @@ export default function DepositTable() {
 				}
 				return '0'
 			})
-			const receipt = await onDepositAll(amounts, false)
+			await onDepositAll(amounts, totalDepositing)
 			setCurrencyValues(initialCurrencyValues)
-			onAddTransaction({
-				hash: receipt.transactionHash,
-				description: 'Deposit|$' + totalDepositing,
-			} as Transaction)
 		} catch (e) {
 			notification.info({
 				message: `Error while depositing:`,
 				description: e.message,
 			})
 		}
-	}, [currencyValues, onAddTransaction, onDepositAll, totalDepositing])
+	}, [currencyValues, onDepositAll, totalDepositing])
 
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
@@ -133,8 +165,8 @@ export default function DepositTable() {
 					onChange={handleFormInputChange(setCurrencyValues)}
 					value={currencyValues[currency.tokenId]}
 					containerStyle={{ borderTop: '1px solid #eceff1' }}
-					contractName={`vault.threeCrv`}
-					approvee={yaxis?.contracts?.yaxisMetaVault.options.address}
+					contractName={`currencies.ERC20.3crv.contract`}
+					approvee={contracts?.internal.yAxisMetaVault.address}
 				/>
 			))}
 			<Row className="total" style={md ? {} : { padding: '0 10%' }}>

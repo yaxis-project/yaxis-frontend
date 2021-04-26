@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import useAPY from '../../../hooks/useAPY'
+import { useAPY } from '../../../state/internal/hooks'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import { Typography, Tooltip, Row } from 'antd'
@@ -45,15 +45,12 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 	const t = (s: string) => phrases[s][language]
 
 	const {
-		data: {
-			threeCrvApyPercent,
-			yaxisApyPercent,
-			yaxisAprPercent,
-			lpApyPercent,
-			totalAPY,
-			totalAPR,
-		},
-		loading,
+		threeCrvApyPercent,
+		yaxisApyPercent,
+		yaxisAprPercent,
+		lpApyPercent,
+		totalAPY,
+		totalAPR,
 	} = useAPY('MetaVault')
 
 	return (
@@ -148,7 +145,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 			<APYCalculator
 				APR={totalAPR.toNumber()}
 				balance={new BigNumber(totalUSDBalance)}
-				loading={loading || balanceLoading}
+				loading={balanceLoading}
 			/>
 		</DetailOverviewCard>
 	)
