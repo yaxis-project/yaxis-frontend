@@ -103,10 +103,13 @@ export default function WithdrawTable() {
 	const prices = usePriceMap()
 
 	const withdrawTokenAmount = useMemo(() => {
-		const price = prices[CRV3.priceMapKey]
-		if (price) return new BigNumber(totalAvailableInUSD || 0).div(price)
+		const price = prices.Cure3Crv
+		if (price)
+			return new BigNumber(withdrawValueUSD || 0)
+				.multipliedBy(0.999)
+				.div(price)
 		return new BigNumber(0)
-	}, [totalAvailableInUSD, prices])
+	}, [withdrawValueUSD, prices])
 
 	return (
 		<>
@@ -192,9 +195,7 @@ export default function WithdrawTable() {
 							</Row>
 							<Row>
 								<Value
-									value={withdrawTokenAmount
-										.times(0.999)
-										.toFixed(2)}
+									value={withdrawTokenAmount.toFixed(2)}
 									numberSuffix={` 3CRV`}
 									extra={
 										'$' +
