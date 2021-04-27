@@ -104,9 +104,9 @@ export default function WithdrawTable() {
 
 	const withdrawTokenAmount = useMemo(() => {
 		const price = prices[CRV3.priceMapKey]
-		if (price) return new BigNumber(withdrawValueUSD || 0).div(price)
+		if (price) return new BigNumber(totalAvailableInUSD || 0).div(price)
 		return new BigNumber(0)
-	}, [withdrawValueUSD, prices])
+	}, [totalAvailableInUSD, prices])
 
 	return (
 		<>
