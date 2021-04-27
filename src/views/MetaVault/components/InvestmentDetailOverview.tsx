@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import useAPY from '../../../hooks/useAPY'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
-import { Typography, Tooltip } from 'antd'
+import { Typography, Tooltip, Row } from 'antd'
 import APYCalculator from '../../../components/APYCalculator'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import Value from '../../../components/Value'
@@ -16,18 +16,20 @@ const { Text } = Typography
 interface TooltipRowProps {
 	main: string
 	value: any
+	suffix?: string
 }
 
-const TooltipRow = ({ main, value }: TooltipRowProps) => (
+const TooltipRow = ({ main, value, suffix }: TooltipRowProps) => (
 	<>
 		<div
 			style={{ textDecoration: 'underline', textUnderlineOffset: '4px' }}
 		>
 			{main}
 		</div>
-		<div>
+		<Row>
 			<Value value={value} numberSuffix="%" decimals={2} />
-		</div>
+			<span style={{ fontSize: '10px' }}>{suffix}</span>
+		</Row>
 	</>
 )
 
@@ -46,6 +48,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 		data: {
 			threeCrvApyPercent,
 			yaxisApyPercent,
+			yaxisAprPercent,
 			lpApyPercent,
 			totalAPY,
 			totalAPR,
@@ -61,6 +64,9 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 					<Tooltip
 						title={
 							<>
+								<Row style={{ marginBottom: '5px' }}>
+									Annual Percentage Rate
+								</Row>
 								<TooltipRow
 									main={'Curve LP APY:'}
 									value={lpApyPercent.toNumber()}
@@ -70,13 +76,13 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 									value={threeCrvApyPercent.toNumber()}
 								/>
 								<TooltipRow
-									main={'YAXIS rewards APY:'}
-									value={yaxisApyPercent.toNumber()}
+									main={'YAXIS rewards APR:'}
+									value={yaxisAprPercent.toNumber()}
 								/>
 							</>
 						}
 					>
-						<Text type="secondary">Total APY </Text>
+						<Text type="secondary">Total APR </Text>
 						<img
 							style={{ position: 'relative', top: -1 }}
 							src={info}
@@ -87,10 +93,56 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 				}
 				secondary={
 					<Value
-						value={totalAPY.toNumber()}
+						value={lpApyPercent
+							.plus(threeCrvApyPercent)
+							.plus(yaxisAprPercent)
+							.toNumber()}
 						numberSuffix={'%'}
 						decimals={2}
 					/>
+				}
+				rightContent={
+					<>
+						<Row>
+							<Tooltip
+								title={
+									<>
+										<Row style={{ marginBottom: '5px' }}>
+											Annual Percentage Yield
+										</Row>
+										<TooltipRow
+											main={'Curve LP APY:'}
+											value={lpApyPercent.toNumber()}
+										/>
+										<TooltipRow
+											main={'CRV APY:'}
+											value={threeCrvApyPercent.toNumber()}
+										/>
+										<TooltipRow
+											main={'YAXIS rewards APY:'}
+											value={yaxisApyPercent.toNumber()}
+											suffix={'* daily compound'}
+										/>
+									</>
+								}
+							>
+								<Text type="secondary">Total APY </Text>
+								<img
+									style={{ position: 'relative', top: -1 }}
+									src={info}
+									height="15"
+									alt="YAXIS Supply Rewards"
+								/>
+							</Tooltip>
+						</Row>
+						<Row>
+							<Value
+								value={totalAPY.toNumber()}
+								numberSuffix={'%'}
+								decimals={2}
+							/>
+						</Row>
+					</>
 				}
 			/>
 			<APYCalculator

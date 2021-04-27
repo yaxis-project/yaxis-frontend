@@ -12,6 +12,7 @@ interface ValueProps {
 	numberSuffix?: string
 	extra?: string
 	secondary?: boolean
+	suffix?: string
 }
 
 /**
@@ -27,6 +28,7 @@ const Value: React.FC<ValueProps> = ({
 	numberSuffix,
 	extra,
 	secondary,
+	suffix,
 }) => {
 	const [start, updateStart] = useState(0)
 	const [end, updateEnd] = useState(0)
@@ -59,6 +61,7 @@ const Value: React.FC<ValueProps> = ({
 						}
 						duration={1}
 						separator=","
+						suffix={suffix}
 					/>
 				</>
 			)}

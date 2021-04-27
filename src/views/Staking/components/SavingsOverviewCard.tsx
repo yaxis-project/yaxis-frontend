@@ -14,6 +14,26 @@ import BigNumber from 'bignumber.js'
 const { Text } = Typography
 type Props = { totalUSDBalance: BigNumber; balanceLoading: boolean }
 
+interface TooltipRowProps {
+	main: string
+	value: any
+	suffix?: string
+}
+
+const TooltipRow = ({ main, value, suffix }: TooltipRowProps) => (
+	<>
+		<div
+			style={{ textDecoration: 'underline', textUnderlineOffset: '4px' }}
+		>
+			{main}
+		</div>
+		<Row>
+			<Value value={value} numberSuffix="%" decimals={2} />
+			<span style={{ fontSize: '10px' }}>{suffix}</span>
+		</Row>
+	</>
+)
+
 const SavingsOverviewCard: React.FC<Props> = ({
 	totalUSDBalance,
 	balanceLoading,
@@ -42,16 +62,17 @@ const SavingsOverviewCard: React.FC<Props> = ({
 					<Tooltip
 						title={
 							<>
-								{/* <Row>Curve LP APY (20%):</Row>
-								<Row>{lpApyPercent?.toFixed(2)}%</Row>
-								<Row>CRV APY (20%):</Row>
-								<Row>{threeCrvApyPercent?.toFixed(2)}%</Row> */}
-								<Row>YAXIS rewards APY:</Row>
-								<Row>{yaxisApyPercent.toFixed(2)}%</Row>
+								<Row style={{ marginBottom: '5px' }}>
+									Annual Percentage Rate
+								</Row>
+								<TooltipRow
+									main={'YAXIS rewards APR:'}
+									value={yaxisAprPercent.toNumber()}
+								/>
 							</>
 						}
 					>
-						<Text type="secondary">Total APY </Text>
+						<Text type="secondary">Total APR </Text>
 						<img
 							style={{ position: 'relative', top: -1 }}
 							src={info}
@@ -62,15 +83,45 @@ const SavingsOverviewCard: React.FC<Props> = ({
 				}
 				secondary={
 					<Value
-						value={
-							// lpApyPercent
-							// .plus(threeCrvApyPercent)
-							// .plus(
-							yaxisApyPercent.toNumber()
-						}
+						value={yaxisAprPercent.toNumber()}
 						numberSuffix="%"
 						decimals={2}
 					/>
+				}
+				rightContent={
+					<>
+						<Row>
+							<Tooltip
+								title={
+									<>
+										<Row style={{ marginBottom: '5px' }}>
+											Annual Percentage Yield
+										</Row>
+										<TooltipRow
+											main={'YAXIS rewards APY:'}
+											value={yaxisApyPercent.toNumber()}
+											suffix={'* daily compound'}
+										/>
+									</>
+								}
+							>
+								<Text type="secondary">Total APY </Text>
+								<img
+									style={{ position: 'relative', top: -1 }}
+									src={info}
+									height="15"
+									alt="YAXIS Supply Rewards"
+								/>
+							</Tooltip>
+						</Row>
+						<Row>
+							<Value
+								value={yaxisApyPercent.toNumber()}
+								numberSuffix={'%'}
+								decimals={2}
+							/>
+						</Row>
+					</>
 				}
 			/>
 			<APYCalculator
