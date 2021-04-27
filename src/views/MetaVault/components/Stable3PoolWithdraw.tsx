@@ -102,7 +102,6 @@ export default function Stable3PoolWithdraw() {
 				if (_v)
 					return new BigNumber(_v)
 						.multipliedBy(conversions[c.tokenId])
-						.multipliedBy(0.99) // Account for slippage
 						.toFixed(0)
 						.toString()
 				return '0'
