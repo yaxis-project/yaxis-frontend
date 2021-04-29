@@ -23,7 +23,19 @@ export default function VaultStatsCard() {
 	return (
 		<>
 			<ExpandableSidePanel header={t('Vault Stats')} key="1">
-				<CardRow main={t('Current Strategy')} secondary={strategy} />
+				<CardRow
+					main={t('Current Strategy')}
+					secondary={
+						strategy ? (
+							<>
+								<div>{strategy}</div>
+								<div>YearnV2: DAI</div>
+							</>
+						) : (
+							<div></div>
+						)
+					}
+				/>
 				<CardRow
 					main={t('Total Value Locked')}
 					secondary={
