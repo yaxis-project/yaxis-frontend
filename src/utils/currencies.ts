@@ -39,7 +39,7 @@ export const CRV3: Currency = {
 	tokenId: '3crv',
 	icon: crv3,
 	decimals: 18,
-	priceMapKey: 'YCURVE',
+	priceMapKey: 'Cure3Crv',
 }
 
 export const USD: Currency = {
