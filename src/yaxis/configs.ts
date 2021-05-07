@@ -127,7 +127,7 @@ export const configs: Record<number, Config> = {
 				liquidId: '0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73/ETH',
 				lpAddress: '0xF0E3FdF48661CD10d56692f60BD4eCcd01E9CF64',
 				lpUrl:
-					'https://info.uniswap.org/pair/0xF0E3FdF48661CD10d56692f60BD4eCcd01E9CF64',
+					'https://app.uniswap.org/#/add/v2/ETH/0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73',
 				lpTokens: [
 					{
 						symbol: 'YAXIS',
@@ -153,7 +153,7 @@ export const configs: Record<number, Config> = {
 				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
 				lpAddress: '0x1107b6081231d7f256269ad014bf92e041cb08df',
 				lpUrl:
-					'https://app.uniswap.org/#/add/0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
+					'https://app.uniswap.org/#/add/v2/ETH/0xb1dc9124c395c1e97773ab855d66e879f053a289',
 				lpTokens: [
 					{
 						symbol: 'YAX',
