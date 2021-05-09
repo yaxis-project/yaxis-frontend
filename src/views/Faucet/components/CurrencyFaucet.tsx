@@ -19,7 +19,7 @@ export default function CurrencyFaucet({ currency, contractName }) {
 		method: 'faucet',
 		description: `drip ${currency} from faucet`,
 	})
-
+	console.log(contractName)
 	const Currency = useMemo(() => Currencies[currency.toUpperCase()], [
 		currency,
 	])
