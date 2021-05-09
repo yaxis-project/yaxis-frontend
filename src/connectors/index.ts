@@ -35,17 +35,16 @@ export const FRIENDLY_NETWORK_NAMES = {
 }
 
 export const network = new NetworkConnector({
-	urls: { 1: RPC_URLS[1] },
+	urls: RPC_URLS,
 	defaultChainId: 1,
 })
 
 export const injected = new InjectedConnector({
-	supportedChainIds: [1, 42],
+	supportedChainIds: SUPPORTED_NETWORKS,
 })
 
-export const WALLET_CONNECT_SUPPORTED_NETWORKS = [1]
 export const walletconnect = new WalletConnectConnector({
-	rpc: { 1: RPC_URLS[1] }, // Wallet Connect only supports network 1
+	rpc: RPC_URLS, // Wallet Connect only supports network 1
 	bridge: 'https://bridge.walletconnect.org',
 	qrcode: true,
 	pollingInterval: POLLING_INTERVAL,
