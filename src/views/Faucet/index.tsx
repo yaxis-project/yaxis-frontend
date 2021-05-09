@@ -71,22 +71,18 @@ const Faucet: React.FC = () => {
 							</Row>
 						</Card>
 					</Col>
-					{Object.keys(contracts.currencies.ERC20).map((name) => (
-						<CurrencyFaucet
-							currency={name}
-							contractName={`currencies.ERC20.${name}.contract`}
-						/>
-					))}
-					{Object.keys(contracts.currencies.ERC677).map((name) => (
-						<CurrencyFaucet
-							currency={name}
-							contractName={`currencies.ERC677.${name}.contract`}
-						/>
-					))}
+					{Object.keys(contracts.currencies.ERC20)
+						.filter((name) => name !== 'mvlt') // MVLT has no facuet
+						.map((name) => (
+							<CurrencyFaucet
+								currency={name}
+								contractName={`currencies.ERC20.${name}.contract`}
+							/>
+						))}
 					{Object.values(contracts.pools).map((pool) => (
 						<CurrencyFaucet
 							currency={pool.tokenSymbol}
-							contractName={`currencies.pools.${pool.name}.tokenContract]`}
+							contractName={`pools.${pool.name}.tokenContract.contract`}
 						/>
 					))}
 				</Row>
