@@ -6,14 +6,13 @@ import {
 	useSingleCallResult,
 } from '../onchain/hooks'
 import BigNumber from 'bignumber.js'
-import { Interface } from '@ethersproject/abi'
 import { usePrices } from '../prices/hooks'
 import { useCurveRewardsAPR, useCurvePoolAPR } from '../external/hooks'
 import { numberToFloat } from '../../utils/number'
 import { TLiquidityPools, TRewardsContracts } from '../../constants/type'
 import ERC20Abi from '../../constants/abis/mainnet/erc20.json'
 
-const ERC20_INTERFACE = new Interface(ERC20Abi)
+const ERC20_INTERFACE = new ethers.utils.Interface(ERC20Abi)
 
 export function useMetaVaultData() {
 	const { contracts } = useContracts()
