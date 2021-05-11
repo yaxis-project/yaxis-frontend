@@ -50,14 +50,12 @@ const StepClaim: React.FC<StepClaimProps> = ({
 
 	const { onFetchMetaVaultData } = useMetaVaultData('V2')
 
-	const {
-		call: handleUnstake,
-		loading: loadingUnstakeMVLT,
-	} = useContractWrite({
-		contractName: `yaxisMetaVault`,
-		method: 'unstake',
-		description: `unstake MVLT`,
-	})
+	const { call: handleUnstake, loading: loadingUnstakeMVLT } =
+		useContractWrite({
+			contractName: `yaxisMetaVault`,
+			method: 'unstake',
+			description: `unstake MVLT`,
+		})
 
 	const handleClaimRewards = useCallback(async () => {
 		try {
@@ -140,7 +138,11 @@ const StepClaim: React.FC<StepClaimProps> = ({
 							onClick={async () => {
 								try {
 									setLoadingUnstakeUni(true)
-									await onUnstake(stakedUniLP.toString())
+									await onUnstake(
+										stakedUniLP
+											.dividedBy(10 ** 18)
+											.toString(),
+									)
 									setLoadingUnstakeUni(false)
 								} catch {
 									setLoadingUnstakeUni(false)
