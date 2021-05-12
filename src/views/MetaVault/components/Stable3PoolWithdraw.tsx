@@ -155,7 +155,6 @@ export default function Stable3PoolWithdraw() {
 			<Row style={md ? {} : { padding: '0 10%' }} align="middle">
 				<Col xs={24} sm={24} md={24} style={{ marginTop: '10px' }}>
 					<Button
-						className="investing-btn"
 						disabled={balance3CRV.eq(0) || error || input3CRV.eq(0)}
 						loading={loadingWithdraw3Pool}
 						onClick={handleSubmit}

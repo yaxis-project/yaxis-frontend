@@ -117,7 +117,6 @@ export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
 				</Col>
 				<Col xs={24} sm={24} md={6}>
 					<Button
-						className="investing-btn"
 						disabled={disabled}
 						loading={loadingDeposit3Pool}
 						onClick={handleSubmit}

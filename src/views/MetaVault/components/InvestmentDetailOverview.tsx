@@ -146,6 +146,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 				APR={totalAPR.toNumber()}
 				balance={new BigNumber(totalUSDBalance)}
 				loading={balanceLoading}
+				page={'metavault'}
 			/>
 		</DetailOverviewCard>
 	)

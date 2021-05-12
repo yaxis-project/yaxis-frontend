@@ -174,7 +174,6 @@ export default function DepositTable() {
 					<Text type="secondary">{phrases['Total'][language]}</Text>
 					<Title level={3}>${totalDepositing}</Title>
 					<Button
-						className="investing-btn"
 						disabled={disabled}
 						loading={isSubmitting}
 						onClick={handleSubmit}
