@@ -1,5 +1,5 @@
 import { TransactionResponse } from '@ethersproject/providers'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import useWeb3Provider from '../../hooks/useWeb3Provider'
@@ -83,4 +83,23 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
  */
 export function isTransactionRecent(tx: TransactionDetails): boolean {
 	return new Date().getTime() - tx.addedTime < 86_400_000
+}
+
+export function useHasPendingTransaction(
+	contractName: string,
+	method: string,
+): boolean {
+	const allTransactions = useAllTransactions()
+	return useMemo(() => {
+		const txIndex = Object.keys(allTransactions).find((hash) => {
+			const tx = allTransactions[hash]
+			return (
+				!tx.confirmedTime &&
+				isTransactionRecent(tx) &&
+				tx.contract === contractName &&
+				tx.method === method
+			)
+		})
+		return txIndex !== undefined
+	}, [contractName, method, allTransactions])
 }

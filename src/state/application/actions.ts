@@ -1,21 +1,12 @@
 import { createAction } from '@reduxjs/toolkit'
 
-export type PopupContent =
-	| {
-			txn: {
-				hash: string
-				success: boolean
-				summary?: string
-			}
-	  }
-	| {
-			listUpdate: {
-				listUrl: string
-				oldList: any //Rev
-				newList: any //Rev
-				auto: boolean
-			}
-	  }
+export type PopupContent = {
+	txn: {
+		hash: string
+		success: boolean
+		summary?: string
+	}
+}
 
 export enum ApplicationModal {
 	WALLET,
