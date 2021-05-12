@@ -27,7 +27,7 @@ export function shouldCheck(
 }
 
 export default function Updater(): null {
-	const { chainId, library } = useWeb3Provider()
+	const { account, chainId, library } = useWeb3Provider()
 
 	const lastBlockNumber = useBlockNumber()
 
@@ -36,10 +36,10 @@ export default function Updater(): null {
 		(state) => state.transactions,
 	)
 
-	const transactions = useMemo(() => (chainId ? state[chainId] ?? {} : {}), [
-		chainId,
-		state,
-	])
+	const transactions = useMemo(
+		() => (chainId ? state[account]?.[chainId] ?? {} : {}),
+		[account, chainId, state],
+	)
 
 	// show popup on confirm
 	const addPopup = useAddPopup()
@@ -56,6 +56,7 @@ export default function Updater(): null {
 						if (receipt) {
 							dispatch(
 								finalizeTransaction({
+									account,
 									chainId,
 									hash,
 									receipt: {
@@ -87,6 +88,7 @@ export default function Updater(): null {
 						} else {
 							dispatch(
 								checkedTransaction({
+									account,
 									chainId,
 									hash,
 									blockNumber: lastBlockNumber,
@@ -101,7 +103,15 @@ export default function Updater(): null {
 						)
 					})
 			})
-	}, [chainId, library, transactions, lastBlockNumber, dispatch, addPopup])
+	}, [
+		account,
+		chainId,
+		library,
+		transactions,
+		lastBlockNumber,
+		dispatch,
+		addPopup,
+	])
 
 	return null
 }

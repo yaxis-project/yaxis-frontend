@@ -12,6 +12,7 @@ export interface SerializableTransactionReceipt {
 }
 
 export const addTransaction = createAction<{
+	account: string
 	chainId: number
 	hash: string
 	from: string
@@ -20,15 +21,18 @@ export const addTransaction = createAction<{
 	method: string
 	contract: string
 }>('transactions/addTransaction')
-export const clearAllTransactions = createAction<{ chainId: number }>(
-	'transactions/clearAllTransactions',
-)
+export const clearAllTransactions = createAction<{
+	account: string
+	chainId: number
+}>('transactions/clearAllTransactions')
 export const finalizeTransaction = createAction<{
+	account: string
 	chainId: number
 	hash: string
 	receipt: SerializableTransactionReceipt
 }>('transactions/finalizeTransaction')
 export const checkedTransaction = createAction<{
+	account: string
 	chainId: number
 	hash: string
 	blockNumber: number

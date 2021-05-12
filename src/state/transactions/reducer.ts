@@ -23,8 +23,10 @@ export interface TransactionDetails {
 }
 
 export interface TransactionState {
-	[chainId: number]: {
-		[txHash: string]: TransactionDetails
+	[account: string]: {
+		[chainId: number]: {
+			[txHash: string]: TransactionDetails
+		}
 	}
 }
 
@@ -38,6 +40,7 @@ export default createReducer(initialState, (builder) =>
 				transactions,
 				{
 					payload: {
+						account,
 						chainId,
 						from,
 						hash,
@@ -48,10 +51,11 @@ export default createReducer(initialState, (builder) =>
 					},
 				},
 			) => {
-				if (transactions[chainId]?.[hash]) {
+				if (transactions[account]?.[chainId]?.[hash]) {
 					throw Error('Attempted to add existing transaction.')
 				}
-				const txs = transactions[chainId] ?? {}
+				if (!transactions[account]) transactions[account] = {}
+				const txs = transactions[account][chainId] ?? {}
 				txs[hash] = {
 					hash,
 					summary,
@@ -61,20 +65,23 @@ export default createReducer(initialState, (builder) =>
 					contract,
 					amount,
 				}
-				transactions[chainId] = txs
+				transactions[account][chainId] = txs
 			},
 		)
 		.addCase(
 			clearAllTransactions,
-			(transactions, { payload: { chainId } }) => {
-				if (!transactions[chainId]) return
-				transactions[chainId] = {}
+			(transactions, { payload: { account, chainId } }) => {
+				if (!transactions[account]?.[chainId]) return
+				transactions[account][chainId] = {}
 			},
 		)
 		.addCase(
 			checkedTransaction,
-			(transactions, { payload: { chainId, hash, blockNumber } }) => {
-				const tx = transactions[chainId]?.[hash]
+			(
+				transactions,
+				{ payload: { account, chainId, hash, blockNumber } },
+			) => {
+				const tx = transactions[account]?.[chainId]?.[hash]
 				if (!tx) {
 					return
 				}
@@ -90,8 +97,11 @@ export default createReducer(initialState, (builder) =>
 		)
 		.addCase(
 			finalizeTransaction,
-			(transactions, { payload: { hash, chainId, receipt } }) => {
-				const tx = transactions[chainId]?.[hash]
+			(
+				transactions,
+				{ payload: { account, hash, chainId, receipt } },
+			) => {
+				const tx = transactions[account]?.[chainId]?.[hash]
 				if (!tx) {
 					return
 				}
