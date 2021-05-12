@@ -4,7 +4,10 @@ import { useContracts } from '../contexts/Contracts'
 import useWeb3Provider from './useWeb3Provider'
 import { Contract } from '@ethersproject/contracts'
 import objectPath from 'object-path'
-import { useTransactionAdder } from '../state/transactions/hooks'
+import {
+	useTransactionAdder,
+	useHasPendingTransaction,
+} from '../state/transactions/hooks'
 import { calculateGasMargin } from '../utils/number'
 
 interface Params {
@@ -22,7 +25,7 @@ interface CallOptions {
 
 const useContractWrite = ({ contractName, method, description }: Params) => {
 	const [data, setData] = useState(null)
-	const [loading, setLoading] = useState(false)
+	const loading = useHasPendingTransaction(contractName, method)
 
 	const { account, library } = useWeb3Provider()
 	const { contracts } = useContracts()
@@ -47,7 +50,6 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				const c = contract.connect(
 					library.getSigner(account).connectUnchecked(),
 				)
-				setLoading(true)
 				notification.info({
 					message: `Please confirm ${description}.`,
 				})
@@ -58,16 +60,15 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				if (amount) config.value = amount
 				const m = c[method]
 				const receipt = await m(...(args || []), config)
-				await receipt.wait()
-				if (cb) cb()
 				addTransaction(receipt, {
 					method,
 					summary: description,
 					contract: contractName,
 					amount: descriptionExtra,
 				})
+				await receipt.wait()
+				if (cb) cb()
 				setData(receipt)
-				setLoading(false)
 				return receipt
 			} catch (e) {
 				console.error(e)
@@ -75,7 +76,6 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 					description: e.message,
 					message: `Unable to ${description}:`,
 				})
-				setLoading(false)
 				return false
 			}
 		},

@@ -32,7 +32,6 @@ export function useDarkModeManager(): [boolean, () => void] {
 
 export function useFutureBalanceCalc(page: CalcPages): FutureBalanceCalculator {
 	return useSelector((state: AppState) => {
-		console.log(state.user)
 		return state.user.futureBalancesCalcs[page]
 	})
 }
