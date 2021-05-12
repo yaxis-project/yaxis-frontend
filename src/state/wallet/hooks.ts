@@ -34,9 +34,9 @@ const ERC20_INTERFACE = new Interface(ERC20Abi)
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
  */
-export function useETHBalances(
-	uncheckedAddresses?: (string | undefined)[],
-): { [address: string]: CurrencyValue | undefined } {
+export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
+	[address: string]: CurrencyValue | undefined
+} {
 	const { contracts } = useContracts()
 
 	const addresses: string[] = useMemo(
@@ -291,16 +291,14 @@ export function useApprovals() {
 	const { contracts } = useContracts()
 	const { account } = useWeb3Provider()
 
-	const [
-		{ mvlt: mvRewardsStaking },
-		loadingMvRewardsStaking,
-	] = useApprovedAmounts(
-		account,
-		contracts?.rewards.MetaVault.address,
-		contracts?.currencies.ERC20.mvlt
-			? [contracts?.currencies.ERC20.mvlt]
-			: [],
-	)
+	const [{ mvlt: mvRewardsStaking }, loadingMvRewardsStaking] =
+		useApprovedAmounts(
+			account,
+			contracts?.rewards.MetaVault.address,
+			contracts?.currencies.ERC20.mvlt
+				? [contracts?.currencies.ERC20.mvlt]
+				: [],
+		)
 
 	const [mvDepositCurrencies, loadingMvDeposit] = useApprovedAmounts(
 		account,
@@ -310,16 +308,14 @@ export function useApprovals() {
 			: [],
 	)
 
-	const [
-		converter3PoolCurrencies,
-		loadingConverter3Pool,
-	] = useApprovedAmounts(
-		account,
-		contracts?.external.curve3pool.address,
-		CurrenciesIn3Pool.map((c) => contracts?.currencies.ERC20[c]).filter(
-			(c) => c,
-		),
-	)
+	const [converter3PoolCurrencies, loadingConverter3Pool] =
+		useApprovedAmounts(
+			account,
+			contracts?.external.curve3pool.address,
+			CurrenciesIn3Pool.map((c) => contracts?.currencies.ERC20[c]).filter(
+				(c) => c,
+			),
+		)
 
 	const [
 		{ YAXIS_ETH_UNISWAP_LP: uniYaxisEthRewardsStaking },
@@ -349,12 +345,12 @@ export function useApprovals() {
 			converter3pool: {
 				loading: loadingConverter3Pool,
 				...Object.fromEntries(
-					Object.entries(
-						converter3PoolCurrencies,
-					).map(([currency, value]) => [
-						currency,
-						value?.approved || new BigNumber(0),
-					]),
+					Object.entries(converter3PoolCurrencies).map(
+						([currency, value]) => [
+							currency,
+							value?.approved || new BigNumber(0),
+						],
+					),
 				),
 			},
 		}
@@ -382,13 +378,11 @@ export function useSwapApprovals() {
 			: [],
 	)
 
-	const {
-		result: allowanceSYAX,
-		loading: loadingAllowanceSYAX,
-	} = useSingleCallResult(contracts?.internal.xYaxStaking, 'allowance', [
-		account,
-		contracts?.internal.swap.address,
-	])
+	const { result: allowanceSYAX, loading: loadingAllowanceSYAX } =
+		useSingleCallResult(contracts?.internal.xYaxStaking, 'allowance', [
+			account,
+			contracts?.internal.swap.address,
+		])
 
 	return useMemo(() => {
 		return {
@@ -414,26 +408,23 @@ export const useClaimed = () => {
 	const block = useBlockNumber()
 	useEffect(() => {
 		const getData = async () => {
-			const [
-				claimedMetaVault,
-				claimedLp,
-				claimedGovernance,
-			] = await Promise.all(
-				Object.values(contracts.rewards).map((c) =>
-					c
-						.queryFilter(c.filters.RewardPaid(account))
-						.then((e) =>
-							e.reduce(
-								(acc, curr) =>
-									acc.add(
-										curr.decode(curr.data, curr.topics)
-											.reward,
-									),
-								ethers.BigNumber.from(0),
+			const [claimedMetaVault, claimedGovernance, claimedLp] =
+				await Promise.all(
+					Object.values(contracts.rewards).map((c) =>
+						c
+							.queryFilter(c.filters.RewardPaid(account))
+							.then((e) =>
+								e.reduce(
+									(acc, curr) =>
+										acc.add(
+											curr.decode(curr.data, curr.topics)
+												.reward,
+										),
+									ethers.BigNumber.from(0),
+								),
 							),
-						),
-				),
-			)
+					),
+				)
 			setState({ claimedMetaVault, claimedLp, claimedGovernance })
 			setLoading(false)
 		}
@@ -486,7 +477,7 @@ export const useReturns = () => {
 		if (loadingClaimed || !earned.length || !prices?.yaxis)
 			return defaultUseReturnsState
 
-		const [pendingMetaVault, pendingLp, pendingGovernance] = earned.map(
+		const [pendingMetaVault, pendingGovernance, pendingLp] = earned.map(
 			({ result: reward, loading }, i) => {
 				if (loading) return ethers.BigNumber.from(0)
 				if (!reward) return ethers.BigNumber.from(0)
@@ -548,12 +539,10 @@ export function useLegacyReturns(pid: number) {
 		],
 	)
 
-	const {
-		result: governanceStaked,
-		loading: loadingGovernanceStaked,
-	} = useSingleCallResult(contracts?.internal.xYaxStaking, 'balanceOf', [
-		account,
-	])
+	const { result: governanceStaked, loading: loadingGovernanceStaked } =
+		useSingleCallResult(contracts?.internal.xYaxStaking, 'balanceOf', [
+			account,
+		])
 
 	return useMemo(() => {
 		let isLoading = false
