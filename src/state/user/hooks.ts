@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
-import { updateUserDarkMode, toggleURLWarning } from './actions'
+import { updateUserDarkMode, updateFutureBalanceCalc } from './actions'
+import { CalcPages, FutureBalanceCalculator } from './reducer'
 
 export function useIsDarkMode(): boolean {
 	const { userDarkMode, matchesDarkMode } = useSelector<
@@ -29,11 +30,23 @@ export function useDarkModeManager(): [boolean, () => void] {
 	return [darkMode, toggleSetDarkMode]
 }
 
-export function useURLWarningVisible(): boolean {
-	return useSelector((state: AppState) => state.user.URLWarningVisible)
+export function useFutureBalanceCalc(page: CalcPages): FutureBalanceCalculator {
+	return useSelector((state: AppState) => {
+		console.log(state.user)
+		return state.user.futureBalancesCalcs[page]
+	})
 }
 
-export function useURLWarningToggle(): () => void {
-	const dispatch = useDispatch()
-	return useCallback(() => dispatch(toggleURLWarning()), [dispatch])
+export function useFutureBalanceCalcUpdate(page: CalcPages) {
+	const dispatch = useDispatch<AppDispatch>()
+	return useCallback(
+		({
+			field,
+			value,
+		}: {
+			field: keyof FutureBalanceCalculator
+			value: number
+		}) => dispatch(updateFutureBalanceCalc({ page, field, value })),
+		[dispatch, page],
+	)
 }

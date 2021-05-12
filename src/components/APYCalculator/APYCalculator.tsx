@@ -5,12 +5,17 @@ import Value from '../../components/Value'
 import info from '../../assets/img/info.svg'
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
+import { CalcPages } from '../../state/user/reducer'
+import {
+	useFutureBalanceCalc,
+	useFutureBalanceCalcUpdate,
+} from '../../state/user/hooks'
 
 const { Text } = Typography
 type Props = {
 	balance: BigNumber
 	APR: number
-	yearlyCompounds?: number
+	page: CalcPages
 	loading?: boolean
 }
 
@@ -58,18 +63,18 @@ const sliderMarks = {
 const APYCalculator: React.FC<Props> = ({
 	balance: walletBalance,
 	APR,
-	yearlyCompounds = 365,
+	page,
 }) => {
-	const [duration, setDuration] = useState(12)
-	const [compoundFrequency, setCompoundFrequency] = useState(yearlyCompounds)
+	const { duration, yearlyCompounds } = useFutureBalanceCalc(page)
+	const update = useFutureBalanceCalcUpdate(page)
 
 	const handleOnDurationChange = useCallback(
 		(duration) => {
-			setDuration(duration)
+			update({ field: 'duration', value: duration })
 			const monthlyAPR = new BigNumber(APR).div(12)
 			const displayAPR = monthlyAPR.multipliedBy(duration)
 			const adjustedCompounds = Math.round(
-				(duration / 12) * compoundFrequency,
+				(duration / 12) * yearlyCompounds,
 			)
 			const displayAPY = displayAPR
 				.div(100)
@@ -81,14 +86,12 @@ const APYCalculator: React.FC<Props> = ({
 			const futureBalance = walletBalance.plus(earnings)
 			setBalance(futureBalance)
 		},
-		[walletBalance, APR, compoundFrequency],
+		[walletBalance, APR, yearlyCompounds, update],
 	)
 	const [balance, setBalance] = useState(() => {
 		const monthlyAPR = new BigNumber(APR).div(100).div(12)
 		const displayAPR = monthlyAPR.multipliedBy(duration)
-		const adjustedCompounds = Math.round(
-			(duration / 12) * compoundFrequency,
-		)
+		const adjustedCompounds = Math.round((duration / 12) * yearlyCompounds)
 		const displayAPY = displayAPR
 			.div(100)
 			.dividedBy(adjustedCompounds)
@@ -132,7 +135,10 @@ const APYCalculator: React.FC<Props> = ({
 									options={options}
 									defaultValue={`${yearlyCompounds}`}
 									onChange={({ target: { value } }) => {
-										setCompoundFrequency(Number(value))
+										update({
+											field: 'yearlyCompounds',
+											value: Number(value),
+										})
 									}}
 									size="small"
 									style={{ color: 'white' }}

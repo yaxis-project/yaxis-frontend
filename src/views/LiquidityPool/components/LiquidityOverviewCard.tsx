@@ -150,9 +150,9 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 			/>
 			<APYCalculator
 				APR={yaxisAprPercent.toNumber()}
-				yearlyCompounds={12}
 				balance={totalUSDBalance}
 				loading={false}
+				page={'lp'}
 			/>
 		</DetailOverviewCard>
 	)
