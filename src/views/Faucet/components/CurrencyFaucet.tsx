@@ -19,10 +19,11 @@ export default function CurrencyFaucet({ currency, contractName }) {
 		method: 'faucet',
 		description: `drip ${currency} from faucet`,
 	})
-	console.log(contractName)
-	const Currency = useMemo(() => Currencies[currency.toUpperCase()], [
-		currency,
-	])
+
+	const Currency = useMemo(
+		() => Currencies[currency.toUpperCase()],
+		[currency],
+	)
 
 	return (
 		<StyledCol xs={24} sm={24} md={24} lg={8}>
@@ -43,7 +44,7 @@ export default function CurrencyFaucet({ currency, contractName }) {
 									alt="logo"
 								/>
 								<div style={{ paddingLeft: '14px' }}>
-									{Currency.name}
+									{currency.toUpperCase()}
 								</div>
 							</Row>
 						</Col>
