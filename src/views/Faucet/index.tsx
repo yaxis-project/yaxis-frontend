@@ -79,12 +79,6 @@ const Faucet: React.FC = () => {
 								contractName={`currencies.ERC20.${name}.contract`}
 							/>
 						))}
-					{Object.values(contracts.pools).map((pool) => (
-						<CurrencyFaucet
-							currency={pool.tokenSymbol}
-							contractName={`pools.${pool.name}.tokenContract.contract`}
-						/>
-					))}
 				</Row>
 			</div>
 		)
