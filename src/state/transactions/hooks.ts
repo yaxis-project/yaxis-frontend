@@ -44,6 +44,7 @@ export function useTransactionAdder(): (
 			}
 			dispatch(
 				addTransaction({
+					account,
 					hash,
 					from: account,
 					chainId,
@@ -60,13 +61,16 @@ export function useTransactionAdder(): (
 
 // returns all the transactions for the current chain
 export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
-	const { chainId } = useWeb3Provider()
+	const { account, chainId } = useWeb3Provider()
 
 	const state = useSelector<AppState, AppState['transactions']>(
 		(state) => state.transactions,
 	)
 
-	return chainId ? state[chainId] ?? {} : {}
+	return useMemo(
+		() => (chainId && account ? state[account]?.[chainId] ?? {} : {}),
+		[account, chainId, state],
+	)
 }
 
 export function useIsTransactionPending(transactionHash?: string): boolean {

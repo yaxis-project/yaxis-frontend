@@ -25,6 +25,7 @@ interface CallOptions {
 
 const useContractWrite = ({ contractName, method, description }: Params) => {
 	const [data, setData] = useState(null)
+	const [accountOnCall, setAccountOnCall] = useState(null)
 	const loading = useHasPendingTransaction(contractName, method)
 
 	const { account, library } = useWeb3Provider()
@@ -59,6 +60,7 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				}
 				if (amount) config.value = amount
 				const m = c[method]
+				setAccountOnCall(account)
 				const receipt = await m(...(args || []), config)
 				addTransaction(receipt, {
 					method,
@@ -67,8 +69,9 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 					amount: descriptionExtra,
 				})
 				await receipt.wait()
-				if (cb) cb()
+				if (cb && accountOnCall === account) cb()
 				setData(receipt)
+				setAccountOnCall(null)
 				return receipt
 			} catch (e) {
 				console.error(e)
@@ -76,11 +79,13 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 					description: e.message,
 					message: `Unable to ${description}:`,
 				})
+				setAccountOnCall(null)
 				return false
 			}
 		},
 		[
 			account,
+			accountOnCall,
 			library,
 			contract,
 			description,
