@@ -2,23 +2,42 @@ import { createReducer } from '@reduxjs/toolkit'
 import {
 	updateMatchesDarkMode,
 	updateUserDarkMode,
-	toggleURLWarning,
+	updateFutureBalanceCalc,
 } from './actions'
 
 const currentTimestamp = () => new Date().getTime()
 
+export type CalcPages = 'metavault' | 'staking' | 'lp'
+export interface FutureBalanceCalculator {
+	duration: number
+	yearlyCompounds: number
+}
 export interface UserState {
 	userDarkMode: boolean | null // the user's choice for dark mode or light mode
 	matchesDarkMode: boolean // whether the dark mode media query matches
-
+	futureBalancesCalcs: {
+		[key in CalcPages]: FutureBalanceCalculator
+	}
 	timestamp: number
-	URLWarningVisible: boolean
 }
 
 export const initialState: UserState = {
 	userDarkMode: null,
 	matchesDarkMode: false,
-	URLWarningVisible: true,
+	futureBalancesCalcs: {
+		metavault: {
+			duration: 12,
+			yearlyCompounds: 365,
+		},
+		staking: {
+			duration: 12,
+			yearlyCompounds: 365,
+		},
+		lp: {
+			duration: 12,
+			yearlyCompounds: 12,
+		},
+	},
 	timestamp: currentTimestamp(),
 }
 
@@ -32,8 +51,10 @@ export default createReducer(initialState, (builder) =>
 			state.matchesDarkMode = action.payload.matchesDarkMode
 			state.timestamp = currentTimestamp()
 		})
-
-		.addCase(toggleURLWarning, (state) => {
-			state.URLWarningVisible = !state.URLWarningVisible
-		}),
+		.addCase(
+			updateFutureBalanceCalc,
+			(state, { payload: { page, field, value } }) => {
+				state.futureBalancesCalcs[page][field] = value
+			},
+		),
 )

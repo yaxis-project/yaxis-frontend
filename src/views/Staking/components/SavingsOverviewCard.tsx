@@ -125,6 +125,7 @@ const SavingsOverviewCard: React.FC<Props> = ({
 				APR={yaxisAprPercent.toNumber()}
 				balance={totalUSDBalance}
 				loading={balanceLoading}
+				page={'staking'}
 			/>
 		</DetailOverviewCard>
 	)
