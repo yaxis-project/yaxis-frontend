@@ -14,18 +14,24 @@ const Nav: React.FC = () => {
 		<StyledRow align="middle">
 			<StyledCol xs={24} sm={24} md={9}>
 				<Row justify="center">
-					<StyledLink target="_blank" href="https://gov.yaxis.io/#/">
+					<StyledLink
+						target="_blank"
+						href="https://gov.yaxis.io/#/"
+						rel="noopener noreferrer"
+					>
 						Governance
 					</StyledLink>
 					<StyledLink
 						target="_blank"
 						href="https://immunefi.com/bounty/yaxis/"
+						rel="noopener noreferrer"
 					>
 						Security
 					</StyledLink>
 					<StyledLink
 						target="_blank"
 						href="https://trello.com/b/nkcEh9pc/yaxis-bounty-board-community"
+						rel="noopener noreferrer"
 					>
 						We're Hiring!
 					</StyledLink>
@@ -37,6 +43,7 @@ const Nav: React.FC = () => {
 					<StyledLinkButton
 						target="_blank"
 						href="https://certificate.quantstamp.com/full/meta-vault-v-2"
+						rel="noopener noreferrer"
 					>
 						<span style={{ color: 'black' }}>Secured by</span>{' '}
 						<img
@@ -53,24 +60,28 @@ const Nav: React.FC = () => {
 					<StyledLink
 						target="_blank"
 						href="https://yaxis.medium.com/"
+						rel="noopener noreferrer"
 					>
 						<MediumOutlined style={{ fontSize: '25px' }} />
 					</StyledLink>
 					<StyledLink
 						target="_blank"
 						href="https://discord.gg/u8KZPCMJ6x"
+						rel="noopener noreferrer"
 					>
 						<HoverableIcon component={discord} />
 					</StyledLink>
 					<StyledLink
 						target="_blank"
 						href="https://github.com/yaxis-project"
+						rel="noopener noreferrer"
 					>
 						<HoverableIcon component={github} />
 					</StyledLink>
 					<StyledLink
 						target="_blank"
 						href="https://twitter.com/yaxis_project"
+						rel="noopener noreferrer"
 					>
 						<HoverableIcon component={twitter} />
 					</StyledLink>

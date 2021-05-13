@@ -52,7 +52,7 @@ const Faucet: React.FC = () => {
 											<a
 												href="https://faucet.kovan.network/"
 												target="_blank"
-												rel="noreferrer"
+												rel="noopener noreferrer"
 											>
 												<img
 													src={icon}

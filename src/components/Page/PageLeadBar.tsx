@@ -98,7 +98,11 @@ const PageLeadBar = (props: PageLeadBarProps) => {
 					</Title>
 
 					{secondaryTextLink ? (
-						<StyledLink href={secondaryTextLink} target="_blank">
+						<StyledLink
+							href={secondaryTextLink}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							<LinkOutlined />
 							<span style={{ padding: '0 6px' }}>
 								{secondaryText}

@@ -7,7 +7,7 @@ import { usePrices } from '../../../state/prices/hooks'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import { reduce } from 'lodash'
-import { Row, Col, Grid, Typography, notification } from 'antd'
+import { Row, Col, Grid, Typography } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
 import useContractWrite from '../../../hooks/useContractWrite'
@@ -47,9 +47,10 @@ export default function DepositTable() {
 		description: `MetaVault deposit`,
 	})
 
-	const contract = useMemo(() => contracts?.internal.yAxisMetaVault, [
-		contracts,
-	])
+	const contract = useMemo(
+		() => contracts?.internal.yAxisMetaVault,
+		[contracts],
+	)
 
 	const calcMinTokenAmount = useCallback(
 		async (amounts: string[]) => {
@@ -118,22 +119,15 @@ export default function DepositTable() {
 	)
 
 	const handleSubmit = useCallback(async () => {
-		try {
-			const amounts = InvestingDepositCurrencies.map((c) => {
-				const _v = currencyValues[c.tokenId]
-				if (_v) {
-					return numberToDecimal(_v, c.decimals)
-				}
-				return '0'
-			})
-			await onDepositAll(amounts, totalDepositing)
-			setCurrencyValues(initialCurrencyValues)
-		} catch (e) {
-			notification.info({
-				message: `Error while depositing:`,
-				description: e.message,
-			})
-		}
+		const amounts = InvestingDepositCurrencies.map((c) => {
+			const _v = currencyValues[c.tokenId]
+			if (_v) {
+				return numberToDecimal(_v, c.decimals)
+			}
+			return '0'
+		})
+		await onDepositAll(amounts, totalDepositing)
+		setCurrencyValues(initialCurrencyValues)
 	}, [currencyValues, onDepositAll, totalDepositing])
 
 	const languages = useContext(LanguageContext)
