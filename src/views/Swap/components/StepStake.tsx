@@ -265,6 +265,7 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 		allowanceLP,
 		onApproveLP,
 		loadingApproveLP,
+		contracts,
 	])
 
 	const yaxis = useMemo(() => {

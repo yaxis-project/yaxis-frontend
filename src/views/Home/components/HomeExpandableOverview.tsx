@@ -103,7 +103,7 @@ export default function HomeExpandableOverview() {
 							<a
 								href={`https://app.uniswap.org/#/swap?outputCurrency=${contracts?.currencies.ERC677.yaxis?.contract.address}`}
 								target="_blank"
-								rel="noreferrer"
+								rel="noopener noreferrer"
 							>
 								<Button height={'40px'}>Get YAXIS</Button>
 							</a>

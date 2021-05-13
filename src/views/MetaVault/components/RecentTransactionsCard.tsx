@@ -1,23 +1,20 @@
 import { useContext, useMemo } from 'react'
-import { Typography, Card, Button } from 'antd'
+import { Typography, Card, Button, Row, Col } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import transactionIn from '../../../assets/img/icons/transaction-in.svg'
 import transactionOut from '../../../assets/img/icons/transaction-out.svg'
 import { LanguageContext } from '../../../contexts/Language'
 import { Languages } from '../../../utils/languages'
 import phrases from './translations'
+import { TransactionDetails } from '../../../state/transactions/reducer'
 import { useAllTransactions } from '../../../state/transactions/hooks'
-import { map } from 'lodash'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
+import { NETWORK_NAMES } from '../../../connectors'
+import { etherscanUrl } from '../../../utils'
 import styled from 'styled-components'
+import moment from 'moment'
 
 const { Text, Title } = Typography
-
-const gridStyle = {
-	width: '100%',
-	boxShadow: 'none',
-	padding: 0,
-	marginTop: 10,
-}
 
 const ClearTransactionsButton = styled(Button)`
 	color: #016eac;
@@ -59,70 +56,107 @@ const CardTitle = (props: CardTitleProps) => {
 interface RecentTransactionRowProps {
 	main: string
 	secondary: string
+	transaction: TransactionDetails
+	chainId: number
 }
 
-const RecentTransactionRow = (props: RecentTransactionRowProps) => {
-	const { main, secondary } = props
+const RecentTransactionRow = ({
+	main,
+	secondary,
+	chainId,
+	transaction,
+}: RecentTransactionRowProps) => {
 	const transactionImg = main === 'Deposit' ? transactionIn : transactionOut
-	return (
-		<Card.Grid hoverable={false} style={gridStyle}>
-			<img
-				src={transactionImg}
-				height="32"
-				style={{ marginTop: 4, position: 'absolute' }}
-				alt="logo"
-			/>
-			<Title style={{ margin: 0, marginLeft: '48px' }} level={5}>
-				{main}
-			</Title>
-			<Text
-				style={{ margin: 0, marginLeft: '48px', display: 'block' }}
-				type="secondary"
-			>
-				{secondary}
-			</Text>
-		</Card.Grid>
-	)
-}
+	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 
-function generateTransactionRow([hash, val]) {
 	return (
-		<RecentTransactionRow
-			key={hash}
-			main={val.summary}
-			secondary={'$' + val.amount}
-		/>
+		<a
+			href={etherscanUrl(`/tx/${transaction.hash}`, networkName)}
+			target="_blank"
+			rel="noopener noreferrer"
+		>
+			<Card.Grid
+				hoverable={true}
+				style={{
+					width: '100%',
+				}}
+			>
+				<Row align="middle">
+					<Col xs={3} sm={3} md={2} lg={6}>
+						<img src={transactionImg} height="32" alt="logo" />
+					</Col>
+					<Col>
+						<Text
+							style={{
+								fontSize: '10px',
+							}}
+							type="secondary"
+						>
+							{moment(transaction.confirmedTime).fromNow()}
+						</Text>
+						<Title style={{ margin: 0 }} level={5}>
+							{main}
+						</Title>
+						<Text
+							style={{
+								margin: 0,
+							}}
+							type="secondary"
+						>
+							{secondary}
+						</Text>
+					</Col>
+				</Row>
+			</Card.Grid>
+		</a>
 	)
 }
 
 export default function RecentTransactionsCard() {
+	const { chainId } = useWeb3Provider()
+
 	const transactions = useAllTransactions()
 	const mvTxs = useMemo(
 		() =>
 			Object.entries(transactions || {}).filter(
 				([_, t]) =>
-					t.contract === 'rewards.MetaVault' &&
+					t.contract === 'internal.yAxisMetaVault' &&
 					(t.method === 'depositAll' || t.method === 'withdraw'),
 			),
 		[transactions],
 	)
+	const txRows = useMemo(
+		() =>
+			mvTxs.map(([hash, val]) => (
+				<RecentTransactionRow
+					key={hash}
+					main={val.summary}
+					secondary={'$' + val.amount}
+					transaction={val}
+					chainId={chainId}
+				/>
+			)),
+		[mvTxs, chainId],
+	)
+
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
-	const txCount = mvTxs.length > 0
 
+	const txCount = mvTxs.length > 0
 	if (!txCount) return null
+
 	return (
 		<Card
 			title={
 				<CardTitle
 					showClear={false}
-					onClearTransactions={() => {}}
+					onClearTransactions={() => {}} // TODO: clear selected
 					language={language}
 				/>
 			}
 			style={{ marginTop: 10 }}
 		>
-			{map(mvTxs, generateTransactionRow)}
+			{txRows}
 		</Card>
 	)
 }
