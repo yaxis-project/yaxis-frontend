@@ -1,5 +1,5 @@
-import { useContext, useMemo } from 'react'
-import { Typography, Card, Button, Row, Col } from 'antd'
+import { useContext, useMemo, useState } from 'react'
+import { Typography, Card, Button, Row, Col, Pagination } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import transactionIn from '../../../assets/img/icons/transaction-in.svg'
 import transactionOut from '../../../assets/img/icons/transaction-out.svg'
@@ -113,28 +113,33 @@ const RecentTransactionRow = ({
 }
 
 export default function RecentTransactionsCard() {
+	const [page, setPage] = useState(1)
 	const { chainId } = useWeb3Provider()
 
 	const transactions = useAllTransactions()
 	const mvTxs = useMemo(
 		() =>
-			Object.entries(transactions || {}).filter(
-				([_, t]) =>
-					t.contract === 'internal.yAxisMetaVault' &&
-					(t.method === 'depositAll' || t.method === 'withdraw'),
-			),
+			Object.entries(transactions || {})
+				.filter(
+					([_, t]) =>
+						t.contract === 'internal.yAxisMetaVault' &&
+						(t.method === 'depositAll' || t.method === 'withdraw'),
+				)
+				.reverse(),
 		[transactions],
 	)
 	const txRows = useMemo(
 		() =>
 			mvTxs.map(([hash, val]) => (
-				<RecentTransactionRow
-					key={hash}
-					main={val.summary}
-					secondary={'$' + val.amount}
-					transaction={val}
-					chainId={chainId}
-				/>
+				<Col span={24}>
+					<RecentTransactionRow
+						key={hash}
+						main={val.summary}
+						secondary={'$' + val.amount}
+						transaction={val}
+						chainId={chainId}
+					/>
+				</Col>
 			)),
 		[mvTxs, chainId],
 	)
@@ -142,8 +147,7 @@ export default function RecentTransactionsCard() {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 
-	const txCount = mvTxs.length > 0
-	if (!txCount) return null
+	if (!(mvTxs.length > 0)) return null
 
 	return (
 		<Card
@@ -154,9 +158,22 @@ export default function RecentTransactionsCard() {
 					language={language}
 				/>
 			}
-			style={{ marginTop: 10 }}
+			bodyStyle={{ marginTop: 10, padding: 0 }}
 		>
-			{txRows}
+			<Row justify="center" style={{ width: '100%' }}>
+				{txRows.slice((page - 1) * 5, (page - 1) * 5 + 5)}
+			</Row>
+			{mvTxs.length > 5 && (
+				<Row justify="center" style={{ margin: '20px 0' }}>
+					<Pagination
+						defaultCurrent={1}
+						pageSize={5}
+						total={mvTxs.length}
+						current={page}
+						onChange={(page) => setPage(page)}
+					/>
+				</Row>
+			)}
 		</Card>
 	)
 }
