@@ -11,9 +11,9 @@ import {
 	useAllTokenBalances,
 } from '../../../state/wallet/hooks'
 import { useContracts } from '../../../contexts/Contracts'
-import useApprove from '../../../hooks/useApprove'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { MAX_UINT } from '../../../utils/number'
+import { ethers } from 'ethers'
 
 const { Step } = Steps
 const { useBreakpoint } = Grid
@@ -39,11 +39,11 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 		uniYaxisEth: { staking: allowanceLP },
 	} = useApprovals()
 
-	const { onApprove, loading: loadingApproveMVLT } = useApprove(
-		contracts?.internal.yAxisMetaVault,
-		contracts?.rewards.MetaVault.address,
-		'MVLT',
-	)
+	const { call: onApprove, loading: loadingApproveMVLT } = useContractWrite({
+		contractName: `internal.yAxisMetaVault`,
+		method: 'approve',
+		description: `approve MVLT`,
+	})
 
 	const { call: handleStake, loading: loadingStakeMVLT } = useContractWrite({
 		contractName: `rewards.MetaVault`,
@@ -58,7 +58,15 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 					<Step
 						title={
 							<StyledButton
-								onClick={() => onApprove()}
+								onClick={() =>
+									onApprove({
+										args: [
+											contracts?.rewards.MetaVault
+												.address,
+											ethers.constants.MaxUint256,
+										],
+									})
+								}
 								loading={loadingApproveMVLT}
 								height={'40px'}
 							>
@@ -102,28 +110,28 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 		loadingApproveMVLT,
 		loadingStakeMVLT,
 		onApprove,
-	])
-
-	const uniYaxisEthLP = useMemo(() => contracts?.pools['Uniswap YAXIS/ETH'], [
 		contracts,
 	])
 
+	const uniYaxisEthLP = useMemo(
+		() => contracts?.pools['Uniswap YAXIS/ETH'],
+		[contracts],
+	)
+
 	const [{ YAXIS_ETH_UNISWAP_LP }] = useAllTokenBalances()
 
-	const {
-		call: handleStakeYaxisEthLP,
-		loading: loadingStakeYaxisEthLP,
-	} = useContractWrite({
-		contractName: `rewards.Uniswap YAXIS/ETH`,
-		method: 'stake',
-		description: `stake Uniswap YAXIS ETH LP token`,
-	})
+	const { call: handleStakeYaxisEthLP, loading: loadingStakeYaxisEthLP } =
+		useContractWrite({
+			contractName: `rewards.Uniswap YAXIS/ETH`,
+			method: 'stake',
+			description: `stake Uniswap YAXIS ETH LP token`,
+		})
 
-	const { onApprove: onApproveLP, loading: loadingApproveLP } = useApprove(
-		uniYaxisEthLP?.lpContract,
-		contracts?.rewards['Uniswap YAXIS/ETH'].address,
-		'Uniswap YAXIS/ETH LP token',
-	)
+	const { call: onApproveLP, loading: loadingApproveLP } = useContractWrite({
+		contractName: `pools.Uniswap YAXIS/ETH.lpContract`,
+		method: 'approve',
+		description: `approve Uniswap YAXIS/ETH LP token`,
+	})
 
 	const { call: onEnter, loading: loadingStakeYAXIS } = useContractWrite({
 		contractName: 'currencies.ERC677.yaxis.contract',
@@ -147,7 +155,16 @@ const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 						title={
 							<StyledButton
 								height={'40px'}
-								onClick={() => onApproveLP()}
+								onClick={() =>
+									onApproveLP({
+										args: [
+											contracts?.rewards[
+												'Uniswap YAXIS/ETH'
+											].address,
+											ethers.constants.MaxUint256,
+										],
+									})
+								}
 								loading={loadingApproveLP}
 							>
 								Approve YAXIS ETH LP token

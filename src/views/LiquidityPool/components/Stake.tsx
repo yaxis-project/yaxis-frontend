@@ -3,7 +3,6 @@ import * as currencies from '../../../constants/currencies'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { useContracts } from '../../../contexts/Contracts'
-import useApprove from '../../../hooks/useApprove'
 import { useAccountLP } from '../../../state/wallet/hooks'
 import Value from '../../../components/Value'
 import { LanguageContext } from '../../../contexts/Language'
@@ -14,6 +13,7 @@ import { Row, Col, Typography, Card, Form, Result } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import { useApprovals } from '../../../state/wallet/hooks'
+import { ethers } from 'ethers'
 const { Text } = Typography
 
 /**
@@ -189,20 +189,15 @@ export default function ApprovalWrapper({ pool }) {
 
 	const { contracts } = useContracts()
 
-	const LPContract = useMemo(() => contracts?.pools[pool.name]?.lpContract, [
-		contracts,
-		pool.name,
-	])
-
 	const {
 		uniYaxisEth: { staking },
 	} = useApprovals()
 
-	const { onApprove, loading } = useApprove(
-		LPContract,
-		contracts?.rewards[pool.rewards].address,
-		pool.name,
-	)
+	const { call: onApprove, loading } = useContractWrite({
+		contractName: `pools.${pool.name}.lpContract`,
+		method: 'approve',
+		description: `approve stake ${pool.name}`,
+	})
 
 	const body = useMemo(() => {
 		if (!account)
@@ -225,7 +220,18 @@ export default function ApprovalWrapper({ pool }) {
 					</Row>
 					<Row justify="center">
 						<Col span={4}>
-							<Button onClick={onApprove} loading={loading}>
+							<Button
+								onClick={() =>
+									onApprove({
+										args: [
+											contracts?.rewards[pool.rewards]
+												.address,
+											ethers.constants.MaxUint256,
+										],
+									})
+								}
+								loading={loading}
+							>
 								{t('Approve')}
 							</Button>
 						</Col>
@@ -233,7 +239,7 @@ export default function ApprovalWrapper({ pool }) {
 				</>
 			)
 		return <Stake pool={pool} />
-	}, [account, staking, loading, onApprove, pool, t])
+	}, [account, staking, loading, onApprove, pool, t, contracts])
 
 	return (
 		<Card className="staking-card" title={<strong>{t('Staking')}</strong>}>

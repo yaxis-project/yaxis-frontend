@@ -3,7 +3,6 @@ import { MVLT } from '../../../constants/currencies'
 import { LoadingOutlined } from '@ant-design/icons'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useContractWrite from '../../../hooks/useContractWrite'
-import useApprove from '../../../hooks/useApprove'
 import { useContracts } from '../../../contexts/Contracts'
 import { useRewardsBalances } from '../../../state/wallet/hooks'
 import Value from '../../../components/Value'
@@ -15,6 +14,7 @@ import { Row, Col, Typography, Card, Form, Result, Spin } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import { useApprovals } from '../../../state/wallet/hooks'
+import { ethers } from 'ethers'
 const { Text } = Typography
 
 /**
@@ -46,12 +46,8 @@ function Stake({ mvlt }) {
 		description: `unstake MVLT`,
 	})
 
-	const {
-		rawWalletBalance,
-		walletBalance,
-		stakedBalance,
-		rawStakedBalance,
-	} = useRewardsBalances('mvlt', 'MetaVault')
+	const { rawWalletBalance, walletBalance, stakedBalance, rawStakedBalance } =
+		useRewardsBalances('mvlt', 'MetaVault')
 
 	const [depositAmount, setDeposit] = useState<string>('')
 	const updateDeposit = (value: string) =>
@@ -188,11 +184,11 @@ export default function ApprovalWrapper() {
 
 	const { contracts } = useContracts()
 
-	const { onApprove, loading } = useApprove(
-		contracts?.internal?.yAxisMetaVault,
-		contracts?.rewards.MetaVault.address,
-		'MVLT',
-	)
+	const { call: onApprove, loading } = useContractWrite({
+		contractName: `internal.yAxisMetaVault`,
+		method: 'approve',
+		description: `approve MVLT`,
+	})
 
 	const body = useMemo(() => {
 		if (!account)
@@ -230,7 +226,18 @@ export default function ApprovalWrapper() {
 					</Row>
 					<Row justify="center">
 						<Col span={4}>
-							<Button onClick={onApprove} loading={loading}>
+							<Button
+								onClick={() =>
+									onApprove({
+										args: [
+											contracts?.rewards.MetaVault
+												.address,
+											ethers.constants.MaxUint256,
+										],
+									})
+								}
+								loading={loading}
+							>
 								{t('Approve')}
 							</Button>
 						</Col>
