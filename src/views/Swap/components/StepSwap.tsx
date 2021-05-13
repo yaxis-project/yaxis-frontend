@@ -4,12 +4,12 @@ import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
 import { Row, Col } from 'antd'
 import { useContracts } from '../../../contexts/Contracts'
 import { useSwapApprovals } from '../../../state/wallet/hooks'
-import useApprove from '../../../hooks/useApprove'
 import useContractWrite from '../../../hooks/useContractWrite'
 import Button from '../../../components/Button'
 import { ArrowRightOutlined, ArrowDownOutlined } from '@ant-design/icons'
 import { formatBN, MAX_UINT } from '../../../utils/number'
 import BigNumber from 'bignumber.js'
+import { ethers } from 'ethers'
 
 const BalanceTitle = styled(Row)`
 	font-size: 18px;
@@ -46,20 +46,20 @@ const StepSwap: React.FC<StepSwapProps> = ({
 		loadingSYAX: loadingAllowanceSYAX,
 	} = useSwapApprovals()
 
-	const { onApprove: onApproveYAX, loading: loadingApproveYAX } = useApprove(
-		contracts?.currencies.ERC20.yax.contract,
-		contracts?.internal.swap.address,
-		'YAX',
+	const { call: onApproveYAX, loading: loadingApproveYAX } = useContractWrite(
+		{
+			contractName: `currencies.ERC20.yax.contract`,
+			method: 'approve',
+			description: `approve YAX`,
+		},
 	)
 
-	const {
-		onApprove: onApproveSYAX,
-		loading: loadingApproveSYAX,
-	} = useApprove(
-		contracts?.internal.xYaxStaking,
-		contracts?.internal.swap.address,
-		'sYAX',
-	)
+	const { call: onApproveSYAX, loading: loadingApproveSYAX } =
+		useContractWrite({
+			contractName: `internal.xYaxStaking`,
+			method: 'approve',
+			description: `approve sYAX`,
+		})
 
 	const { call, loading: loadingSwap } = useContractWrite({
 		contractName: 'internal.swap',
@@ -67,10 +67,10 @@ const StepSwap: React.FC<StepSwapProps> = ({
 		description: 'Token Swap',
 	})
 
-	const totalYAX = useMemo(() => stakedBalance.plus(yaxBalance), [
-		stakedBalance,
-		yaxBalance,
-	])
+	const totalYAX = useMemo(
+		() => stakedBalance.plus(yaxBalance),
+		[stakedBalance, yaxBalance],
+	)
 
 	const longWalletBalance = useMemo(
 		() => yaxBalance.toFixed(2).length > 8,
@@ -91,7 +91,14 @@ const StepSwap: React.FC<StepSwapProps> = ({
 				<Button
 					loading={loadingApproveSYAX}
 					disabled={totalYAX.eq(0)}
-					onClick={() => onApproveSYAX()}
+					onClick={() =>
+						onApproveSYAX({
+							args: [
+								contracts?.internal.swap.address,
+								ethers.constants.MaxUint256,
+							],
+						})
+					}
 				>
 					Approve sYAX
 				</Button>
@@ -102,7 +109,14 @@ const StepSwap: React.FC<StepSwapProps> = ({
 				<Button
 					loading={loadingApproveYAX}
 					disabled={totalYAX.eq(0)}
-					onClick={() => onApproveYAX()}
+					onClick={() =>
+						onApproveYAX({
+							args: [
+								contracts?.internal.swap.address,
+								ethers.constants.MaxUint256,
+							],
+						})
+					}
 				>
 					Approve YAX
 				</Button>
@@ -131,6 +145,7 @@ const StepSwap: React.FC<StepSwapProps> = ({
 		totalYAX,
 		stakedBalance,
 		yaxBalance,
+		contracts,
 	])
 
 	return (
