@@ -11,7 +11,6 @@ import {
 import { calculateGasMargin } from '../utils/number'
 import { LoadingOutlined } from '@ant-design/icons'
 import { NETWORK_NAMES } from '../connectors'
-
 import { etherscanUrl } from '../utils'
 
 interface Params {
@@ -114,18 +113,6 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 			try {
 				await receipt.wait()
 				notification.close(key)
-
-				notification.success({
-					key,
-					message: `Successfully ${description}.`,
-					description: 'Click to see on Etherscan',
-					style: clickableStyle,
-					onClick: () =>
-						window.open(
-							etherscanUrl(`/tx/${receipt?.hash}`, networkName),
-							'_blank',
-						),
-				})
 				if (cb) cb()
 				setData(receipt)
 				// setAccountOnCall(null)
@@ -134,7 +121,7 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				console.error(e)
 				notification.close(key)
 				notification.error({
-					message: `Failed: Unable to ${description}:`,
+					message: `Internal Error: Unable to ${description}:`,
 					description: e.message,
 				})
 				// setAccountOnCall(null)

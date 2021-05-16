@@ -1,9 +1,14 @@
 import { useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
-import { useAddPopup, useBlockNumber } from '../application/hooks'
+import { useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
 import { checkedTransaction, finalizeTransaction } from './actions'
+import { notification } from 'antd'
+import { etherscanUrl } from '../../utils'
+import { NETWORK_NAMES } from '../../connectors'
+
+const clickableStyle = { cursor: 'pointer' }
 
 export function shouldCheck(
 	lastBlockNumber: number,
@@ -29,6 +34,8 @@ export function shouldCheck(
 export default function Updater(): null {
 	const { account, chainId, library } = useWeb3Provider()
 
+	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
+
 	const lastBlockNumber = useBlockNumber()
 
 	const dispatch = useDispatch<AppDispatch>()
@@ -40,9 +47,6 @@ export default function Updater(): null {
 		() => (chainId ? state[account]?.[chainId] ?? {} : {}),
 		[account, chainId, state],
 	)
-
-	// show popup on confirm
-	const addPopup = useAddPopup()
 
 	useEffect(() => {
 		if (!chainId || !library || !lastBlockNumber) return
@@ -75,16 +79,36 @@ export default function Updater(): null {
 								}),
 							)
 
-							addPopup(
-								{
-									txn: {
-										hash,
-										success: receipt.status === 1,
-										summary: transactions[hash]?.summary,
-									},
-								},
-								hash,
-							)
+							const tx = transactions[hash]
+							if (receipt.status === 1) {
+								notification.success({
+									message: `Successfully ${tx.summary}.`,
+									description: 'Click to see on Etherscan',
+									style: clickableStyle,
+									onClick: () =>
+										window.open(
+											etherscanUrl(
+												`/tx/${tx?.hash}`,
+												networkName,
+											),
+											'_blank',
+										),
+								})
+							}
+							if (receipt.status === 0)
+								notification.error({
+									message: `Failed: Unable to ${tx.summary}.`,
+									description: 'Click to see on Etherscan',
+									style: clickableStyle,
+									onClick: () =>
+										window.open(
+											etherscanUrl(
+												`/tx/${tx?.hash}`,
+												networkName,
+											),
+											'_blank',
+										),
+								})
 						} else {
 							dispatch(
 								checkedTransaction({
@@ -110,7 +134,7 @@ export default function Updater(): null {
 		transactions,
 		lastBlockNumber,
 		dispatch,
-		addPopup,
+		networkName,
 	])
 
 	return null

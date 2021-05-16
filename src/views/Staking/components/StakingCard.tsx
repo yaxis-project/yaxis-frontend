@@ -41,15 +41,18 @@ export default function StakingCard() {
 
 	const [{ yaxis }] = useAllTokenBalances()
 	const { Yaxis } = useStakedBalances()
-	const yaxisBalance = useMemo(() => yaxis?.amount || new BigNumber(0), [
-		yaxis,
-	])
-	const stakedBalance = useMemo(() => Yaxis?.amount || new BigNumber(0), [
-		Yaxis,
-	])
-	const walletBalance = useMemo(() => yaxis?.value || new BigNumber(0), [
-		yaxis,
-	])
+	const yaxisBalance = useMemo(
+		() => yaxis?.amount || new BigNumber(0),
+		[yaxis],
+	)
+	const stakedBalance = useMemo(
+		() => Yaxis?.amount || new BigNumber(0),
+		[Yaxis],
+	)
+	const walletBalance = useMemo(
+		() => yaxis?.value || new BigNumber(0),
+		[yaxis],
+	)
 
 	const { call: onEnter, loading: loadingEnter } = useContractWrite({
 		contractName: 'currencies.ERC677.yaxis.contract',
