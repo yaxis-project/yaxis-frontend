@@ -4,7 +4,6 @@ import { Typography, Tooltip, Row } from 'antd'
 import Value from '../../../components/Value'
 import { useAPY } from '../../../state/internal/hooks'
 import { useAccountLP } from '../../../state/wallet/hooks'
-
 import { LiquidityPool } from '../../../constants/type'
 import Claim from '../../../components/Claim'
 import LegacyClaim from './LegacyClaim'

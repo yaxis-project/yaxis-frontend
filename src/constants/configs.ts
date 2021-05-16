@@ -61,7 +61,7 @@ export const configs: Record<number, Config> = {
 			},
 			'Uniswap YAX/ETH': {
 				pid: 6,
-				active: false,
+				active: true,
 				legacy: true,
 				type: 'uniswap',
 				liquidId: '0xe0e3413740aAF1E2E23278c9692a6c3Bb728E9B0/ETH',
@@ -84,7 +84,7 @@ export const configs: Record<number, Config> = {
 			'Linkswap YAX/ETH': {
 				legacy: true,
 				pid: null,
-				active: false,
+				active: true,
 				type: 'linkswap',
 				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
 				lpAddress: '0x21dee38170F1e1F26baFf2C30C0fc8F8362b6961',
@@ -147,8 +147,7 @@ export const configs: Record<number, Config> = {
 				type: 'uniswap',
 				liquidId: '0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73/ETH',
 				lpAddress: '0xF0E3FdF48661CD10d56692f60BD4eCcd01E9CF64',
-				lpUrl:
-					'https://app.uniswap.org/#/add/v2/ETH/0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73',
+				lpUrl: 'https://app.uniswap.org/#/add/v2/ETH/0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73',
 				lpTokens: [
 					{
 						tokenId: 'yaxis',
@@ -167,12 +166,11 @@ export const configs: Record<number, Config> = {
 			'Uniswap YAX/ETH': {
 				legacy: true,
 				pid: 6,
-				active: false,
+				active: true,
 				type: 'uniswap',
 				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
 				lpAddress: '0x1107b6081231d7f256269ad014bf92e041cb08df',
-				lpUrl:
-					'https://app.uniswap.org/#/add/v2/ETH/0xb1dc9124c395c1e97773ab855d66e879f053a289',
+				lpUrl: 'https://app.uniswap.org/#/add/v2/ETH/0xb1dc9124c395c1e97773ab855d66e879f053a289',
 				lpTokens: [
 					{
 						tokenId: 'yax',
@@ -190,12 +188,11 @@ export const configs: Record<number, Config> = {
 			'Linkswap YAX/ETH': {
 				legacy: true,
 				pid: null,
-				active: false,
+				active: true,
 				type: 'linkswap',
 				liquidId: '0xb1dc9124c395c1e97773ab855d66e879f053a289/ETH',
 				lpAddress: '0x21dee38170F1e1F26baFf2C30C0fc8F8362b6961',
-				lpUrl:
-					'https://linkswap.app/#/add/0xb1dC9124c395c1e97773ab855d66E879f053A289/ETH',
+				lpUrl: 'https://linkswap.app/#/add/0xb1dC9124c395c1e97773ab855d66E879f053A289/ETH',
 				lpTokens: [
 					{
 						tokenId: 'yax',

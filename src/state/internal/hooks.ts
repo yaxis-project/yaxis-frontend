@@ -92,7 +92,7 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 	const balance = useSingleCallResult(
 		contracts?.currencies.ERC677.yaxis.contract,
 		'balanceOf',
-		[contracts?.rewards[rewardsContract].address],
+		[contracts?.rewards[rewardsContract]?.address],
 	)
 
 	const {
@@ -332,12 +332,10 @@ export function useAPY(
 			.times(100)
 			.decimalPlaces(18)
 		if (strategyPercentage) {
-			threeCrvAprPercent = threeCrvAprPercent.multipliedBy(
-				strategyPercentage,
-			)
-			threeCrvApyPercent = threeCrvApyPercent.multipliedBy(
-				strategyPercentage,
-			)
+			threeCrvAprPercent =
+				threeCrvAprPercent.multipliedBy(strategyPercentage)
+			threeCrvApyPercent =
+				threeCrvApyPercent.multipliedBy(strategyPercentage)
 		}
 
 		const totalAPR = rewardsAPR.plus(lpApyPercent).plus(threeCrvApyPercent)
