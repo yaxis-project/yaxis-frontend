@@ -19,11 +19,13 @@ const columns = [
 const Liquidity: React.FC = () => {
 	const { contracts } = useContracts()
 	const activePools = useMemo(
-		() => Object.values(contracts.pools).filter((pool) => pool.active),
+		() =>
+			Object.values(contracts?.pools || {}).filter((pool) => pool.active),
 		[contracts],
 	)
 	const legacyPools = useMemo(
-		() => Object.values(contracts.pools).filter((pool) => pool.legacy),
+		() =>
+			Object.values(contracts?.pools || {}).filter((pool) => pool.legacy),
 		[contracts],
 	)
 	const history = useHistory()
