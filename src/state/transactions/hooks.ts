@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { AppDispatch, AppState } from '../index'
-import { addTransaction } from './actions'
+import { addTransaction, clearPendingTransactions } from './actions'
 import { TransactionDetails } from './reducer'
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
@@ -97,6 +97,7 @@ export function useHasPendingTransaction(
 	return useMemo(() => {
 		const txIndex = Object.keys(allTransactions).find((hash) => {
 			const tx = allTransactions[hash]
+			if (!tx) return false
 			return (
 				!tx.confirmedTime &&
 				isTransactionRecent(tx) &&
@@ -106,4 +107,15 @@ export function useHasPendingTransaction(
 		})
 		return txIndex !== undefined
 	}, [contractName, method, allTransactions])
+}
+
+export function useClearPendingTransactions() {
+	const { chainId, account } = useWeb3Provider()
+
+	const dispatch = useDispatch<AppDispatch>()
+
+	return useCallback(
+		() => dispatch(clearPendingTransactions({ account, chainId })),
+		[dispatch, account, chainId],
+	)
 }

@@ -15,8 +15,6 @@ import {
 } from '../../../connectors'
 import { useWeb3React } from '@web3-react/core'
 
-interface NavTabletProps {}
-
 const StyledMenu = styled(Menu)`
 	padding: 10px;
 `
@@ -55,14 +53,16 @@ const Connect = styled(Menu.Item)`
 		color: rgb(67, 210, 255);
 	}
 `
+interface NavTabletProps {}
 
 const NavTablet: React.FC<NavTabletProps> = () => {
 	const { account, chainId, deactivate } = useWeb3Provider()
 	const { activate } = useWeb3React('fallback')
 
-	const networkName: string = useMemo(() => NETWORK_NAMES[chainId] || '', [
-		chainId,
-	])
+	const networkName: string = useMemo(
+		() => NETWORK_NAMES[chainId] || '',
+		[chainId],
+	)
 	const friendlyNetworkName: string = useMemo(
 		() => FRIENDLY_NETWORK_NAMES[chainId] || '',
 		[chainId],
@@ -83,8 +83,8 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 		activate(network)
 	}, [activate, deactivate, account])
 
-	const activePools = Object.values(currentConfig(chainId).pools).filter(
-		(pool) => pool.active,
+	const currentPools = Object.values(currentConfig(chainId).pools).filter(
+		(pool) => pool.active && !pool.legacy,
 	)
 
 	const menu = useMemo(
@@ -123,7 +123,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 					title={<StyledSpan>Liquidity</StyledSpan>}
 				>
 					<ItemGroup title="Provide Liquidity" />
-					{activePools.map((farm) => (
+					{currentPools.map((farm) => (
 						<MenuItem key={`/liquidity/${farm.lpAddress}`}>
 							<StyledLink
 								activeClassName="active"
@@ -159,7 +159,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 			handleUnlockClick,
 			networkName,
 			friendlyNetworkName,
-			activePools,
+			currentPools,
 			handleSignOutClick,
 		],
 	)

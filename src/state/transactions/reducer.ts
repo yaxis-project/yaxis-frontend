@@ -3,6 +3,7 @@ import {
 	addTransaction,
 	checkedTransaction,
 	clearAllTransactions,
+	clearPendingTransactions,
 	finalizeTransaction,
 	SerializableTransactionReceipt,
 } from './actions'
@@ -73,6 +74,17 @@ export default createReducer(initialState, (builder) =>
 			(transactions, { payload: { account, chainId } }) => {
 				if (!transactions[account]?.[chainId]) return
 				transactions[account][chainId] = {}
+			},
+		)
+		.addCase(
+			clearPendingTransactions,
+			(transactions, { payload: { account, chainId } }) => {
+				if (!transactions[account]?.[chainId]) return
+				for (const tx in transactions[account][chainId]) {
+					if (!transactions[account]?.[chainId]?.[tx]) continue
+					if (!transactions[account][chainId][tx]?.confirmedTime)
+						delete transactions[account][chainId][tx]
+				}
 			},
 		)
 		.addCase(

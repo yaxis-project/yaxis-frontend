@@ -13,6 +13,7 @@ import {
 	FRIENDLY_NETWORK_NAMES,
 } from '../../../connectors'
 import { useWeb3React } from '@web3-react/core'
+import { useClearPendingTransactions } from '../../../state/transactions/hooks'
 
 interface AccountButtonProps {}
 
@@ -41,6 +42,8 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 		activate(network)
 	}, [activate, deactivate, account])
 
+	const handleClearPending = useClearPendingTransactions()
+
 	return (
 		<StyledAccountButton>
 			<Col>
@@ -67,6 +70,9 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 									>
 										Help Center
 									</a>
+								</StyledText>
+								<StyledText onClick={handleClearPending}>
+									Clear Pending
 								</StyledText>
 								<StyledText
 									onClick={handleSignOutClick}

@@ -21,6 +21,10 @@ export const addTransaction = createAction<{
 	method: string
 	contract: string
 }>('transactions/addTransaction')
+export const clearPendingTransactions = createAction<{
+	account: string
+	chainId: number
+}>('transactions/clearPendingTransactions')
 export const clearAllTransactions = createAction<{
 	account: string
 	chainId: number

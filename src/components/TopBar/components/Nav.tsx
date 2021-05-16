@@ -11,10 +11,10 @@ import { useWeb3React } from '@web3-react/core'
  * @param props any
  */
 
-const Nav: React.FC = (props) => {
+const Nav: React.FC = () => {
 	const { chainId } = useWeb3React()
-	const activePools = Object.values(currentConfig(chainId).pools).filter(
-		(pool) => pool.active,
+	const currentPools = Object.values(currentConfig(chainId).pools).filter(
+		(pool) => pool.active && !pool.legacy,
 	)
 
 	return (
@@ -49,7 +49,7 @@ const Nav: React.FC = (props) => {
 				}
 			>
 				<ItemGroup title="Provide Liquidity" />
-				{activePools.map((pool) => (
+				{currentPools.map((pool) => (
 					<Menu.Item key={`/liquidity/${pool.lpAddress}`}>
 						<StyledLink
 							activeClassName="active"
