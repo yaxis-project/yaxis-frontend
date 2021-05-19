@@ -73,14 +73,14 @@ function AdvancedNavigationRow(props: AdvancedNavigationRowProps) {
 export default function AdvancedNavigation() {
 	const { chainId } = useWeb3Provider()
 
-	const activePools = Object.values(currentConfig(chainId)?.pools).filter(
-		(pool) => pool?.active,
+	const currentPools = Object.values(currentConfig(chainId).pools).filter(
+		(pool) => pool.active && !pool.legacy,
 	)
 
-	return activePools.length > 0 ? (
+	return currentPools.length > 0 ? (
 		<Collapse expandIconPosition="right">
 			<Panel header={'Liquidity Pools'} key="1">
-				{activePools.map((pool) => (
+				{currentPools.map((pool) => (
 					<AdvancedNavigationRow
 						key={pool.name}
 						contextType="Provide Liquidity"
