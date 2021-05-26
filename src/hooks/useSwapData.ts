@@ -30,7 +30,7 @@ const useSwapData = () => {
 			mvEarnings,
 			balances: {
 				stakedBalance: stakedYAX,
-				yaxBalance: new BigNumber(0),
+				yaxBalance: balances?.['yax']?.amount || new BigNumber(0),
 			},
 			yaxisBalance: balances?.['yaxis']?.amount || new BigNumber(0),
 			stakedUniLP,
