@@ -119,7 +119,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 
 	const { call: onUnstake, loading: unstakeLoading } = useContractWrite({
 		contractName: 'internal.yaxisChef',
-		method: 'unstake',
+		method: 'withdraw',
 		description: `unstake ${uniYaxEthLP?.name}`,
 	})
 
@@ -153,7 +153,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 					title={
 						<StyledButton
 							onClick={async () => {
-								await onReward()
+								await onReward({ args: ['6', '0'] })
 							}}
 							loading={loading}
 							disabled={!earnings.toNumber()}

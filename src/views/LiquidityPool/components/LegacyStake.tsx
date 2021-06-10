@@ -20,9 +20,15 @@ const LegacyStake: React.FC<StakeProps> = ({ pid, tokenName }) => {
 		lp: { staked: stakedBalance },
 	} = useLegacyReturns(pid)
 
+	const { call: onStake } = useContractWrite({
+		contractName: 'internal.yaxisChef',
+		method: 'deposit',
+		description: `unstake ${tokenName}`,
+	})
+
 	const { call: onUnstake, loading: unstakeLoading } = useContractWrite({
 		contractName: 'internal.yaxisChef',
-		method: 'unstake',
+		method: 'withdraw',
 		description: `unstake ${tokenName}`,
 	})
 
@@ -43,7 +49,7 @@ const LegacyStake: React.FC<StakeProps> = ({ pid, tokenName }) => {
 		/>,
 	)
 
-	if (stakedBalance.eq(0)) return null
+	// if (stakedBalance.eq(0)) return null
 
 	return (
 		<Card title={<strong>Staking</strong>}>
@@ -64,6 +70,18 @@ const LegacyStake: React.FC<StakeProps> = ({ pid, tokenName }) => {
 						loading={unstakeLoading}
 					>
 						Unstake
+					</Button>
+				</Col>
+				<Col span={12}>
+					<Button
+						onClick={() => {
+							console.log(pid)
+							onStake({
+								args: [pid, '0'],
+							})
+						}}
+					>
+						Stake
 					</Button>
 				</Col>
 			</Row>
