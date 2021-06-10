@@ -145,8 +145,8 @@ export function useCurvePoolAPR(name: string) {
 					await fetch('https://stats.curve.fi/raw-stats/apys.json')
 				).json()
 				setCurveApy(
-					apy?.total && apy?.total[name]
-						? parseFloat(apy?.total[name])
+					apy?.day && apy?.day[name]
+						? parseFloat(apy?.day[name])
 						: 0,
 				)
 			} catch (e) {
