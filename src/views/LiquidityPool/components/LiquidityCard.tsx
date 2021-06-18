@@ -121,7 +121,12 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 					<Button
 						disabled={!lpUrl || !walletBalance?.amount.toNumber()}
 						icon={<MinusOutlined />}
-						onClick={() => window.open(lpUrl, '_blank')}
+						onClick={() =>
+							window.open(
+								lpUrl.replace('add', 'remove'),
+								'_blank',
+							)
+						}
 					>
 						Remove
 					</Button>
