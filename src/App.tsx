@@ -2,9 +2,9 @@ import React, { Suspense, useMemo } from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import Home from './views/Home'
 import MetaVault from './views/Vault'
-import Staking from './views/Staking'
 import Liquidity from './views/Liquidity'
 import LiquidityPool from './views/LiquidityPool'
+import Rewards from './views/Rewards'
 import Swap from './views/Swap'
 import Faucet from './views/Faucet'
 // import Governance from './views/Governance'
@@ -46,9 +46,6 @@ const App: React.FC = () => {
 				<Route path="/vault" exact>
 					<MetaVault />
 				</Route>
-				<Route path="/staking" exact>
-					<Staking />
-				</Route>
 				<Route path="/liquidity" exact>
 					<Liquidity />
 				</Route>
@@ -60,6 +57,9 @@ const App: React.FC = () => {
 						</Route>
 					)
 				})}
+				<Route path="/rewards" exact>
+					<Rewards />
+				</Route>
 				<Route path="/swap" exact>
 					<Swap />
 				</Route>

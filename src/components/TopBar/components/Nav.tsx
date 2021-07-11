@@ -34,12 +34,6 @@ const Nav: React.FC = () => {
 				</StyledLink>
 			</MenuItem>
 
-			<MenuItem key={'/staking'}>
-				<StyledLink activeClassName="active" to="/staking">
-					Staking
-				</StyledLink>
-			</MenuItem>
-
 			<StyledSubMenu
 				key={'/liquidity'}
 				title={
@@ -60,6 +54,12 @@ const Nav: React.FC = () => {
 					</Menu.Item>
 				))}
 			</StyledSubMenu>
+
+			<MenuItem key={'/rewards'}>
+				<StyledLink activeClassName="active" to="/rewards">
+					Rewards
+				</StyledLink>
+			</MenuItem>
 		</StyledMenu>
 	)
 }

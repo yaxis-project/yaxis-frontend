@@ -107,12 +107,6 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 					</StyledLink>
 				</MenuItem>
 
-				<MenuItem key={'/staking'}>
-					<StyledLink activeClassName="active" to="/staking">
-						Staking
-					</StyledLink>
-				</MenuItem>
-
 				<StyledSubMenu
 					key={'/liquidity'}
 					title={<StyledSpan>Liquidity</StyledSpan>}
@@ -129,6 +123,12 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 						</MenuItem>
 					))}
 				</StyledSubMenu>
+
+				<MenuItem key={'/rewards'}>
+					<StyledLink activeClassName="active" to="/rewards">
+						Rewards
+					</StyledLink>
+				</MenuItem>
 
 				<Menu.Divider />
 				<MenuItem>

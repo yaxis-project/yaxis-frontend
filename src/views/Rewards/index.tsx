@@ -23,25 +23,26 @@ const StyledCol = styled(Col)`
 	}
 `
 
-const Staking: React.FC = () => {
+const Rewards: React.FC = () => {
 	const { Yaxis } = useStakedBalances()
 	const {
 		prices: { yaxis },
 	} = usePrices()
 
-	const balance = useMemo(() => Yaxis.amount.multipliedBy(yaxis), [
-		Yaxis,
-		yaxis,
-	])
+	const balance = useMemo(
+		() => Yaxis.amount.multipliedBy(yaxis),
+		[Yaxis, yaxis],
+	)
 
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 
 	const { chainId } = useWeb3Provider()
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
-	const address = useMemo(() => currentConfig(chainId).rewards.Yaxis, [
-		chainId,
-	])
+	const address = useMemo(
+		() => currentConfig(chainId).rewards.Yaxis,
+		[chainId],
+	)
 
 	return (
 		<div className="savings-view">
@@ -78,4 +79,4 @@ const Staking: React.FC = () => {
 	)
 }
 
-export default Staking
+export default Rewards
