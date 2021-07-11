@@ -103,7 +103,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 
 				<MenuItem key={'/vault'}>
 					<StyledLink activeClassName="active" to="/vault">
-						MetaVault
+						Vault
 					</StyledLink>
 				</MenuItem>
 

@@ -84,8 +84,8 @@ const InvestmentAccountOverview: React.FC = () => {
 	return (
 		<AccountOverviewCard
 			loading={false}
-			mainTitle={'MetaVault Account'}
-			secondaryText={'Metavault 2.0'}
+			mainTitle={'Vault Account'}
+			secondaryText={'Canonical Vaults'}
 			value={balanceUSD}
 		/>
 	)

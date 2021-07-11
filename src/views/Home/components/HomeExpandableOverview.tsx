@@ -67,7 +67,7 @@ export default function HomeExpandableOverview() {
 							title={
 								<>
 									<TooltipRow
-										main="Total MetaVault 2.0 value"
+										main="Total Vault value"
 										value={metavaultTvl.toNumber()}
 									/>
 									<TooltipRow

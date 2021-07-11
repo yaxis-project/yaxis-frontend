@@ -1,7 +1,7 @@
 import React, { Suspense, useMemo } from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import Home from './views/Home'
-import MetaVault from './views/MetaVault'
+import MetaVault from './views/Vault'
 import Staking from './views/Staking'
 import Liquidity from './views/Liquidity'
 import LiquidityPool from './views/LiquidityPool'

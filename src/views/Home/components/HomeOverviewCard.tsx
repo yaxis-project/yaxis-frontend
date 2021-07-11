@@ -90,15 +90,15 @@ export default function HomeOverviewCard() {
 									Your YAXIS rewards:
 								</div>
 								<TooltipRow
-									main="MetaVault staking"
+									main="Vault rewards"
 									value={metaVault.toNumber()}
 								/>
 								<TooltipRow
-									main="Governance (YAXIS) staking"
+									main="Governance (YAXIS) rewards"
 									value={governance.toNumber()}
 								/>
 								<TooltipRow
-									main="Liquidity Pool token staking"
+									main="Liquidity Pool token rewards"
 									value={lp.toNumber()}
 								/>
 							</>

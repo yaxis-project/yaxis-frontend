@@ -44,8 +44,9 @@ const MetaVault: React.FC = () => {
 		<div className="investing-view">
 			<Page
 				loading={false}
-				mainTitle="MetaVault Account"
-				secondaryText="MetaVault 2.0"
+				mainTitle="Vault Account"
+				secondaryText="Canonical Vaults"
+				// TODO: update URL
 				secondaryTextLink={
 					address &&
 					etherscanUrl(`/address/${address}#code`, networkName)
