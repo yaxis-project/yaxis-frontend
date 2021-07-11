@@ -16,13 +16,6 @@ const Nav: React.FC = () => {
 				<Row justify="center">
 					<StyledLink
 						target="_blank"
-						href="https://gov.yaxis.io/#/"
-						rel="noopener noreferrer"
-					>
-						Governance
-					</StyledLink>
-					<StyledLink
-						target="_blank"
 						href="https://immunefi.com/bounty/yaxis/"
 						rel="noopener noreferrer"
 					>

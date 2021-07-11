@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Layout } from 'antd'
-import TopBar from '../TopBar'
+import TopBar from '../Header'
 import Footer from '../Footer'
 import PageLeadBar from './PageLeadBar'
 

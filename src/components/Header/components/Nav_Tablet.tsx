@@ -132,6 +132,12 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 					</StyledLink>
 				</MenuItem>
 
+				<MenuItem key={'/governance'}>
+					<StyledLink activeClassName="active" to="/governance">
+						Governance
+					</StyledLink>
+				</MenuItem>
+
 				<Menu.Divider />
 				<Row
 					align="middle"

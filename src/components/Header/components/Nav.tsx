@@ -60,6 +60,12 @@ const Nav: React.FC = () => {
 					Rewards
 				</StyledLink>
 			</MenuItem>
+
+			<MenuItem key={'/governance'}>
+				<StyledLink activeClassName="active" to="/governance">
+					Governance
+				</StyledLink>
+			</MenuItem>
 		</StyledMenu>
 	)
 }

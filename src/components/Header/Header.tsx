@@ -6,10 +6,10 @@ import AccountButton from './components/AccountButton'
 import Nav from './components/Nav'
 import NavTablet from './components/Nav_Tablet'
 
-const { Header } = Layout
+const { Header: BaseHeader } = Layout
 const { useBreakpoint } = Grid
 
-const TopBar = ({ home }: any) => {
+const Header = ({ home }: any) => {
 	const { lg } = useBreakpoint()
 	return (
 		<StyledHeader>
@@ -38,7 +38,7 @@ const TopBar = ({ home }: any) => {
 	)
 }
 
-const StyledHeader = styled(Header)`
+const StyledHeader = styled(BaseHeader)`
 	height: 80px;
 	padding: 0 10%;
 	display: flex;
@@ -78,4 +78,4 @@ const StyledAccountButtonWrapper = styled(Col)`
 	}
 `
 
-export default TopBar
+export default Header

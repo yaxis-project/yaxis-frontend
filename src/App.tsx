@@ -7,7 +7,7 @@ import LiquidityPool from './views/LiquidityPool'
 import Rewards from './views/Rewards'
 import Swap from './views/Swap'
 import Faucet from './views/Faucet'
-// import Governance from './views/Governance'
+import Governance from './views/Governance'
 import { notification } from 'antd'
 import { currentConfig } from './constants/configs'
 import { useWeb3React } from '@web3-react/core'
@@ -59,6 +59,9 @@ const App: React.FC = () => {
 				})}
 				<Route path="/rewards" exact>
 					<Rewards />
+				</Route>
+				<Route path="/governance" exact>
+					<Governance />
 				</Route>
 				<Route path="/swap" exact>
 					<Swap />
