@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 import { Layout, Row, Col, Grid } from 'antd'
 import Logo from '../Logo'
@@ -8,11 +7,10 @@ import Nav from './components/Nav'
 import NavTablet from './components/Nav_Tablet'
 
 const { Header } = Layout
-const { useBreakpoint } = Grid;
-
+const { useBreakpoint } = Grid
 
 const TopBar = ({ home }: any) => {
-	const { lg } = useBreakpoint();
+	const { lg } = useBreakpoint()
 	return (
 		<StyledHeader>
 			<StyledTopBar gutter={4} align="middle">
@@ -21,7 +19,7 @@ const TopBar = ({ home }: any) => {
 						<Logo />
 					</StyledLogoWrapper>
 				</Col>
-				{lg ?
+				{lg ? (
 					<>
 						<Col flex="auto" style={{ color: 'white' }}>
 							<Nav />
@@ -30,11 +28,11 @@ const TopBar = ({ home }: any) => {
 							<AccountButton />
 						</StyledAccountButtonWrapper>
 					</>
-					:
-					<Col style={{ display: "flex", alignItems: "center" }}>
+				) : (
+					<Col style={{ display: 'flex', alignItems: 'center' }}>
 						<NavTablet />
 					</Col>
-				}
+				)}
 			</StyledTopBar>
 		</StyledHeader>
 	)
@@ -50,7 +48,6 @@ const StyledHeader = styled(Header)`
 		padding: 0;
 	}
 `
-
 
 const StyledLogoWrapper = styled.div`
 	img {

@@ -41,9 +41,6 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 	return (
 		<StyledAccountButton>
 			<Col>
-				<ThemeToggle></ThemeToggle>
-			</Col>
-			<Col>
 				{!account ? (
 					<StyledButton onClick={openModal}>Connect</StyledButton>
 				) : (
@@ -57,6 +54,10 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 									friendlyNetworkName={friendlyNetworkName}
 									mobile={false}
 								/>
+								<Row align="middle" justify="center">
+									<ThemeToggle />
+								</Row>
+
 								<StyledText>
 									<a
 										href="https://resources.yaxis.io/"
@@ -100,9 +101,8 @@ const StyledText = styled(Menu.Item)`
 `
 
 const StyledMenu = styled(Menu)`
-	background: ${(props) => props.theme.secondary.background};
+	background: ${(props) => props.theme.primary.background};
 	margin: 8px -2px 0 0;
-	border: 2px solid lightgrey;
 `
 
 const StyledButton = styled(Button)`

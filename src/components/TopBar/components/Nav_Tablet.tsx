@@ -4,7 +4,7 @@ import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { NavLink } from 'react-router-dom'
 import { currentConfig } from '../../../constants/configs'
 import AccountInfo from './AccountInfo'
-import { Menu, Dropdown, Button, Typography } from 'antd'
+import { Row, Menu, Dropdown, Button, Typography } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
 import { useOpenModal } from '../../../state/application/hooks'
 import { ApplicationModal } from '../../../state/application/actions'
@@ -13,6 +13,7 @@ import {
 	NETWORK_NAMES,
 	FRIENDLY_NETWORK_NAMES,
 } from '../../../connectors'
+import ThemeToggle from '../../ThemeToggle'
 import { useWeb3React } from '@web3-react/core'
 
 const StyledMenu = styled(Menu)`
@@ -30,6 +31,7 @@ const MenuItem = styled(Menu.Item)`
 `
 const StyledSpan = styled.span`
 	font-size: 18px;
+	color: ${(props) => props.theme.primary.font};
 `
 
 const StyledSubMenu = styled(Menu.SubMenu)`
@@ -131,6 +133,14 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 				</MenuItem>
 
 				<Menu.Divider />
+				<Row
+					align="middle"
+					justify="center"
+					style={{ margin: '10px 0' }}
+				>
+					<ThemeToggle />
+				</Row>
+
 				<MenuItem>
 					<a
 						href="https://resources.yaxis.io/"
