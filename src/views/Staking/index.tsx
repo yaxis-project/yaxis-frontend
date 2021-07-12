@@ -1,11 +1,10 @@
 import React, { useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import Page from '../../components/Page/Page'
-import YaxisPriceGraph from '../../components/YaxisPriceGraph'
 import { Row, Col } from 'antd'
 import { LanguageContext } from '../../contexts/Language'
 import phrases from './translations'
-import StakingCard from './components/StakingCard'
+import YaxisStaking from './components/StakingCard'
 import SavingsOverviewCard from './components/SavingsOverviewCard'
 import VaultStatsCard from './components/VaultStatsCard'
 import './index.less'
@@ -23,7 +22,7 @@ const StyledCol = styled(Col)`
 	}
 `
 
-const Rewards: React.FC = () => {
+const Staking: React.FC = () => {
 	const { Yaxis } = useStakedBalances()
 	const {
 		prices: { yaxis },
@@ -59,8 +58,7 @@ const Rewards: React.FC = () => {
 			>
 				<Row gutter={16}>
 					<Col md={24} lg={16}>
-						<YaxisPriceGraph />
-						<StakingCard />
+						<YaxisStaking />
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<Row>
@@ -79,4 +77,4 @@ const Rewards: React.FC = () => {
 	)
 }
 
-export default Rewards
+export default Staking

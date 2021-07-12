@@ -129,7 +129,7 @@ export default function StakingCard() {
 			className="staking-card"
 			title={
 				<Text>
-					<strong>{t('Staking')}</strong>
+					<strong>{`YAXIS ${t('Staking')}`}</strong>
 				</Text>
 			}
 		>

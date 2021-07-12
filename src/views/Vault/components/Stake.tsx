@@ -260,7 +260,7 @@ export default function ApprovalWrapper() {
 			className="staking-card"
 			title={
 				<Text>
-					<strong>{t('Staking')}</strong>
+					<strong>{`MVLT ${t('Staking')}`}</strong>
 				</Text>
 			}
 		>
