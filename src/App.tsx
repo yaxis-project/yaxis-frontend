@@ -4,7 +4,6 @@ import Home from './views/Home'
 import MetaVault from './views/Vault'
 import Liquidity from './views/Liquidity'
 import LiquidityPool from './views/LiquidityPool'
-import Staking from './views/Staking'
 import Swap from './views/Swap'
 import Faucet from './views/Faucet'
 import Governance from './views/Governance'
@@ -57,9 +56,6 @@ const App: React.FC = () => {
 						</Route>
 					)
 				})}
-				<Route path="/staking" exact>
-					<Staking />
-				</Route>
 				<Route path="/governance" exact>
 					<Governance />
 				</Route>
