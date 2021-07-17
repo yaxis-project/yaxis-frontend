@@ -71,7 +71,8 @@ export const InternalContracts = <const>[
 	'xYaxStaking',
 	'yAxisMetaVault',
 	'stableSwap3PoolConverter',
-	'merkleDistributor'
+	'merkleDistributor',
+	'votingEscrow',
 ]
 export type TInternalContracts = typeof InternalContracts[number]
 
@@ -83,6 +84,15 @@ export const ExternalContracts = <const>[
 	'curve3pool',
 ]
 export type TExternalContracts = typeof ExternalContracts[number]
+
+export const Vaults = <const>[
+	'stables',
+]
+export type TVaults = typeof Vaults[number]
+export interface Vault {
+	vault: string
+	gauge: string
+}
 
 export interface Config {
 	internal: {
@@ -104,5 +114,8 @@ export interface Config {
 	}
 	pools: {
 		[key in TLiquidityPools]: LiquidityPool
+	}
+	vaults: {
+		[key in TVaults]: Vault
 	}
 }

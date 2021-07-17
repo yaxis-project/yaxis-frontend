@@ -15,6 +15,8 @@ import {
 	LiquidityPools,
 	TLiquidityPools,
 	lpToken,
+	Vaults,
+	TVaults,
 } from './type'
 import { configs } from './configs'
 import networks from './abis'
@@ -46,6 +48,13 @@ type LiquidityPoolWithContract = LiquidityPool & {
 type LiquidityPoolC = {
 	[key in TLiquidityPools]: LiquidityPoolWithContract
 }
+interface VaultC {
+	vault: Contract
+	gauge: Contract
+}
+type VaultsC = {
+	[key in TVaults]: VaultC
+}
 
 export class Contracts {
 	private config: Config
@@ -54,6 +63,7 @@ export class Contracts {
 	public pools: LiquidityPoolC
 	public currencies: CurrenciesC
 	public rewards: RewardsC
+	public vaults: VaultsC
 
 	constructor(provider: any, networkId: number) {
 		const abis = networks[networkId]
@@ -147,6 +157,24 @@ export class Contracts {
 					if (!currency) console.error('LP token currency not found')
 					return { ...t, ...currency }
 				}),
+			}
+		}
+
+		this.vaults = {} as VaultsC
+		for (const vault of Vaults) {
+			this.vaults[vault] = {
+				vault:
+					new Contract(
+						this.config.vaults[vault].vault,
+						abis.VaultABI,
+						provider,
+					),
+				gauge:
+					new Contract(
+						this.config.vaults[vault].gauge,
+						abis.GaugeABI,
+						provider,
+					)
 			}
 		}
 	}
