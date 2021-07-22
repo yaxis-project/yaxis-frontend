@@ -150,6 +150,9 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 			funding = balanceBN.isZero()
 				? new BigNumber(0)
 				: balanceBN.minus(tvl)
+		else if (rewardsContract === 'MetaVault')
+			funding =
+				new BigNumber(0)
 		else funding = balanceBN
 
 		const period = new BigNumber(duration.toString() || 0).dividedBy(86400)
@@ -157,9 +160,9 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 		const rewardsPerBlock = funding.isZero()
 			? new BigNumber(0)
 			: funding
-					.dividedBy(period)
-					.dividedBy(AVERAGE_BLOCKS_PER_DAY)
-					.dividedBy(10 ** 18)
+				.dividedBy(period)
+				.dividedBy(AVERAGE_BLOCKS_PER_DAY)
+				.dividedBy(10 ** 18)
 
 		const rewardPerToken = tvl.isZero()
 			? new BigNumber(0)
