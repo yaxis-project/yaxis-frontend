@@ -66,6 +66,8 @@ export type Ticker =
 	| TAdditionalCurrencies
 
 export const InternalContracts = <const>[
+	'depositor',
+	'minter',
 	'swap',
 	'yaxisChef',
 	'xYaxStaking',
@@ -92,6 +94,7 @@ export type TVaults = typeof Vaults[number]
 export interface Vault {
 	vault: string
 	gauge: string
+	token: string
 }
 
 export interface Config {

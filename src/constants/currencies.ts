@@ -41,6 +41,13 @@ export const MVLT: Currency = {
 	decimals: 18,
 }
 
+export const CVS: Currency = {
+	name: 'CV:S',
+	tokenId: 'cv:s',
+	icon: yax,
+	decimals: 18,
+}
+
 export const DAI: Currency = {
 	name: 'DAI',
 	tokenId: 'dai',
@@ -146,6 +153,7 @@ export const Currencies = {
 	YAX,
 	YAXIS,
 	MVLT,
+	'CV:S': CVS,
 	DAI,
 	USDC,
 	USDT,
@@ -165,6 +173,6 @@ export const InvestingDepositCurrencies = [DAI, USDC, USDT, threeCRV]
 
 export const CurrenciesIn3Pool = <const>['dai', 'usdc', 'usdt']
 export type TCurrencies3Pool = typeof CurrenciesIn3Pool[number]
-export const Currencies3Pool = CurrenciesIn3Pool.map(
+export const Currencies3Pool: Currency[] = CurrenciesIn3Pool.map(
 	(c) => Currencies[c.toUpperCase()],
 )

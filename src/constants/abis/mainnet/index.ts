@@ -2,6 +2,8 @@ import { JsonFragment } from '@ethersproject/abi'
 
 export const abis = {
 	VaultABI: require('./vault.json') as JsonFragment[],
+	DepositorABI: require('./depositor.json') as JsonFragment[],
+	MinterABI: require('./minter.json') as JsonFragment[],
 	VotingEscrowABI: require('./votingEscrow.json') as JsonFragment[],
 	GaugeABI: require('./gauge.json') as JsonFragment[],
 	ERC20Abi: require('./erc20.json') as JsonFragment[],

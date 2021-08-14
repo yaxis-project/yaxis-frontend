@@ -51,6 +51,7 @@ type LiquidityPoolC = {
 interface VaultC {
 	vault: Contract
 	gauge: Contract
+	token: CurrencyContract
 }
 type VaultsC = {
 	[key in TVaults]: VaultC
@@ -162,6 +163,10 @@ export class Contracts {
 
 		this.vaults = {} as VaultsC
 		for (const vault of Vaults) {
+			const vaultConfig = this.config.vaults[vault]
+			const Currency = Currencies[vaultConfig.token.toUpperCase()]
+			if (!Currency)
+				console.error(`Currency not found: ${vaultConfig.token.toUpperCase()}`)
 			this.vaults[vault] = {
 				vault:
 					new Contract(
@@ -174,7 +179,15 @@ export class Contracts {
 						this.config.vaults[vault].gauge,
 						abis.GaugeABI,
 						provider,
-					)
+					),
+				token: {
+					...Currency,
+					contract: new Contract(
+						vaultConfig.vault,
+						abis.ERC20Abi,
+						provider,
+					),
+				},
 			}
 		}
 	}
