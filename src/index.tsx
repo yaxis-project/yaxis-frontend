@@ -14,7 +14,6 @@ import { updater as TransactionUpdater } from './state/transactions'
 import { updater as UserUpdater } from './state/user'
 import { updater as OnChainUpdater } from './state/onchain'
 import { updater as PricesUpdater } from './state/prices'
-import ModalsProvider from './contexts/Modals'
 import LanguageProvider from './contexts/Language'
 import ContractsProvider from './contexts/Contracts'
 
@@ -42,11 +41,9 @@ ReactDOM.render(
 						<Updaters>
 							<LanguageProvider>
 								<ThemeProvider theme={theme}>
-									<ModalsProvider>
-										<Router>
-											<App />
-										</Router>
-									</ModalsProvider>
+									<Router>
+										<App />
+									</Router>
 								</ThemeProvider>
 							</LanguageProvider>
 						</Updaters>

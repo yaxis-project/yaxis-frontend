@@ -15,6 +15,7 @@ import { useEagerConnect } from './hooks/useEagerConnect'
 import { useInactiveListener } from './hooks/useInactiveListener'
 
 import SwapBanner from './components/Banner/Banners/SwapBanner'
+import Modals from './components/Modals'
 
 notification.config({
 	placement: 'topRight',
@@ -67,6 +68,7 @@ const App: React.FC = () => {
 				</Route>
 				<Redirect to="/" />
 			</Switch>
+			<Modals />
 		</Suspense>
 	)
 }

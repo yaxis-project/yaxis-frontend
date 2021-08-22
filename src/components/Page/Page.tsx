@@ -4,20 +4,17 @@ import { Layout } from 'antd'
 import TopBar from '../TopBar'
 import Footer from '../Footer'
 import PageLeadBar from './PageLeadBar'
-import NetworkCheck from '../NetworkCheck'
 
 const { Content } = Layout
 
 export const HomePage: React.FC = ({ children }) => (
 	<StyledLayout>
-		<NetworkCheck>
-			<BGHomeUnderlay />
-			<TopBar home />
-			<StyledContent>
-				<StyledMain>{children}</StyledMain>
-			</StyledContent>
-			<Footer />
-		</NetworkCheck>
+		<BGHomeUnderlay />
+		<TopBar home />
+		<StyledContent>
+			<StyledMain>{children}</StyledMain>
+		</StyledContent>
+		<Footer />
 	</StyledLayout>
 )
 
@@ -62,15 +59,13 @@ interface PageProps {
 
 const Page = ({ children, ...props }: PageProps) => (
 	<StyledLayout>
-		<NetworkCheck>
-			<BGUnderlay />
-			<TopBar />
-			<PageLeadBar {...props} />
-			<StyledContent>
-				<StyledMain>{children}</StyledMain>
-			</StyledContent>
-			<Footer />
-		</NetworkCheck>
+		<BGUnderlay />
+		<TopBar />
+		<PageLeadBar {...props} />
+		<StyledContent>
+			<StyledMain>{children}</StyledMain>
+		</StyledContent>
+		<Footer />
 	</StyledLayout>
 )
 

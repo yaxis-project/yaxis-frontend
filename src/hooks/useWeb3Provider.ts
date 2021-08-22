@@ -7,7 +7,7 @@ function useWeb3Provider() {
 
     const provider = useMemo(() => {
         if (account) return { account, ...mainProviderRest }
-        return fallbackProvider
+        return { ...fallbackProvider, error: mainProviderRest.error }
     }, [account, mainProviderRest, fallbackProvider])
 
     return provider

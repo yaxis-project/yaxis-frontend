@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
-import useModal from '../../../hooks/useModal'
 import { Button, Menu, Dropdown, Row, Col } from 'antd'
 import { CaretDownOutlined } from '@ant-design/icons'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
-import WalletProviderModal from '../../WalletProviderModal'
+import { useOpenModal } from '../../../state/application/hooks'
+import { ApplicationModal } from '../../../state/application/actions'
 import AccountInfo from '../components/AccountInfo'
 import {
 	network,
@@ -18,11 +18,6 @@ import { useClearPendingTransactions } from '../../../state/transactions/hooks'
 interface AccountButtonProps {}
 
 const AccountButton: React.FC<AccountButtonProps> = (props) => {
-	const [onPresentWalletProviderModal] = useModal(
-		<WalletProviderModal />,
-		'provider',
-	)
-
 	const { account, deactivate, chainId } = useWeb3Provider()
 	const { activate } = useWeb3React('fallback')
 
@@ -32,9 +27,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 		[chainId],
 	)
 
-	const handleUnlockClick = useCallback(() => {
-		onPresentWalletProviderModal()
-	}, [onPresentWalletProviderModal])
+	const openModal = useOpenModal(ApplicationModal['WALLET'])
 
 	const handleSignOutClick = useCallback(() => {
 		localStorage.setItem('signOut', account)
@@ -48,9 +41,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 		<StyledAccountButton>
 			<Col>
 				{!account ? (
-					<StyledButton onClick={handleUnlockClick}>
-						Connect
-					</StyledButton>
+					<StyledButton onClick={openModal}>Connect</StyledButton>
 				) : (
 					<Dropdown
 						placement="bottomRight"
