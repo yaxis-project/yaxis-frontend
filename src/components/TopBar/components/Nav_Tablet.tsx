@@ -6,8 +6,8 @@ import { currentConfig } from '../../../constants/configs'
 import AccountInfo from './AccountInfo'
 import { Menu, Dropdown, Button, Typography } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
-import WalletProviderModal from '../../WalletProviderModal'
-import useModal from '../../../hooks/useModal'
+import { useOpenModal } from '../../../state/application/hooks'
+import { ApplicationModal } from '../../../state/application/actions'
 import {
 	network,
 	NETWORK_NAMES,
@@ -68,14 +68,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 		[chainId],
 	)
 
-	const [onPresentWalletProviderModal] = useModal(
-		<WalletProviderModal />,
-		'provider',
-	)
-
-	const handleUnlockClick = useCallback(() => {
-		onPresentWalletProviderModal()
-	}, [onPresentWalletProviderModal])
+	const openModal = useOpenModal(ApplicationModal['WALLET'])
 
 	const handleSignOutClick = useCallback(() => {
 		localStorage.setItem('signOut', account)
@@ -91,7 +84,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 		() => (
 			<StyledMenu>
 				{!account ? (
-					<Connect onClick={handleUnlockClick}>Connect</Connect>
+					<Connect onClick={openModal}>Connect</Connect>
 				) : (
 					<AccountInfo
 						account={account}
@@ -156,7 +149,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 		),
 		[
 			account,
-			handleUnlockClick,
+			openModal,
 			networkName,
 			friendlyNetworkName,
 			currentPools,

@@ -1,13 +1,11 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { Row, Col, Card } from 'antd'
 import Button from '../../../components/Button'
 import Value from '../../../components/Value'
-import useModal from '../../../hooks/useModal'
 import { useLegacyReturns } from '../../../state/wallet/hooks'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { getBalanceNumber } from '../../../utils/formatBalance'
-import WithdrawModal from './WithdrawModal'
 import BigNumber from 'bignumber.js'
 
 interface StakeProps {
@@ -20,36 +18,26 @@ const LegacyStake: React.FC<StakeProps> = ({ pid, tokenName }) => {
 		lp: { staked: stakedBalance },
 	} = useLegacyReturns(pid)
 
-	const { call: onStake } = useContractWrite({
-		contractName: 'internal.yaxisChef',
-		method: 'deposit',
-		description: `unstake ${tokenName}`,
-	})
-
 	const { call: onUnstake, loading: unstakeLoading } = useContractWrite({
 		contractName: 'internal.yaxisChef',
 		method: 'withdraw',
 		description: `unstake ${tokenName}`,
 	})
 
-	const [onPresentWithdraw] = useModal(
-		<WithdrawModal
-			max={stakedBalance}
-			onConfirm={(amount: string) =>
-				onUnstake({
-					args: [
-						pid,
-						new BigNumber(amount)
-							.times(new BigNumber(10).pow(18))
-							.toString(),
-					],
-				})
-			}
-			tokenName={tokenName}
-		/>,
+	const withdrawAll = useCallback(
+		() =>
+			onUnstake({
+				args: [
+					pid,
+					new BigNumber(stakedBalance)
+						.times(new BigNumber(10).pow(18))
+						.toString(),
+				],
+			}),
+		[stakedBalance, onUnstake, pid],
 	)
 
-	// if (stakedBalance.eq(0)) return null
+	if (stakedBalance.eq(0)) return null
 
 	return (
 		<Card title={<strong>Staking</strong>}>
@@ -66,22 +54,10 @@ const LegacyStake: React.FC<StakeProps> = ({ pid, tokenName }) => {
 				<Col span={12}>
 					<Button
 						disabled={stakedBalance.eq(new BigNumber(0))}
-						onClick={onPresentWithdraw}
+						onClick={withdrawAll}
 						loading={unstakeLoading}
 					>
-						Unstake
-					</Button>
-				</Col>
-				<Col span={12}>
-					<Button
-						onClick={() => {
-							console.log(pid)
-							onStake({
-								args: [pid, '0'],
-							})
-						}}
-					>
-						Stake
+						Unstake All
 					</Button>
 				</Col>
 			</Row>

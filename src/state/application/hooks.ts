@@ -18,7 +18,7 @@ export function useBlockNumber(): number | undefined {
 	)
 }
 
-export function useModalOpen(modal: ApplicationModal): boolean {
+export function useIsModalOpen(modal: ApplicationModal): boolean {
 	const openModal = useSelector(
 		(state: AppState) => state.application.openModal,
 	)
@@ -26,7 +26,7 @@ export function useModalOpen(modal: ApplicationModal): boolean {
 }
 
 export function useToggleModal(modal: ApplicationModal): () => void {
-	const open = useModalOpen(modal)
+	const open = useIsModalOpen(modal)
 	const dispatch = useDispatch<AppDispatch>()
 	return useCallback(() => dispatch(setOpenModal(open ? null : modal)), [
 		dispatch,
@@ -47,30 +47,6 @@ export function useCloseModals(): () => void {
 
 export function useWalletModalToggle(): () => void {
 	return useToggleModal(ApplicationModal.WALLET)
-}
-
-export function useToggleSettingsMenu(): () => void {
-	return useToggleModal(ApplicationModal.SETTINGS)
-}
-
-export function useShowClaimPopup(): boolean {
-	return useModalOpen(ApplicationModal.CLAIM_POPUP)
-}
-
-export function useToggleShowClaimPopup(): () => void {
-	return useToggleModal(ApplicationModal.CLAIM_POPUP)
-}
-
-export function useToggleSelfClaimModal(): () => void {
-	return useToggleModal(ApplicationModal.SELF_CLAIM)
-}
-
-export function useToggleDelegateModal(): () => void {
-	return useToggleModal(ApplicationModal.DELEGATE)
-}
-
-export function useToggleVoteModal(): () => void {
-	return useToggleModal(ApplicationModal.VOTE)
 }
 
 // returns a function that allows adding a popup
