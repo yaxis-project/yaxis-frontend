@@ -52,6 +52,7 @@ interface VaultC {
 	vault: Contract
 	gauge: Contract
 	token: CurrencyContract
+	gaugeToken: CurrencyContract
 }
 type VaultsC = {
 	[key in TVaults]: VaultC
@@ -164,9 +165,12 @@ export class Contracts {
 		this.vaults = {} as VaultsC
 		for (const vault of Vaults) {
 			const vaultConfig = this.config.vaults[vault]
-			const Currency = Currencies[vaultConfig.token.toUpperCase()]
-			if (!Currency)
+			const VaultCurrency = Currencies[vaultConfig.token.toUpperCase()]
+			if (!VaultCurrency)
 				console.error(`Currency not found: ${vaultConfig.token.toUpperCase()}`)
+			const GaugeCurrency = Currencies[vaultConfig.token.toUpperCase() + '-GAUGE']
+			if (!GaugeCurrency)
+				console.error(`Currency not found: ${vaultConfig.token.toUpperCase()}-GAUGE`)
 			this.vaults[vault] = {
 				vault:
 					new Contract(
@@ -181,9 +185,17 @@ export class Contracts {
 						provider,
 					),
 				token: {
-					...Currency,
+					...VaultCurrency,
 					contract: new Contract(
 						vaultConfig.vault,
+						abis.ERC20Abi,
+						provider,
+					),
+				},
+				gaugeToken: {
+					...GaugeCurrency,
+					contract: new Contract(
+						vaultConfig.gauge,
 						abis.ERC20Abi,
 						provider,
 					),

@@ -149,6 +149,7 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 				balance={totalUSDBalance}
 				loading={false}
 				page={'lp'}
+				last
 			/>
 		</DetailOverviewCard>
 	)

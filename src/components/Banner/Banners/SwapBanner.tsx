@@ -33,6 +33,7 @@ const SwapBanner = () => {
 
 	return (
 		<Banner
+			to={'/swap'}
 			visible={visible}
 			text={'YIP-08 Token Swap is now live! Click here to learn more.'}
 		/>

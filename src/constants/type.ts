@@ -66,7 +66,7 @@ export type Ticker =
 	| TAdditionalCurrencies
 
 export const InternalContracts = <const>[
-	'depositor',
+	'vaultHelper',
 	'minter',
 	'swap',
 	'yaxisChef',
@@ -75,6 +75,7 @@ export const InternalContracts = <const>[
 	'stableSwap3PoolConverter',
 	'merkleDistributor',
 	'votingEscrow',
+	'gaugeController'
 ]
 export type TInternalContracts = typeof InternalContracts[number]
 

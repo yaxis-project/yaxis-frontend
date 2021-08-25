@@ -3,9 +3,10 @@ import { JsonFragment } from '@ethersproject/abi'
 export const abis = {
 	VaultABI: require('./vault.json') as JsonFragment[],
 	MinterABI: require('./minter.json') as JsonFragment[],
-	DepositorABI: require('./depositor.json') as JsonFragment[],
+	VaultHelperABI: require('./vaultHelper.json') as JsonFragment[],
 	VotingEscrowABI: require('./votingEscrow.json') as JsonFragment[],
 	GaugeABI: require('./gauge.json') as JsonFragment[],
+	GaugeControllerABI: require('./GaugeController.json') as JsonFragment[],
 	ERC20Abi: require('./erc20.json') as JsonFragment[],
 	ERC677Abi: require('./erc677.json') as JsonFragment[],
 	UNIV2PairAbi: require('./uni_v2_lp.json') as JsonFragment[],

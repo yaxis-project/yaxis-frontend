@@ -80,8 +80,12 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 		activate(network)
 	}, [activate, deactivate, account])
 
-	const currentPools = Object.values(currentConfig(chainId).pools).filter(
-		(pool) => pool.active && !pool.legacy,
+	const currentPools = useMemo(
+		() =>
+			Object.values(currentConfig(chainId).pools).filter(
+				(pool) => pool.active && !pool.legacy,
+			),
+		[chainId],
 	)
 
 	const menu = useMemo(

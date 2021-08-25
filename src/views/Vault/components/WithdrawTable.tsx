@@ -1,240 +1,357 @@
-import { useState, useContext, useCallback, useMemo } from 'react'
-import { Row, Col, Form, Tooltip } from 'antd'
-import { threeCRV, MVLT } from '../../../constants/currencies'
-import { numberToDecimal } from '../../../utils/number'
+import { useState, useContext, useMemo, useCallback } from 'react'
+import { Currencies3Pool, Currency } from '../../../constants/currencies'
+import { useVaultsBalances } from '../../../state/wallet/hooks'
+import { usePrices } from '../../../state/prices/hooks'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
-import BigNumber from 'bignumber.js'
-import useContractWrite from '../../../hooks/useContractWrite'
-import Value from '../../../components/Value'
-import Typography from '../../../components/Typography'
-import Divider from '../../../components/Divider'
-import Button from '../../../components/Button'
-import { ArrowDownOutlined } from '@ant-design/icons'
-import info from '../../../assets/img/info.svg'
-import { usePrices } from '../../../state/prices/hooks'
-import Input from '../../../components/Input'
-import Stable3PoolWithdraw from './Stable3PoolWithdraw'
+import { keyBy, reduce } from 'lodash'
+import { Row, Grid, Form } from 'antd'
 import styled from 'styled-components'
-import { useAccountMetaVaultData } from '../../../state/wallet/hooks'
-import { useMetaVaultData } from '../../../state/internal/hooks'
+import { numberToDecimal } from '../../../utils/number'
+import useContractWrite from '../../../hooks/useContractWrite'
 import { useContracts } from '../../../contexts/Contracts'
-const { Title, Text } = Typography
+import Button from '../../../components/Button'
+import Table from '../../../components/Table'
+import Typography from '../../../components/Typography'
+import {
+	CurrencyValues,
+	handleFormInputChange,
+	computeInsufficientBalance,
+	computeTotalDepositing,
+} from '../utils'
+import { MAX_UINT } from '../../../utils/number'
+import BigNumber from 'bignumber.js'
+import Value from '../../../components/Value'
+import Input from '../../../components/Input'
+import { useHistory } from 'react-router-dom'
+import ApprovalCover from '../../../components/ApprovalCover'
+import { useVaultAutoStake } from '../../../state/user/hooks'
+import { AutoStakeCover } from '../../../components/ApprovalCover/AutoStakeCover'
 
-/**
- * Generates the withdraw component, allowing a user to select investment currency to withdraw from.
- */
-export default function WithdrawTable() {
-	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
-	const t = useCallback((s: string) => phrases[s][language], [language])
+const { Text, Title } = Typography
 
-	const { contracts } = useContracts()
-	const { mvltPrice } = useMetaVaultData()
-	const { deposited } = useAccountMetaVaultData()
+const StyledText = styled(Text)`
+	margin-left: 16px;
+	font-size: 18px;
+	line-height: 1em;
+`
 
-	const [withdrawValueUSD, setWithdrawValueUSD] = useState('')
-
-	const totalAvailableInUSD = useMemo(
-		() => new BigNumber(deposited || '0').multipliedBy(mvltPrice || '0'),
-		[deposited, mvltPrice],
-	)
-
-	const withdrawValueShares = useMemo(
-		() => new BigNumber(withdrawValueUSD).div(mvltPrice),
-		[withdrawValueUSD, mvltPrice],
-	)
-
-	const updateWithdraw = (value: string) => setWithdrawValueUSD(value)
-	const withdrawalError = new BigNumber(withdrawValueUSD).gt(
-		totalAvailableInUSD,
-	)
-	const withdrawDisabled =
-		withdrawValueUSD === '' ||
-		new BigNumber(withdrawValueUSD).isLessThanOrEqualTo(new BigNumber(0)) ||
-		withdrawalError
-
-	const { call: handleWithdraw, loading: submitting } = useContractWrite({
-		contractName: 'internal.yAxisMetaVault',
-		method: 'withdraw',
-		description: `MetaVault withdraw`,
-	})
-
-	const onWithdraw = useCallback(
-		async (
-			sharesAmount: string,
-			currencyAddress: string,
-			usdValue: string,
-		) => {
-			const args = [
-				new BigNumber(sharesAmount).toFixed(0),
-				currencyAddress,
-			]
-			await handleWithdraw({ args, descriptionExtra: usdValue })
+const makeColumns = (
+	onChange: ReturnType<typeof handleFormInputChange>,
+	onMaxWithdraw: () => void,
+) => {
+	return [
+		{
+			title: 'Asset',
+			key: 'asset',
+			sorter: (a, b) => a.name.length - b.name.length,
+			render: (text, record) => (
+				<Row align="middle">
+					<img src={record.icon} height="36" alt="logo" />
+					<StyledText>{record.name}</StyledText>
+				</Row>
+			),
 		},
-		[handleWithdraw],
-	)
-
-	const handleSubmit = useCallback(async () => {
-		const sharesAmount = numberToDecimal(withdrawValueShares, 18)
-		await onWithdraw(
-			sharesAmount,
-			contracts?.currencies.ERC20['3crv'].contract.address,
-			withdrawValueUSD,
-		)
-		setWithdrawValueUSD('')
-	}, [contracts, onWithdraw, withdrawValueShares, withdrawValueUSD])
-
-	const { prices } = usePrices()
-
-	const withdrawTokenAmount = useMemo(() => {
-		const price = prices['3crv']
-		if (price)
-			return new BigNumber(withdrawValueUSD || 0)
-				.multipliedBy(0.999)
-				.div(price)
-		return new BigNumber(0)
-	}, [withdrawValueUSD, prices])
-
-	return (
-		<>
-			<WithdrawRow>
-				<Col xs={24} sm={8}>
-					<Title level={5}>{phrases['From'][language]}</Title>
-				</Col>
-				<Col xs={24} sm={16}>
-					<Row align="middle" gutter={14}>
-						<Col>
-							<img src={MVLT.icon} height="36" alt="logo" />
-						</Col>
-						<Col>
-							<Text>
-								{phrases['Investment Account'][language]}
-							</Text>
-						</Col>
-					</Row>
-					<Row style={{ padding: '6px 0' }}>
-						<Text type="secondary">
-							{phrases['Available'][language]}:
-							<Tooltip
-								title={
-									<>
-										{new BigNumber(deposited || 0).toFixed(
-											2,
-										) + ' MVLT'}
-									</>
-								}
-							>
-								{' $' + totalAvailableInUSD.toFixed(2)}{' '}
-								<img
-									src={info}
-									style={{ position: 'relative', top: -2 }}
-									height="15"
-									alt="Withdraw Token Breakdown"
-								/>
-							</Tooltip>
-						</Text>
-					</Row>
-					<Form.Item validateStatus={withdrawalError && 'error'}>
+		{
+			title: 'Vault Balance',
+			key: 'balance',
+			sorter: (a, b) => a.balance.minus(b.balance).toNumber(),
+			render: (text, record) => (
+				<>
+					<Value
+						value={record.balanceUSD}
+						numberPrefix="$"
+						decimals={2}
+					/>
+					<Text type="secondary">
+						{record.balance.toFixed(2)} {record.vaultCurrency}
+					</Text>
+				</>
+			),
+		},
+		{
+			title: 'Amount',
+			key: 'amount',
+			render: (text, record) => {
+				return (
+					<Form.Item
+						validateStatus={
+							new BigNumber(record.value).gt(
+								new BigNumber(record.balance),
+							) && 'error'
+						}
+						style={{ marginBottom: 0 }}
+					>
 						<Input
-							onChange={(e) =>
-								!isNaN(Number(e.target.value)) &&
-								updateWithdraw(e.target.value)
-							}
-							value={withdrawValueUSD}
+							onChange={(e) => {
+								onChange(record.tokenId, e.target.value)
+							}}
+							value={record.value}
 							min={'0'}
 							placeholder="0"
-							disabled={
-								submitting || totalAvailableInUSD.isZero()
-							}
-							suffix={'USD'}
+							disabled={record.balance.isZero()}
+							suffix={record.name}
 							onClickMax={() =>
-								updateWithdraw(totalAvailableInUSD.toString())
+								onChange(record.tokenId, record.balance || '0')
 							}
 						/>
 					</Form.Item>
-				</Col>
-			</WithdrawRow>
+				)
+			},
+		},
+	]
+}
 
-			<Divider>
-				<DividerArrow />
-			</Divider>
+const { useBreakpoint } = Grid
 
-			<WithdrawRow>
-				<Col xs={24} sm={8}>
-					<Title level={5}>{phrases['To Wallet'][language]}</Title>
-				</Col>
-				<Col xs={24} sm={16}>
-					<Row align="middle">
-						<Col span={3}>
-							<Row>
-								<img
-									src={threeCRV.icon}
-									height="36"
-									alt="logo"
-								/>
-							</Row>
-						</Col>
-						<Col span={14}>
-							<Row>
-								<Text type="secondary">
-									{t("You'll receive an estimate of")}
-								</Text>
-							</Row>
-							<Row>
-								<Value
-									value={withdrawTokenAmount.toFixed(2)}
-									numberSuffix={` 3CRV`}
-									extra={
-										'$' +
-										new BigNumber(withdrawValueUSD || 0)
-											.times(0.999)
-											.toFixed(2)
-									}
-								/>
-							</Row>
-						</Col>
-					</Row>
-					<Row style={{ margin: '10px 0' }}>
-						<Button
-							disabled={withdrawDisabled}
-							loading={submitting}
-							onClick={handleSubmit}
-						>
-							{t('Withdraw')}
-						</Button>
-					</Row>
-					<Text type="secondary">{t('Withdraw Fee')}: 0.1%</Text>
-				</Col>
-			</WithdrawRow>
+const initialCurrencyValues: CurrencyValues = reduce(
+	Currencies3Pool,
+	(prev, curr) => ({
+		...prev,
+		[curr.tokenId]: '',
+	}),
+	{},
+)
 
-			<Divider>
-				<DividerArrow />
-			</Divider>
+interface TableDataEntry extends Currency {
+	balance: BigNumber
+	balanceUSD: string
+	value: BigNumber
+	vault: string
+}
 
-			<WithdrawRow>
-				<Col xs={24} sm={8}>
-					<Title level={5}>{t('Convert')}</Title>
-				</Col>
-				<Col xs={24} sm={16}>
-					<Stable3PoolWithdraw />
-				</Col>
-			</WithdrawRow>
+/**
+ * Creates a deposit table for the savings account.
+ */
+export default function WithdrawTable() {
+	const history = useHistory()
+
+	const balances = useVaultsBalances()
+
+	const { contracts } = useContracts()
+	const { md } = useBreakpoint()
+
+	const autoStake = useVaultAutoStake()
+
+	const { call: withdraw, loading: isSubmitting } = useContractWrite({
+		contractName: 'internal.vaultHelper',
+		method: 'withdrawVault',
+		description: `Vault withdraw`,
+	})
+
+	// const contract = useMemo(
+	// 	() => contracts?.internal.yAxisMetaVault,
+	// 	[contracts],
+	// )
+
+	const currencyMap = useMemo(() => {
+		return {
+			...contracts?.currencies.ERC20,
+			...contracts?.currencies.ERC677,
+		}
+	}, [contracts])
+
+	// const calcMinTokenAmount = useCallback(
+	// 	async (amounts: string[]) => {
+	// 		const threeCrvIndex = 3 // Index from InvestingDepositCurrencies that DepositAll expects
+	// 		const defaultSlippage = 0.001 // 0.1%
+
+	// 		try {
+	// 			if (contract) {
+	// 				const params = [...amounts]
+	// 				params.splice(threeCrvIndex, 1)
+	// 				const tokensDeposit = await contract.methods
+	// 					.calc_token_amount_deposit(params)
+	// 					.call()
+	// 				const threeCrvDeposit = amounts[threeCrvIndex] || '0'
+	// 				return new BigNumber(tokensDeposit)
+	// 					.plus(threeCrvDeposit)
+	// 					.times(1 - defaultSlippage)
+	// 					.integerValue(BigNumber.ROUND_DOWN)
+	// 					.toFixed()
+	// 			}
+	// 		} catch (e) {}
+	// 		return '0'
+	// 	},
+	// 	[contract],
+	// )
+
+	const { prices } = usePrices()
+	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
+		initialCurrencyValues,
+	)
+
+	// const {
+	// 	metavault: {
+	// 		deposit: allowance3crv,
+	// 		loadingDeposit: loading3crvAllowance,
+	// 	},
+	// } = useApprovals()
+
+	// TODO: this
+	// const disabled = useMemo(
+	// 	() => computeInsufficientBalance(currencyValues, balances),
+	// 	[currencyValues, balances],
+	// )
+
+	const totalWithdrawing = useMemo(
+		() => computeTotalDepositing(Currencies3Pool, currencyValues, prices),
+		[currencyValues, prices],
+	)
+
+	const handleSubmit = useCallback(async () => {
+		// const args = Currencies3Pool.reduce(
+		// 	(previous, current) => {
+		// 		const _v = currencyValues[current.tokenId]
+		// 		if (_v) {
+		// 			previous[0].push(
+		// 				currencyMap[current.tokenId].contract.address,
+		// 			)
+		// 			previous[1].push()
+		// 		}
+		// 		return previous
+		// 	},
+		// 	[[], []],
+		// )
+		for (const [currency, value] of Object.entries(currencyValues)) {
+			console.log([
+				contracts.vaults.stables.vault.address,
+				currencyMap[currency].contract.address,
+				numberToDecimal(value, 18),
+			])
+			if (value) {
+				await withdraw({
+					args: [
+						contracts.vaults.stables.vault.address,
+						currencyMap[currency].contract.address,
+						numberToDecimal(value, 18),
+					],
+					descriptionExtra: totalWithdrawing,
+				})
+			}
+		}
+		setCurrencyValues(initialCurrencyValues)
+	}, [contracts, currencyValues, withdraw, totalWithdrawing, currencyMap])
+
+	const languages = useContext(LanguageContext)
+	const language = languages.state.selected
+
+	const data = useMemo(() => {
+		return Currencies3Pool.map<TableDataEntry>((currency) => {
+			const balance = balances['stables']
+			return {
+				...currency,
+				vault: 'stables',
+				vaultCurrency: autoStake ? 'CV:S-G' : 'CV:S',
+				balance: new BigNumber(balance.totalToken.toString() || '0'),
+				balanceUSD: balance.usd.toFixed(2),
+				value: currencyValues
+					? new BigNumber(
+							currencyValues[currency.name.toLowerCase()] || 0,
+					  )
+					: new BigNumber(0),
+				key: currency.tokenId,
+			}
+		})
+	}, [balances, currencyValues, autoStake])
+
+	const columns = useMemo(
+		() => makeColumns(handleFormInputChange(setCurrencyValues), () => {}),
+		[],
+	)
+
+	return (
+		<>
+			<Table
+				columns={columns}
+				dataSource={data}
+				pagination={false}
+				onRow={(record, rowIndex) => {
+					return {
+						// onClick: (event) => {
+						// 	history.push(
+						// 		`/vault/${(record as TableDataEntry).vault}`,
+						// 	)
+						// },
+						// click row
+						onDoubleClick: (event) => {}, // double click row
+						onContextMenu: (event) => {}, // right button click row
+						onMouseEnter: (event) => {}, // mouse enter row
+						onMouseLeave: (event) => {}, // mouse leave row
+					}
+				}}
+				components={{
+					body: {
+						row: ({ children, className, ...props }) => {
+							const key = props['data-row-key']
+							console.log(key)
+							return (
+								<tr
+									key={key}
+									className={className}
+									style={{
+										transform: 'translateY(0)',
+									}}
+								>
+									<AutoStakeCover
+										contractName={`vaults.stables.gaugeToken.contract`}
+										approvee={
+											contracts?.vaults.stables.gauge
+												.address
+										}
+										hidden={
+											false
+											// balance.eq(0)
+										}
+										noWrapper
+									>
+										<AutoStakeCover
+											contractName={`vaults.stables.gaugeToken.contract`}
+											approvee={
+												contracts?.internal.vaultHelper
+													.address
+											}
+											hidden={
+												false
+												// balance.eq(0)
+											}
+											noWrapper
+										>
+											{children}
+										</AutoStakeCover>
+									</AutoStakeCover>
+								</tr>
+							)
+						},
+					},
+				}}
+			/>
+			<div
+				style={
+					md
+						? { padding: '2% 30%' }
+						: { padding: '0 10%', margin: '10px' }
+				}
+			>
+				<Text type="secondary">{phrases['Total'][language]}</Text>
+				<Title level={3} style={{ margin: '0 0 10px 0' }}>
+					${totalWithdrawing}
+				</Title>
+				<Button
+					// disabled={disabled}
+					loading={isSubmitting}
+					onClick={handleSubmit}
+					style={{ fontSize: '18px' }}
+				>
+					{phrases['Withdraw'][language]}
+				</Button>
+				<Text
+					type="secondary"
+					style={{ marginTop: '10px', display: 'block' }}
+				>
+					{phrases['Withdraw Fee'][language]}: 0.1%
+				</Text>
+			</div>
 		</>
 	)
 }
-
-const WithdrawRow = styled(Row)`
-	margin: 28px 22px;
-	position: relative;
-`
-
-const DividerArrow = styled(ArrowDownOutlined)`
-	font-size: 24px;
-	background: ${(props) => props.theme.secondary.background};
-	border: 8px solid ${(props) => props.theme.secondary.background};
-	color: ${(props) => props.theme.primary.font};
-	svg {
-		opacity: 0.3;
-	}
-`

@@ -55,6 +55,7 @@ const PairStatsCard: React.FC<Props> = ({ pool }) => {
 						/>
 					</>
 				}
+				last
 			/>
 		</DetailOverviewCard>
 	)

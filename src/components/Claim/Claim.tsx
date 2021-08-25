@@ -1,35 +1,41 @@
-import { useState } from 'react'
+import { useMemo } from 'react'
 import { Row, Col } from 'antd'
 import { CardRow } from '../../components/ExpandableSidePanel'
 import Value from '../../components/Value'
 import Button from '../../components/Button'
-import RewardAPYTooltip from '../../components/Tooltip/Tooltips/RewardAPYTooltip'
 import useContractWrite from '../../hooks/useContractWrite'
 import { useSingleCallResultByName } from '../../state/onchain/hooks'
 import { getBalanceNumber } from '../../utils/formatBalance'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import BigNumber from 'bignumber.js'
-import { TRewardsContracts } from '../../constants/type'
+import { currentConfig } from '../../constants/configs'
+import { TVaults, TRewardsContracts } from '../../constants/type'
 
-type Props = { rewardsContract: TRewardsContracts }
+type Props = { vault?: TVaults; rewardsContract?: TRewardsContracts }
 
-const Claim: React.FC<Props> = ({ rewardsContract }) => {
-	const { account } = useWeb3Provider()
+const Claim: React.FC<Props> = ({ vault, rewardsContract }) => {
+	const { account, chainId } = useWeb3Provider()
+
+	const vaults = useMemo(() => currentConfig(chainId).vaults, [chainId])
+
+	if (!vault && !rewardsContract)
+		throw new Error(
+			'Claim button must have either a vault or rewards type.',
+		)
 
 	const { call: handleClaim, loading: loadingClaim } = useContractWrite({
-		contractName: `rewards.${rewardsContract}`,
-		method: 'getReward',
+		contractName: vault ? `vaults.${vault}` : `rewards.${rewardsContract}`,
+		method: vault ? 'claim_rewards' : 'getReward',
 		description: `claim YAXIS`,
 	})
 
-	const {
-		loading: loadingClaimable,
-		result: claimable,
-	} = useSingleCallResultByName(`rewards.${rewardsContract}`, 'earned', [
-		account,
-	])
+	const { loading: loadingClaimable, result: claimable } =
+		useSingleCallResultByName(
+			vault ? `vaults.${vault}` : `rewards.${rewardsContract}`,
+			vault ? 'claimable_reward' : 'earned',
+			vault ? [account, vaults.stables.vault] : [account],
+		)
 
-	const [claimVisible, setClaimVisible] = useState(false)
 	return (
 		<CardRow
 			main="Rewards"
@@ -45,25 +51,19 @@ const Claim: React.FC<Props> = ({ rewardsContract }) => {
 			rightContent={
 				<Row justify="center">
 					<Col xs={14} sm={14} md={14}>
-						<RewardAPYTooltip visible={claimVisible} title="">
-							<Button
-								disabled={
-									loadingClaimable ||
-									new BigNumber(
-										claimable?.toString() || 0,
-									).isZero()
-								}
-								onClick={() =>
-									handleClaim({
-										cb: () => setClaimVisible(true),
-									})
-								}
-								loading={loadingClaim}
-								height={'40px'}
-							>
-								Claim
-							</Button>
-						</RewardAPYTooltip>
+						<Button
+							disabled={
+								loadingClaimable ||
+								new BigNumber(
+									claimable?.toString() || 0,
+								).isZero()
+							}
+							onClick={() => handleClaim()}
+							loading={loadingClaim}
+							height={'40px'}
+						>
+							Claim
+						</Button>
 					</Col>
 				</Row>
 			}

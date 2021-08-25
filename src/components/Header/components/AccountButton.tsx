@@ -14,7 +14,6 @@ import {
 } from '../../../connectors'
 import { useWeb3React } from '@web3-react/core'
 import { useClearPendingTransactions } from '../../../state/transactions/hooks'
-import ThemeToggle from '../../ThemeToggle'
 
 interface AccountButtonProps {}
 
@@ -54,9 +53,6 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 									friendlyNetworkName={friendlyNetworkName}
 									mobile={false}
 								/>
-								<Row align="middle" justify="center">
-									<ThemeToggle />
-								</Row>
 
 								<StyledText>
 									<a

@@ -13,6 +13,8 @@ type Props = {
 	contractName: string
 	approvee: string
 	hidden?: boolean
+	noWrapper?: boolean
+	autoStake?: string
 }
 
 const ApprovalCover: React.FC<Props> = ({
@@ -20,16 +22,17 @@ const ApprovalCover: React.FC<Props> = ({
 	contractName,
 	approvee,
 	hidden,
+	noWrapper,
+	autoStake,
 }) => {
 	const { account } = useWeb3Provider()
 
-	const {
-		loading: loadingAllowance,
-		result: allowance,
-	} = useSingleCallResultByName(contractName, 'allowance', [
-		account,
-		approvee,
-	])
+	const { loading: loadingAllowance, result: allowance } =
+		useSingleCallResultByName(contractName, 'allowance', [
+			account,
+			approvee,
+		])
+
 	const { call: handleApprove, loading: loadingApprove } = useContractWrite({
 		contractName,
 		method: 'approve',
@@ -75,28 +78,31 @@ const ApprovalCover: React.FC<Props> = ({
 		hidden,
 	])
 
+	if (noWrapper)
+		return (
+			<>
+				{children}
+				{cover}
+			</>
+		)
+
 	return (
-		<CoverWrapper>
-			{cover}
+		<div style={{ position: 'relative' }}>
 			{children}
-		</CoverWrapper>
+			{cover}
+		</div>
 	)
 }
 
 export default ApprovalCover
 
-const CoverWrapper = styled(Col)`
-	position: relative;
-	height: 100%;
-`
 const Cover = styled(Row)<any>`
 	width: 100%;
 	height: 100%;
-	border-radius: 4px;
 	position: absolute;
 	top: 0;
 	left: 0;
-	background-color: rgb(128, 128, 128, 0.3);
+	background-color: rgb(128, 128, 128, 0.7);
 	z-index: 2;
 	text-align: center;
 	visibility: ${(props) =>

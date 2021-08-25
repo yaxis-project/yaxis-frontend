@@ -9,7 +9,7 @@ import Typography from '../../../components/Typography'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import Value from '../../../components/Value'
 import { CardRow } from '../../../components/ExpandableSidePanel'
-import Claim from '../../../components/Claim'
+import ClaimAll from '../../../components/ClaimAll'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
 
@@ -62,8 +62,8 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 
 	return (
 		<DetailOverviewCard title={t('Account Overview')}>
-			<Claim rewardsContract="MetaVault" />
-			<CardRow
+			<ClaimAll />
+			{/* <CardRow
 				main={
 					<Tooltip
 						title={
@@ -86,7 +86,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 							</>
 						}
 					>
-						<Text type="secondary">Total APR </Text>
+						<Text type="secondary">Average APR </Text>
 						<StyledInfoIcon alt="YAXIS Supply Rewards" />
 					</Tooltip>
 				}
@@ -125,7 +125,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 									</>
 								}
 							>
-								<Text type="secondary">Total APY </Text>
+								<Text type="secondary">Average APY </Text>
 								<StyledInfoIcon alt="YAXIS Supply Rewards" />
 							</Tooltip>
 						</Row>
@@ -138,12 +138,13 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 						</Row>
 					</>
 				}
-			/>
+			/> */}
 			<APYCalculator
 				APR={totalAPR.toNumber()}
 				balance={new BigNumber(totalUSDBalance)}
 				loading={balanceLoading}
 				page={'metavault'}
+				last
 			/>
 		</DetailOverviewCard>
 	)

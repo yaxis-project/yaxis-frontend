@@ -65,7 +65,6 @@ export default function AccountOverviewCard(props: AccountOverviewCardProps) {
 						<Title
 							style={{
 								margin: 0,
-								marginLeft: 'auto',
 								fontSize: '22px',
 							}}
 							level={5}

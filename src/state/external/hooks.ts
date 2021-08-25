@@ -131,6 +131,7 @@ export function useCurveRewardsAPR() {
 			} catch (e) {
 				console.error('[getYAxisAPY]', e)
 			}
+		console.log(apys)
 		return apys
 	}, [btc, crv, decodedRates, decodedVirtualPrices, weights, decodedWeights])
 }

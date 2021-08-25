@@ -1,89 +1,66 @@
 import React, { useContext } from 'react'
-import styled from 'styled-components'
 import Page from '../../components/Page/Page'
-import {
-	Row,
-	// , Col
-} from 'antd'
+import { Row } from 'antd'
 import { LanguageContext } from '../../contexts/Language'
 import phrases from './translations'
 import Tabs from '../../components/Tabs'
 import Card from '../../components/Card'
-// import GovernanceCard from './components/GovernanceCard'
-// import GovernanceOverviewCard from './components/GovernanceOverviewCard'
-import './index.less'
+import { Lock, Offchain, Onchain } from './components'
+import { useLocation, useHistory, Redirect } from 'react-router-dom'
+import { useVotingPower } from '../../state/wallet/hooks'
 
 const { TabPane } = Tabs
 
-const Savings: React.FC = () => {
+const DEFAULT_TAB = '#lock'
+
+const TABS = {
+	'#lock': '#lock',
+	'#offchain': '#offchain',
+	'#onchain': '#onchain',
+}
+
+const Governance: React.FC = () => {
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
+
+	const history = useHistory()
+	const location = useLocation()
+
+	const votingPower = useVotingPower()
+
+	if (location.hash && !TABS[location.hash]) return <Redirect to="/vault" />
+
 	return (
-		<div className="governance-view">
-			<Page
-				loading={false}
-				mainTitle={phrases['Governance'][language]}
-				secondaryText={phrases['Community Voting'][language]}
-				// TODO: hook this up to veYAXIS
-				value="-"
-				valueInfo={phrases['Voting Power'][language]}
-			>
-				{/* <Col span={16}>
-						<GovernanceCard />
-					</Col>
-					<Col span={8}>
-						<GovernanceOverviewCard />
-					</Col> */}
-				<Row justify="center" style={{ marginTop: '5%' }}>
-					<Card style={{ width: '50%' }}>
-						<Tabs defaultActiveKey="1" centered>
-							<TabPane tab="Off-chain" key="1">
-								<Row
-									style={{ paddingTop: '5%' }}
-									justify="center"
-								>
-									<StyledLinkButton
-										target="_blank"
-										href="https://gov.yaxis.io/#/"
-										rel="noopener noreferrer"
-									>
-										<span
-											style={{
-												position: 'relative',
-												fontSize: '20px',
-												top: '3px',
-											}}
-										>
-											⚡️
-										</span>
-										<span style={{ color: 'black' }}>
-											Snapshot
-										</span>
-									</StyledLinkButton>
-								</Row>
-							</TabPane>
-							<TabPane tab="On-chain" key="2" disabled></TabPane>
-						</Tabs>
-					</Card>
-				</Row>
-			</Page>
-		</div>
+		<Page
+			loading={false}
+			mainTitle={phrases['Governance'][language]}
+			secondaryText={phrases['Community Voting'][language]}
+			value={votingPower.toString()}
+			valueInfo={phrases['Voting Power'][language]}
+		>
+			<Row justify="center" style={{ marginTop: '5%' }}>
+				<Card style={{ width: '60%' }}>
+					<Tabs
+						activeKey={location.hash || DEFAULT_TAB}
+						onTabClick={(key) =>
+							history.push(`${location.pathname}${key}`)
+						}
+						centered
+					>
+						<TabPane tab="Boost" key="#lock">
+							<Lock />
+						</TabPane>
+						<TabPane tab="Reward Distribution" key="#onchain">
+							<Onchain />
+						</TabPane>
+						<TabPane tab="Snapshot" key="#offchain">
+							<Offchain />
+						</TabPane>
+					</Tabs>
+				</Card>
+			</Row>
+		</Page>
 	)
 }
 
-export default Savings
-
-const StyledLinkButton = styled.a`
-	padding: 10px ${(props) => props.theme.spacing[3]}px;
-	text-decoration: none;
-	font-size: 16px;
-	width: 200px;
-	border: 1px solid grey;
-	border-radius: 18px;
-	text-align: center;
-	background: ${(props) => props.theme.colors.aliceBlue};
-
-	&:hover {
-		border: 1px solid ${(props) => props.theme.primary.hover};
-	}
-`
+export default Governance

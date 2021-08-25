@@ -2,17 +2,13 @@ import './index.less'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { HomePage } from '../../components/Page'
-import YaxisPriceGraph from '../../components/YaxisPriceGraph'
+import YaxisPriceGraph from '../../components/Graph/YaxisPriceGraph'
 import AccountOverviewCard from './components/AccountOverviewCard'
 import HomeOverviewCard from './components/HomeOverviewCard'
-import AdvancedNavigation from './components/AdvancedNavigation'
+import LPAccountOverview from './components/LPAccountOverview'
 import HomeExpandableOverview from './components/HomeExpandableOverview'
 import { Row, Col, Grid } from 'antd'
-import {
-	useStakedBalances,
-	useAccountMetaVaultData,
-} from '../../state/wallet/hooks'
-import { useMetaVaultData } from '../../state/internal/hooks'
+import { useStakedBalances, useVaultsBalances } from '../../state/wallet/hooks'
 import { usePrices } from '../../state/prices/hooks'
 import { formatBN } from '../../utils/number'
 
@@ -32,9 +28,9 @@ const Home: React.FC = () => {
 				<Row gutter={lg ? 16 : 0}>
 					<Col md={24} lg={16} className={'home-left'}>
 						<YaxisPriceGraph />
-						<InvestmentAccountOverview />
-						<SavingsAccountOverview />
-						<AdvancedNavigation />
+						<VaultAccountOverview />
+						<LPAccountOverview />
+						<GovernanceAccountOverview />
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<HomeOverviewCard />
@@ -49,8 +45,10 @@ const Home: React.FC = () => {
 /**
  * Lead data for the user's account overview.
  */
-const SavingsAccountOverview: React.FC = () => {
+const GovernanceAccountOverview: React.FC = () => {
 	const { Yaxis } = useStakedBalances()
+	// TODO
+
 	const {
 		prices: { yaxis },
 	} = usePrices()
@@ -61,7 +59,7 @@ const SavingsAccountOverview: React.FC = () => {
 	return (
 		<AccountOverviewCard
 			loading={false}
-			mainTitle={'Staking Account'}
+			mainTitle={'Governance Account'}
 			secondaryText={'YAXIS Staking'}
 			value={balanceUSD}
 		/>
@@ -71,22 +69,17 @@ const SavingsAccountOverview: React.FC = () => {
 /**
  * Lead data for the user's account overview.
  */
-const InvestmentAccountOverview: React.FC = () => {
-	const { MetaVault } = useStakedBalances()
-	const { deposited } = useAccountMetaVaultData()
-	const { mvltPrice } = useMetaVaultData()
-
-	const balanceUSD = useMemo(() => {
-		const totalMVLT = MetaVault.amount.plus(deposited)
-		return '$' + formatBN(totalMVLT.multipliedBy(mvltPrice))
-	}, [MetaVault, deposited, mvltPrice])
+const VaultAccountOverview: React.FC = () => {
+	const {
+		total: { usd: balanceUSD },
+	} = useVaultsBalances()
 
 	return (
 		<AccountOverviewCard
 			loading={false}
 			mainTitle={'Vault Account'}
 			secondaryText={'Canonical Vaults'}
-			value={balanceUSD}
+			value={'$' + formatBN(balanceUSD)}
 		/>
 	)
 }

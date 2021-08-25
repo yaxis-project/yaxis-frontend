@@ -79,26 +79,6 @@ const ErrorText = styled.div`
 	font-weight: 600;
 	text-align: center;
 `
-<<<<<<< HEAD:src/components/Modals/Modal/Wallet/Wallet.tsx
-=======
-
-const CloseButton = styled(Button)`
-	position: absolute;
-	top: 5%;
-	right: 5%;
-	border: none;
-`
-const ModalTitle = styled.div`
-	align-items: center;
-	color: ${(props) => props.theme.colors.grey[600]};
-	display: flex;
-	font-size: 18px;
-	font-weight: 700;
-	height: ${(props) => props.theme.topBarSize}px;
-	justify-content: center;
-`
-
->>>>>>> 🌚 Dark Mode 🌚:src/components/WalletProviderModal/WalletProviderModal.tsx
 const ModalContent = styled.div`
 	padding: ${(props) => props.theme.spacing[4]}px;
 	@media (max-width: ${(props) => props.theme.breakpoints.mobile}px) {

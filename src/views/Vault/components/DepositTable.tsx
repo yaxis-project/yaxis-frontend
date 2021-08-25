@@ -1,18 +1,17 @@
 import { useState, useContext, useMemo, useCallback } from 'react'
-import { InvestingDepositCurrencies } from '../../../constants/currencies'
-import DepositAssetRow from './DepositAssetRow'
-import Stable3PoolDeposit from './Stable3PoolDeposit'
-import { useAllTokenBalances, useApprovals } from '../../../state/wallet/hooks'
+import { Currencies3Pool, Currency } from '../../../constants/currencies'
+import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import { reduce } from 'lodash'
-import { Row, Col, Grid } from 'antd'
+import { Row, Grid, Form } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { useContracts } from '../../../contexts/Contracts'
 import Button from '../../../components/Button'
+import Table from '../../../components/Table'
 import Typography from '../../../components/Typography'
 import {
 	CurrencyValues,
@@ -20,14 +19,105 @@ import {
 	computeInsufficientBalance,
 	computeTotalDepositing,
 } from '../utils'
-import { MAX_UINT } from '../../../utils/number'
-import { BigNumber } from 'bignumber.js'
+import BigNumber from 'bignumber.js'
+import Value from '../../../components/Value'
+import Input from '../../../components/Input'
+import { useHistory } from 'react-router-dom'
+import { AutoStakeCover } from '../../../components/ApprovalCover/AutoStakeCover'
 
-const { Title, Text } = Typography
+const { Text, Title } = Typography
+
+const StyledText = styled(Text)`
+	margin-left: 16px;
+	font-size: 18px;
+	line-height: 1em;
+`
+
+const makeColumns = (onChange: ReturnType<typeof handleFormInputChange>) => {
+	return [
+		{
+			title: 'Asset',
+			key: 'asset',
+			sorter: (a, b) => a.name.length - b.name.length,
+			render: (text, record) => (
+				<Row align="middle">
+					<img src={record.icon} height="36" alt="logo" />
+					<StyledText>{record.name}</StyledText>
+				</Row>
+			),
+		},
+		{
+			title: 'Wallet Balance',
+			key: 'balance',
+			sorter: (a, b) => a.balance.minus(b.balance).toNumber(),
+			render: (text, record) => (
+				<>
+					<Value
+						value={record.balanceUSD}
+						numberPrefix="$"
+						decimals={2}
+					/>
+					<Text type="secondary">
+						{record.balance.toFixed(2)} {record.name}
+					</Text>
+				</>
+			),
+		},
+		{
+			title: 'Amount',
+			key: 'amount',
+			render: (text, record) => {
+				return (
+					<Form.Item
+						validateStatus={
+							new BigNumber(record.value).gt(
+								new BigNumber(record.balance),
+							) && 'error'
+						}
+						style={{ marginBottom: 0 }}
+					>
+						<Input
+							onChange={(e) => {
+								onChange(record.tokenId, e.target.value)
+							}}
+							value={record.value}
+							min={'0'}
+							placeholder="0"
+							disabled={record.balance.isZero()}
+							suffix={record.name}
+							onClickMax={() =>
+								onChange(record.tokenId, record.balance || '0')
+							}
+						/>
+					</Form.Item>
+				)
+			},
+		},
+		{
+			title: 'APY',
+			key: 'apy',
+			sorter: (a, b) => a.name.length - b.name.length,
+			render: (text, record) => (
+				<>
+					<Row style={{ fontWeight: 'bolder' }} justify="center">
+						<Text type="secondary">{record.minApy}%</Text>
+					</Row>
+					<Row justify="center">
+						<Text type="secondary">to</Text>
+					</Row>
+					<Row style={{ fontWeight: 'bolder' }} justify="center">
+						<Text type="secondary">{record.maxApy}%</Text>
+					</Row>
+				</>
+			),
+		},
+	]
+}
+
 const { useBreakpoint } = Grid
 
 const initialCurrencyValues: CurrencyValues = reduce(
-	InvestingDepositCurrencies,
+	Currencies3Pool,
 	(prev, curr) => ({
 		...prev,
 		[curr.tokenId]: '',
@@ -35,165 +125,196 @@ const initialCurrencyValues: CurrencyValues = reduce(
 	{},
 )
 
+interface TableDataEntry extends Currency {
+	balance: BigNumber
+	balanceUSD: string
+	value: BigNumber
+	vault: string
+}
+
 /**
  * Creates a deposit table for the savings account.
  */
 export default function DepositTable() {
+	const history = useHistory()
+
+	const [balances] = useAllTokenBalances()
+
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
 
 	const { call: handleDepositAll, loading: isSubmitting } = useContractWrite({
-		contractName: 'internal.yAxisMetaVault',
-		method: 'depositAll',
-		description: `MetaVault deposit`,
+		contractName: 'internal.vaultHelper',
+		method: 'depositMultipleVault',
+		description: `Vault deposit`,
 	})
 
-	const contract = useMemo(
-		() => contracts?.internal.yAxisMetaVault,
-		[contracts],
-	)
-
-	const calcMinTokenAmount = useCallback(
-		async (amounts: string[]) => {
-			const threeCrvIndex = 3 // Index from InvestingDepositCurrencies that DepositAll expects
-			const defaultSlippage = 0.001 // 0.1%
-
-			try {
-				if (contract) {
-					const params = [...amounts]
-					params.splice(threeCrvIndex, 1)
-					const tokensDeposit = await contract.methods
-						.calc_token_amount_deposit(params)
-						.call()
-					const threeCrvDeposit = amounts[threeCrvIndex] || '0'
-					return new BigNumber(tokensDeposit)
-						.plus(threeCrvDeposit)
-						.times(1 - defaultSlippage)
-						.integerValue(BigNumber.ROUND_DOWN)
-						.toFixed()
-				}
-			} catch (e) {}
-			return '0'
-		},
-		[contract],
-	)
-
-	const onDepositAll = useCallback(
-		async (amounts: string[], usdValue: string) => {
-			const minMintAmount = await calcMinTokenAmount(amounts)
-			const args = [amounts, minMintAmount, false]
-			handleDepositAll({ args, descriptionExtra: usdValue })
-		},
-		[calcMinTokenAmount, handleDepositAll],
-	)
+	const currencyMap = useMemo(() => {
+		return {
+			...contracts?.currencies.ERC20,
+			...contracts?.currencies.ERC677,
+		}
+	}, [contracts])
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		initialCurrencyValues,
 	)
 
-	const [tokenBalances] = useAllTokenBalances()
-
-	const {
-		metavault: {
-			deposit: allowance3crv,
-			loadingDeposit: loading3crvAllowance,
-		},
-	} = useApprovals()
-
 	const disabled = useMemo(
-		() =>
-			loading3crvAllowance ||
-			allowance3crv.lt(MAX_UINT) ||
-			computeInsufficientBalance(currencyValues, tokenBalances),
-		[currencyValues, tokenBalances, allowance3crv, loading3crvAllowance],
+		() => computeInsufficientBalance(currencyValues, balances),
+		[currencyValues, balances],
 	)
 
 	const totalDepositing = useMemo(
-		() =>
-			computeTotalDepositing(
-				InvestingDepositCurrencies,
-				currencyValues,
-				prices,
-			),
+		() => computeTotalDepositing(Currencies3Pool, currencyValues, prices),
 		[currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const amounts = InvestingDepositCurrencies.map((c) => {
-			const _v = currencyValues[c.tokenId]
-			if (_v) {
-				return numberToDecimal(_v, c.decimals)
-			}
-			return '0'
-		})
-		await onDepositAll(amounts, totalDepositing)
-		setCurrencyValues(initialCurrencyValues)
-	}, [currencyValues, onDepositAll, totalDepositing])
+		const args = Currencies3Pool.reduce<[string, string[], string[]]>(
+			(previous, current) => {
+				const _v = currencyValues[current.tokenId]
+				if (_v) {
+					previous[1].push(
+						currencyMap[current.tokenId].contract.address,
+					)
+					previous[2].push(numberToDecimal(_v, current.decimals))
+				}
+				return previous
+			},
+			[contracts.vaults.stables.vault.address, [], []],
+		)
+		if (args[1].length > 0) {
+			await handleDepositAll({ args, descriptionExtra: totalDepositing })
+			setCurrencyValues(initialCurrencyValues)
+		}
+	}, [
+		contracts,
+		currencyValues,
+		handleDepositAll,
+		totalDepositing,
+		currencyMap,
+	])
 
 	const languages = useContext(LanguageContext)
 	const language = languages.state.selected
 
+	const data = useMemo(() => {
+		return Currencies3Pool.map<TableDataEntry>((currency) => {
+			const balance =
+				balances[currency.name.toLowerCase()]?.amount ||
+				new BigNumber(0)
+			return {
+				...currency,
+				vault: 'stables',
+				balance,
+				balanceUSD: new BigNumber(prices[currency.priceMapKey])
+					.times(balance)
+					.toFixed(2),
+				value: currencyValues
+					? new BigNumber(
+							currencyValues[currency.name.toLowerCase()] || 0,
+					  )
+					: new BigNumber(0),
+				key: currency.tokenId,
+				//  TODO
+				minApy: 0,
+				maxApy: 0,
+			}
+		})
+	}, [prices, balances, currencyValues])
+
+	const columns = useMemo(
+		() => makeColumns(handleFormInputChange(setCurrencyValues)),
+		[],
+	)
+
 	return (
-		<div className="deposit-table">
-			<HeaderRow className="deposit-asset-header-row">
-				<Col xs={6} sm={6} md={5}>
-					<Text type="secondary">{phrases['Asset'][language]}</Text>
-				</Col>
-				<Col xs={8} sm={8} md={7}>
-					<Text type="secondary">
-						{phrases['Wallet Balance'][language]}
-					</Text>
-				</Col>
-				<StyledCol xs={10} sm={10} md={12}>
-					<Text type="secondary">{phrases['Amount'][language]}</Text>
-				</StyledCol>
-			</HeaderRow>
-			<Stable3PoolDeposit
-				set3crvValue={handleFormInputChange(setCurrencyValues)}
-				value3crv={currencyValues}
+		<>
+			<Table
+				components={{
+					body: {
+						row: ({ children, className, ...props }) => {
+							const key = props['data-row-key']
+							return (
+								<tr
+									key={key}
+									className={className}
+									style={{
+										transform: 'translateY(0)',
+									}}
+								>
+									<AutoStakeCover
+										contractName={`currencies.ERC20.${key}.contract`}
+										approvee={
+											contracts?.vaults.stables.vault
+												.address
+										}
+										hidden={false}
+										noWrapper
+									>
+										<AutoStakeCover
+											contractName={`currencies.ERC20.${key}.contract`}
+											approvee={
+												contracts?.internal.vaultHelper
+													.address
+											}
+											hidden={false}
+											noWrapper
+										>
+											{children}
+										</AutoStakeCover>
+									</AutoStakeCover>
+								</tr>
+							)
+						},
+					},
+				}}
+				columns={columns}
+				dataSource={data}
+				pagination={false}
+				onRow={(record, rowIndex) => {
+					return {
+						// onClick: (event) => {
+						// 	history.push(
+						// 		`/vault/${(record as TableDataEntry).vault}`,
+						// 	)
+						// },
+						// click row
+						onDoubleClick: (event) => {}, // double click row
+						onContextMenu: (event) => {}, // right button click row
+						onMouseEnter: (event) => {}, // mouse enter row
+						onMouseLeave: (event) => {}, // mouse leave row
+					}
+				}}
 			/>
-			{[InvestingDepositCurrencies[3]].map((currency) => (
-				<DepositAssetRow
-					key={currency.name}
-					currency={currency}
-					onChange={handleFormInputChange(setCurrencyValues)}
-					value={currencyValues[currency.tokenId]}
-					containerStyle={{ borderTop: '1px solid #eceff1' }}
-					contractName={`currencies.ERC20.3crv.contract`}
-					approvee={contracts?.internal.yAxisMetaVault.address}
-				/>
-			))}
-			<Row className="total" style={md ? {} : { padding: '0 10%' }}>
-				<Col offset={md ? 12 : 0} xs={24} sm={24} md={11}>
-					<Text type="secondary">{phrases['Total'][language]}</Text>
-					<Title level={3}>${totalDepositing}</Title>
-					<Button
-						disabled={disabled}
-						loading={isSubmitting}
-						onClick={handleSubmit}
-						style={{ fontSize: '18px' }}
-					>
-						{phrases['Deposit'][language]}
-					</Button>
-					<Text
-						type="secondary"
-						style={{ marginTop: '10px', display: 'block' }}
-					>
-						{phrases['Withdraw Fee'][language]}: 0.1%
-					</Text>
-				</Col>
-			</Row>
-		</div>
+			<div
+				style={
+					md
+						? { padding: '2% 30%' }
+						: { padding: '0 10%', margin: '10px' }
+				}
+			>
+				<Text type="secondary">{phrases['Total'][language]}</Text>
+				<Title level={3} style={{ margin: '0 0 10px 0' }}>
+					${totalDepositing}
+				</Title>
+				<Button
+					disabled={disabled}
+					loading={isSubmitting}
+					onClick={handleSubmit}
+					style={{ fontSize: '18px' }}
+				>
+					{phrases['Deposit'][language]}
+				</Button>
+				<Text
+					type="secondary"
+					style={{ marginTop: '10px', display: 'block' }}
+				>
+					{phrases['Withdraw Fee'][language]}: 0.1%
+				</Text>
+			</div>
+		</>
 	)
 }
-
-const HeaderRow = styled(Row)`
-	margin-top: 10px;
-`
-
-const StyledCol = styled(Col)`
-	@media only screen and (max-width: 400px) {
-		padding-left: 16px;
-	}
-`

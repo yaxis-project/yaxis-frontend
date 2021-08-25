@@ -8,6 +8,8 @@ import {
 	DetailOverviewCard,
 	DetailOverviewCardRow,
 } from '../../../components/DetailOverviewCard'
+import { CardRow } from '../../../components/ExpandableSidePanel'
+
 import Value from '../../../components/Value'
 import { useReturns } from '../../../state/wallet/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
@@ -53,68 +55,113 @@ export default function HomeOverviewCard() {
 
 	return (
 		<DetailOverviewCard title={t('Your Lifetime Earnings')}>
-			{/* <DetailOverviewCardRow inline>
-				<Text>
-					<strong>Total</strong>
-				</Text>
-				<Col>
-					<Value
-						numberPrefix="$"
-						value={totalUSD.toNumber()}
-						decimals={2}
-					/>
-				</Col>
-			</DetailOverviewCardRow>
-			<DetailOverviewCardRow inline>
-				<StyledText>MetaVault Account</StyledText>
-				<Col>
-					<Value
-						numberPrefix="$"
-						value={metaVaultUSD.toNumber()}
-						decimals={2}
-					/>
-				</Col>
-			</DetailOverviewCardRow> */}
-			<DetailOverviewCardRow inline>
-				<StyledText>
-					Rewards Earned
-					<Tooltip
-						title={
-							<>
-								<div
-									style={{
-										fontSize: '16px',
-										fontWeight: 700,
-									}}
-								>
-									Your YAXIS rewards:
-								</div>
-								<TooltipRow
-									main="Vault rewards"
-									value={metaVault.toNumber()}
-								/>
-								<TooltipRow
-									main="Governance (YAXIS) rewards"
-									value={governance.toNumber()}
-								/>
-								<TooltipRow
-									main="Liquidity Pool token rewards"
-									value={lp.toNumber()}
-								/>
-							</>
-						}
-					>
-						<StyledInfoIcon alt="YAXIS Rewards" />
-					</Tooltip>
-				</StyledText>
-				<Col>
-					<Value
-						numberPrefix="$"
-						value={rewardsUSD.toNumber()}
-						decimals={2}
-					/>
-				</Col>
-			</DetailOverviewCardRow>
+			<CardRow
+				main={
+					<StyledText>
+						Interest Earned
+						<Tooltip
+							title={
+								<>
+									<div
+										style={{
+											fontSize: '16px',
+											fontWeight: 700,
+										}}
+									>
+										Your YAXIS rewards:
+									</div>
+									<TooltipRow
+										main="Vault rewards"
+										value={metaVault.toNumber()}
+									/>
+									<TooltipRow
+										main="Governance (YAXIS) rewards"
+										value={governance.toNumber()}
+									/>
+									<TooltipRow
+										main="Liquidity Pool token rewards"
+										value={lp.toNumber()}
+									/>
+								</>
+							}
+						>
+							<StyledInfoIcon alt="YAXIS Rewards" />
+						</Tooltip>
+					</StyledText>
+				}
+				secondary={null}
+				rightContent={
+					<Col>
+						<Value
+							numberPrefix="$"
+							value={
+								0
+								// rewardsUSD.toNumber()
+								// TODO
+							}
+							decimals={2}
+						/>
+					</Col>
+				}
+			/>
+
+			<CardRow
+				main={
+					<StyledText>
+						Rewards Earned
+						<Tooltip
+							title={
+								<>
+									<div
+										style={{
+											fontSize: '16px',
+											fontWeight: 700,
+										}}
+									>
+										Your YAXIS rewards:
+									</div>
+									<TooltipRow
+										main="Vault rewards"
+										value={metaVault.toNumber()}
+									/>
+									<TooltipRow
+										main="Governance (YAXIS) rewards"
+										value={governance.toNumber()}
+									/>
+									<TooltipRow
+										main="Liquidity Pool token rewards"
+										value={lp.toNumber()}
+									/>
+								</>
+							}
+						>
+							<StyledInfoIcon alt="YAXIS Rewards" />
+						</Tooltip>
+					</StyledText>
+				}
+				secondary={null}
+				rightContent={
+					<Col>
+						<Value
+							numberPrefix="$"
+							value={
+								// rewardsUSD.toNumber()
+								0
+								// TODO
+							}
+							decimals={2}
+						/>
+						<Value
+							numberSuffix=" YAXIS"
+							value={0}
+							decimals={0}
+							fontSize={'14px'}
+							color={'grey'}
+						/>
+					</Col>
+				}
+				last
+			/>
 		</DetailOverviewCard>
 	)
 }

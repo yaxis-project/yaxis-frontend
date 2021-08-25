@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Menu, Typography } from 'antd'
 import styled from 'styled-components'
@@ -13,8 +13,16 @@ import { useWeb3React } from '@web3-react/core'
 
 const Nav: React.FC = () => {
 	const { chainId } = useWeb3React()
-	const currentPools = Object.values(currentConfig(chainId).pools).filter(
-		(pool) => pool.active && !pool.legacy,
+	const vaults = useMemo(
+		() => Object.keys(currentConfig(chainId).vaults),
+		[chainId],
+	)
+	const currentPools = useMemo(
+		() =>
+			Object.values(currentConfig(chainId).pools).filter(
+				(pool) => pool.active && !pool.legacy,
+			),
+		[chainId],
 	)
 
 	return (
@@ -28,11 +36,28 @@ const Nav: React.FC = () => {
 				</StyledLink>
 			</MenuItem>
 
-			<MenuItem key={'/vault'}>
-				<StyledLink activeClassName="active" to="/vault">
-					Vault
-				</StyledLink>
-			</MenuItem>
+			<StyledSubMenu
+				key={'/vault'}
+				title={
+					<StyledLink activeClassName="active" to="/vault">
+						Vault <CaretDownFilled style={{ margin: 0 }} />
+					</StyledLink>
+				}
+			>
+				{vaults.map((vault) => (
+					<Menu.Item key={`/vault/${vault}`}>
+						<StyledLink
+							activeClassName="active"
+							to={`/vault/${vault}`}
+						>
+							<MenuText>
+								{vault[0].toUpperCase()}
+								{vault.slice(1)}
+							</MenuText>
+						</StyledLink>
+					</Menu.Item>
+				))}
+			</StyledSubMenu>
 
 			<StyledSubMenu
 				key={'/liquidity'}

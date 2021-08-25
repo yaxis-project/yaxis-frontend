@@ -9,7 +9,7 @@ import BigNumber from 'bignumber.js'
 import { usePrices } from '../prices/hooks'
 import { useCurveRewardsAPR, useCurvePoolAPR } from '../external/hooks'
 import { numberToFloat } from '../../utils/number'
-import { TLiquidityPools, TRewardsContracts } from '../../constants/type'
+import { TLiquidityPools, TRewardsContracts, Vaults, TVaults } from '../../constants/type'
 import ERC20Abi from '../../constants/abis/mainnet/erc20.json'
 
 const ERC20_INTERFACE = new ethers.utils.Interface(ERC20Abi)
@@ -64,6 +64,178 @@ export function useMetaVaultData() {
 			pricePerFullShare: new BigNumber(pricePerFullShare.toString()),
 		}
 	}, [metaVaultData, strategy, prices])
+}
+
+export function useVault(name: TVaults) {
+	const { contracts } = useContracts()
+
+	const vaultContracts = useMemo(() => contracts?.vaults[name], [contracts, name])
+
+	const data = useSingleContractMultipleMethods(vaultContracts?.vault, [
+		['balance'],
+		['totalSupply'],
+		// ['getPricePerFullShare'],
+	])
+
+	return useMemo(() => {
+		const [balance, totalSupply,
+			//  pricePerFullShare
+		] = data.map(
+			({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			},
+		)
+		return {
+			balance: new BigNumber(
+				balance?.toString()
+			),
+			totalSupply: new BigNumber(
+				totalSupply?.toString()
+			),
+			pricePerFullShare: new BigNumber(
+				// pricePerFullShare?.toString()
+				0
+			).dividedBy(10 ** 18)
+		}
+	}, [
+		data
+	])
+}
+
+export function useVaultAPR(name: TVaults) {
+	const { contracts } = useContracts()
+	const multicall = useMemo(() => contracts?.external.multicall, [contracts])
+
+	const AbiCoder = useMemo(() => new ethers.utils.AbiCoder(), [])
+
+	// const {
+	// 	prices: { crv, btc },
+	// } = usePrices()
+
+	// const weights = useMemo(
+	// 	() =>
+	// 		['0x2e46090E9e02D4c4CCF75aa008640E24Fa0F7F4F'].map((gauge) => [
+	// 			'0xA634255116c248bB995318F6BCD69520c3E0EBB7',
+	// 			'0x6207d866000000000000000000000000' + gauge.slice(2),
+	// 		]),
+	// 	[],
+	// )
+	// const weightCalls = useSingleCallResult(multicall, 'aggregate', [weights])
+
+	// const decodedWeights = useMemo(() => {
+	// 	return (
+	// 		weightCalls.result?.[1]?.map((hex, i: number) => {
+	// 			return [
+	// 				weightCalls.result[0],
+	// 				hex === '0x'
+	// 					? 0
+	// 					: (AbiCoder.decode(['uint256'], hex) as any) / 1e18,
+	// 			]
+	// 		}) || []
+	// 	)
+	// }, [weightCalls, AbiCoder])
+
+	// const rateCalls = useSingleCallResult(multicall, 'aggregate', [
+	// 	['0x2e46090E9e02D4c4CCF75aa008640E24Fa0F7F4F']
+	// 		.map((gauge) => [
+	// 			[gauge, '0x180692d0'],
+	// 			[gauge, '0x17e28089'],
+	// 		])
+	// 		.flat(),
+	// ])
+
+	// const decodedRates = useMemo(() => {
+	// 	return (
+	// 		rateCalls?.result?.[1]?.map((hex) => {
+	// 			return hex === '0x' ? 0 : AbiCoder.decode(['uint256'], hex)
+	// 		}) || []
+	// 	)
+	// }, [rateCalls, AbiCoder])
+
+	// const virtualPrices = useMemo(
+	// 	() => Object.values(poolInfo).map((v) => [v.swap, '0xbb7b8b80']),
+	// 	[],
+	// )
+	// const virtualPriceCalls = useSingleCallResult(multicall, 'aggregate', [
+	// 	virtualPrices,
+	// ])
+
+	// const decodedVirtualPrices = useMemo(() => {
+	// 	return (
+	// 		virtualPriceCalls?.result?.[1]?.map((hex, i: number) => [
+	// 			virtualPrices[i][0],
+	// 			hex === '0x'
+	// 				? 0
+	// 				: (AbiCoder.decode(['uint256'], hex) as any) / 1e18,
+	// 		]) || []
+	// 	)
+	// }, [virtualPrices, virtualPriceCalls, AbiCoder])
+
+	// return useMemo(() => {
+	// 	const apys = defaultApys
+
+	// 	if (
+	// 		decodedVirtualPrices.length &&
+	// 		decodedWeights.length &&
+	// 		decodedRates.length
+	// 	)
+	// 		try {
+	// 			let gaugeRates = decodedRates
+	// 				.filter((_: any, i: number) => i % 2 === 0)
+	// 				.map((v: number) => v / 1e18)
+	// 			let workingSupplies = decodedRates
+	// 				.filter((_: any, i: number) => i % 2 === 1)
+	// 				.map((v: number) => v / 1e18)
+
+	// 			decodedWeights.forEach((w: any, i: number) => {
+	// 				let pool: string = Object.values(poolInfo).find((v) => {
+	// 					return (
+	// 						v.gauge.toLowerCase() ===
+	// 						'0x' + weights[i][1].slice(34).toLowerCase()
+	// 					)
+	// 				}).name
+	// 				let swap_address = poolInfo[pool].swap
+	// 				let virtual_price = decodedVirtualPrices.find(
+	// 					(v: any) =>
+	// 						v[0].toLowerCase() === swap_address.toLowerCase(),
+	// 				)[1]
+	// 				let _working_supply = workingSupplies[i]
+	// 				if (['ren', 'sbtc'].includes(pool)) _working_supply *= btc
+	// 				let rate =
+	// 					(((gaugeRates[i] * w[1] * 31536000) / _working_supply) *
+	// 						0.4) /
+	// 					virtual_price
+	// 				let apy = rate * crv * 100
+	// 				if (isNaN(apy)) apy = 0
+	// 				Object.values(poolInfo).find(
+	// 					(v: any) => v.name === pool,
+	// 				).gauge_relative_weight = w[1]
+	// 				apys[pool] = apy
+	// 			})
+	// 		} catch (e) {
+	// 			console.error('[getYAxisAPY]', e)
+	// 		}
+	// 	return apys
+	// }, [btc, crv, decodedRates, decodedVirtualPrices, weights, decodedWeights])
+}
+
+export function useVaults() {
+
+	const stables = useVault('stables')
+
+	return useMemo(() => {
+		// const stables = {
+		// 	balance: new BigNumber(0),
+		// 	totalSupply: new BigNumber(0),
+		// 	pricePerFullShare: new BigNumber(0),
+		// 	getTokens: new BigNumber(0)
+		// }
+		return { stables }
+	}, [
+		stables
+	])
 }
 
 export function useYaxisSupply() {
@@ -137,7 +309,7 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 					),
 				),
 			)
-		else if (rewardsContract === 'Yaxis')
+		else if (rewardsContract === 'Yaxis' || rewardsContract === 'MetaVault')
 			tvl = new BigNumber(totalSupply.toString() || 0)
 		else if (metaVaultTVL && yaxis)
 			tvl = new BigNumber(metaVaultTVL)
@@ -153,7 +325,6 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 			funding =
 				new BigNumber(0)
 		else funding = balanceBN
-
 		const period = new BigNumber(duration.toString() || 0).dividedBy(86400)
 		const AVERAGE_BLOCKS_PER_DAY = 6450
 		const rewardsPerBlock = funding.isZero()
@@ -337,7 +508,6 @@ export function useAPY(
 		const totalAPY = yaxisApyPercent
 			.plus(lpApyPercent)
 			.plus(threeCrvApyPercent)
-		console.log(totalAPR.toNumber(), totalAPY.toNumber(), strategyPercentage)
 		return {
 			lpAprPercent,
 			lpApyPercent,

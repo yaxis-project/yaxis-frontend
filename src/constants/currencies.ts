@@ -48,6 +48,13 @@ export const CVS: Currency = {
 	decimals: 18,
 }
 
+export const CVSgauge: Currency = {
+	name: 'CV:S-GAUGE',
+	tokenId: 'cv:s-gauge',
+	icon: yax,
+	decimals: 18,
+}
+
 export const DAI: Currency = {
 	name: 'DAI',
 	tokenId: 'dai',
@@ -154,6 +161,7 @@ export const Currencies = {
 	YAXIS,
 	MVLT,
 	'CV:S': CVS,
+	'CV:S-GAUGE': CVSgauge,
 	DAI,
 	USDC,
 	USDT,

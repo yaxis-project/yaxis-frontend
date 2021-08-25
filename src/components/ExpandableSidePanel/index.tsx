@@ -12,10 +12,11 @@ interface CardRowProps {
 	main: string | React.ReactNode
 	secondary: string | React.ReactNode
 	rightContent?: string | React.ReactNode
+	last?: boolean
 }
 
 export const CardRow = (props: CardRowProps) => {
-	const { main, secondary, rightContent } = props
+	const { main, secondary, rightContent, last } = props
 	return (
 		<StyledRow align={'middle'}>
 			<Col span={rightContent ? 12 : 24}>
@@ -38,7 +39,7 @@ export const CardRow = (props: CardRowProps) => {
 				</Title>
 			</Col>
 			{rightContent && <Col span={12}>{rightContent}</Col>}
-			<Divider plain style={{ margin: 0 }} />
+			{!last && <Divider plain style={{ margin: 0 }} />}
 		</StyledRow>
 	)
 }

@@ -5,7 +5,7 @@ import {
 import { useTVL } from '../../../state/internal/hooks'
 import Value from '../../../components/Value'
 import { useAPY } from '../../../state/internal/hooks'
-import { useMetaVaultData } from '../../../state/internal/hooks'
+// import { useMetaVaultData / from '../../../state/internal/hooks'
 
 /**
  * Generates investing vault stats card for the current signed in user.
@@ -14,11 +14,11 @@ export default function VaultStatsCard() {
 	const { metavaultTvl } = useTVL()
 	const { rewardsPerBlock } = useAPY('MetaVault')
 
-	const { strategy } = useMetaVaultData()
+	// const { strategy } = useMetaVaultData()
 	return (
 		<>
-			<ExpandableSidePanel header="Vault Stats" key="1">
-				<CardRow
+			<ExpandableSidePanel header="Global Vault Stats" key="1">
+				{/* <CardRow
 					main="Current Strategy"
 					secondary={
 						strategy ? (
@@ -30,18 +30,23 @@ export default function VaultStatsCard() {
 							<div></div>
 						)
 					}
-				/>
+				/> */}
 				<CardRow
 					main="Total Value Locked"
 					secondary={
 						<Value
-							value={metavaultTvl.toNumber()}
+							value={
+								0
+								// metavaultTvl.toNumber()
+								// TODO
+							}
 							numberPrefix="$"
 							decimals={2}
 						/>
 					}
+					last
 				/>
-				<CardRow
+				{/* <CardRow
 					main="Rewards Per Block"
 					secondary={
 						<Value
@@ -50,7 +55,7 @@ export default function VaultStatsCard() {
 							decimals={3}
 						/>
 					}
-				/>
+				/> */}
 			</ExpandableSidePanel>
 		</>
 	)

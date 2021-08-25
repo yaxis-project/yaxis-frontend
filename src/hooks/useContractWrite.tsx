@@ -79,6 +79,7 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 					message: `Please confirm ${description}.`,
 					duration: null,
 				})
+
 				receipt = await m(...(args || []), config)
 				addTransaction(receipt, {
 					method,
@@ -100,12 +101,12 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 							'_blank',
 						),
 				})
-			} catch (e) {
-				console.error(e)
+			} catch (error) {
+				console.error(error)
 				notification.close(key)
 				notification.error({
 					message: `Error: Unable to ${description}:`,
-					description: e.message,
+					description: error.message,
 				})
 				// setAccountOnCall(null)
 				return false
@@ -117,12 +118,12 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				setData(receipt)
 				// setAccountOnCall(null)
 				return receipt
-			} catch (e) {
-				console.error(e)
+			} catch (error) {
+				console.error(error)
 				notification.close(key)
 				notification.error({
 					message: `Internal Error: Unable to ${description}:`,
-					description: e.message,
+					description: error.message,
 				})
 				// setAccountOnCall(null)
 				return false

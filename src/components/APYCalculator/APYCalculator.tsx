@@ -18,6 +18,7 @@ type Props = {
 	APR: number
 	page: CalcPages
 	loading?: boolean
+	last?: boolean
 }
 
 const StyledRadio = styled(Radio.Group)`
@@ -71,6 +72,7 @@ const APYCalculator: React.FC<Props> = ({
 	balance: walletBalance,
 	APR,
 	page,
+	last,
 }) => {
 	const { duration, yearlyCompounds } = useFutureBalanceCalc(page)
 	const update = useFutureBalanceCalcUpdate(page)
@@ -116,72 +118,71 @@ const APYCalculator: React.FC<Props> = ({
 	}, [handleOnDurationChange, duration])
 
 	return (
-		<>
-			<CardRow
-				main={
-					<Tooltip
-						style={{ minWidth: '350px' }}
-						placement="topLeft"
-						title={
-							<Col style={{ margin: '10px 20px' }}>
-								<StyledRow
-									style={{
-										marginBottom: '10px',
-									}}
-								>
-									Annual Percentage Rate: {APR.toFixed(2)}%
-								</StyledRow>
-								<StyledRow
-									style={{
-										marginBottom: '8px',
-									}}
-								>
-									Compounding Frequency:
-								</StyledRow>
-								<StyledRadio
-									options={options}
-									defaultValue={`${yearlyCompounds}`}
-									onChange={({ target: { value } }) => {
-										update({
-											field: 'yearlyCompounds',
-											value: Number(value),
-										})
-									}}
-									size="small"
-									style={{ color: 'white' }}
-								/>
-								<StyledRow>See Your Balance In:</StyledRow>
+		<CardRow
+			main={
+				<Tooltip
+					style={{ minWidth: '350px' }}
+					placement="topLeft"
+					title={
+						<Col style={{ margin: '10px 20px' }}>
+							<StyledRow
+								style={{
+									marginBottom: '10px',
+								}}
+							>
+								Annual Percentage Rate: {APR.toFixed(2)}%
+							</StyledRow>
+							<StyledRow
+								style={{
+									marginBottom: '8px',
+								}}
+							>
+								Compounding Frequency:
+							</StyledRow>
+							<StyledRadio
+								options={options}
+								defaultValue={`${yearlyCompounds}`}
+								onChange={({ target: { value } }) => {
+									update({
+										field: 'yearlyCompounds',
+										value: Number(value),
+									})
+								}}
+								size="small"
+								style={{ color: 'white' }}
+							/>
+							<StyledRow>See Your Balance In:</StyledRow>
 
-								<Slider
-									style={{ width: '90%' }}
-									value={duration}
-									marks={sliderMarks}
-									defaultValue={12}
-									min={1}
-									max={12}
-									tipFormatter={(value) =>
-										value > 1
-											? `${value} months`
-											: `${value} month`
-									}
-									onChange={handleOnDurationChange}
-								/>
-							</Col>
-						}
-					>
-						<Text type="secondary">Future Balance</Text>
-						<StyledInfoIcon alt="YAXIS Rewards" />
-					</Tooltip>
-				}
-				secondary={
-					<Value
-						value={balance.toNumber()}
-						numberPrefix="$"
-						decimals={2}
-					/>
-				}
-			/>
-		</>
+							<Slider
+								style={{ width: '90%' }}
+								value={duration}
+								marks={sliderMarks}
+								defaultValue={12}
+								min={1}
+								max={12}
+								tipFormatter={(value) =>
+									value > 1
+										? `${value} months`
+										: `${value} month`
+								}
+								onChange={handleOnDurationChange}
+							/>
+						</Col>
+					}
+				>
+					<Text type="secondary">Future Balance</Text>
+					<StyledInfoIcon alt="YAXIS Rewards" />
+				</Tooltip>
+			}
+			secondary={
+				<Value
+					value={balance.toNumber()}
+					numberPrefix="$"
+					decimals={2}
+				/>
+			}
+			last={last}
+		/>
 	)
 }
 

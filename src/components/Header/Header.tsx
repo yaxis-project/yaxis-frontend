@@ -5,6 +5,8 @@ import Logo from '../Logo'
 import AccountButton from './components/AccountButton'
 import Nav from './components/Nav'
 import NavTablet from './components/Nav_Tablet'
+import LanguageSelect from './components/LanguageSelect'
+import ThemeToggle from '../ThemeToggle'
 
 const { Header: BaseHeader } = Layout
 const { useBreakpoint } = Grid
@@ -23,6 +25,12 @@ const Header = ({ home }: any) => {
 					<>
 						<Col flex="auto" style={{ color: 'white' }}>
 							<Nav />
+						</Col>
+						<Col>
+							<ThemeToggle></ThemeToggle>
+						</Col>
+						<Col>
+							<LanguageSelect />
 						</Col>
 						<StyledAccountButtonWrapper>
 							<AccountButton />

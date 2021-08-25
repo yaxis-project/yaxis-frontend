@@ -1,8 +1,37 @@
 import { useCallback } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
-import { updateUserDarkMode, updateFutureBalanceCalc } from './actions'
+import { updateLanguage, updateUserDarkMode, updateFutureBalanceCalc, updateVaultAutoStake } from './actions'
+import { TLanguages } from '../../constants/translations'
 import { CalcPages, FutureBalanceCalculator } from './reducer'
+
+export function useVaultAutoStake(): boolean {
+	return useSelector((state: AppState) =>
+		state.user.vaultAutoStake
+	)
+}
+
+export function useSetVaultAutoStake() {
+	const dispatch = useDispatch<AppDispatch>()
+
+	return useCallback((vaultAutoStake: boolean) => {
+		dispatch(updateVaultAutoStake({ vaultAutoStake }))
+	}, [dispatch])
+}
+
+export function useLanguage(): string {
+	return useSelector((state: AppState) =>
+		state.user.language
+	)
+}
+
+export function useSetLanguage() {
+	const dispatch = useDispatch<AppDispatch>()
+
+	return useCallback((language: TLanguages) => {
+		dispatch(updateLanguage({ language }))
+	}, [dispatch])
+}
 
 export function useIsDarkMode(): boolean {
 	const { userDarkMode, matchesDarkMode } = useSelector<

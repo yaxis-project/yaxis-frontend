@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import styled from 'styled-components'
-import { Col } from 'antd'
+import { Row, Col } from 'antd'
 import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import { useContracts } from '../../../contexts/Contracts'
@@ -116,15 +116,27 @@ export default function HomeExpandableOverview() {
 				/>
 
 				<CardRow
-					main={<SecondaryText>Max YAXIS Supply</SecondaryText>}
+					main={<SecondaryText>YAXIS Supply</SecondaryText>}
 					secondary={
-						<Value
-							value={
-								totalSupply ? getBalanceNumber(totalSupply) : ''
-							}
-							decimals={2}
-						/>
+						<Row gutter={3}>
+							<Col>
+								{/*  TODO */}
+								<Value value={'3,222,243'} decimals={0} />
+							</Col>
+							<Col>{' / '}</Col>
+							<Col>
+								<Value
+									value={
+										totalSupply
+											? getBalanceNumber(totalSupply)
+											: ''
+									}
+									decimals={0}
+								/>
+							</Col>
+						</Row>
 					}
+					last
 				/>
 			</ExpandableSidePanel>
 		</>

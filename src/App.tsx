@@ -1,10 +1,12 @@
 import React, { Suspense, useMemo } from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import Home from './views/Home'
-import MetaVault from './views/Vault'
+import Vault from './views/Vault'
+import VaultDetails from './views/VaultDetails'
 import Liquidity from './views/Liquidity'
 import LiquidityPool from './views/LiquidityPool'
 import Swap from './views/Swap'
+import V3 from './views/V3'
 import Faucet from './views/Faucet'
 import Governance from './views/Governance'
 import { notification } from 'antd'
@@ -27,6 +29,11 @@ const App: React.FC = () => {
 
 	const { chainId } = useWeb3React()
 
+	const vaults = useMemo(
+		() => Object.keys(currentConfig(chainId).vaults),
+		[chainId],
+	)
+
 	const activePools = useMemo(
 		() =>
 			Object.values(currentConfig(chainId).pools).filter(
@@ -42,8 +49,16 @@ const App: React.FC = () => {
 				<Route path="/" exact>
 					<Home />
 				</Route>
-				<Route path="/vault" exact>
-					<MetaVault />
+				{vaults.map((vault) => {
+					const key = `/vault/${vault}`
+					return (
+						<Route key={key} path={key} exact>
+							<VaultDetails vault={vault} />
+						</Route>
+					)
+				})}
+				<Route path="/vault">
+					<Vault />
 				</Route>
 				<Route path="/liquidity" exact>
 					<Liquidity />
@@ -61,6 +76,9 @@ const App: React.FC = () => {
 				</Route>
 				<Route path="/swap" exact>
 					<Swap />
+				</Route>
+				<Route path="/v3" exact>
+					<V3 />
 				</Route>
 				<Route path="/faucet" exact>
 					<Faucet />
