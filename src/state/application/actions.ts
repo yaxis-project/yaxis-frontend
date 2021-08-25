@@ -10,7 +10,8 @@ export type PopupContent = {
 
 export enum ApplicationModal {
 	WALLET,
-	UNSUPPORTED_NETWORK
+	UNSUPPORTED_NETWORK,
+	MERKLE_DROP
 }
 
 export const updateBlockNumber = createAction<{

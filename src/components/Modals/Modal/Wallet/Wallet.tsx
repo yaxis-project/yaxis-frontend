@@ -22,8 +22,8 @@ export const Wallet: React.FC<any> = () => {
 	const { account, error } = useWeb3Provider()
 
 	useEffect(() => {
-		if (account) closeModal()
-	}, [account, closeModal])
+		if (account && visible) closeModal()
+	}, [account, visible, closeModal])
 
 	const wallets = useMemo(() => {
 		const options = Object.values(SUPPORTED_WALLETS)
