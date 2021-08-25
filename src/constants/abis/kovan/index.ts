@@ -9,6 +9,7 @@ export const abis = {
 	PickleChefABI: require('./pickleChef.json') as JsonFragment[],
 	PickleJarABI: require('./pickleJar.json') as JsonFragment[],
 	SwapABI: require('./swap.json') as JsonFragment[],
+	MerkleDistributorABI: require('./MerkleDistributor.json') as JsonFragment[],
 	MulticallABI: require('./Multicall.json') as JsonFragment[],
 	XYaxStakingABI: require('./xYax.json') as JsonFragment[],
 	YAxisMetaVaultABI: require('./yAxisMetaVault.json') as JsonFragment[],

@@ -17,15 +17,11 @@ export const NetworkCheck: React.FC = () => {
 	const closeModal = useCloseModals()
 
 	useEffect(() => {
-		if (active && !SUPPORTED_NETWORKS.includes(chainId)) {
-			openModal()
-		}
+		if (active && !SUPPORTED_NETWORKS.includes(chainId)) openModal()
 	}, [active, chainId, openModal])
 
 	useEffect(() => {
-		if (visible && SUPPORTED_NETWORKS.includes(chainId)) {
-			closeModal()
-		}
+		if (visible && SUPPORTED_NETWORKS.includes(chainId)) closeModal()
 	}, [visible, chainId, closeModal])
 
 	return (
