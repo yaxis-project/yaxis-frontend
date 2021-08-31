@@ -1,9 +1,9 @@
 import React from 'react'
 import { Row } from 'antd'
 import { useWeb3React } from '@web3-react/core'
-import Button from '../../Button'
-import { WalletInfo } from '../../../connectors'
-import { setRecentProvider } from '../../../connectors/utils'
+import Button from '../../../../Button'
+import { WalletInfo } from '../../../../../connectors'
+import { setRecentProvider } from '../../../../../connectors/utils'
 import styled from 'styled-components'
 
 interface WalletCardProps {
@@ -16,7 +16,10 @@ const WalletCard: React.FC<WalletCardProps> = ({ config }) => {
 		<>
 			<CardIcon>
 				<img
-					src={require('../../../assets/img/' + config.icon).default}
+					src={
+						require('../../../../../assets/img/' + config.icon)
+							.default
+					}
 					style={{ height: 32 }}
 					alt={`${config.name} logo`}
 				/>

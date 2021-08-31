@@ -10,19 +10,15 @@ export type PopupContent = {
 
 export enum ApplicationModal {
 	WALLET,
-	SETTINGS,
-	SELF_CLAIM,
-	ADDRESS_CLAIM,
-	CLAIM_POPUP,
-	MENU,
-	DELEGATE,
-	VOTE,
+	UNSUPPORTED_NETWORK,
+	MERKLE_DROP
 }
 
 export const updateBlockNumber = createAction<{
 	chainId: number
 	blockNumber: number
 }>('application/updateBlockNumber')
+
 export const setOpenModal = createAction<ApplicationModal | null>(
 	'application/setOpenModal',
 )

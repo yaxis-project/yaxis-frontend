@@ -9,6 +9,7 @@ export const configs: Record<number, Config> = {
 			yAxisMetaVault: '0x6e4BA66AD61610098E216991977a067F0680FC96',
 			stableSwap3PoolConverter:
 				'0x4981D4A898e1C503BFA06B751f932600E124108f',
+			merkleDistributor: '0x51A8F76b848E478e08B771DE55e5e17370DE1D25',
 		},
 		external: {
 			multicall: '0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A',
@@ -113,6 +114,8 @@ export const configs: Record<number, Config> = {
 				'0x2eab685d85AA52E4d8b6699Ba5aAC3b0c3992C3B',
 			xYaxStaking: '0xeF31Cb88048416E301Fee1eA13e7664b887BA7e8',
 			yAxisMetaVault: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
+			merkleDistributor: '0xd0c9432625a181c823b3e63d5e6656f87231ae96',
+
 		},
 		external: {
 			multicall: '0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441',

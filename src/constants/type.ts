@@ -71,6 +71,7 @@ export const InternalContracts = <const>[
 	'xYaxStaking',
 	'yAxisMetaVault',
 	'stableSwap3PoolConverter',
+	'merkleDistributor'
 ]
 export type TInternalContracts = typeof InternalContracts[number]
 

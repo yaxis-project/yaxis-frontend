@@ -1,24 +1,29 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import useWeb3Provider from '../../hooks/useWeb3Provider'
-import { Button, Pagination } from 'antd'
-import { CloseOutlined } from '@ant-design/icons'
-import Modal, { ModalProps } from '../Modal'
+import useWeb3Provider from '../../../../hooks/useWeb3Provider'
+import { Pagination } from 'antd'
 import WalletCard from './components/WalletCard'
-import { Col, Row } from 'antd'
-
-import { SUPPORTED_WALLETS } from '../../connectors'
-import { getErrorMessage } from '../../connectors/errors'
+import { Modal, Col, Row } from 'antd'
+import { SUPPORTED_WALLETS } from '../../../../connectors'
+import { getErrorMessage } from '../../../../connectors/errors'
 import { handleInjected, filterByDevice } from './utils'
+import { ApplicationModal } from '../../../../state/application/actions'
+import {
+	useIsModalOpen,
+	useCloseModals,
+} from '../../../../state/application/hooks'
 
-const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
+export const Wallet: React.FC<any> = () => {
+	const visible = useIsModalOpen(ApplicationModal['WALLET'])
+	const closeModal = useCloseModals()
+
 	const [page, setPage] = useState(1)
+
 	const { account, error } = useWeb3Provider()
+
 	useEffect(() => {
-		if (account) {
-			onDismiss()
-		}
-	}, [account, onDismiss])
+		if (account && visible) closeModal()
+	}, [account, visible, closeModal])
 
 	const wallets = useMemo(() => {
 		const options = Object.values(SUPPORTED_WALLETS)
@@ -27,13 +32,12 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
 	}, [])
 
 	return (
-		<Modal>
-			<CloseButton
-				shape="circle"
-				icon={<CloseOutlined style={{ fontSize: '25px' }} />}
-				onClick={onDismiss}
-			/>
-			<ModalTitle>Select a wallet provider.</ModalTitle>
+		<Modal
+			visible={visible}
+			title={'Select a wallet provider.'}
+			footer={null}
+			onCancel={closeModal}
+		>
 			{error && <ErrorText>{getErrorMessage(error)}</ErrorText>}
 			<ModalContent>
 				<StyledWalletsWrapper
@@ -75,23 +79,6 @@ const ErrorText = styled.div`
 	font-weight: 600;
 	text-align: center;
 `
-
-const CloseButton = styled(Button)`
-	position: absolute;
-	top: 5%;
-	right: 5%;
-	border: none;
-`
-const ModalTitle = styled.div`
-	align-items: center;
-	color: ${(props) => props.theme.color.grey[600]};
-	display: flex;
-	font-size: 18px;
-	font-weight: 700;
-	height: ${(props) => props.theme.topBarSize}px;
-	justify-content: center;
-`
-
 const ModalContent = styled.div`
 	padding: ${(props) => props.theme.spacing[4]}px;
 	@media (max-width: ${(props) => props.theme.breakpoints.mobile}px) {
@@ -99,5 +86,3 @@ const ModalContent = styled.div`
 		overflow: auto;
 	}
 `
-
-export default WalletProviderModal
