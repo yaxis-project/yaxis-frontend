@@ -114,7 +114,7 @@ export const configs: Record<number, Config> = {
 				'0x2eab685d85AA52E4d8b6699Ba5aAC3b0c3992C3B',
 			xYaxStaking: '0xeF31Cb88048416E301Fee1eA13e7664b887BA7e8',
 			yAxisMetaVault: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
-			merkleDistributor: '',
+			merkleDistributor: '0xd0c9432625a181c823b3e63d5e6656f87231ae96',
 
 		},
 		external: {
