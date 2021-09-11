@@ -147,9 +147,8 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 		const balanceBN = new BigNumber(balance?.result?.toString() || 0)
 		let funding = new BigNumber(0)
 		if (rewardsContract === 'Yaxis')
-			funding = balanceBN.isZero()
-				? new BigNumber(0)
-				: balanceBN.minus(tvl)
+			funding =
+				new BigNumber(0)
 		else if (rewardsContract === 'MetaVault')
 			funding =
 				new BigNumber(0)
@@ -320,10 +319,7 @@ export function useAPY(
 			.minus(1)
 			.times(100)
 			.decimalPlaces(18)
-		if (strategyPercentage) {
-			lpAprPercent = lpAprPercent.multipliedBy(strategyPercentage)
-			lpApyPercent = lpApyPercent.multipliedBy(strategyPercentage)
-		}
+		lpApyPercent = lpApyPercent.multipliedBy(strategyPercentage)
 
 		let threeCrvAprPercent = new BigNumber(curveRewardsAPRs['3crv'])
 		let threeCrvApyPercent = threeCrvAprPercent
@@ -334,17 +330,14 @@ export function useAPY(
 			.minus(1)
 			.times(100)
 			.decimalPlaces(18)
-		if (strategyPercentage) {
-			threeCrvAprPercent =
-				threeCrvAprPercent.multipliedBy(strategyPercentage)
-			threeCrvApyPercent =
-				threeCrvApyPercent.multipliedBy(strategyPercentage)
-		}
+		threeCrvApyPercent =
+			threeCrvApyPercent.multipliedBy(strategyPercentage)
 
 		const totalAPR = rewardsAPR.plus(lpApyPercent).plus(threeCrvApyPercent)
 		const totalAPY = yaxisApyPercent
 			.plus(lpApyPercent)
 			.plus(threeCrvApyPercent)
+		console.log(totalAPR.toNumber(), totalAPY.toNumber(), strategyPercentage)
 		return {
 			lpAprPercent,
 			lpApyPercent,

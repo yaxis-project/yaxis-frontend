@@ -102,13 +102,7 @@ export default function StakingCard() {
 		() => new BigNumber(depositAmount).gt(walletBalance.div(1e18)),
 		[walletBalance, depositAmount],
 	)
-	const depositDisabled = useMemo(
-		() =>
-			depositAmount === '' ||
-			new BigNumber(depositAmount).eq(new BigNumber(0)) ||
-			errorDeposit,
-		[depositAmount, errorDeposit],
-	)
+
 	const maxDeposit = () => setDeposit(yaxisBalance.toString() || '0')
 
 	const updateWithdraw = (value: string) =>
@@ -167,7 +161,7 @@ export default function StakingCard() {
 						/>
 					</Form.Item>
 					<Button
-						disabled={depositDisabled}
+						disabled={true}
 						onClick={stakeYAXIS}
 						loading={loadingEnter}
 					>
