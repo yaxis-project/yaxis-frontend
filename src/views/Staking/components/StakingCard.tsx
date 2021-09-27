@@ -7,7 +7,7 @@ import { LanguageContext } from '../../../contexts/Language'
 import phrases from './translations'
 import Button from '../../../components/Button'
 import Input from '../../../components/Input'
-import { Row, Col, Typography, Card, Form } from 'antd'
+import { Row, Col, Typography, Card, Form, Tooltip } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import {
@@ -155,18 +155,25 @@ export default function StakingCard() {
 							value={depositAmount}
 							min={'0'}
 							placeholder="0"
-							disabled={loadingEnter || walletBalance.isZero()}
+							disabled={true}
 							suffix={YAXIS.name}
 							onClickMax={maxDeposit}
 						/>
 					</Form.Item>
-					<Button
-						disabled={true}
-						onClick={stakeYAXIS}
-						loading={loadingEnter}
+					<Tooltip
+						visible={true}
+						title={
+							'Staking deposits are currently disabled to save on gas fees, as staking rewards are paused until the upcoming version 3 launch.'
+						}
 					>
-						{t('Stake')}
-					</Button>
+						<Button
+							disabled={true}
+							onClick={stakeYAXIS}
+							loading={loadingEnter}
+						>
+							{t('Stake')}
+						</Button>
+					</Tooltip>
 				</Col>
 				<Col span={12}>
 					<Form.Item validateStatus={errorWithdraw && 'error'}>
