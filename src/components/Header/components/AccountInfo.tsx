@@ -8,6 +8,7 @@ import {
 	CheckCircleTwoTone,
 } from '@ant-design/icons'
 import { etherscanUrl } from '../../../utils'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { Text } = Typography
 
@@ -61,6 +62,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 	friendlyNetworkName,
 	mobile,
 }) => {
+	const translate = useTranslation()
 	return (
 		<>
 			<Menu.ItemGroup
@@ -72,7 +74,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 								margin: '5px 10px 12px 10px',
 							}}
 						>
-							<AccountText>Account:</AccountText>
+							<AccountText>{translate('Account')}:</AccountText>
 							<AccountIdText>
 								{account.slice(0, 4)} ... {account.slice(-2)}
 							</AccountIdText>
@@ -90,7 +92,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 											</Col>
 											<Col>
 												<StyledText mobile={mobile}>
-													Copy Address
+													{translate('Copy Address')}
 												</StyledText>
 											</Col>
 										</Row>,
@@ -103,7 +105,10 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 											</Col>
 											<Col>
 												<StyledText mobile={mobile}>
-													Address Copied!
+													{translate(
+														'Address Copied',
+													)}
+													!
 												</StyledText>
 											</Col>
 										</Row>,
@@ -124,7 +129,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 									rel="noopener noreferrer"
 									target="_blank"
 								>
-									View on Etherscan
+									{translate('View on Etherscan')}
 								</a>
 							</StyledText>
 						</StyledRow>

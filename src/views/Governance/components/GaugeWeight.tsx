@@ -6,12 +6,15 @@ import Typography from '../../../components/Typography'
 import { Vaults } from '../../../constants/type'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { useContracts } from '../../../contexts/Contracts'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { Text } = Typography
 
 const initialWeights = Vaults.map((v) => 0)
 
 const GaugeWeight: React.FC = () => {
+	const translate = useTranslation()
+
 	const [weights, setWeights] = useState(initialWeights)
 
 	const { contracts } = useContracts()
@@ -35,13 +38,13 @@ const GaugeWeight: React.FC = () => {
 	const columns = useMemo(
 		() => [
 			{
-				title: 'Name',
+				title: translate('Name'),
 				dataIndex: 'name',
 				key: 'name',
 				render: (text, record) => <Text>{text}</Text>,
 			},
 			{
-				title: 'Weight',
+				title: translate('Weight'),
 				key: 'action',
 
 				render: (text, record) => (
@@ -58,7 +61,7 @@ const GaugeWeight: React.FC = () => {
 				),
 			},
 		],
-		[weights],
+		[translate, weights],
 	)
 
 	return (
@@ -82,7 +85,7 @@ const GaugeWeight: React.FC = () => {
 						})
 					}
 				>
-					Vote
+					{translate('Vote')}
 				</Button>
 			</Row>
 		</>

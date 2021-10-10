@@ -1,13 +1,11 @@
-import { useContext, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Button, Row, Col, Pagination } from 'antd'
 import Card from '../../../components/Card'
 import Typography from '../../../components/Typography'
 import { CloseOutlined } from '@ant-design/icons'
 import transactionIn from '../../../assets/img/icons/transaction-in.svg'
 import transactionOut from '../../../assets/img/icons/transaction-out.svg'
-import { LanguageContext } from '../../../contexts/Language'
-import { Languages } from '../../../utils/languages'
-import phrases from './translations'
+import useTranslation from '../../../hooks/useTranslation'
 import { TransactionDetails } from '../../../state/transactions/reducer'
 import { useAllTransactions } from '../../../state/transactions/hooks'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
@@ -31,22 +29,23 @@ const ClearTransactionsButton = styled(Button)`
 `
 
 interface CardTitleProps {
-	language: Languages
 	onClearTransactions: Function
 	showClear: boolean
 }
 
 const CardTitle = (props: CardTitleProps) => {
-	const { language, onClearTransactions, showClear } = props
+	const { onClearTransactions, showClear } = props
+	const translate = useTranslation()
+
 	return (
 		<>
-			<Title level={4}>{phrases['Recent Transactions'][language]}</Title>
+			<Title level={4}>{translate('Recent Transactions')}</Title>
 			{showClear ? (
 				<ClearTransactionsButton
 					onClick={() => onClearTransactions()}
 					style={{ float: 'right' }}
 				>
-					{phrases['Clear all'][language]} <CloseOutlined />
+					{translate('Clear all')} <CloseOutlined />
 				</ClearTransactionsButton>
 			) : (
 				''
@@ -146,9 +145,6 @@ export default function RecentTransactionsCard() {
 		[mvTxs, chainId],
 	)
 
-	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
-
 	if (!(mvTxs.length > 0)) return null
 
 	return (
@@ -157,7 +153,6 @@ export default function RecentTransactionsCard() {
 				<CardTitle
 					showClear={false}
 					onClearTransactions={() => {}} // TODO: clear selected
-					language={language}
 				/>
 			}
 			bodyStyle={{ marginTop: 10, padding: 0 }}

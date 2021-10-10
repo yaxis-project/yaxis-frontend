@@ -11,6 +11,7 @@ import { Row, Col, Grid } from 'antd'
 import { useStakedBalances, useVaultsBalances } from '../../state/wallet/hooks'
 import { usePrices } from '../../state/prices/hooks'
 import { formatBN } from '../../utils/number'
+import useTranslation from '../../hooks/useTranslation'
 
 const { useBreakpoint } = Grid
 
@@ -46,6 +47,8 @@ const Home: React.FC = () => {
  * Lead data for the user's account overview.
  */
 const GovernanceAccountOverview: React.FC = () => {
+	const translate = useTranslation()
+
 	const { Yaxis } = useStakedBalances()
 	// TODO
 
@@ -59,8 +62,8 @@ const GovernanceAccountOverview: React.FC = () => {
 	return (
 		<AccountOverviewCard
 			loading={false}
-			mainTitle={'Governance Account'}
-			secondaryText={'YAXIS Staking'}
+			mainTitle={translate('Governance Account')}
+			secondaryText={translate('YAXIS Staking')}
 			value={balanceUSD}
 		/>
 	)
@@ -70,6 +73,8 @@ const GovernanceAccountOverview: React.FC = () => {
  * Lead data for the user's account overview.
  */
 const VaultAccountOverview: React.FC = () => {
+	const translate = useTranslation()
+
 	const {
 		total: { usd: balanceUSD },
 	} = useVaultsBalances()
@@ -77,8 +82,8 @@ const VaultAccountOverview: React.FC = () => {
 	return (
 		<AccountOverviewCard
 			loading={false}
-			mainTitle={'Vault Account'}
-			secondaryText={'Canonical Vaults'}
+			mainTitle={translate('Vault Account')}
+			secondaryText={translate('Canonical Vaults')}
 			value={'$' + formatBN(balanceUSD)}
 		/>
 	)

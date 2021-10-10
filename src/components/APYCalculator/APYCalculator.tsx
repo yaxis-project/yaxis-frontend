@@ -11,6 +11,7 @@ import {
 	useFutureBalanceCalc,
 	useFutureBalanceCalcUpdate,
 } from '../../state/user/hooks'
+import useTranslation from '../../hooks/useTranslation'
 
 const { Text } = Typography
 type Props = {
@@ -74,6 +75,8 @@ const APYCalculator: React.FC<Props> = ({
 	page,
 	last,
 }) => {
+	const translate = useTranslation()
+
 	const { duration, yearlyCompounds } = useFutureBalanceCalc(page)
 	const update = useFutureBalanceCalcUpdate(page)
 
@@ -130,14 +133,15 @@ const APYCalculator: React.FC<Props> = ({
 									marginBottom: '10px',
 								}}
 							>
-								Annual Percentage Rate: {APR.toFixed(2)}%
+								{translate('Annual Percentage Rate')}:{' '}
+								{APR.toFixed(2)}%
 							</StyledRow>
 							<StyledRow
 								style={{
 									marginBottom: '8px',
 								}}
 							>
-								Compounding Frequency:
+								{translate('Compounding Frequency')}:
 							</StyledRow>
 							<StyledRadio
 								options={options}
@@ -151,7 +155,9 @@ const APYCalculator: React.FC<Props> = ({
 								size="small"
 								style={{ color: 'white' }}
 							/>
-							<StyledRow>See Your Balance In:</StyledRow>
+							<StyledRow>
+								{translate('See Your Balance In')}:
+							</StyledRow>
 
 							<Slider
 								style={{ width: '90%' }}
@@ -170,8 +176,8 @@ const APYCalculator: React.FC<Props> = ({
 						</Col>
 					}
 				>
-					<Text type="secondary">Future Balance</Text>
-					<StyledInfoIcon alt="YAXIS Rewards" />
+					<Text type="secondary">{translate('Future Balance')}</Text>
+					<StyledInfoIcon alt={translate('YAXIS Rewards')} />
 				</Tooltip>
 			}
 			secondary={

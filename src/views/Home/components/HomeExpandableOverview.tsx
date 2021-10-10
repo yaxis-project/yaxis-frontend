@@ -1,8 +1,5 @@
-import { useContext } from 'react'
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
-import { LanguageContext } from '../../../contexts/Language'
-import phrases from './translations'
 import { useContracts } from '../../../contexts/Contracts'
 import { useTVL } from '../../../state/internal/hooks'
 import { useYaxisSupply } from '../../../state/internal/hooks'
@@ -17,6 +14,7 @@ import {
 import { Tooltip } from 'antd'
 import Button from '../../../components/Button'
 import Typography from '../../../components/Typography'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { SecondaryText } = Typography
 
@@ -47,41 +45,43 @@ const TooltipRow = ({ main, value }: TooltipRowProps) => (
  * Generates an expandable side panel that shows basic overview data for the home page.
  */
 export default function HomeExpandableOverview() {
+	const translate = useTranslation()
+
 	const { contracts } = useContracts()
 	const { prices } = usePrices()
-	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
 
 	const { tvl, stakingTvl, metavaultTvl, liquidityTvl } = useTVL()
 	const { totalSupply } = useYaxisSupply()
-
 	return (
 		<>
-			<ExpandableSidePanel
-				header={phrases['yAxis Overview'][language]}
-				key="1"
-			>
+			<ExpandableSidePanel header={translate('yAxis Overview')} key="1">
 				<CardRow
 					main={
 						<Tooltip
 							title={
 								<>
 									<TooltipRow
-										main="Total Vault value"
+										main={translate('Total Vault value')}
 										value={metavaultTvl.toNumber()}
 									/>
 									<TooltipRow
-										main="Total YAXIS Staking value"
+										main={translate(
+											'Total YAXIS Staking value',
+										)}
 										value={stakingTvl.toNumber()}
 									/>
 									<TooltipRow
-										main="Total Liquidity Pool value"
+										main={translate(
+											'Total Liquidity Pool value',
+										)}
 										value={liquidityTvl.toNumber()}
 									/>
 								</>
 							}
 						>
-							<SecondaryText>Total Value Locked </SecondaryText>
+							<SecondaryText>
+								{translate('Total Value Locked')}
+							</SecondaryText>
 							<StyledInfoIcon />
 						</Tooltip>
 					}
@@ -94,7 +94,11 @@ export default function HomeExpandableOverview() {
 					}
 				/>
 				<CardRow
-					main={<SecondaryText>Price of YAXIS</SecondaryText>}
+					main={
+						<SecondaryText>
+							{translate('Price of YAXIS')}
+						</SecondaryText>
+					}
 					secondary={
 						<Value
 							value={prices.yaxis}
@@ -109,14 +113,20 @@ export default function HomeExpandableOverview() {
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								<Button height={'40px'}>Get YAXIS</Button>
+								<Button height={'40px'}>
+									{translate('Get YAXIS')}
+								</Button>
 							</a>
 						</Col>
 					}
 				/>
 
 				<CardRow
-					main={<SecondaryText>YAXIS Supply</SecondaryText>}
+					main={
+						<SecondaryText>
+							{translate('YAXIS Supply')}
+						</SecondaryText>
+					}
 					secondary={
 						<Row gutter={3}>
 							<Col>

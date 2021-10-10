@@ -11,6 +11,7 @@ import logo from '../../../assets/img/logo-ui.svg'
 import { useLPsBalance } from '../../../state/wallet/hooks'
 import { formatBN } from '../../../utils/number'
 import BigNumber from 'bignumber.js'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { Panel } = Collapse
 
@@ -114,6 +115,8 @@ function AdvancedNavigationRow(props: AdvancedNavigationRowProps) {
  * @see AdvancedNavigationRow
  */
 export default function LPAccountOverview() {
+	const translate = useTranslation()
+
 	const { chainId } = useWeb3Provider()
 
 	const balances = useLPsBalance()
@@ -140,7 +143,7 @@ export default function LPAccountOverview() {
 							>
 								<Col>
 									<StyledTitle style={{ margin: 0 }}>
-										Liquidity Pools
+										{translate('Liquidity Pools')}
 									</StyledTitle>
 								</Col>
 							</Row>

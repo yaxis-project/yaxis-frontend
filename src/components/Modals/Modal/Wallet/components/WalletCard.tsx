@@ -5,12 +5,15 @@ import Button from '../../../../Button'
 import { WalletInfo } from '../../../../../connectors'
 import { setRecentProvider } from '../../../../../connectors/utils'
 import styled from 'styled-components'
+import useTranslation from '../../../../../hooks/useTranslation'
 
 interface WalletCardProps {
 	config: WalletInfo
 }
 
 const WalletCard: React.FC<WalletCardProps> = ({ config }) => {
+	const translate = useTranslation()
+
 	const { activate } = useWeb3React()
 	return (
 		<>
@@ -37,7 +40,7 @@ const WalletCard: React.FC<WalletCardProps> = ({ config }) => {
 					setRecentProvider(config.name.toUpperCase())
 				}}
 			>
-				{config.connector ? 'Connect' : 'Install'}
+				{translate(config.connector ? 'Connect' : 'Install')}
 			</Button>
 		</>
 	)

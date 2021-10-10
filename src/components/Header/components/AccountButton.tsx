@@ -14,10 +14,13 @@ import {
 } from '../../../connectors'
 import { useWeb3React } from '@web3-react/core'
 import { useClearPendingTransactions } from '../../../state/transactions/hooks'
+import useTranslation from '../../../hooks/useTranslation'
 
 interface AccountButtonProps {}
 
 const AccountButton: React.FC<AccountButtonProps> = (props) => {
+	const translate = useTranslation()
+
 	const { account, deactivate, chainId } = useWeb3Provider()
 	const { activate } = useWeb3React('fallback')
 
@@ -41,7 +44,9 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 		<StyledAccountButton>
 			<Col>
 				{!account ? (
-					<StyledButton onClick={openModal}>Connect</StyledButton>
+					<StyledButton onClick={openModal}>
+						{translate('Connect')}
+					</StyledButton>
 				) : (
 					<Dropdown
 						placement="bottomRight"
@@ -60,11 +65,11 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 										rel="noopener noreferrer"
 										target="_blank"
 									>
-										Help Center
+										{translate('Help Center')}
 									</a>
 								</StyledText>
 								<StyledText onClick={handleClearPending}>
-									Clear Pending
+									{translate('Clear Pending')}
 								</StyledText>
 								<StyledText
 									onClick={handleSignOutClick}
@@ -72,7 +77,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 										marginBottom: '8px',
 									}}
 								>
-									Logout
+									{translate('Logout')}
 								</StyledText>
 							</StyledMenu>
 						}

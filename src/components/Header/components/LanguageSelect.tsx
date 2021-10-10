@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Dropdown, Menu } from 'antd'
+import { Dropdown, Menu, Row, Col } from 'antd'
 import { CaretDownOutlined } from '@ant-design/icons'
 import { useLanguage, useSetLanguage } from '../../../state/user/hooks'
 import { TLanguages, LanguagesDisplay } from '../../../constants/translations'
@@ -14,7 +14,7 @@ type Props = {}
 const Button: React.FC<Props> = () => {
 	const language = useLanguage()
 	const setLanguage = useSetLanguage()
-	const t = useTranslation()
+	const translate = useTranslation()
 	return (
 		<StyledDropdown
 			placement="bottomCenter"
@@ -28,12 +28,18 @@ const Button: React.FC<Props> = () => {
 									setLanguage(key.toUpperCase() as TLanguages)
 								}
 							>
-								<Text>
-									<span style={{ paddingRight: '5px' }}>
+								<Row align="middle" gutter={10}>
+									<Col
+										style={{
+											fontSize: '26px',
+										}}
+									>
 										{flag}
-									</span>
-									{t[name]}
-								</Text>
+									</Col>
+									<Col>
+										<Text>{translate(name)}</Text>
+									</Col>
+								</Row>
 							</Menu.Item>
 						))}
 				</StyledMenu>

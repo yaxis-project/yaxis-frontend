@@ -12,8 +12,11 @@ import {
 	useIsModalOpen,
 	useCloseModals,
 } from '../../../../state/application/hooks'
+import useTranslation from '../../../../hooks/useTranslation'
 
 export const Wallet: React.FC<any> = () => {
+	const translate = useTranslation()
+
 	const visible = useIsModalOpen(ApplicationModal['WALLET'])
 	const closeModal = useCloseModals()
 
@@ -34,7 +37,7 @@ export const Wallet: React.FC<any> = () => {
 	return (
 		<Modal
 			visible={visible}
-			title={'Select a wallet provider.'}
+			title={translate('Select a wallet provider.')}
 			footer={null}
 			onCancel={closeModal}
 		>

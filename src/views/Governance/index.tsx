@@ -1,8 +1,7 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import Page from '../../components/Page/Page'
 import { Row } from 'antd'
-import { LanguageContext } from '../../contexts/Language'
-import phrases from './translations'
+import useTranslation from '../../hooks/useTranslation'
 import Tabs from '../../components/Tabs'
 import Card from '../../components/Card'
 import { Lock, Offchain, Onchain } from './components'
@@ -20,8 +19,7 @@ const TABS = {
 }
 
 const Governance: React.FC = () => {
-	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
+	const translate = useTranslation()
 
 	const history = useHistory()
 	const location = useLocation()
@@ -33,10 +31,10 @@ const Governance: React.FC = () => {
 	return (
 		<Page
 			loading={false}
-			mainTitle={phrases['Governance'][language]}
-			secondaryText={phrases['Community Voting'][language]}
+			mainTitle={translate('Governance')}
+			secondaryText={translate('Community Voting')}
 			value={votingPower.toString()}
-			valueInfo={phrases['Voting Power'][language]}
+			valueInfo={translate('Voting Power')}
 		>
 			<Row justify="center" style={{ marginTop: '5%' }}>
 				<Card style={{ width: '60%' }}>
@@ -47,13 +45,16 @@ const Governance: React.FC = () => {
 						}
 						centered
 					>
-						<TabPane tab="Boost" key="#lock">
+						<TabPane tab={translate('Boost')} key="#lock">
 							<Lock />
 						</TabPane>
-						<TabPane tab="Reward Distribution" key="#onchain">
+						<TabPane
+							tab={translate('Reward Distribution')}
+							key="#onchain"
+						>
 							<Onchain />
 						</TabPane>
-						<TabPane tab="Snapshot" key="#offchain">
+						<TabPane tab={translate('Snapshot')} key="#offchain">
 							<Offchain />
 						</TabPane>
 					</Tabs>

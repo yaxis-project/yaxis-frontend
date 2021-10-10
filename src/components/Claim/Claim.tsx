@@ -10,23 +10,26 @@ import useWeb3Provider from '../../hooks/useWeb3Provider'
 import BigNumber from 'bignumber.js'
 import { currentConfig } from '../../constants/configs'
 import { TVaults, TRewardsContracts } from '../../constants/type'
+import useTranslation from '../../hooks/useTranslation'
 
 type Props = { vault?: TVaults; rewardsContract?: TRewardsContracts }
 
 const Claim: React.FC<Props> = ({ vault, rewardsContract }) => {
+	const translate = useTranslation()
+
 	const { account, chainId } = useWeb3Provider()
 
 	const vaults = useMemo(() => currentConfig(chainId).vaults, [chainId])
 
 	if (!vault && !rewardsContract)
 		throw new Error(
-			'Claim button must have either a vault or rewards type.',
+			translate('Claim button must have either a vault or rewards type.'),
 		)
 
 	const { call: handleClaim, loading: loadingClaim } = useContractWrite({
 		contractName: vault ? `vaults.${vault}` : `rewards.${rewardsContract}`,
 		method: vault ? 'claim_rewards' : 'getReward',
-		description: `claim YAXIS`,
+		description: translate(`claim YAXIS`),
 	})
 
 	const { loading: loadingClaimable, result: claimable } =
@@ -38,7 +41,7 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract }) => {
 
 	return (
 		<CardRow
-			main="Rewards"
+			main={translate('Rewards')}
 			secondary={
 				<Value
 					value={getBalanceNumber(
@@ -62,7 +65,7 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract }) => {
 							loading={loadingClaim}
 							height={'40px'}
 						>
-							Claim
+							{translate('Claim')}
 						</Button>
 					</Col>
 				</Row>

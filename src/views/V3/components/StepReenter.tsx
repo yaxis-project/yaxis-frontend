@@ -5,6 +5,7 @@ import { Steps, Row } from 'antd'
 import Button from '../../../components/Button'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { Step } = Steps
 
@@ -26,6 +27,8 @@ const StepReenter: React.FC<StepReenterProps> = ({
 	usdtBalance,
 	daiBalance,
 }) => {
+	const translate = useTranslation()
+
 	const yaxis = useMemo(() => {
 		if (usdtBalance.gt(0) || daiBalance.gt(0) || usdcBalance.gt(0))
 			return (
@@ -38,23 +41,29 @@ const StepReenter: React.FC<StepReenterProps> = ({
 							}}
 							height={'40px'}
 						>
-							Stake YAXIS
+							{translate('Stake')} YAXIS
 						</StyledButton>
 					}
-					description="Lock up your YAXIS for extra APY and voting power."
+					description={translate(
+						'Lock up your YAXIS for extra APY and voting power.',
+					)}
 					icon={<StyledIcon />}
 				/>
 			)
 		return (
-			<Step title={'Stake YAXIS'} description="Done." status="finish" />
+			<Step
+				title={translate('Stake') + ' YAXIS'}
+				description={translate('Done.')}
+				status="finish"
+			/>
 		)
-	}, [usdcBalance, usdtBalance, daiBalance])
+	}, [translate, usdcBalance, usdtBalance, daiBalance])
 
 	const message = useMemo(() => {
 		if (usdtBalance.gt(0) || daiBalance.gt(0) || usdcBalance.gt(0))
-			return 'Stake your tokens to receive emissions!'
-		return 'Step complete.'
-	}, [usdcBalance, usdtBalance, daiBalance])
+			return translate('Stake your tokens to receive emissions!')
+		return translate('Step complete.')
+	}, [translate, usdcBalance, usdtBalance, daiBalance])
 
 	return (
 		<DetailOverviewCardRow>

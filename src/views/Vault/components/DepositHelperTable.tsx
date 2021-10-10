@@ -1,8 +1,7 @@
-import { useState, useContext, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { Currencies3Pool, Currency } from '../../../constants/currencies'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-
 import useTranslation from '../../../hooks/useTranslation'
 import { reduce } from 'lodash'
 import { Row, Grid, Form } from 'antd'
@@ -257,7 +256,20 @@ export default function DepositTable() {
 										noWrapper
 										buttonText={translate('Vault')}
 									>
-										{children}
+										<AutoStakeCover
+											contractName={`currencies.ERC20.${key}.contract`}
+											approvee={
+												contracts?.internal.vaultHelper
+													.address
+											}
+											hidden={false}
+											noWrapper
+											buttonText={translate(
+												'Automatic Staking',
+											)}
+										>
+											{children}
+										</AutoStakeCover>
 									</AutoStakeCover>
 								</tr>
 							)

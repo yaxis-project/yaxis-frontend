@@ -11,9 +11,12 @@ import useWeb3Provider from '../../../../hooks/useWeb3Provider'
 import useContractWrite from '../../../../hooks/useContractWrite'
 import Button from '../../../Button'
 import vault from '../../../../assets/img/merkle_drop_vault.gif'
+import useTranslation from '../../../../hooks/useTranslation'
 const { Title } = Typography
 
 export const MerkleDrop: React.FC = () => {
+	const translate = useTranslation()
+
 	const { account } = useWeb3Provider()
 
 	const { call: handleClaim, loading } = useContractWrite({
@@ -43,7 +46,7 @@ export const MerkleDrop: React.FC = () => {
 			<Row justify="center" style={{ marginTop: '30px' }}>
 				<Col>
 					<Title level={4}>
-						Your strong hands have been rewarded.
+						{translate('Your strong hands have been rewarded.')}
 					</Title>
 				</Col>
 			</Row>
@@ -51,7 +54,9 @@ export const MerkleDrop: React.FC = () => {
 				<Col>
 					<img
 						src={vault}
-						alt={'Vault safe opening fille with money animation'}
+						alt={translate(
+							'Vault safe opens and fills with money animation',
+						)}
 						height={'auto'}
 						width={'100%'}
 						style={{ maxWidth: '400px' }}
@@ -76,7 +81,7 @@ export const MerkleDrop: React.FC = () => {
 								})
 						}}
 					>
-						Claim{' '}
+						{translate('Claim')}{' '}
 						{userUnclaimedAmount &&
 							userUnclaimedAmount.amountBN
 								.div(10 ** 18)

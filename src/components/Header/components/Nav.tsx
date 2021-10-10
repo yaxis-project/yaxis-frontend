@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { currentConfig } from '../../../constants/configs'
 import { CaretDownFilled } from '@ant-design/icons'
 import { useWeb3React } from '@web3-react/core'
+import useTranslation from '../../../hooks/useTranslation'
 
 /**
  * Horizontal top navigation bar for the application.
@@ -12,6 +13,8 @@ import { useWeb3React } from '@web3-react/core'
  */
 
 const Nav: React.FC = () => {
+	const translate = useTranslation()
+
 	const { chainId } = useWeb3React()
 	const vaults = useMemo(
 		() => Object.keys(currentConfig(chainId).vaults),
@@ -32,7 +35,7 @@ const Nav: React.FC = () => {
 		>
 			<MenuItem key={'/'}>
 				<StyledLink exact activeClassName="active" to="/">
-					Overview
+					{translate('Overview')}
 				</StyledLink>
 			</MenuItem>
 
@@ -40,7 +43,8 @@ const Nav: React.FC = () => {
 				key={'/vault'}
 				title={
 					<StyledLink activeClassName="active" to="/vault">
-						Vault <CaretDownFilled style={{ margin: 0 }} />
+						{translate('Vault')}{' '}
+						<CaretDownFilled style={{ margin: 0 }} />
 					</StyledLink>
 				}
 			>
@@ -63,7 +67,8 @@ const Nav: React.FC = () => {
 				key={'/liquidity'}
 				title={
 					<StyledLink activeClassName="active" to="/liquidity">
-						Liquidity <CaretDownFilled style={{ margin: 0 }} />
+						{translate('Liquidity')}{' '}
+						<CaretDownFilled style={{ margin: 0 }} />
 					</StyledLink>
 				}
 			>
@@ -82,7 +87,7 @@ const Nav: React.FC = () => {
 
 			<MenuItem key={'/governance'}>
 				<StyledLink activeClassName="active" to="/governance">
-					Governance
+					{translate('Governance')}
 				</StyledLink>
 			</MenuItem>
 		</StyledMenu>

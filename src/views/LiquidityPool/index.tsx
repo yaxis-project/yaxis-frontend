@@ -15,6 +15,7 @@ import { red } from '../../theme/colors'
 import BigNumber from 'bignumber.js'
 import { useLP } from '../../state/external/hooks'
 import { formatBN } from '../../utils/number'
+import useTranslation from '../../hooks/useTranslation'
 
 type Props = {
 	pool: LiquidityPool
@@ -27,6 +28,8 @@ const StyledCol = styled(Col)`
 `
 
 const Liquidity: React.FC<Props> = ({ pool }) => {
+	const translate = useTranslation()
+
 	const { stakedBalance, walletBalance } = useAccountLP(pool)
 	const { reserves, totalSupply } = useLP(pool.name)
 
@@ -54,19 +57,19 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 			<Page
 				loading={false}
 				mainTitle={pool.name}
-				secondaryText={
-					pool?.legacy ? 'Legacy Liquidity Pool' : 'Liquidity Pool'
-				}
+				secondaryText={translate(
+					pool?.legacy ? 'Legacy Liquidity Pool' : 'Liquidity Pool',
+				)}
 				value={
 					pool?.legacy
-						? 'No longer supported.'
+						? translate('No longer supported.')
 						: '$' + formatBN(balanceUSD)
 				}
-				valueInfo={
+				valueInfo={translate(
 					pool?.legacy
 						? 'Please unstake, remove funds, and move to a new LP.'
-						: 'Your Position'
-				}
+						: 'Your Position',
+				)}
 				background={pool?.legacy ? red[100] : undefined}
 			>
 				<Row gutter={16}>

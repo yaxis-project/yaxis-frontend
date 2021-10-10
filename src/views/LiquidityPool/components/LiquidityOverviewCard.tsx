@@ -12,6 +12,7 @@ import LegacyClaim from './LegacyClaim'
 import APYCalculator from '../../../components/APYCalculator'
 import BigNumber from 'bignumber.js'
 import { InfoCircleOutlined } from '@ant-design/icons'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { Text } = Typography
 
@@ -52,19 +53,21 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 	pool,
 	totalUSDBalance,
 }) => {
+	const translate = useTranslation()
+
 	const { yaxisAprPercent } = useAPY(pool?.rewards)
 
 	const { poolShare } = useAccountLP(pool)
 
 	return (
-		<DetailOverviewCard title="Overview">
+		<DetailOverviewCard title={translate('Overview')}>
 			{pool?.legacy ? (
 				<LegacyClaim pool={pool} />
 			) : (
 				<Claim rewardsContract={pool.rewards} />
 			)}
 			<CardRow
-				main="Share of Pool"
+				main={translate('Share of Pool')}
 				secondary={
 					<Value
 						value={poolShare.times(100).toNumber()}
@@ -79,17 +82,19 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 						title={
 							<>
 								<Row style={{ marginBottom: '5px' }}>
-									<Text>Annual Percentage Rate</Text>
+									<Text>
+										{translate('Annual Percentage Rate')}
+									</Text>
 								</Row>
 								<TooltipRow
-									main={'YAXIS rewards APR:'}
+									main={translate('YAXIS rewards APR') + ':'}
 									value={yaxisAprPercent.toNumber()}
 								/>
 							</>
 						}
 					>
-						<Text type="secondary">Total APR </Text>
-						<StyledInfoIcon alt="YAXIS Rewards" />
+						<Text type="secondary">{translate('Total APR')} </Text>
+						<StyledInfoIcon alt={translate('YAXIS Rewards')} />
 					</Tooltip>
 				}
 				secondary={
@@ -106,10 +111,17 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 								title={
 									<>
 										<Row style={{ marginBottom: '5px' }}>
-											<Text>Annual Percentage Yield</Text>
+											<Text>
+												{translate(
+													'Annual Percentage Yield',
+												)}
+											</Text>
 										</Row>
 										<TooltipRow
-											main={'YAXIS rewards APY:'}
+											main={
+												translate('YAXIS rewards APY') +
+												':'
+											}
 											value={yaxisAprPercent
 												.div(100)
 												.dividedBy(12)
@@ -118,13 +130,20 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 												.minus(1)
 												.multipliedBy(100)
 												.toNumber()}
-											suffix={'* monthly compound'}
+											suffix={
+												'* ' +
+												translate('monthly compound')
+											}
 										/>
 									</>
 								}
 							>
-								<Text type="secondary">Total APY </Text>
-								<StyledInfoIcon alt="YAXIS Rewards" />
+								<Text type="secondary">
+									{translate('Total APY')}{' '}
+								</Text>
+								<StyledInfoIcon
+									alt={translate('YAXIS Rewards')}
+								/>
 							</Tooltip>
 						</Row>
 						<Row>

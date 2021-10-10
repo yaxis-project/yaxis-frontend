@@ -15,6 +15,7 @@ import { usePrices } from '../../../state/prices/hooks'
 import moment from 'moment'
 import { baseTheme } from '../../../theme'
 import BigNumber from 'bignumber.js'
+import useTranslation from '../../../hooks/useTranslation'
 
 import {
 	WithTooltip,
@@ -85,6 +86,8 @@ const StyledText = styled.span`
  */
 //const PriceGraph = ({className}) => {
 const PriceGraph: React.FC = () => {
+	const translate = useTranslation()
+
 	const [data, setData] = useState<any>({ values: [], max: 0, min: 0 })
 	const [isLoading, setLoading] = useState(true)
 	const [selectedDay, setDate] = useState<SelectableDay>(dayOptions[3])
@@ -127,7 +130,7 @@ const PriceGraph: React.FC = () => {
 				<Row>
 					<Col style={{ paddingRight: '10px' }}>
 						<StyledText>
-							<strong>YAXIS Price:</strong>
+							<strong>{translate('YAXIS Price')}:</strong>
 						</StyledText>
 					</Col>
 					<Col>

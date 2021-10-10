@@ -9,6 +9,8 @@ import Typography from '../../components/Typography'
 import Collapse from '../../components/Collapse'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { useContracts } from '../../contexts/Contracts'
+import useTranslation from '../../hooks/useTranslation'
+
 const { Panel } = Collapse
 const { Text } = Typography
 const columns = [
@@ -20,6 +22,8 @@ const columns = [
 ]
 
 const Liquidity: React.FC = () => {
+	const translate = useTranslation()
+
 	const { contracts } = useContracts()
 	const activePools = useMemo(
 		() =>
@@ -39,7 +43,9 @@ const Liquidity: React.FC = () => {
 					<Card
 						title={
 							<Col style={{ fontSize: '18px', fontWeight: 700 }}>
-								<Text>Active Liquidity Pools</Text>
+								<Text>
+									{translate('Active Liquidity Pools')}
+								</Text>
 							</Col>
 						}
 						bodyStyle={{ padding: 0 }}
@@ -66,16 +72,24 @@ const Liquidity: React.FC = () => {
 							header={
 								<Row gutter={10}>
 									<Col>
-										<Text>Legacy Liquidity Pools</Text>
+										<Text>
+											{translate(
+												'Legacy Liquidity Pools',
+											)}
+										</Text>
 									</Col>
 									<Col>
 										<Tooltip
-											title={
-												'LPs that are no longer supported'
-											}
+											title={translate(
+												'LPs that are no longer supported',
+											)}
 											placement={'right'}
 										>
-											<StyledInfoIcon alt="Legacy Liquidity Pools info" />
+											<StyledInfoIcon
+												alt={translate(
+													'Legacy Liquidity Pools info',
+												)}
+											/>
 										</Tooltip>
 									</Col>
 								</Row>

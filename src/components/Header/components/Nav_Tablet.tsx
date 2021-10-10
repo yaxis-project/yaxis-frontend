@@ -15,6 +15,7 @@ import {
 } from '../../../connectors'
 import ThemeToggle from '../../ThemeToggle'
 import { useWeb3React } from '@web3-react/core'
+import useTranslation from '../../../hooks/useTranslation'
 
 const StyledMenu = styled(Menu)`
 	background: ${(props) => props.theme.secondary.background};
@@ -60,6 +61,8 @@ const Connect = styled(Menu.Item)`
 interface NavTabletProps {}
 
 const NavTablet: React.FC<NavTabletProps> = () => {
+	const translate = useTranslation()
+
 	const { account, chainId, deactivate } = useWeb3Provider()
 	const { activate } = useWeb3React('fallback')
 
@@ -92,7 +95,9 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 		() => (
 			<StyledMenu>
 				{!account ? (
-					<Connect onClick={openModal}>Connect</Connect>
+					<Connect onClick={openModal}>
+						{translate('Connect')}
+					</Connect>
 				) : (
 					<AccountInfo
 						account={account}
@@ -103,21 +108,21 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 				)}
 				<MenuItem key={'/'}>
 					<StyledLink exact activeClassName="active" to="/">
-						Overview
+						{translate('Overview')}
 					</StyledLink>
 				</MenuItem>
 
 				<MenuItem key={'/vault'}>
 					<StyledLink activeClassName="active" to="/vault">
-						Vault
+						{translate('Vault')}
 					</StyledLink>
 				</MenuItem>
 
 				<StyledSubMenu
 					key={'/liquidity'}
-					title={<StyledSpan>Liquidity</StyledSpan>}
+					title={<StyledSpan>{translate('Liquidity')}</StyledSpan>}
 				>
-					<ItemGroup title="Provide Liquidity" />
+					<ItemGroup title={translate('Provide Liquidity')} />
 					{currentPools.map((farm) => (
 						<MenuItem key={`/liquidity/${farm.lpAddress}`}>
 							<StyledLink
@@ -132,7 +137,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 
 				<MenuItem key={'/governance'}>
 					<StyledLink activeClassName="active" to="/governance">
-						Governance
+						{translate('Governance')}
 					</StyledLink>
 				</MenuItem>
 
@@ -151,19 +156,20 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 						rel="noopener noreferrer"
 						target="_blank"
 					>
-						Help Center
+						{translate('Help Center')}
 					</a>
 				</MenuItem>
 				{!account ? (
 					<></>
 				) : (
 					<MenuItem key="logout" onClick={handleSignOutClick}>
-						Logout
+						{translate('Logout')}
 					</MenuItem>
 				)}
 			</StyledMenu>
 		),
 		[
+			translate,
 			account,
 			openModal,
 			networkName,

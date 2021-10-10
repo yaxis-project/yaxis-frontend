@@ -1,15 +1,12 @@
-import { useContext } from 'react'
 import styled from 'styled-components'
 import { Col, Tooltip } from 'antd'
 import Typography from '../../../components/Typography'
-import { LanguageContext } from '../../../contexts/Language'
-import phrases from './translations'
 import {
 	DetailOverviewCard,
 	DetailOverviewCardRow,
 } from '../../../components/DetailOverviewCard'
 import { CardRow } from '../../../components/ExpandableSidePanel'
-
+import useTranslation from '../../../hooks/useTranslation'
 import Value from '../../../components/Value'
 import { useReturns } from '../../../state/wallet/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
@@ -43,10 +40,7 @@ const TooltipRow = ({ main, value }: TooltipRowProps) => (
  * Creates a loadable detail overview for users on the home page, showing financial returns and account balances.
  */
 export default function HomeOverviewCard() {
-	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
-
-	const t = (s: string) => phrases[s][language]
+	const translate = useTranslation()
 
 	const {
 		rewardsUSD,
@@ -54,11 +48,11 @@ export default function HomeOverviewCard() {
 	} = useReturns()
 
 	return (
-		<DetailOverviewCard title={t('Your Lifetime Earnings')}>
+		<DetailOverviewCard title={translate('Your Lifetime Earnings')}>
 			<CardRow
 				main={
 					<StyledText>
-						Interest Earned
+						{translate('Interest Earned')}
 						<Tooltip
 							title={
 								<>
@@ -68,24 +62,28 @@ export default function HomeOverviewCard() {
 											fontWeight: 700,
 										}}
 									>
-										Your YAXIS rewards:
+										{translate('Your YAXIS rewards')}:
 									</div>
 									<TooltipRow
-										main="Vault rewards"
+										main={translate('Vault rewards')}
 										value={metaVault.toNumber()}
 									/>
 									<TooltipRow
-										main="Governance (YAXIS) rewards"
+										main={translate(
+											'Governance (YAXIS) rewards',
+										)}
 										value={governance.toNumber()}
 									/>
 									<TooltipRow
-										main="Liquidity Pool token rewards"
+										main={translate(
+											'Liquidity Pool token rewards',
+										)}
 										value={lp.toNumber()}
 									/>
 								</>
 							}
 						>
-							<StyledInfoIcon alt="YAXIS Rewards" />
+							<StyledInfoIcon alt={translate('YAXIS Rewards')} />
 						</Tooltip>
 					</StyledText>
 				}
@@ -108,7 +106,7 @@ export default function HomeOverviewCard() {
 			<CardRow
 				main={
 					<StyledText>
-						Rewards Earned
+						{translate('Rewards Earned')}
 						<Tooltip
 							title={
 								<>
@@ -118,24 +116,28 @@ export default function HomeOverviewCard() {
 											fontWeight: 700,
 										}}
 									>
-										Your YAXIS rewards:
+										{translate('Your YAXIS rewards')}:
 									</div>
 									<TooltipRow
-										main="Vault rewards"
+										main={translate('Vault rewards')}
 										value={metaVault.toNumber()}
 									/>
 									<TooltipRow
-										main="Governance (YAXIS) rewards"
+										main={translate(
+											'Governance (YAXIS) rewards',
+										)}
 										value={governance.toNumber()}
 									/>
 									<TooltipRow
-										main="Liquidity Pool token rewards"
+										main={translate(
+											'Liquidity Pool token rewards',
+										)}
 										value={lp.toNumber()}
 									/>
 								</>
 							}
 						>
-							<StyledInfoIcon alt="YAXIS Rewards" />
+							<StyledInfoIcon alt={translate('YAXIS Rewards')} />
 						</Tooltip>
 					</StyledText>
 				}

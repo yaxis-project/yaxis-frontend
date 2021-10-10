@@ -2,8 +2,11 @@ import { useMemo } from 'react'
 import Banner from '..'
 import useSwapData from '../../../hooks/useSwapData'
 import BigNumber from 'bignumber.js'
+import useTranslation from '../../../hooks/useTranslation'
 
 const SwapBanner = () => {
+	const translate = useTranslation()
+
 	const data = useSwapData()
 
 	const visible = useMemo(() => {
@@ -35,7 +38,9 @@ const SwapBanner = () => {
 		<Banner
 			to={'/swap'}
 			visible={visible}
-			text={'YIP-08 Token Swap is now live! Click here to learn more.'}
+			text={translate(
+				'YIP-08 Token Swap is now live! Click here to learn more.',
+			)}
 		/>
 	)
 }

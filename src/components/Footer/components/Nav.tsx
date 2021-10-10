@@ -6,9 +6,11 @@ import { ReactComponent as github } from '../../../assets/img/icons/github.svg'
 import { ReactComponent as twitter } from '../../../assets/img/icons/twitter.svg'
 import quantstamp from '../../../assets/img/icons/quantstamp.svg'
 import Icon, { MediumOutlined } from '@ant-design/icons'
+import useTranslation from '../../../hooks/useTranslation'
 const { useBreakpoint } = Grid
 
 const Nav: React.FC = () => {
+	const translate = useTranslation()
 	const { xs, sm } = useBreakpoint()
 	return (
 		<StyledRow align="middle">
@@ -19,14 +21,14 @@ const Nav: React.FC = () => {
 						href="https://immunefi.com/bounty/yaxis/"
 						rel="noopener noreferrer"
 					>
-						Security
+						{translate('Security')}
 					</StyledLink>
 					<StyledLink
 						target="_blank"
 						href="https://trello.com/b/nkcEh9pc/yaxis-bounty-board-community"
 						rel="noopener noreferrer"
 					>
-						We're Hiring!
+						{translate("We're Hiring")!}
 					</StyledLink>
 				</Row>
 			</StyledCol>
@@ -38,7 +40,9 @@ const Nav: React.FC = () => {
 						href="https://certificate.quantstamp.com/full/meta-vault-v-2"
 						rel="noopener noreferrer"
 					>
-						<span style={{ color: 'black' }}>Secured by</span>{' '}
+						<span style={{ color: 'black' }}>
+							{translate('Secured by')}
+						</span>{' '}
 						<img
 							src={quantstamp}
 							height="17"

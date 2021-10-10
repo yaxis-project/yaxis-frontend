@@ -2,8 +2,7 @@ import { useState, useContext, useMemo, useCallback } from 'react'
 import { Currencies3Pool, Currency } from '../../../constants/currencies'
 import { useVaultsBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-import { LanguageContext } from '../../../contexts/Language'
-import phrases from './translations'
+
 import { keyBy, reduce } from 'lodash'
 import { Row, Grid, Form } from 'antd'
 import styled from 'styled-components'
@@ -25,6 +24,7 @@ import Value from '../../../components/Value'
 import Input from '../../../components/Input'
 import { useHistory } from 'react-router-dom'
 import ApprovalCover from '../../../components/ApprovalCover'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { Text, Title } = Typography
 
@@ -35,12 +35,13 @@ const StyledText = styled(Text)`
 `
 
 const makeColumns = (
+	translate: any,
 	onChange: ReturnType<typeof handleFormInputChange>,
 	onMaxWithdraw: () => void,
 ) => {
 	return [
 		{
-			title: 'Asset',
+			title: translate('Asset'),
 			key: 'asset',
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
@@ -51,7 +52,7 @@ const makeColumns = (
 			),
 		},
 		{
-			title: 'Vault Balance',
+			title: translate('Vault Balance'),
 			key: 'balance',
 			sorter: (a, b) => a.balance.minus(b.balance).toNumber(),
 			render: (text, record) => (
@@ -68,7 +69,7 @@ const makeColumns = (
 			),
 		},
 		{
-			title: 'Amount',
+			title: translate('Amount'),
 			key: 'amount',
 			render: (text, record) => {
 				return (
@@ -122,6 +123,8 @@ interface TableDataEntry extends Currency {
  * Creates a deposit table for the savings account.
  */
 export default function DepositTable() {
+	const translate = useTranslation()
+
 	const history = useHistory()
 
 	const balances = useVaultsBalances()
@@ -211,7 +214,6 @@ export default function DepositTable() {
 		// )
 		for (const [currency, value] of Object.entries(currencyValues)) {
 			if (value) {
-				console.log(numberToDecimal(value, 18))
 				await withdraw({
 					args: [
 						numberToDecimal(value, 18),
@@ -223,9 +225,6 @@ export default function DepositTable() {
 		}
 		setCurrencyValues(initialCurrencyValues)
 	}, [currencyValues, withdraw, totalDepositing, currencyMap])
-
-	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
 
 	const data = useMemo(() => {
 		return Currencies3Pool.map<TableDataEntry>((currency) => {
@@ -249,8 +248,13 @@ export default function DepositTable() {
 	}, [balances, currencyValues])
 
 	const columns = useMemo(
-		() => makeColumns(handleFormInputChange(setCurrencyValues), () => {}),
-		[],
+		() =>
+			makeColumns(
+				translate,
+				handleFormInputChange(setCurrencyValues),
+				() => {},
+			),
+		[translate],
 	)
 
 	return (
@@ -281,7 +285,7 @@ export default function DepositTable() {
 						: { padding: '0 10%', margin: '10px' }
 				}
 			>
-				<Text type="secondary">{phrases['Total'][language]}</Text>
+				<Text type="secondary">{translate('Total')}</Text>
 				<Title level={3} style={{ margin: '0 0 10px 0' }}>
 					${totalDepositing}
 				</Title>
@@ -291,13 +295,13 @@ export default function DepositTable() {
 					onClick={handleSubmit}
 					style={{ fontSize: '18px' }}
 				>
-					{phrases['Withdraw'][language]}
+					{translate('Withdraw')}
 				</Button>
 				<Text
 					type="secondary"
 					style={{ marginTop: '10px', display: 'block' }}
 				>
-					{phrases['Withdraw Fee'][language]}: 0.1%
+					{translate('Withdraw Fee')}: 0.1%
 				</Text>
 			</div>
 		</>

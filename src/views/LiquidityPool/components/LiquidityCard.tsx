@@ -1,6 +1,4 @@
-import React, { useContext, useMemo } from 'react'
-import { LanguageContext } from '../../../contexts/Language'
-import phrases from './translations'
+import React, { useMemo } from 'react'
 import Card from '../../../components/Card'
 import Typography from '../../../components/Typography'
 import Divider from '../../../components/Divider'
@@ -13,6 +11,7 @@ import { Currencies } from '../../../constants/currencies'
 import { getFullDisplayBalance } from '../../../utils/formatBalance'
 import { useAccountLP } from '../../../state/wallet/hooks'
 import { useLP } from '../../../state/external/hooks'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { Text } = Typography
 
@@ -69,8 +68,7 @@ type Props = {
 }
 
 const LiquidityCard: React.FC<Props> = ({ pool }) => {
-	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
+	const translate = useTranslation()
 
 	const { lpUrl, reserves } = useLP(pool.name)
 	const { walletBalance, poolShare, stakedBalance } = useAccountLP(pool)
@@ -90,26 +88,26 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 			className="liquidity-card"
 			title={
 				<Text>
-					<strong>Your Liquidity</strong>
+					<strong>{translate('Your Liquidity')}</strong>
 				</Text>
 			}
 		>
 			<Row>
-				<TableHeader value={phrases['Asset'][language]} span={9} />
-				<TableHeader value={phrases['Balance'][language]} span={15} />
+				<TableHeader value={translate('Asset')} span={9} />
+				<TableHeader value={translate('Balance')} span={15} />
 			</Row>
 			<Divider style={{ margin: '0' }} />
 
 			<LiquidityRow
 				icon={currency?.icon}
-				name={'Pool Tokens'}
+				name={translate('Pool Tokens')}
 				balance={getFullDisplayBalance(
 					walletBalance?.value.plus(stakedBalance?.value),
 				)}
 				symbol={pool.symbol}
 			/>
 			<Divider style={{ margin: '0' }}>
-				<Text>REPRESENTING:</Text>
+				<Text>{translate('REPRESENTING')}:</Text>
 			</Divider>
 			{pool.lpTokens.map(({ tokenId }, i) => (
 				<>
@@ -137,7 +135,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 							)
 						}
 					>
-						Remove
+						{translate('Remove')}
 					</Button>
 				</Col>
 				{!pool?.legacy && (
@@ -147,7 +145,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 							icon={<PlusOutlined />}
 							onClick={() => window.open(lpUrl, '_blank')}
 						>
-							Add
+							{translate('Add')}
 						</Button>
 					</Col>
 				)}

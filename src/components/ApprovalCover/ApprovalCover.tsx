@@ -8,6 +8,7 @@ import Button from '../Button'
 import BigNumber from 'bignumber.js'
 import { MAX_UINT } from '../../utils/number'
 import { ethers } from 'ethers'
+import useTranslation from '../../hooks/useTranslation'
 
 type Props = {
 	contractName: string
@@ -25,6 +26,8 @@ const ApprovalCover: React.FC<Props> = ({
 	noWrapper,
 	autoStake,
 }) => {
+	const translate = useTranslation()
+
 	const { account } = useWeb3Provider()
 
 	const { loading: loadingAllowance, result: allowance } =
@@ -64,12 +67,13 @@ const ApprovalCover: React.FC<Props> = ({
 							})
 						}}
 					>
-						Approve
+						{translate('Approve')}
 					</Button>
 				</Col>
 			</Cover>
 		)
 	}, [
+		translate,
 		allowance,
 		loadingAllowance,
 		handleApprove,

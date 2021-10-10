@@ -11,10 +11,13 @@ import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { AutoStakeCover } from '../../../components/ApprovalCover/AutoStakeCover'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { Text } = Typography
 
 const CreateLock: React.FC = () => {
+	const translate = useTranslation()
+
 	const { call, loading } = useContractWrite({
 		contractName: 'internal.votingEscrow',
 		method: 'create_lock',
@@ -32,7 +35,7 @@ const CreateLock: React.FC = () => {
 				<Col>
 					<Row style={{ marginBottom: '10px' }}>
 						<StyledText>
-							You have{' '}
+							{translate('You have')}{' '}
 							<span style={{ fontWeight: 600 }}>
 								{balances?.yaxis?.amount
 									? balances?.yaxis?.amount.toNumber()
@@ -43,7 +46,7 @@ const CreateLock: React.FC = () => {
 					</Row>
 					<Row gutter={10} style={{ marginBottom: '10px' }}>
 						<Col>
-							<StyledText>Lock up</StyledText>
+							<StyledText>{translate('Lock up')}</StyledText>
 						</Col>
 						<Col>
 							<Input
@@ -69,7 +72,8 @@ const CreateLock: React.FC = () => {
 					</Row>
 					<Row style={{ marginBottom: '14px' }}>
 						<StyledText>
-							It will unlock {moment(length * 1000).fromNow()}. On{' '}
+							{translate('It will unlock')}{' '}
+							{moment(length * 1000).fromNow()}. {translate('On')}{' '}
 							{moment(length * 1000).format(
 								'MMM Do YYYY, h:mm:ss a',
 							)}
@@ -83,23 +87,6 @@ const CreateLock: React.FC = () => {
 						<Button
 							block={false}
 							loading={loading}
-							onClick={() => setLength(length + 86057)}
-						>
-							<Row align="middle">
-								<span style={{ fontSize: '30px' }}>+</span>
-								<span
-									style={{
-										marginTop: '4px',
-										paddingLeft: '3px',
-									}}
-								>
-									1 day
-								</span>
-							</Row>
-						</Button>
-						<Button
-							block={false}
-							loading={loading}
 							onClick={() => setLength(length + 602400)}
 						>
 							<Row align="middle">
@@ -110,7 +97,7 @@ const CreateLock: React.FC = () => {
 										paddingLeft: '3px',
 									}}
 								>
-									1 week
+									{translate('1 week')}
 								</span>
 							</Row>{' '}
 						</Button>
@@ -127,7 +114,7 @@ const CreateLock: React.FC = () => {
 										paddingLeft: '3px',
 									}}
 								>
-									1 year
+									{translate('1 year')}
 								</span>
 							</Row>{' '}
 						</Button>
@@ -147,13 +134,15 @@ const CreateLock: React.FC = () => {
 					})
 				}
 			>
-				Create Lock
+				{translate('Create Lock')}
 			</Button>
 		</Row>
 	)
 }
 
 const Lock: React.FC = () => {
+	const translate = useTranslation()
+
 	const { contracts } = useContracts()
 
 	const hasLock = useHasLock()
@@ -162,19 +151,21 @@ const Lock: React.FC = () => {
 		<StyledRow gutter={[0, 20]}>
 			<Row>
 				<StyledText>
-					Lock up your YAXIS token to increase your Vault rewards and
-					get voting power toward governance decisions.
+					{translate(
+						'Lock up your YAXIS token to increase your Vault rewards and get voting power toward governance decisions.',
+					)}
 				</StyledText>
 			</Row>
 			<StyledText>
-				These decay over time. Extend the lock up time to get the most
-				benefits.
+				{translate(
+					'These decay over time. Extend the lock up time to get the most benefits.',
+				)}
 			</StyledText>
 			{hasLock ? (
 				<StyledRow justify="center">
 					<StyledText>YAXIS: 100</StyledText>
 					<Input></Input>
-					<Button>Lock</Button>
+					<Button>{translate('Lock')}</Button>
 				</StyledRow>
 			) : (
 				<AutoStakeCover

@@ -5,6 +5,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
 import Button from '../../../components/Button'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { Step } = Steps
 
@@ -20,6 +21,8 @@ interface StepBoostProps extends StepProps {
 }
 
 const StepBoost: React.FC<StepBoostProps> = ({ yaxisBalance }) => {
+	const translate = useTranslation()
+
 	const yaxis = useMemo(() => {
 		if (yaxisBalance.gt(0))
 			return (
@@ -32,22 +35,29 @@ const StepBoost: React.FC<StepBoostProps> = ({ yaxisBalance }) => {
 							}}
 							height={'40px'}
 						>
-							Stake YAXIS
+							{translate('Stake')} YAXIS
 						</StyledButton>
 					}
-					description="Lock up your YAXIS for extra APY and voting power."
+					description={translate(
+						'Lock up your YAXIS for extra APY and voting power.',
+					)}
 					icon={<StyledIcon />}
 				/>
 			)
 		return (
-			<Step title={'Stake YAXIS'} description="Done." status="finish" />
+			<Step
+				title={translate('Stake') + ' YAXIS'}
+				description={translate('Done.')}
+				status="finish"
+			/>
 		)
-	}, [yaxisBalance])
+	}, [translate, yaxisBalance])
 
 	const message = useMemo(() => {
-		if (yaxisBalance.gt(0)) return 'Stake your tokens to receive emissions!'
-		return 'Step complete.'
-	}, [yaxisBalance])
+		if (yaxisBalance.gt(0))
+			return translate('Stake your tokens to receive emissions!')
+		return translate('Step complete.')
+	}, [translate, yaxisBalance])
 
 	return (
 		<>

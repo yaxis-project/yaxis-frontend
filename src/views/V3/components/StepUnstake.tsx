@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
 import Button from '../../../components/Button'
 import useContractWrite from '../../../hooks/useContractWrite'
+import useTranslation from '../../../hooks/useTranslation'
 import { MAX_UINT } from '../../../utils/number'
 import { ethers } from 'ethers'
 
@@ -23,6 +24,8 @@ interface StepUnstakeProps extends StepProps {
 }
 
 const StepUnstake: React.FC<StepUnstakeProps> = ({ stakedYAXIS }) => {
+	const translate = useTranslation()
+
 	const { call: handleUnstake, loading: loadingStakeMVLT } = useContractWrite(
 		{
 			contractName: `rewards.MetaVault`,
@@ -45,22 +48,31 @@ const StepUnstake: React.FC<StepUnstakeProps> = ({ stakedYAXIS }) => {
 							loading={loadingStakeMVLT}
 							height={'40px'}
 						>
-							Approve MVLT
+							{translate('Approve')} MVLT
 						</StyledButton>
 					}
-					description="Approve the new rewards contract to use your MVLT."
+					description={translate(
+						'Approve the new rewards contract to use your MVLT.',
+					)}
 					icon={<StyledIcon />}
 					status="wait"
 				/>
 			)
-		return <Step title="Stake MVLT" description="Done." status="finish" />
-	}, [stakedYAXIS, handleUnstake, loadingStakeMVLT])
+		return (
+			<Step
+				title={translate('Stake') + ' MVLT'}
+				description={translate('Done.')}
+				status="finish"
+			/>
+		)
+	}, [translate, stakedYAXIS, handleUnstake, loadingStakeMVLT])
 
 	const message = useMemo(() => {
-		if (stakedYAXIS.gt(0)) return 'Stake your tokens to receive emissions!'
+		if (stakedYAXIS.gt(0))
+			return translate('Stake your tokens to receive emissions!')
 
-		return 'Step complete.'
-	}, [stakedYAXIS])
+		return translate('Step complete.')
+	}, [translate, stakedYAXIS])
 
 	return (
 		<>

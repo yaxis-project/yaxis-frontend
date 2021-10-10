@@ -2,8 +2,7 @@ import { useState, useContext, useMemo, useCallback } from 'react'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-import { LanguageContext } from '../../../contexts/Language'
-import phrases from './translations'
+
 import { Row, Grid, Form } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
@@ -24,6 +23,7 @@ import Value from '../../../components/Value'
 import Input from '../../../components/Input'
 import { useHistory } from 'react-router-dom'
 import ApprovalCover from '../../../components/ApprovalCover'
+import useTranslation from '../../../hooks/useTranslation'
 import { currentConfig } from '../../../constants/configs'
 
 const { Text, Title } = Typography
@@ -35,12 +35,13 @@ const StyledText = styled(Text)`
 `
 
 const makeColumns = (
+	translate: any,
 	onChange: ReturnType<typeof handleFormInputChange>,
 	onMaxWithdraw: () => void,
 ) => {
 	return [
 		{
-			title: 'Asset',
+			title: translate('Asset'),
 			key: 'asset',
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
@@ -51,7 +52,7 @@ const makeColumns = (
 			),
 		},
 		{
-			title: 'Vault Balance',
+			title: translate('Vault Balance'),
 			key: 'balance',
 			sorter: (a, b) => a.balance.minus(b.balance).toNumber(),
 			render: (text, record) => (
@@ -68,7 +69,7 @@ const makeColumns = (
 			),
 		},
 		{
-			title: 'Amount',
+			title: translate('Amount'),
 			key: 'amount',
 			render: (text, record) => {
 				return (
@@ -111,7 +112,6 @@ interface TableDataEntry extends Currency {
 const vaults = Object.entries(currentConfig().vaults)
 
 const vaultCurrencies = vaults.map(([_, vault]) => {
-	console.log(vault)
 	return Currencies[vault.token]
 })
 
@@ -127,6 +127,8 @@ const initialCurrencyValues: CurrencyValues = vaults.reduce(
  * Creates a deposit table for the savings account.
  */
 export default function StakeTable() {
+	const translate = useTranslation()
+
 	const history = useHistory()
 
 	const [balances] = useAllTokenBalances()
@@ -216,7 +218,6 @@ export default function StakeTable() {
 		// )
 		for (const [currency, value] of Object.entries(currencyValues)) {
 			if (value) {
-				console.log(numberToDecimal(value, 18))
 				await withdraw({
 					args: [
 						numberToDecimal(value, 18),
@@ -228,9 +229,6 @@ export default function StakeTable() {
 		}
 		setCurrencyValues(initialCurrencyValues)
 	}, [currencyValues, withdraw, totalDepositing, currencyMap])
-
-	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
 
 	const data = useMemo(() => {
 		return vaults.map<any>(([name, vault]) => {
@@ -248,8 +246,13 @@ export default function StakeTable() {
 	}, [balances, currencyValues])
 
 	const columns = useMemo(
-		() => makeColumns(handleFormInputChange(setCurrencyValues), () => {}),
-		[],
+		() =>
+			makeColumns(
+				translate,
+				handleFormInputChange(setCurrencyValues),
+				() => {},
+			),
+		[translate],
 	)
 
 	return (
@@ -280,7 +283,7 @@ export default function StakeTable() {
 						: { padding: '0 10%', margin: '10px' }
 				}
 			>
-				<Text type="secondary">{phrases['Total'][language]}</Text>
+				<Text type="secondary">{translate('Total')}</Text>
 				<Title level={3} style={{ margin: '0 0 10px 0' }}>
 					${totalDepositing}
 				</Title>
@@ -290,7 +293,7 @@ export default function StakeTable() {
 					onClick={handleSubmit}
 					style={{ fontSize: '18px' }}
 				>
-					Stake
+					{translate('Stake')}
 				</Button>
 			</div>
 		</>

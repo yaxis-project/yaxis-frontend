@@ -1,12 +1,10 @@
-import { useContext, useState, useMemo, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import * as currencies from '../../../constants/currencies'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { useContracts } from '../../../contexts/Contracts'
 import { useAccountLP } from '../../../state/wallet/hooks'
 import Value from '../../../components/Value'
-import { LanguageContext } from '../../../contexts/Language'
-import phrases from './translations'
 import Button from '../../../components/Button'
 import Input from '../../../components/Input'
 import Card from '../../../components/Card'
@@ -16,6 +14,7 @@ import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import { useApprovals } from '../../../state/wallet/hooks'
 import { ethers } from 'ethers'
+import useTranslation from '../../../hooks/useTranslation'
 const { Text } = Typography
 
 /**
@@ -31,15 +30,13 @@ const TableHeader = (props: any) => (
 )
 
 function Stake({ pool }) {
+	const translate = useTranslation()
+
 	const currency = useMemo(
 		() => currencies[`${pool.type.toUpperCase()}_LP`],
 		[pool.type],
 	)
-	const languages = useContext(LanguageContext)
-	const t = useCallback(
-		(s: string) => phrases[s][languages?.state?.selected],
-		[languages],
-	)
+
 	const { call: handleStake, loading: loadingStake } = useContractWrite({
 		contractName: `rewards.${pool.rewards}`,
 		method: 'stake',
@@ -91,8 +88,8 @@ function Stake({ pool }) {
 	return (
 		<>
 			<Row gutter={24}>
-				<TableHeader value={t('Available Balance')} span={12} />
-				<TableHeader value={t('Staked Balance')} span={12} />
+				<TableHeader value={translate('Available Balance')} span={12} />
+				<TableHeader value={translate('Staked Balance')} span={12} />
 			</Row>
 
 			<Row gutter={24}>
@@ -142,7 +139,7 @@ function Stake({ pool }) {
 						}
 						loading={loadingStake}
 					>
-						{t('Stake')}
+						{translate('Stake')}
 					</Button>
 				</Col>
 				<Col span={12}>
@@ -172,7 +169,7 @@ function Stake({ pool }) {
 						}
 						loading={loadingUnstake}
 					>
-						{t('Unstake')}
+						{translate('Unstake')}
 					</Button>
 				</Col>
 			</Row>
@@ -181,13 +178,9 @@ function Stake({ pool }) {
 }
 
 export default function ApprovalWrapper({ pool }) {
-	const { account } = useWeb3Provider()
+	const translate = useTranslation()
 
-	const languages = useContext(LanguageContext)
-	const t = useCallback(
-		(s: string) => phrases[s][languages?.state?.selected],
-		[languages],
-	)
+	const { account } = useWeb3Provider()
 
 	const { contracts } = useContracts()
 
@@ -207,7 +200,9 @@ export default function ApprovalWrapper({ pool }) {
 				<Row justify="center">
 					<Result
 						status="warning"
-						title="Connect a wallet to start earning rewards."
+						title={translate(
+							'Connect a wallet to start earning rewards.',
+						)}
 					/>
 				</Row>
 			)
@@ -216,8 +211,9 @@ export default function ApprovalWrapper({ pool }) {
 				<>
 					<Row justify="center" style={{ paddingBottom: '20px' }}>
 						<Col>
-							To start staking, first approve the Rewards contract
-							to use your LP token
+							{translate(
+								'To start staking, first approve the Rewards contract to use your LP token',
+							)}
 						</Col>
 					</Row>
 					<Row justify="center">
@@ -234,21 +230,21 @@ export default function ApprovalWrapper({ pool }) {
 								}
 								loading={loading}
 							>
-								{t('Approve')}
+								{translate('Approve')}
 							</Button>
 						</Col>
 					</Row>
 				</>
 			)
 		return <Stake pool={pool} />
-	}, [account, staking, loading, onApprove, pool, t, contracts])
+	}, [account, staking, loading, onApprove, pool, translate, contracts])
 
 	return (
 		<Card
 			className="staking-card"
 			title={
 				<Text>
-					<strong>{t('Staking')}</strong>
+					<strong>{translate('Staking')}</strong>
 				</Text>
 			}
 		>

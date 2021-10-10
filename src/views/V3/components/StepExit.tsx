@@ -1,4 +1,4 @@
-import { useMemo, useCallback, Dispatch, SetStateAction } from 'react'
+import { useMemo, Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
 import { Row, Steps } from 'antd'
@@ -8,6 +8,8 @@ import { currentConfig } from '../../../constants/configs'
 import BigNumber from 'bignumber.js'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
+import useTranslation from '../../../hooks/useTranslation'
+
 const { Step } = Steps
 
 interface StepProps {
@@ -23,6 +25,8 @@ interface StepExitProps extends StepProps {
 }
 
 const StepExit: React.FC<StepExitProps> = ({ stakedMVLT, walletMVLT }) => {
+	const translate = useTranslation()
+
 	const { chainId } = useWeb3Provider()
 
 	const config = useMemo(() => currentConfig(chainId), [chainId])
@@ -48,21 +52,22 @@ const StepExit: React.FC<StepExitProps> = ({ stakedMVLT, walletMVLT }) => {
 							loading={loadingUnstake}
 							height={'40px'}
 						>
-							Claim MetaVault rewards
+							{translate('Claim')} MetaVault{' '}
+							{translate('rewards')}
 						</StyledButton>
 					}
-					description="Gather pending MetaVault rewards"
+					description={translate('Gather pending MetaVault rewards')}
 					icon={<StyledIcon />}
 				/>
 			)
 		return (
 			<Step
-				title="MetaVault rewards"
-				description="Done."
+				title={'MetaVault ' + translate('rewards')}
+				description={translate('Done.')}
 				status="finish"
 			/>
 		)
-	}, [stakedMVLT, handleUnstake, loadingUnstake])
+	}, [translate, stakedMVLT, handleUnstake, loadingUnstake])
 
 	const { call: handleWithdraw, loading: submitting } = useContractWrite({
 		contractName: 'internal.yAxisMetaVault',
@@ -74,10 +79,10 @@ const StepExit: React.FC<StepExitProps> = ({ stakedMVLT, walletMVLT }) => {
 
 	const message = useMemo(() => {
 		if (stakedMVLT.gt(0) || walletMVLT.gt(0))
-			return 'First, exit the previous contract'
+			return translate('First, exit the previous contract')
 
-		return 'Step complete.'
-	}, [stakedMVLT, walletMVLT])
+		return translate('Step complete.')
+	}, [translate, stakedMVLT, walletMVLT])
 
 	return (
 		<>
@@ -115,7 +120,7 @@ const StyledIcon = styled(ExclamationCircleOutlined)`
 // import { useAllTokenBalances } from '../../../state/wallet/hooks'
 // import { usePrices } from '../../../state/prices/hooks'
 // import { useContracts } from '../../../contexts/Contracts'
-// import { LanguageContext } from '../../../contexts/Language'
+//
 // import phrases from './translations'
 // import { reduce } from 'lodash'
 // import Typography from '../../../components/Typography'

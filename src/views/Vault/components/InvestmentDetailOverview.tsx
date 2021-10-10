@@ -1,8 +1,7 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { useAPY } from '../../../state/internal/hooks'
-import { LanguageContext } from '../../../contexts/Language'
-import phrases from './translations'
+
 import { Tooltip, Row } from 'antd'
 import APYCalculator from '../../../components/APYCalculator'
 import Typography from '../../../components/Typography'
@@ -12,6 +11,7 @@ import { CardRow } from '../../../components/ExpandableSidePanel'
 import ClaimAll from '../../../components/ClaimAll'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { Text } = Typography
 
@@ -46,10 +46,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 	totalUSDBalance,
 	balanceLoading,
 }) => {
-	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
-
-	const t = (s: string) => phrases[s][language]
+	const translate = useTranslation()
 
 	const {
 		threeCrvApyPercent,
@@ -61,7 +58,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 	} = useAPY('MetaVault')
 
 	return (
-		<DetailOverviewCard title={t('Account Overview')}>
+		<DetailOverviewCard title={translate('Account Overview')}>
 			<ClaimAll />
 			{/* <CardRow
 				main={

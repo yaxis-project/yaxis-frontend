@@ -9,8 +9,11 @@ import { getBalanceNumber } from '../../utils/formatBalance'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import BigNumber from 'bignumber.js'
 import { currentConfig } from '../../constants/configs'
+import useTranslation from '../../hooks/useTranslation'
 
 const ClaimAll: React.FC = () => {
+	const translate = useTranslation()
+
 	const { account, chainId } = useWeb3Provider()
 
 	const vaults = useMemo(() => currentConfig(chainId).vaults, [chainId])
@@ -51,7 +54,7 @@ const ClaimAll: React.FC = () => {
 
 	return (
 		<CardRow
-			main="Rewards"
+			main={translate('Rewards')}
 			secondary={
 				<Value
 					value={getBalanceNumber(
@@ -91,7 +94,7 @@ const ClaimAll: React.FC = () => {
 							}
 							height={'40px'}
 						>
-							Claim All
+							{translate('Claim All')}
 						</Button>
 					</Col>
 				</Row>

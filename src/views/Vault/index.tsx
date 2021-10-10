@@ -13,6 +13,7 @@ import { formatBN } from '../../utils/number'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { NETWORK_NAMES } from '../../connectors'
 import { useVaultsBalances } from '../../state/wallet/hooks'
+import useTranslation from '../../hooks/useTranslation'
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -21,6 +22,8 @@ const StyledCol = styled(Col)`
 `
 
 const Vault: React.FC = () => {
+	const translate = useTranslation()
+
 	const { chainId } = useWeb3Provider()
 
 	const {
@@ -34,15 +37,15 @@ const Vault: React.FC = () => {
 		<div className="investing-view">
 			<Page
 				loading={false}
-				mainTitle="Vault Account"
-				secondaryText="Canonical Vaults"
+				mainTitle={translate('Vault Account')}
+				secondaryText={translate('Canonical Vaults')}
 				// TODO: update URL
 				secondaryTextLink={
 					address &&
 					etherscanUrl(`/address/${address}#code`, networkName)
 				}
 				value={'$' + formatBN(total)}
-				valueInfo="Balance"
+				valueInfo={translate('Balance')}
 			>
 				<Row gutter={16}>
 					<Col xs={24} sm={24} md={24} lg={16}>

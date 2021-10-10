@@ -1,22 +1,21 @@
 import styled from 'styled-components'
 import Tabs from '../../../components/Tabs'
 import DepositTable from './DepositTable'
+import DepositHelperTable from './DepositHelperTable'
 import StakeTable from './StakeTable'
 import UnstakeTable from './UnstakeTable'
 import WithdrawTable from './WithdrawTable'
+import WithdrawHelperTable from './WithdrawHelperTable'
 import Card from '../../../components/Card'
 import Tooltip from '../../../components/Tooltip'
 import { Dropdown, Menu, Button, Checkbox, Row, Col } from 'antd'
 import { useLocation, useHistory, Redirect } from 'react-router-dom'
 import { SettingOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import {
-	useHasVaultTokenBalance,
-	useHasGaugeTokenBalance,
-} from '../../../state/wallet/hooks'
-import {
 	useVaultAutoStake,
 	useSetVaultAutoStake,
 } from '../../../state/user/hooks'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { TabPane } = Tabs
 
@@ -48,6 +47,8 @@ const StyledIcon = styled(SettingOutlined)`
 `
 
 const SettingsMenu = () => {
+	const translate = useTranslation()
+
 	const autoStake = useVaultAutoStake()
 	const setAutoStake = useSetVaultAutoStake()
 	return (
@@ -58,14 +59,14 @@ const SettingsMenu = () => {
 						checked={autoStake}
 						onClick={() => setAutoStake(!autoStake)}
 					>
-						Auto Stake
+						{translate('Auto Stake')}
 					</Checkbox>
 				</Col>
 				<Col>
 					<Tooltip
-						title={
-							'Using Auto Staking allows for one click deposit & stake or unstake & withdraws, but requires an separate contract approval.'
-						}
+						title={translate(
+							'Auto Staking allows for one click deposit & stake or unstake & withdraw, but requires additional contract approvals to set up.',
+						)}
 					>
 						<QuestionCircleOutlined />
 					</Tooltip>
@@ -88,18 +89,14 @@ const Operations = () => (
 )
 
 export default function VaultActionsCard() {
+	const translate = useTranslation()
+
 	const history = useHistory()
 	const location = useLocation()
-
-	const hasVaultTokenBalance = useHasVaultTokenBalance()
-	const hasGaugeTokenBalance = useHasGaugeTokenBalance()
 
 	const autoStake = useVaultAutoStake()
 
 	if (location.hash && !TABS[location.hash]) return <Redirect to="/vault" />
-
-	const showStake = hasVaultTokenBalance || location.hash === `#stake`
-	const showUnstake = hasGaugeTokenBalance || location.hash === `#unstake`
 
 	return (
 		<StyledCard>
@@ -108,21 +105,21 @@ export default function VaultActionsCard() {
 				onTabClick={(key) => history.push(`${location.pathname}${key}`)}
 				tabBarExtraContent={<Operations />}
 			>
-				<TabPane tab="Deposit" key="#deposit">
-					<DepositTable />
+				<TabPane tab={translate('Deposit')} key="#deposit">
+					{autoStake ? <DepositHelperTable /> : <DepositTable />}
 				</TabPane>
-				{(showStake || !autoStake) && (
-					<TabPane tab="Stake" key="#stake">
+				{!autoStake && (
+					<TabPane tab={translate('Stake')} key="#stake">
 						<StakeTable />
 					</TabPane>
 				)}
-				{(showUnstake || !autoStake) && (
-					<TabPane tab="Unstake" key="#unstake">
+				{!autoStake && (
+					<TabPane tab={translate('Unstake')} key="#unstake">
 						<UnstakeTable />
 					</TabPane>
 				)}
-				<TabPane tab="Withdraw" key="#withdraw">
-					<WithdrawTable />
+				<TabPane tab={translate('Withdraw')} key="#withdraw">
+					{autoStake ? <WithdrawHelperTable /> : <WithdrawTable />}
 				</TabPane>
 			</Tabs>
 		</StyledCard>
