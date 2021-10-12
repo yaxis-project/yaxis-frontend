@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
-import { Affix, Row, Steps, Result } from 'antd'
+import { Affix, Row, Result } from 'antd'
+import Steps from '../../../components/Steps'
 import { LoadingOutlined } from '@ant-design/icons'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useSwapData from '../../../hooks/useSwapData'
@@ -51,10 +52,10 @@ export default function SwapCard() {
 		[balances],
 	)
 
-	const step3 = useMemo(() => yaxisBalance.gt(0) || mvltBalance.gt(0), [
-		yaxisBalance,
-		mvltBalance,
-	])
+	const step3 = useMemo(
+		() => yaxisBalance.gt(0) || mvltBalance.gt(0),
+		[yaxisBalance, mvltBalance],
+	)
 
 	useEffect(() => {
 		if (!loading) {

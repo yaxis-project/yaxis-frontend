@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
-import { Col, Row, Steps, Result } from 'antd'
+import { Col, Row, Result } from 'antd'
+import Steps from '../../../components/Steps'
 import { LoadingOutlined } from '@ant-design/icons'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import StepExit from './StepExit'

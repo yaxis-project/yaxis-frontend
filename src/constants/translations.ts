@@ -174,6 +174,10 @@ export type Phrases =
     | 'Re-enter Vaults'
     | 'Unstake YAXIS'
     | 'Boost your rewards'
+    | 'Welcome to yAxis 3.0'
+    | 'What\'s new'
+    | 'Migrate over'
+    | 'What is a Liquidity Pool?'
     // TODO: Might need tweaks
     | 'claim YAXIS'
     // Langauges
@@ -368,6 +372,10 @@ const EN: Translations = {
     'Re-enter Vaults': 'Re-enter Vaults',
     'Unstake YAXIS': 'Unstake YAXIS',
     'Boost your rewards': 'Boost your rewards',
+    'Welcome to yAxis 3.0': 'Welcome to yAxis 3.0',
+    'What\'s new': 'What\'s new',
+    'Migrate over': 'Migrate over',
+    'What is a Liquidity Pool?': 'What is a Liquidity Pool?',
     'English': 'English',
     'Korean': 'Korean',
     'Japanese': 'Japanese',
@@ -557,6 +565,10 @@ const KO: Translations = {
     'Re-enter Vaults': '',
     'Unstake YAXIS': '',
     'Boost your rewards': '',
+    'Welcome to yAxis 3.0': '',
+    'What\'s new': '',
+    'Migrate over': '',
+    'What is a Liquidity Pool?': '',
     'English': '',
     'Korean': '',
     'Japanese': '',
@@ -746,6 +758,10 @@ const ZH: Translations = {
     'Re-enter Vaults': '',
     'Unstake YAXIS': '',
     'Boost your rewards': '',
+    'Welcome to yAxis 3.0': '',
+    'What\'s new': '',
+    'Migrate over': '',
+    'What is a Liquidity Pool?': '',
     'English': '',
     'Korean': '',
     'Japanese': '',
@@ -904,6 +920,10 @@ const RU: Translations = {
     'Re-enter Vaults': '',
     'Unstake YAXIS': '',
     'Boost your rewards': '',
+    'Welcome to yAxis 3.0': '',
+    'What\'s new': '',
+    'Migrate over': '',
+    'What is a Liquidity Pool?': '',
     'English': 'Английский',
     'Korean': 'Корейский',
     'Japanese': 'Японский',
@@ -1093,6 +1113,10 @@ const JA: Translations = {
     'Re-enter Vaults': '',
     'Unstake YAXIS': '',
     'Boost your rewards': '',
+    'Welcome to yAxis 3.0': '',
+    'What\'s new': '',
+    'Migrate over': '',
+    'What is a Liquidity Pool?': '',
     'English': '',
     'Korean': '',
     'Japanese': '',

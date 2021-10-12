@@ -1,7 +1,8 @@
 import { useMemo, Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
-import { Steps, Row } from 'antd'
+import { Row } from 'antd'
+import Steps from '../../../components/Steps'
 import Button from '../../../components/Button'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
@@ -79,6 +80,7 @@ export default StepReenter
 const Description = styled(Row)`
 	font-size: 16px;
 	padding: 0 10px 20px 10px;
+	color: ${(props) => props.theme.primary.font};
 `
 const StyledIcon = styled(ExclamationCircleOutlined)`
 	font-size: 30px;

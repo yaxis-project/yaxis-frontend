@@ -3,7 +3,8 @@ import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import Page from '../../components/Page/Page'
 import Tooltip from '../../components/Tooltip'
-import { Table, TableProps, Row, Col } from 'antd'
+import Table from '../../components/Table'
+import { Row, Col } from 'antd'
 import Card from '../../components/Card'
 import Typography from '../../components/Typography'
 import Collapse from '../../components/Collapse'
@@ -40,6 +41,23 @@ const Liquidity: React.FC = () => {
 		<div className="liquidity-view">
 			<Page>
 				<>
+					{/* <Card
+						title={
+							<Col
+								style={{
+									fontSize: '18px',
+									fontWeight: 700,
+								}}
+							>
+								<Text>
+									{translate('What is a Liquidity Pool?')}
+								</Text>
+							</Col>
+						}
+						bodyStyle={{ padding: 0 }}
+					>
+					</Card> */}
+
 					<Card
 						title={
 							<Col style={{ fontSize: '18px', fontWeight: 700 }}>
@@ -127,19 +145,15 @@ const StyledInfoIcon = styled(InfoCircleOutlined)`
 	font-size: 15px;
 `
 
-const StyledTable = styled(Table)<TableProps<any>>`
-	background: ${(props) => props.theme.secondary.background};
-
-	.ant-table-cell {
-		background: ${(props) => props.theme.secondary.background};
-		color: ${(props) => props.theme.primary.font};
+const StyledTable = styled(Table)`
+	tbody > tr:last-child td:last-child {
+		border-bottom: none;
 	}
 
 	.LP-Table-Row {
-		border: 5px solid red;
 		&:hover {
 			cursor: pointer;
-			background-color: #eff9ff;
+			background: ${(props) => props.theme.secondary.backgroundHover};
 		}
 	}
 `

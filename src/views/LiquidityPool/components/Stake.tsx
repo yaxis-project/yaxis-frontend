@@ -211,9 +211,11 @@ export default function ApprovalWrapper({ pool }) {
 				<>
 					<Row justify="center" style={{ paddingBottom: '20px' }}>
 						<Col>
-							{translate(
-								'To start staking, first approve the Rewards contract to use your LP token',
-							)}
+							<Text>
+								{translate(
+									'To start staking, first approve the Rewards contract to use your LP token',
+								)}
+							</Text>
 						</Col>
 					</Row>
 					<Row justify="center">

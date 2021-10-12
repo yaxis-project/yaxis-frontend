@@ -7,15 +7,13 @@ const StyledCollapse = styled(Collapse)`
 			? `
 			border: none;
 			background-color: ${(props) => props.theme.secondary.background};
-			
-			&&& {
-				border-top-color: ${props.theme.secondary.font};
-			}
 
-
-			.ant-collapse {
-				background-color: red;
+			.anticon.anticon-right.ant-collapse-arrow {
+				svg {
+					color: ${props.theme.primary.font};
+				}
 			}
+		
 			`
 			: ''}
 `

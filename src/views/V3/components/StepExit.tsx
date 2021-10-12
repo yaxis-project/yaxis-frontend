@@ -1,7 +1,8 @@
 import { useMemo, Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
-import { Row, Steps } from 'antd'
+import { Row } from 'antd'
+import Steps from '../../../components/Steps'
 import Button from '../../../components/Button'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { currentConfig } from '../../../constants/configs'
@@ -75,8 +76,6 @@ const StepExit: React.FC<StepExitProps> = ({ stakedMVLT, walletMVLT }) => {
 		description: `MetaVault withdraw`,
 	})
 
-	/////
-
 	const message = useMemo(() => {
 		if (stakedMVLT.gt(0) || walletMVLT.gt(0))
 			return translate('First, exit the previous contract')
@@ -99,6 +98,7 @@ export default StepExit
 const Description = styled(Row)`
 	font-size: 16px;
 	padding: 0 10px 20px 10px;
+	color: ${(props) => props.theme.primary.font};
 `
 const StyledButton = styled(Button)`
 	border: none;

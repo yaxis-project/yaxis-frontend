@@ -1,9 +1,10 @@
 import { useMemo, Dispatch, SetStateAction } from 'react'
 import BigNumber from 'bignumber.js'
-import { Steps, Row } from 'antd'
+import { Row } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
+import Steps from '../../../components/Steps'
 import Button from '../../../components/Button'
 import useTranslation from '../../../hooks/useTranslation'
 
@@ -74,6 +75,7 @@ export default StepBoost
 const Description = styled(Row)`
 	font-size: 16px;
 	padding: 0 10px 20px 10px;
+	color: ${(props) => props.theme.primary.font};
 `
 
 const StyledIcon = styled(ExclamationCircleOutlined)`
