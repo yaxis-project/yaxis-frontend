@@ -31,8 +31,6 @@ const clickableStyle = { cursor: 'pointer' }
 const useContractWrite = ({ contractName, method, description }: Params) => {
 	const [key, setKey] = useState(null)
 	const [data, setData] = useState(null)
-	// const [accountOnCall, setAccountOnCall] = useState(null)
-	// const [networkOnCall, setNetworkOnCall] = useState(null)
 	const loading = useHasPendingTransaction(contractName, method)
 
 	const { account, library, chainId } = useWeb3Provider()
@@ -58,8 +56,6 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 		async ({ args, amount, cb, descriptionExtra }: CallOptions = {}) => {
 			const key = `${contractName}-${method}-${new Date().getTime()}`
 			setKey(key)
-			// setAccountOnCall(account)
-			// setNetworkOnCall(chainId)
 			let receipt
 			try {
 				if (!library || !account) return
@@ -73,6 +69,8 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				}
 				if (amount) config.value = amount
 				const m = c[method]
+				if (!m)
+					throw new Error(`${method} not found on ${contractName}`)
 
 				notification.info({
 					key,
@@ -106,9 +104,8 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				notification.close(key)
 				notification.error({
 					message: `Error: Unable to ${description}:`,
-					description: error.message,
+					description: (error as any)?.message,
 				})
-				// setAccountOnCall(null)
 				return false
 			}
 			try {
@@ -116,22 +113,19 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				notification.close(key)
 				if (cb) cb()
 				setData(receipt)
-				// setAccountOnCall(null)
 				return receipt
 			} catch (error) {
 				console.error(error)
 				notification.close(key)
 				notification.error({
 					message: `Internal Error: Unable to ${description}:`,
-					description: error.message,
+					description: (error as any)?.message,
 				})
-				// setAccountOnCall(null)
 				return false
 			}
 		},
 		[
 			account,
-			// accountOnCall,
 			library,
 			contract,
 			description,
@@ -139,7 +133,6 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 			contractName,
 			addTransaction,
 			networkName,
-			// networkOnCall,
 		],
 	)
 

@@ -17,6 +17,7 @@ import { useInactiveListener } from './hooks/useInactiveListener'
 
 import SwapBanner from './components/Banner/Banners/SwapBanner'
 import Modals from './components/Modals'
+import { TVaults } from './constants/type'
 
 notification.config({
 	placement: 'topRight',
@@ -30,7 +31,7 @@ const App: React.FC = () => {
 	const { chainId } = useWeb3React()
 
 	const vaults = useMemo(
-		() => Object.keys(currentConfig(chainId).vaults),
+		() => Object.keys(currentConfig(chainId).vaults) as TVaults[],
 		[chainId],
 	)
 

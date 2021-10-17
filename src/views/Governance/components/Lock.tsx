@@ -8,7 +8,7 @@ import { useHasLock } from '../../../state/wallet/hooks'
 import { useContracts } from '../../../contexts/Contracts'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
-import { AutoStakeCover } from '../../../components/ApprovalCover/AutoStakeCover'
+import ApprovalCover from '../../../components/ApprovalCover'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import useTranslation from '../../../hooks/useTranslation'
@@ -162,20 +162,16 @@ const Lock: React.FC = () => {
 				)}
 			</StyledText>
 			{hasLock ? (
-				<StyledRow justify="center">
-					<StyledText>YAXIS: 100</StyledText>
-					<Input></Input>
-					<Button>{translate('Lock')}</Button>
-				</StyledRow>
+				<StyledRow justify="center">{/* TODO */}</StyledRow>
 			) : (
-				<AutoStakeCover
+				<ApprovalCover
 					contractName={`currencies.ERC677.yaxis.contract`}
 					approvee={contracts?.internal.votingEscrow.address}
 					hidden={false}
 					noWrapper
 				>
 					<CreateLock />
-				</AutoStakeCover>
+				</ApprovalCover>
 			)}
 		</StyledRow>
 	)

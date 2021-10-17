@@ -11,6 +11,7 @@ import AccountOverview from './components/AccountOverview'
 import VaultStatsCard from './components/VaultStatsCard'
 import UsersVaultDetails from './components/UsersVaultDetails'
 import { useVaultsBalances } from '../../state/wallet/hooks'
+import { TVaults } from '../../constants/type'
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -19,7 +20,7 @@ const StyledCol = styled(Col)`
 `
 
 interface Props {
-	vault: string
+	vault: TVaults
 }
 
 const VaultDetails: React.FC<Props> = ({ vault }) => {
@@ -52,6 +53,7 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 					<AccountOverview
 						totalUSDBalance={balances[vault].usd.toString()}
 						balanceLoading={false}
+						vault={vault}
 					/>
 					<VaultStatsCard />
 				</StyledCol>

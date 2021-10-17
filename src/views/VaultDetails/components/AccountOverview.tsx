@@ -11,6 +11,7 @@ import { CardRow } from '../../../components/ExpandableSidePanel'
 import Claim from '../../../components/Claim'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
+import { TVaults } from '../../../constants/type'
 
 const { Text } = Typography
 
@@ -39,11 +40,16 @@ const TooltipRow = ({ main, value, suffix }: TooltipRowProps) => (
 	</>
 )
 
-type Props = { totalUSDBalance: string; balanceLoading: boolean }
+type Props = {
+	totalUSDBalance: string
+	balanceLoading: boolean
+	vault: TVaults
+}
 
 const InvestmentDetailOverview: React.FC<Props> = ({
 	totalUSDBalance,
 	balanceLoading,
+	vault,
 }) => {
 	const t = useTranslation()
 
@@ -58,7 +64,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 
 	return (
 		<DetailOverviewCard title={t['Account Overview']}>
-			<Claim vault="stables" />
+			<Claim vault={vault} />
 			{/* <CardRow
 				main={
 					<Tooltip
