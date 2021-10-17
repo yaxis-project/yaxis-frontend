@@ -1,8 +1,10 @@
-import { useState, useContext, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback } from 'react'
+import { Vaults } from '../../../constants/type'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-
+import useTranslation from '../../../hooks/useTranslation'
+import { reduce } from 'lodash'
 import { Row, Grid, Form } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
@@ -17,14 +19,10 @@ import {
 	computeInsufficientBalance,
 	computeTotalDepositing,
 } from '../utils'
-import { MAX_UINT } from '../../../utils/number'
 import BigNumber from 'bignumber.js'
 import Value from '../../../components/Value'
 import Input from '../../../components/Input'
-import { useHistory } from 'react-router-dom'
 import ApprovalCover from '../../../components/ApprovalCover'
-import useTranslation from '../../../hooks/useTranslation'
-import { currentConfig } from '../../../constants/configs'
 
 const { Text, Title } = Typography
 
@@ -33,11 +31,12 @@ const StyledText = styled(Text)`
 	font-size: 18px;
 	line-height: 1em;
 `
+type SortOrder = 'descend' | 'ascend' | null
 
 const makeColumns = (
+	loading: boolean,
 	translate: any,
 	onChange: ReturnType<typeof handleFormInputChange>,
-	onMaxWithdraw: () => void,
 ) => {
 	return [
 		{
@@ -52,18 +51,19 @@ const makeColumns = (
 			),
 		},
 		{
-			title: translate('Vault Balance'),
+			title: translate('Wallet Balance'),
 			key: 'balance',
-			sorter: (a, b) => a.balance.minus(b.balance).toNumber(),
+			defaultSortOrder: 'descend' as SortOrder,
+			sorter: (a, b) =>
+				new BigNumber(a.balanceUSD).minus(b.balanceUSD).toNumber(),
 			render: (text, record) => (
 				<>
 					<Value
-						value={record.balanceUSD}
+						value={new BigNumber(record.balanceUSD).toFormat(2)}
 						numberPrefix="$"
-						decimals={2}
 					/>
 					<Text type="secondary">
-						{record.balance.toFixed(2)} {record.token}
+						{record.balance.toFixed(2)} {record.name}
 					</Text>
 				</>
 			),
@@ -82,182 +82,241 @@ const makeColumns = (
 						style={{ marginBottom: 0 }}
 					>
 						<Input
-							onChange={(e) => {
-								onChange(record.token, e.target.value)
-							}}
-							value={record.value}
+							onChange={(e) =>
+								onChange(record.tokenId, e.target.value)
+							}
+							value={record.inputValue}
 							min={'0'}
+							max={`${record.balance}`}
 							placeholder="0"
-							disabled={record.balance.isZero()}
-							suffix={record.token}
+							disabled={loading || record.balance.isZero()}
+							suffix={record.name}
 							onClickMax={() =>
-								onChange(record.token, record.balance || '0')
+								onChange(record.tokenId, record.balance || '0')
 							}
 						/>
 					</Form.Item>
 				)
 			},
 		},
+		{
+			title: translate('APY'),
+			key: 'apy',
+			sorter: (a, b) => a.name.length - b.name.length,
+			render: (text, record) => (
+				<>
+					<Row style={{ fontWeight: 'bolder' }} justify="center">
+						<Text type="secondary">{record.minApy}%</Text>
+					</Row>
+					<Row justify="center">
+						<Text type="secondary">to</Text>
+					</Row>
+					<Row style={{ fontWeight: 'bolder' }} justify="center">
+						<Text type="secondary">{record.maxApy}%</Text>
+					</Row>
+				</>
+			),
+		},
 	]
 }
 
 const { useBreakpoint } = Grid
 
-interface TableDataEntry extends Currency {
-	balance: BigNumber
-	value: BigNumber
-	vault: string
-}
+const SUPPORTED_CURRENCIES: Currency[] = Vaults.map(
+	(c) => Currencies[c.toUpperCase()],
+)
 
-const vaults = Object.entries(currentConfig().vaults)
-
-const vaultCurrencies = vaults.map(([_, vault]) => {
-	return Currencies[vault.token]
-})
-
-const initialCurrencyValues: CurrencyValues = vaults.reduce(
-	(prev, [name, vault]) => ({
+const initialCurrencyValues: CurrencyValues = reduce(
+	SUPPORTED_CURRENCIES,
+	(prev, curr) => ({
 		...prev,
-		[vault.token]: '',
+		[curr.tokenId]: '',
 	}),
 	{},
 )
 
+interface TableDataEntry extends Currency {
+	balance: BigNumber
+	balanceUSD: string
+	value: BigNumber
+	vault: string
+}
+
 /**
- * Creates a deposit table for the savings account.
+ * Creates a stake table for the Vault account.
  */
 export default function StakeTable() {
 	const translate = useTranslation()
 
-	const history = useHistory()
-
-	const [balances] = useAllTokenBalances()
+	const [balances, loading] = useAllTokenBalances()
 
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
 
-	const { call: withdraw, loading: isSubmitting } = useContractWrite({
-		contractName: 'vaults.stables.gauge',
-		method: 'deposit',
-		description: `Gauge withdraw`,
-	})
+	const { call: handleStakeWETH, loading: isSubmittingWETH } =
+		useContractWrite({
+			contractName: 'vaults.weth.gauge',
+			method: 'deposit(uint256)',
+			description: `staked in WETH Gauge`,
+		})
 
-	// const contract = useMemo(
-	// 	() => contracts?.internal.yAxisMetaVault,
-	// 	[contracts],
-	// )
+	const { call: handleStakeWBTC, loading: isSubmittingWBTC } =
+		useContractWrite({
+			contractName: 'vaults.wbtc.gauge',
+			method: 'deposit(uint256)',
+			description: `staked in WBTC Gauge`,
+		})
 
-	const currencyMap = useMemo(() => {
+	const { call: handleStake3CRV, loading: isSubmitting3CRV } =
+		useContractWrite({
+			contractName: 'vaults.3crv.gauge',
+			method: 'deposit(uint256)',
+			description: `staked in 3CRV Gauge`,
+		})
+
+	const { call: handleStakeLINK, loading: isSubmittingLINK } =
+		useContractWrite({
+			contractName: 'vaults.link.gauge',
+			method: 'deposit(uint256)',
+			description: `staked in LINK Gauge`,
+		})
+
+	const callsLookup = useMemo(() => {
 		return {
-			...contracts?.currencies.ERC20,
-			...contracts?.currencies.ERC677,
+			handleStakeWETH,
+			isSubmittingWETH,
+			handleStakeWBTC,
+			isSubmittingWBTC,
+			handleStake3CRV,
+			isSubmitting3CRV,
+			handleStakeLINK,
+			isSubmittingLINK,
 		}
-	}, [contracts])
-
-	// const calcMinTokenAmount = useCallback(
-	// 	async (amounts: string[]) => {
-	// 		const threeCrvIndex = 3 // Index from InvestingDepositCurrencies that DepositAll expects
-	// 		const defaultSlippage = 0.001 // 0.1%
-
-	// 		try {
-	// 			if (contract) {
-	// 				const params = [...amounts]
-	// 				params.splice(threeCrvIndex, 1)
-	// 				const tokensDeposit = await contract.methods
-	// 					.calc_token_amount_deposit(params)
-	// 					.call()
-	// 				const threeCrvDeposit = amounts[threeCrvIndex] || '0'
-	// 				return new BigNumber(tokensDeposit)
-	// 					.plus(threeCrvDeposit)
-	// 					.times(1 - defaultSlippage)
-	// 					.integerValue(BigNumber.ROUND_DOWN)
-	// 					.toFixed()
-	// 			}
-	// 		} catch (e) {}
-	// 		return '0'
-	// 	},
-	// 	[contract],
-	// )
+	}, [
+		handleStakeWETH,
+		isSubmittingWETH,
+		handleStakeWBTC,
+		isSubmittingWBTC,
+		handleStake3CRV,
+		isSubmitting3CRV,
+		handleStakeLINK,
+		isSubmittingLINK,
+	])
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		initialCurrencyValues,
 	)
 
-	// const {
-	// 	metavault: {
-	// 		deposit: allowance3crv,
-	// 		loadingDeposit: loading3crvAllowance,
-	// 	},
-	// } = useApprovals()
-
-	// TODO: this
-	// const disabled = useMemo(
-	// 	() => computeInsufficientBalance(currencyValues, balances),
-	// 	[currencyValues, balances],
-	// )
+	const disabled = useMemo(
+		() => computeInsufficientBalance(currencyValues, balances),
+		[currencyValues, balances],
+	)
 
 	const totalDepositing = useMemo(
-		() => computeTotalDepositing(vaultCurrencies, currencyValues, prices),
-		[vaultCurrencies, currencyValues, prices],
+		() =>
+			computeTotalDepositing(
+				SUPPORTED_CURRENCIES,
+				currencyValues,
+				prices,
+			),
+		[currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
-		// const args = Currencies3Pool.reduce(
-		// 	(previous, current) => {
-		// 		const _v = currencyValues[current.tokenId]
-		// 		if (_v) {
-		// 			previous[0].push(
-		// 				currencyMap[current.tokenId].contract.address,
-		// 			)
-		// 			previous[1].push()
-		// 		}
-		// 		return previous
-		// 	},
-		// 	[[], []],
-		// )
-		for (const [currency, value] of Object.entries(currencyValues)) {
-			if (value) {
-				await withdraw({
-					args: [
-						numberToDecimal(value, 18),
-						currencyMap[currency].contract.address,
-					],
-					descriptionExtra: totalDepositing,
-				})
-			}
-		}
-		setCurrencyValues(initialCurrencyValues)
-	}, [currencyValues, withdraw, totalDepositing, currencyMap])
+		const transactions = SUPPORTED_CURRENCIES.reduce<[string, string][]>(
+			(previous, current) => {
+				const _v = currencyValues[current.tokenId]
+				if (_v)
+					previous.push([
+						current.tokenId.toUpperCase(),
+						numberToDecimal(_v, current.decimals),
+					])
 
-	const data = useMemo(() => {
-		return vaults.map<any>(([name, vault]) => {
-			const balance = balances[vault.token.toLowerCase()]
-			return {
-				...vault,
-				name,
-				balance: new BigNumber(balance?.amount.toString() || '0'),
-				value: currencyValues
-					? new BigNumber(currencyValues[vault.token] || 0)
-					: new BigNumber(0),
-				key: name,
-			}
-		})
-	}, [balances, currencyValues])
+				return previous
+			},
+			[],
+		)
+		if (transactions.length > 0) {
+			await Promise.allSettled(
+				transactions.map(([token, amount]) =>
+					callsLookup[`handleStake${token}`]({
+						args: [amount],
+						descriptionExtra: totalDepositing,
+					}),
+				),
+			)
+			setCurrencyValues(initialCurrencyValues)
+		}
+	}, [currencyValues, callsLookup, totalDepositing])
+
+	const data = useMemo(
+		() =>
+			SUPPORTED_CURRENCIES.map<TableDataEntry>((currency) => {
+				const token = `cv:${currency.tokenId}`
+				const balance = balances[token]?.amount || new BigNumber(0)
+				return {
+					...currency,
+					vault: currency.tokenId,
+					balance,
+					balanceUSD: new BigNumber(prices[currency.priceMapKey])
+						.times(balance)
+						.toFixed(2),
+					value: currencyValues
+						? new BigNumber(
+								currencyValues[currency.name.toLowerCase()] ||
+									0,
+						  )
+						: new BigNumber(0),
+					inputValue: currencyValues[currency.name.toLowerCase()],
+					key: currency.tokenId,
+					//  TODO
+					minApy: 0,
+					maxApy: 0,
+				}
+			}),
+		[prices, balances, currencyValues],
+	)
+
+	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])
 
 	const columns = useMemo(
-		() =>
-			makeColumns(
-				translate,
-				handleFormInputChange(setCurrencyValues),
-				() => {},
-			),
-		[translate],
+		() => makeColumns(loading, translate, onUpdate),
+		[translate, onUpdate, loading],
 	)
+
+	const components = useMemo(() => {
+		return {
+			body: {
+				row: ({ children, className, ...props }) => {
+					const key = props['data-row-key']
+					return (
+						<tr
+							key={key}
+							className={className}
+							style={{
+								transform: 'translateY(0)',
+							}}
+						>
+							<ApprovalCover
+								contractName={`vaults.${key}.token.contract`}
+								approvee={contracts?.vaults[key].gauge.address}
+								noWrapper
+								buttonText={'Gauge'}
+							>
+								{children}
+							</ApprovalCover>
+						</tr>
+					)
+				},
+			},
+		}
+	}, [contracts?.vaults])
 
 	return (
 		<>
 			<Table
+				components={components}
 				columns={columns}
 				dataSource={data}
 				pagination={false}
@@ -288,13 +347,24 @@ export default function StakeTable() {
 					${totalDepositing}
 				</Title>
 				<Button
-					// disabled={disabled}
-					loading={isSubmitting}
+					disabled={disabled}
+					loading={
+						callsLookup.isSubmittingWETH ||
+						callsLookup.isSubmittingWBTC ||
+						callsLookup.isSubmittingLINK ||
+						callsLookup.isSubmitting3CRV
+					}
 					onClick={handleSubmit}
 					style={{ fontSize: '18px' }}
 				>
-					{translate('Stake')}
+					{translate('Deposit')}
 				</Button>
+				<Text
+					type="secondary"
+					style={{ marginTop: '10px', display: 'block' }}
+				>
+					{translate('Withdraw Fee')}: 0.1%
+				</Text>
 			</div>
 		</>
 	)

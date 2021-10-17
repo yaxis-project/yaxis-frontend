@@ -16,13 +16,12 @@ export interface CurrencyValues {
  */
 export const handleFormInputChange = (setCurrencyValues: Function) => (
 	key: string,
-	value: string,
+	value: string | number,
 ) => {
-	!isNaN(Number(value)) &&
-		setCurrencyValues((prev: any) => ({
-			...prev,
-			[key]: value,
-		}))
+	setCurrencyValues((prev: any) => ({
+		...prev,
+		[key]: value,
+	}))
 }
 
 /**
@@ -60,10 +59,13 @@ export const computeTotalDepositing = (
 	priceMap: any,
 ) =>
 	currencies
-		.map(({ tokenId, priceMapKey }) =>
-			new BigNumber(currencyValues[tokenId] || 0).times(
+		.map(({ tokenId, priceMapKey }) => {
+			const inputValue = currencyValues[tokenId]
+			const inputNumber = Number(inputValue)
+			return new BigNumber(isNaN(inputNumber) ? 0 : inputNumber).times(
 				new BigNumber(priceMap[priceMapKey] || 0),
-			),
+			)
+		}
 		)
 		.reduce((total, current) => total.plus(current), new BigNumber(0))
 		.toFormat(2)

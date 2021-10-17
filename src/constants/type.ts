@@ -44,6 +44,10 @@ export interface LiquidityPool {
 }
 
 export const CurrenciesERC20 = <const>[
+	'wbtc',
+	'link',
+	'mim',
+	'cvx',
 	'yax',
 	'usdc',
 	'dai',
@@ -89,13 +93,17 @@ export const ExternalContracts = <const>[
 export type TExternalContracts = typeof ExternalContracts[number]
 
 export const Vaults = <const>[
-	'stables',
+	'3crv',
+	'wbtc',
+	'weth',
+	'link'
 ]
 export type TVaults = typeof Vaults[number]
 export interface Vault {
 	vault: string
 	gauge: string
 	token: string
+	tokenContract: string
 }
 
 export interface Config {

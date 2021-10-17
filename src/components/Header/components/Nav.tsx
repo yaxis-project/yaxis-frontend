@@ -54,10 +54,7 @@ const Nav: React.FC = () => {
 							activeClassName="active"
 							to={`/vault/${vault}`}
 						>
-							<MenuText>
-								{vault[0].toUpperCase()}
-								{vault.slice(1)}
-							</MenuText>
+							<MenuText>{vault.toUpperCase()}</MenuText>
 						</StyledLink>
 					</Menu.Item>
 				))}
@@ -97,7 +94,6 @@ const Nav: React.FC = () => {
 const StyledMenu = styled(Menu)`
 	border-bottom: none;
 	background: none;
-	display: inline-block;
 `
 
 const StyledSubMenu = styled(Menu.SubMenu)`

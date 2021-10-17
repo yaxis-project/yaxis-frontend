@@ -5,6 +5,10 @@ const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price'
 
 type CoinGeckoID = string
 const tokenCgkIdMap: { [key in Ticker]: CoinGeckoID } = {
+	link: 'chainlink',
+	wbtc: 'wrapped-bitcoin',
+	mim: 'magic-internet-money',
+	cvx: 'convex-finance',
 	eth: 'ethereum',
 	usdt: 'tether',
 	usdc: 'usd-coin',

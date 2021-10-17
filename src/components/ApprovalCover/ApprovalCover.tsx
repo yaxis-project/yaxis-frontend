@@ -15,7 +15,7 @@ type Props = {
 	approvee: string
 	hidden?: boolean
 	noWrapper?: boolean
-	autoStake?: string
+	buttonText?: string
 }
 
 const ApprovalCover: React.FC<Props> = ({
@@ -24,7 +24,7 @@ const ApprovalCover: React.FC<Props> = ({
 	approvee,
 	hidden,
 	noWrapper,
-	autoStake,
+	buttonText,
 }) => {
 	const translate = useTranslation()
 
@@ -42,17 +42,18 @@ const ApprovalCover: React.FC<Props> = ({
 		description: `approve token usage`,
 	})
 
-	const cover = useMemo(() => {
-		return (
-			<Cover
-				align="middle"
-				justify="center"
-				visible={String(
-					!hidden &&
-						!loadingAllowance &&
-						new BigNumber(allowance?.toString() || 0).lt(MAX_UINT),
-				)}
-			>
+	const visible = useMemo(
+		() =>
+			!hidden &&
+			approvee &&
+			!loadingAllowance &&
+			new BigNumber(allowance?.toString() || 0).lt(MAX_UINT),
+		[approvee, allowance, hidden, loadingAllowance],
+	)
+
+	const cover = useMemo(
+		() => (
+			<Cover align="middle" justify="center">
 				<Col span={7}>
 					<Button
 						height={'40px'}
@@ -67,38 +68,33 @@ const ApprovalCover: React.FC<Props> = ({
 							})
 						}}
 					>
-						{translate('Approve')}
+						{translate(
+							buttonText ? `Approve ${buttonText}` : 'Approve',
+						)}
 					</Button>
 				</Col>
 			</Cover>
-		)
-	}, [
-		translate,
-		allowance,
-		loadingAllowance,
-		handleApprove,
-		loadingApprove,
-		approvee,
-		hidden,
-	])
+		),
+		[translate, handleApprove, loadingApprove, approvee, buttonText],
+	)
 
 	if (noWrapper)
 		return (
 			<>
 				{children}
-				{cover}
+				{visible && cover}
 			</>
 		)
 
 	return (
 		<div style={{ position: 'relative' }}>
 			{children}
-			{cover}
+			{visible && cover}
 		</div>
 	)
 }
 
-export default ApprovalCover
+export { ApprovalCover }
 
 const Cover = styled(Row)<any>`
 	width: 100%;
@@ -109,6 +105,4 @@ const Cover = styled(Row)<any>`
 	background-color: rgb(128, 128, 128, 0.7);
 	z-index: 2;
 	text-align: center;
-	visibility: ${(props) =>
-		props.visible === 'true' ? 'visibile' : 'hidden'};
 `

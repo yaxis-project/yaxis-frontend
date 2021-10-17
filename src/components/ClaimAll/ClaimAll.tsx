@@ -31,25 +31,25 @@ const ClaimAll: React.FC = () => {
 
 	/***************************************************/
 
-	const { call: handleClaimStables, loading: loadingClaimStables } =
+	const { call: handleClaimWBTC, loading: loadingClaimWBTC } =
 		useContractWrite({
-			contractName: `vaults.stables`,
+			contractName: `vaults.wbtc`,
 			method: 'claim_rewards',
 			description: `claim YAXIS`,
 		})
 
-	const { loading: loadingClaimableStables, result: claimableStables } =
-		useSingleCallResultByName(`vaults.stables`, 'claimable_reward', [
+	const { loading: loadingClaimableWBTC, result: claimableWBTC } =
+		useSingleCallResultByName(`vaults.wbtc`, 'claimable_reward', [
 			account,
-			vaults.stables.vault,
+			vaults.wbtc.vault,
 		])
 
 	const claimable = useMemo(
 		() =>
 			new BigNumber(claimableMetaVault?.toString() || 0).plus(
-				claimableStables?.toString() || 0,
+				claimableWBTC?.toString() || 0,
 			),
-		[claimableMetaVault, claimableStables],
+		[claimableMetaVault, claimableWBTC],
 	)
 
 	return (
@@ -70,7 +70,7 @@ const ClaimAll: React.FC = () => {
 						<Button
 							disabled={
 								loadingClaimableMetaVault ||
-								loadingClaimableStables ||
+								loadingClaimableWBTC ||
 								new BigNumber(
 									claimable?.toString() || 0,
 								).isZero()
@@ -84,14 +84,12 @@ const ClaimAll: React.FC = () => {
 									handleClaimMetaVault()
 								if (
 									new BigNumber(
-										claimableStables?.toString() || 0,
+										claimableWBTC?.toString() || 0,
 									).gt(0)
 								)
-									handleClaimStables()
+									handleClaimWBTC()
 							}}
-							loading={
-								loadingClaimMetaVault || loadingClaimStables
-							}
+							loading={loadingClaimMetaVault || loadingClaimWBTC}
 							height={'40px'}
 						>
 							{translate('Claim All')}

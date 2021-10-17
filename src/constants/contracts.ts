@@ -187,8 +187,8 @@ export class Contracts {
 				token: {
 					...VaultCurrency,
 					contract: new Contract(
-						vaultConfig.vault,
-						abis.ERC20Abi,
+						vaultConfig.tokenContract,
+						abis.VaultTokenABI,
 						provider,
 					),
 				},

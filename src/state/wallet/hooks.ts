@@ -694,27 +694,34 @@ export function useRewardsBalances(token: string, name: TRewardsContracts) {
 }
 
 export function useVaultsBalances() {
-	const { stables } = useVaults()
-	const [balances] = useAllTokenBalances()
+	const vaults = useVaults()
+	const [balances, loading] = useAllTokenBalances()
 	const { prices } = usePrices()
-
-	return useMemo(() => {
-		const stablesVaultToken = balances['cv:s']
-		const stablesGaugeToken = balances['cv:s-gauge']
-		const stablesTotalToken = (stablesVaultToken?.amount || new BigNumber(0)).plus((stablesGaugeToken?.amount || new BigNumber(0)))
-		const stablesUSD = stablesTotalToken
-			.multipliedBy(stables.pricePerFullShare)
-			.multipliedBy(prices['3crv'])
-		return { stables: { vaultToken: stablesVaultToken, gaugeToken: stablesGaugeToken, totalToken: stablesTotalToken, usd: stablesUSD }, total: { usd: stablesUSD } }
-	}, [stables, balances, prices])
+	return useMemo(() =>
+		Object.entries(vaults).reduce(
+			(accumulator, [vault, data]) => {
+				const vaultToken = balances[`cv:${vault}`]
+				const gaugeToken = balances[`cv:${vault}-gauge`]
+				const totalToken = (vaultToken?.amount || new BigNumber(0)).plus((gaugeToken?.amount || new BigNumber(0)))
+				const usd = totalToken
+					.multipliedBy(data.pricePerFullShare)
+					.multipliedBy(prices[vault])
+				accumulator[vault] = {
+					...data,
+					vaultToken, gaugeToken, totalToken, usd
+				}
+				accumulator.total.usd = accumulator.total.usd.plus(usd)
+				return accumulator
+			}, { loading, total: { usd: new BigNumber(0) } })
+		, [vaults, balances, prices, loading])
 }
 
 export function useHasVaultTokenBalance() {
 	const [balances] = useAllTokenBalances()
 
 	return useMemo(() => {
-		const stablesBalance = balances['cv:s']
-		return !stablesBalance?.amount.isZero()
+		const wbtcBalance = balances['cv:wbtc']
+		return !wbtcBalance?.amount.isZero()
 	}, [balances])
 }
 
@@ -722,8 +729,8 @@ export function useHasGaugeTokenBalance() {
 	const [balances] = useAllTokenBalances()
 
 	return useMemo(() => {
-		const stablesBalance = balances['cv:s-gauge']
-		return !stablesBalance?.amount.isZero()
+		const wbtcBalance = balances['cv:wbtc-gauge']
+		return !wbtcBalance?.amount.isZero()
 	}, [balances])
 }
 

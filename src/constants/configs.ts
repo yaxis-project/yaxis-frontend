@@ -3,26 +3,45 @@ import { Config } from './type'
 export const configs: Record<number, Config> = {
 	42: {
 		vaults: {
-			stables: {
-				vault: '0x1aEe32285611Bac2C9ce74A92401291Aa10e682C',
-				token: 'CV:S',
-				gauge: '0x2e46090E9e02D4c4CCF75aa008640E24Fa0F7F4F',
-			}
+			'3crv': {
+				vault: '0x626e2bE9Ef5d5C2a28Be4Cd18eedB34fb8F34Cd2',
+				token: 'CV:3CRV',
+				tokenContract: '0x583c34a81B2700E1f19970aF609d9eFFB3b17D72',
+				gauge: '0xf7e019C206BcF787b52a23669da36c1D94B1c76e',
+			},
+			wbtc: {
+				vault: '0x22CEab5a459E9fb807768d90fc6b16CF2B30E9A8',
+				token: 'CV:WBTC',
+				tokenContract: '0x1b01D5495Da81453b1A74eCEDd4CBDe47c2474F8',
+				gauge: '0xe3cE52a51DC5fd3edcf7264F662a58B8867B46E6',
+			},
+			weth: {
+				vault: '0x68f6AE036011eA92bFa2bDAF58Dc5eb48E39f683',
+				token: 'CV:WETH',
+				tokenContract: '0xb3fCf30686978Fd21AFDc0BAD14e9C37A53C0A42',
+				gauge: '0xBD6ECdbD385F8B8D0CC66f2182382A2a9241fDD3',
+			},
+			link: {
+				vault: '0xDDC5EAE80fC4Dd9caC854387089BC3CFd40D8368',
+				token: 'CV:LINK',
+				tokenContract: '0x6D7204f8109432105FF05003D7516cB254CB16c3',
+				gauge: '0xb35593c0c267b739a7ABc1C7c23BB39A39ff6350',
+			},
 		},
 		internal: {
 			// Current
-			vaultHelper: '0x7a390763c17937c2E82a0A2E176A49ea6A06c781',
-			minter: '0xC1b1e4419a15935a7D8Fd606AaD92FdBF781035e',
+			vaultHelper: '0x448223929ab973E3d97afc5A7bE48f2d74651497',
+			minter: '0x9652EC937545F28efb2c7e813A93D659d02D5e39',
 			stableSwap3PoolConverter:
-				'0xDB4e9F8354c6684eC6F3Fa9e0964EDcDAcC169b0',
-			votingEscrow: '0x72641D6A06825CDd04181588FD0a9cb46765fDdA',
-			gaugeController: '0xA634255116c248bB995318F6BCD69520c3E0EBB7',
+				'0x1A17D5dbBcdBe9E95c3110b2CAc35312Ed82909e',
+			votingEscrow: '0x9B95f3164eA9CE0f04747e82F5A2232a5448845A',
+			gaugeController: '0xA6Ac7751565b4Cf63B20315950EB9af6961f560e',
 			merkleDistributor: '0x51A8F76b848E478e08B771DE55e5e17370DE1D25',
 			// Legacy
 			swap: '0x90D647a323DE34057ABb36cC05D530C59a102f9A',
-			yaxisChef: '0x719dAa4c1f91BCf9385CBecb044BaE4F28484fa8',
+			yaxisChef: '0x7eD746d742166bc8465Ed04dD23a62DA4524bCAa',
 			xYaxStaking: '0xc5598a5FE5aFFb55308ac06593Af31784606de4C',
-			yAxisMetaVault: '0x6e4BA66AD61610098E216991977a067F0680FC96',
+			yAxisMetaVault: '0xF293DbBe39EDC5793Ed02d3731170f618538b0D9',
 		},
 		external: {
 			multicall: '0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A',
@@ -38,16 +57,20 @@ export const configs: Record<number, Config> = {
 		},
 		currencies: {
 			ERC20: {
-				yax: '0x42407091d2079a739E993696DBa74840fFCD4f2C',
-				usdc: '0x1AFA7C8fB499ff2c5E638996C11dAEe1ffec258d',
-				dai: '0x483355ee7412f3E97f13Bd8C19da42fE46c5F054',
-				usdt: '0x3Eae32bD124E64561F3f6162b96B7434941d7066',
-				'3crv': '0xc033788b535c02d550dB6E6E4440Cf85CbE32FAB',
-				weth: '0x390C2e4c6d463339aeBc1Ab87246fa0B96FFD72d',
-				mvlt: '0x0Dc95c39C9F787761708FF31A72c97b65CaDeeec',
+				wbtc: '0x508996CeC62aD89457B3C4c434bB4b2e0Eda9A1B',
+				link: '0xa2dB763BbEB1dDA3EeB0845C6C23D379A9Cc0F53',
+				mim: '0x7F3331ea41B6A839EA623cbc26Cbf92E625BEa07',
+				cvx: '0x5Ca82b87E5d82C69Cb0Ab873107F77fdEb537b8a',
+				yax: '0x32f5Bc5949591215297594a8A62b991F665f8041', //
+				usdc: '0xc3Fe4D1658B567C03f626C3FA9dd2e1D15904Dd7',
+				dai: '0x4f4242Dd31b7F8f93Fd54EEBf2dA81ccEf797681',
+				usdt: '0x817807eB931C1d55629C1010BDda4320e9988de7',
+				'3crv': '0x81C0257A53341f9d9e679376804AF94F5B0e748F',
+				weth: '0x3C54f058cD7EA85C4CE13d5d77A6Bb3AE0eF9910',
+				mvlt: '0xF293DbBe39EDC5793Ed02d3731170f618538b0D9',
 			},
 			ERC677: {
-				yaxis: '0xA0e08288787cBE076A4A6380dA86953aF85E2C35',
+				yaxis: '0x8624474F9E886b59A3317F3Ab598fFA63e050E96',
 			},
 		},
 		pools: {
@@ -150,6 +173,10 @@ export const configs: Record<number, Config> = {
 		},
 		currencies: {
 			ERC20: {
+				wbtc: '',
+				link: '',
+				mim: '',
+				cvx: '',
 				yax: '0xb1dc9124c395c1e97773ab855d66e879f053a289',
 				usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
 				dai: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
@@ -163,11 +190,30 @@ export const configs: Record<number, Config> = {
 			},
 		},
 		vaults: {
-			stables: {
+			'3crv': {
 				vault: '',
+				token: 'CV:3CRV',
+				tokenContract: '',
 				gauge: '',
-				token: 'CV:S',
-			}
+			},
+			wbtc: {
+				vault: '',
+				token: 'CV:WBTC',
+				tokenContract: '',
+				gauge: '',
+			},
+			weth: {
+				vault: '',
+				token: 'CV:WETH',
+				tokenContract: '',
+				gauge: '',
+			},
+			link: {
+				vault: '',
+				token: 'CV:LINK',
+				tokenContract: '',
+				gauge: '',
+			},
 		},
 		pools: {
 			'Uniswap YAXIS/ETH': {

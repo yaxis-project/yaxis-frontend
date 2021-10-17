@@ -8,11 +8,7 @@ import {
 } from 'antd'
 const { Text } = Typography
 
-const StyledInput = styled(BaseInput)`
-	.ant-input-affix-wrapper .ant-input-affix-wrapper-disabled {
-		background: red;
-	}
-`
+const StyledInput = styled(BaseInput)``
 
 export interface InputProps extends BaseInputProps {
 	onClickMax?: () => void

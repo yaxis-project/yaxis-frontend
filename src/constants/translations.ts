@@ -178,6 +178,9 @@ export type Phrases =
     | 'What\'s new'
     | 'Migrate over'
     | 'What is a Liquidity Pool?'
+    | 'Approve Vault'
+    | 'Approve Automatic Staking'
+    | 'Approve Gauge'
     // TODO: Might need tweaks
     | 'claim YAXIS'
     // Langauges
@@ -376,6 +379,10 @@ const EN: Translations = {
     'What\'s new': 'What\'s new',
     'Migrate over': 'Migrate over',
     'What is a Liquidity Pool?': 'What is a Liquidity Pool?',
+    'Approve Vault': 'Approve Vault',
+    'Approve Automatic Staking': 'Approve Automatic Staking',
+    'Approve Gauge':
+        'Approve Gauge',
     'English': 'English',
     'Korean': 'Korean',
     'Japanese': 'Japanese',
@@ -569,6 +576,10 @@ const KO: Translations = {
     'What\'s new': '',
     'Migrate over': '',
     'What is a Liquidity Pool?': '',
+    'Approve Vault': '',
+    'Approve Automatic Staking': '',
+    'Approve Gauge':
+        '',
     'English': '',
     'Korean': '',
     'Japanese': '',
@@ -762,6 +773,10 @@ const ZH: Translations = {
     'What\'s new': '',
     'Migrate over': '',
     'What is a Liquidity Pool?': '',
+    'Approve Vault': '',
+    'Approve Automatic Staking': '',
+    'Approve Gauge':
+        '',
     'English': '',
     'Korean': '',
     'Japanese': '',
@@ -924,6 +939,10 @@ const RU: Translations = {
     'What\'s new': '',
     'Migrate over': '',
     'What is a Liquidity Pool?': '',
+    'Approve Vault': '',
+    'Approve Automatic Staking': '',
+    'Approve Gauge':
+        '',
     'English': 'Английский',
     'Korean': 'Корейский',
     'Japanese': 'Японский',
@@ -1117,6 +1136,9 @@ const JA: Translations = {
     'What\'s new': '',
     'Migrate over': '',
     'What is a Liquidity Pool?': '',
+    'Approve Vault': '',
+    'Approve Automatic Staking': '',
+    'Approve Gauge': '',
     'English': '',
     'Korean': '',
     'Japanese': '',

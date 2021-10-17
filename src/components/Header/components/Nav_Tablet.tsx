@@ -83,6 +83,11 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 		activate(network)
 	}, [activate, deactivate, account])
 
+	const vaults = useMemo(
+		() => Object.keys(currentConfig(chainId).vaults),
+		[chainId],
+	)
+
 	const currentPools = useMemo(
 		() =>
 			Object.values(currentConfig(chainId).pools).filter(
@@ -112,11 +117,25 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 					</StyledLink>
 				</MenuItem>
 
-				<MenuItem key={'/vault'}>
-					<StyledLink activeClassName="active" to="/vault">
-						{translate('Vault')}
-					</StyledLink>
-				</MenuItem>
+				<StyledSubMenu
+					key={'/vault'}
+					title={
+						<StyledLink activeClassName="active" to="/vault">
+							{translate('Vault')}{' '}
+						</StyledLink>
+					}
+				>
+					{vaults.map((vault) => (
+						<Menu.Item key={`/vault/${vault}`}>
+							<StyledLink
+								activeClassName="active"
+								to={`/vault/${vault}`}
+							>
+								<MenuText>{vault.toUpperCase()}</MenuText>
+							</StyledLink>
+						</Menu.Item>
+					))}
+				</StyledSubMenu>
 
 				<StyledSubMenu
 					key={'/liquidity'}

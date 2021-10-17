@@ -12,6 +12,7 @@ import { numberToFloat } from '../../utils/number'
 import { TLiquidityPools, TRewardsContracts, Vaults, TVaults } from '../../constants/type'
 import ERC20Abi from '../../constants/abis/mainnet/erc20.json'
 
+
 const ERC20_INTERFACE = new ethers.utils.Interface(ERC20Abi)
 
 export function useMetaVaultData() {
@@ -71,16 +72,30 @@ export function useVault(name: TVaults) {
 
 	const vaultContracts = useMemo(() => contracts?.vaults[name], [contracts, name])
 
-	const data = useSingleContractMultipleMethods(vaultContracts?.vault, [
+	const vaultData = useSingleContractMultipleMethods(vaultContracts?.vault, [
 		['balance'],
+		['getPricePerFullShare'],
+	])
+
+	const tokenData = useSingleContractMultipleMethods(vaultContracts?.token.contract, [
 		['totalSupply'],
-		// ['getPricePerFullShare'],
 	])
 
 	return useMemo(() => {
-		const [balance, totalSupply,
-			//  pricePerFullShare
-		] = data.map(
+		const [
+			balance,
+			pricePerFullShare
+		] = vaultData.map(
+			({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			},
+		)
+
+		const [
+			totalSupply,
+		] = tokenData.map(
 			({ result, loading }, i) => {
 				if (loading) return ethers.BigNumber.from(0)
 				if (!result) return ethers.BigNumber.from(0)
@@ -95,12 +110,11 @@ export function useVault(name: TVaults) {
 				totalSupply?.toString()
 			),
 			pricePerFullShare: new BigNumber(
-				// pricePerFullShare?.toString()
-				0
+				pricePerFullShare?.toString()
 			).dividedBy(10 ** 18)
 		}
 	}, [
-		data
+		vaultData, tokenData
 	])
 }
 
@@ -223,7 +237,10 @@ export function useVaultAPR(name: TVaults) {
 
 export function useVaults() {
 
-	const stables = useVault('stables')
+	const v3crv = useVault('3crv')
+	const wbtc = useVault('wbtc')
+	const weth = useVault('weth')
+	const link = useVault('link')
 
 	return useMemo(() => {
 		// const stables = {
@@ -232,9 +249,17 @@ export function useVaults() {
 		// 	pricePerFullShare: new BigNumber(0),
 		// 	getTokens: new BigNumber(0)
 		// }
-		return { stables }
+		return {
+			'3crv': v3crv,
+			wbtc
+			, weth,
+			link
+		}
 	}, [
-		stables
+		v3crv,
+		wbtc
+		, weth
+		, link
 	])
 }
 
@@ -271,7 +296,8 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 		prices: { yaxis },
 	} = usePrices()
 
-	const { tvl: metaVaultTVL } = useMetaVaultData()
+	// TODO
+	const { tvl: metaVaultTVL } = { tvl: 0 }
 
 	const pool = useMemo(
 		() =>
@@ -429,7 +455,8 @@ export function useLiquidityPools() {
 
 export function useTVL() {
 	const { contracts } = useContracts()
-	const metaVaultData = useMetaVaultData()
+	// TODO
+	const { metaVaultTVL } = { metaVaultTVL: 0 }
 
 	const { prices } = usePrices()
 
@@ -453,14 +480,14 @@ export function useTVL() {
 			new BigNumber(0),
 		)
 
-		const metavaultTvl = new BigNumber(metaVaultData?.tvl || 0)
+		const metavaultTvl = new BigNumber(metaVaultTVL || 0)
 		return {
 			stakingTvl,
 			liquidityTvl,
 			metavaultTvl,
 			tvl: stakingTvl.plus(liquidityTvl).plus(metavaultTvl),
 		}
-	}, [pools, metaVaultData?.tvl, totalSupply, prices])
+	}, [pools, metaVaultTVL, totalSupply, prices])
 }
 
 export function useAPY(

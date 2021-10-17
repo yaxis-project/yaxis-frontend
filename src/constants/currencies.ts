@@ -8,6 +8,8 @@ import pickle from '../assets/img/currencies/pickle.svg'
 import uni from '../assets/img/currencies/uni.svg'
 import usdc from '../assets/img/currencies/usdc.svg'
 import usdt from '../assets/img/currencies/usdt.svg'
+import link from '../assets/img/currencies/link.svg'
+import wbtc from '../assets/img/currencies/wbtc.svg'
 import linkswap from '../assets/img/icons/pool-token.svg'
 import yax from '../assets/img/logo-ui.svg'
 
@@ -41,16 +43,58 @@ export const MVLT: Currency = {
 	decimals: 18,
 }
 
-export const CVS: Currency = {
-	name: 'CV:S',
-	tokenId: 'cv:s',
+export const CV3CRV: Currency = {
+	name: 'CV:3CRV',
+	tokenId: 'cv:3crv',
 	icon: yax,
 	decimals: 18,
 }
 
-export const CVSgauge: Currency = {
-	name: 'CV:S-GAUGE',
-	tokenId: 'cv:s-gauge',
+export const CV3CRVgauge: Currency = {
+	name: 'CV:3CRV-GAUGE',
+	tokenId: 'cv:3crv-gauge',
+	icon: yax,
+	decimals: 18,
+}
+
+export const CVWBTC: Currency = {
+	name: 'CV:WBTC',
+	tokenId: 'cv:wbtc',
+	icon: yax,
+	decimals: 18,
+}
+
+export const CVWBTCgauge: Currency = {
+	name: 'CV:WBTC-GAUGE',
+	tokenId: 'cv:wbtc-gauge',
+	icon: yax,
+	decimals: 18,
+}
+
+export const CVWETH: Currency = {
+	name: 'CV:WETH',
+	tokenId: 'cv:weth',
+	icon: yax,
+	decimals: 18,
+}
+
+export const CVWETHgauge: Currency = {
+	name: 'CV:WETH-GAUGE',
+	tokenId: 'cv:weth-gauge',
+	icon: yax,
+	decimals: 18,
+}
+
+export const CVLINK: Currency = {
+	name: 'CV:LINK',
+	tokenId: 'cv:link',
+	icon: yax,
+	decimals: 18,
+}
+
+export const CVLINKgauge: Currency = {
+	name: 'CV:LINK-GAUGE',
+	tokenId: 'cv:link-gauge',
 	icon: yax,
 	decimals: 18,
 }
@@ -72,7 +116,7 @@ export const threeCRV: Currency = {
 }
 
 export const WETH: Currency = {
-	name: 'WETH',
+	name: 'wETH',
 	tokenId: 'weth',
 	icon: eth,
 	decimals: 18,
@@ -85,6 +129,38 @@ export const ETH: Currency = {
 	icon: eth,
 	decimals: 18,
 	priceMapKey: 'eth',
+}
+
+export const WBTC: Currency = {
+	name: 'wBTC',
+	tokenId: 'wbtc',
+	icon: wbtc,
+	decimals: 18,
+	priceMapKey: 'wbtc',
+}
+
+export const LINK: Currency = {
+	name: 'LINK',
+	tokenId: 'link',
+	icon: link,
+	decimals: 18,
+	priceMapKey: 'link',
+}
+
+export const MIM: Currency = {
+	name: 'MIM',
+	tokenId: 'mim',
+	icon: eth,
+	decimals: 18,
+	priceMapKey: 'mim',
+}
+
+export const CVX: Currency = {
+	name: 'CVX',
+	tokenId: 'cvx',
+	icon: eth,
+	decimals: 18,
+	priceMapKey: 'cvx',
 }
 
 export const YAX: Currency = {
@@ -160,8 +236,18 @@ export const Currencies = {
 	YAX,
 	YAXIS,
 	MVLT,
-	'CV:S': CVS,
-	'CV:S-GAUGE': CVSgauge,
+	'CV:3CRV': CV3CRV,
+	'CV:3CRV-GAUGE': CV3CRVgauge,
+	'CV:WBTC': CVWBTC,
+	'CV:WBTC-GAUGE': CVWBTCgauge,
+	'CV:WETH': CVWETH,
+	'CV:WETH-GAUGE': CVWETHgauge,
+	'CV:LINK': CVLINK,
+	'CV:LINK-GAUGE': CVLINKgauge,
+	MIM,
+	CVX,
+	WBTC,
+	LINK,
 	DAI,
 	USDC,
 	USDT,
