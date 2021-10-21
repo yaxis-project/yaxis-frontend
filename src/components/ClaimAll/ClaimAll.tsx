@@ -44,12 +44,59 @@ const ClaimAll: React.FC = () => {
 			vaults.wbtc.vault,
 		])
 
+	const { call: handleClaim3CRV, loading: loadingClaim3CRV } =
+		useContractWrite({
+			contractName: `vaults.3crv`,
+			method: 'claim_rewards',
+			description: `claim YAXIS`,
+		})
+
+	const { loading: loadingClaimable3CRV, result: claimable3CRV } =
+		useSingleCallResultByName(`vaults.3crv`, 'claimable_reward', [
+			account,
+			vaults.wbtc.vault,
+		])
+
+	const { call: handleClaimWETH, loading: loadingClaimWETH } =
+		useContractWrite({
+			contractName: `vaults.weth`,
+			method: 'claim_rewards',
+			description: `claim YAXIS`,
+		})
+
+	const { loading: loadingClaimableWETH, result: claimableWETH } =
+		useSingleCallResultByName(`vaults.weth`, 'claimable_reward', [
+			account,
+			vaults.wbtc.vault,
+		])
+
+	const { call: handleClaimLINK, loading: loadingClaimLINK } =
+		useContractWrite({
+			contractName: `vaults.link`,
+			method: 'claim_rewards',
+			description: `claim YAXIS`,
+		})
+
+	const { loading: loadingClaimableLINK, result: claimableLINK } =
+		useSingleCallResultByName(`vaults.link`, 'claimable_reward', [
+			account,
+			vaults.wbtc.vault,
+		])
+
 	const claimable = useMemo(
 		() =>
-			new BigNumber(claimableMetaVault?.toString() || 0).plus(
-				claimableWBTC?.toString() || 0,
-			),
-		[claimableMetaVault, claimableWBTC],
+			new BigNumber(claimableMetaVault?.toString() || 0)
+				.plus(claimableWBTC?.toString() || 0)
+				.plus(claimableWETH?.toString() || 0)
+				.plus(claimable3CRV?.toString() || 0)
+				.plus(claimableLINK?.toString() || 0),
+		[
+			claimableMetaVault,
+			claimableWBTC,
+			claimableWETH,
+			claimableLINK,
+			claimable3CRV,
+		],
 	)
 
 	return (
@@ -70,6 +117,9 @@ const ClaimAll: React.FC = () => {
 						<Button
 							disabled={
 								loadingClaimableMetaVault ||
+								loadingClaimableLINK ||
+								loadingClaimableWETH ||
+								loadingClaimable3CRV ||
 								loadingClaimableWBTC ||
 								new BigNumber(
 									claimable?.toString() || 0,
@@ -88,8 +138,32 @@ const ClaimAll: React.FC = () => {
 									).gt(0)
 								)
 									handleClaimWBTC()
+								if (
+									new BigNumber(
+										claimableWETH?.toString() || 0,
+									).gt(0)
+								)
+									handleClaimWETH()
+								if (
+									new BigNumber(
+										claimableLINK?.toString() || 0,
+									).gt(0)
+								)
+									handleClaimLINK()
+								if (
+									new BigNumber(
+										claimableLINK?.toString() || 0,
+									).gt(0)
+								)
+									handleClaimLINK()
 							}}
-							loading={loadingClaimMetaVault || loadingClaimWBTC}
+							loading={
+								loadingClaimMetaVault ||
+								loadingClaimWBTC ||
+								loadingClaimWETH ||
+								loadingClaim3CRV ||
+								loadingClaimLINK
+							}
 							height={'40px'}
 						>
 							{translate('Claim All')}
