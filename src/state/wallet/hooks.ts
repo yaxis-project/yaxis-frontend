@@ -805,27 +805,41 @@ export function useVotingPower() {
 	}, [results])
 }
 
-export function useHasLock() {
+export function useLock() {
 	const { account } = useWeb3Provider()
 	const { contracts } = useContracts()
+
+	const [loading, setLoading] = useState(true)
 
 	const results = useSingleContractMultipleMethods(
 		contracts?.internal.votingEscrow,
 		[
 			['locked__end', [account]],
+			['locked(address)', [account]],
 		],
 	)
 
+	useEffect(() => {
+		if (results.every(({ valid, loading }) => valid && !loading)) setLoading(false)
+	}, [results])
+
 	return useMemo(() => {
 		const [
-			locked__end
+			locked_end,
+			locked
 		] = results.map(({ result, loading }, i) => {
 			if (loading) return ethers.BigNumber.from(0)
 			if (!result) return ethers.BigNumber.from(0)
 			return result
 		})
-		return !new BigNumber(locked__end.toString()).isZero()
-	}, [results])
+
+		return {
+			loading,
+			hasLock: !new BigNumber(locked_end.toString()).isZero(),
+			end: new BigNumber(locked_end.toString()),
+			locked: new BigNumber(locked.toString().split(',')[0]).div(10 ** 18),
+		}
+	}, [results, loading])
 }
 
 export function useUserGaugeWeights() {

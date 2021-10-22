@@ -181,6 +181,7 @@ export type Phrases =
     | 'Approve Vault'
     | 'Approve Automatic Staking'
     | 'Approve Gauge'
+    | 'Must be locked for more than 7 days to vote!'
     // TODO: Might need tweaks
     | 'claim YAXIS'
     // Langauges
@@ -383,6 +384,7 @@ const EN: Translations = {
     'Approve Automatic Staking': 'Approve Automatic Staking',
     'Approve Gauge':
         'Approve Gauge',
+    'Must be locked for more than 7 days to vote!': 'Must be locked for more than 7 days to vote!',
     'English': 'English',
     'Korean': 'Korean',
     'Japanese': 'Japanese',
@@ -580,6 +582,7 @@ const KO: Translations = {
     'Approve Automatic Staking': '',
     'Approve Gauge':
         '',
+    'Must be locked for more than 7 days to vote!': '',
     'English': '',
     'Korean': '',
     'Japanese': '',
@@ -777,6 +780,7 @@ const ZH: Translations = {
     'Approve Automatic Staking': '',
     'Approve Gauge':
         '',
+    'Must be locked for more than 7 days to vote!': '',
     'English': '',
     'Korean': '',
     'Japanese': '',
@@ -943,6 +947,7 @@ const RU: Translations = {
     'Approve Automatic Staking': '',
     'Approve Gauge':
         '',
+    'Must be locked for more than 7 days to vote!': '',
     'English': 'Английский',
     'Korean': 'Корейский',
     'Japanese': 'Японский',
@@ -1139,6 +1144,7 @@ const JA: Translations = {
     'Approve Vault': '',
     'Approve Automatic Staking': '',
     'Approve Gauge': '',
+    'Must be locked for more than 7 days to vote!': '',
     'English': '',
     'Korean': '',
     'Japanese': '',

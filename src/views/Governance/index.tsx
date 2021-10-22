@@ -44,6 +44,7 @@ const Governance: React.FC = () => {
 							history.push(`${location.pathname}${key}`)
 						}
 						centered
+						destroyInactiveTabPane
 					>
 						<TabPane tab={translate('Boost')} key="#lock">
 							<Lock />
