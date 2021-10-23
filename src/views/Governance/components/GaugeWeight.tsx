@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Slider, Row, Tooltip } from 'antd'
 import Table from '../../../components/Table'
 import Button from '../../../components/Button'
@@ -7,8 +7,10 @@ import { Vaults } from '../../../constants/type'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { useContracts } from '../../../contexts/Contracts'
 import useTranslation from '../../../hooks/useTranslation'
-import { useLock } from '../../../state/wallet/hooks'
+import { useLock, useUserGaugeWeights } from '../../../state/wallet/hooks'
 import moment from 'moment'
+
+const WEIGHT_VOTE_DELAY = 10 * 86400
 
 const { Text } = Typography
 
@@ -18,10 +20,12 @@ const GaugeWeight: React.FC = () => {
 	const translate = useTranslation()
 
 	const [weights, setWeights] = useState(initialWeights)
-
+	const [hasInitialWeights, setHasInitialWeight] = useState(false)
 	const { contracts } = useContracts()
 
 	const lock = useLock()
+
+	const [loadingVotedWeights, votedWeights] = useUserGaugeWeights()
 
 	const { call, loading } = useContractWrite({
 		contractName: 'internal.gaugeController',
@@ -29,15 +33,33 @@ const GaugeWeight: React.FC = () => {
 		description: `vote for gauge weights`,
 	})
 
+	useEffect(() => {
+		if (!loadingVotedWeights && !hasInitialWeights) {
+			setHasInitialWeight(true)
+			setWeights(
+				Vaults.map((vault) =>
+					votedWeights[vault].power.div(100).toNumber(),
+				),
+			)
+		}
+	}, [
+		loadingVotedWeights,
+		votedWeights,
+		hasInitialWeights,
+		setWeights,
+		setHasInitialWeight,
+	])
+
 	const data = useMemo(() => {
 		return Vaults.map((name, i) => {
 			return {
 				key: i,
 				name: name.toUpperCase(),
 				vaultWeight: weights[i],
+				...votedWeights[name],
 			}
 		})
-	}, [weights])
+	}, [weights, votedWeights])
 
 	const disabled = useMemo(
 		() =>
@@ -53,21 +75,32 @@ const GaugeWeight: React.FC = () => {
 				title: translate('Name'),
 				dataIndex: 'name',
 				key: 'name',
-				render: (text, record) => <Text>{text}</Text>,
+				render: (text) => <Text>{text}</Text>,
 			},
 			{
 				title: translate('Weight'),
 				key: 'action',
-
-				render: (text, record) => (
+				render: (record) => (
 					<div style={{ width: '300px' }}>
 						<Slider
-							disabled={disabled}
-							defaultValue={record.vaultWeight}
+							value={weights[record.key]}
+							tipFormatter={(value) => `${value}%`}
+							disabled={
+								disabled ||
+								moment().isBefore(
+									moment(record.end.toNumber() * 1000).add(
+										WEIGHT_VOTE_DELAY * 1000,
+									),
+								)
+							}
 							onChange={(value) => {
 								const nextWeights = [...weights]
 								nextWeights.splice(record.key, 1, value)
-								setWeights(nextWeights)
+								const total = nextWeights.reduce(
+									(acc, curr) => acc + curr,
+									0,
+								)
+								if (total <= 100) setWeights(nextWeights)
 							}}
 						/>
 					</div>
@@ -79,6 +112,7 @@ const GaugeWeight: React.FC = () => {
 
 	return (
 		<>
+			{/* TODO: What is this? */}
 			<Row justify="center">
 				<Table columns={columns} dataSource={data} pagination={false} />
 			</Row>

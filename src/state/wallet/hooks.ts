@@ -13,13 +13,14 @@ import {
 	TRewardsContracts,
 	RewardsContracts,
 	LiquidityPool,
+	Vaults,
 } from '../../constants/type'
 import { usePrices } from '../prices/hooks'
 import {
 	useSingleContractMultipleData,
 	useSingleContractMultipleMethods,
 	useSingleCallResult,
-	useMultipleContractSingleData
+	useMultipleContractSingleData,
 } from '../onchain/hooks'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { BigNumber } from 'bignumber.js'
@@ -44,8 +45,8 @@ export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
 		() =>
 			uncheckedAddresses
 				? uncheckedAddresses
-					.filter((a) => ethers.utils.isAddress(a))
-					.sort()
+						.filter((a) => ethers.utils.isAddress(a))
+						.sort()
 				: [],
 		[uncheckedAddresses],
 	)
@@ -121,33 +122,33 @@ export function useTokenBalancesWithLoadingIndicator(
 			() =>
 				address && validatedTokens.length > 0
 					? validatedTokens.reduce<{
-						[tokenAddress: string]: CurrencyValue | undefined
-					}>((memo, token, i) => {
-						const value = new BigNumber(
-							balances?.[i]?.result?.[0]?.toString() || 0,
-						)
-						const amount = new BigNumber(value).dividedBy(
-							10 ** token.decimals,
-						)
-						memo[token.tokenId] = {
-							...token,
-							amount,
-							value,
-						}
-						return memo
-					}, {})
+							[tokenAddress: string]: CurrencyValue | undefined
+					  }>((memo, token, i) => {
+							const value = new BigNumber(
+								balances?.[i]?.result?.[0]?.toString() || 0,
+							)
+							const amount = new BigNumber(value).dividedBy(
+								10 ** token.decimals,
+							)
+							memo[token.tokenId] = {
+								...token,
+								amount,
+								value,
+							}
+							return memo
+					  }, {})
 					: Object.fromEntries(
-						tokens.map((t) => {
-							return [
-								t.tokenId,
-								{
-									...t,
-									amount: new BigNumber(0),
-									value: new BigNumber(0),
-								},
-							]
-						}),
-					),
+							tokens.map((t) => {
+								return [
+									t.tokenId,
+									{
+										...t,
+										amount: new BigNumber(0),
+										value: new BigNumber(0),
+									},
+								]
+							}),
+					  ),
 			[address, tokens, validatedTokens, balances],
 		),
 		anyLoading,
@@ -168,9 +169,7 @@ export function useAllTokenBalances(): [
 			(pool) => pool.tokenContract,
 		) || []
 	const VAULT =
-		Object.values(contracts?.vaults || {}).map(
-			(vault) => vault.token,
-		) || []
+		Object.values(contracts?.vaults || {}).map((vault) => vault.token) || []
 	const GAUGE =
 		Object.values(contracts?.vaults || {}).map(
 			(vault) => vault.gaugeToken,
@@ -181,7 +180,7 @@ export function useAllTokenBalances(): [
 		...ERC677,
 		...LP,
 		...VAULT,
-		...GAUGE
+		...GAUGE,
 	])
 }
 
@@ -211,19 +210,19 @@ export function useStakedBalances(): StakedBalanceReturn {
 	return useMemo(() => {
 		return account && balances.length > 0
 			? balances.reduce<StakedBalanceReturn>((memo, token, i) => {
-				const value = new BigNumber(
-					token?.result?.[0]?.toString() || 0,
-				)
-				const amount = new BigNumber(
-					value.toString() || 0,
-				).dividedBy(10 ** YAXIS.decimals)
-				memo[rewardsContracts[i][0]] = {
-					...YAXIS,
-					value,
-					amount,
-				}
-				return memo
-			}, {} as StakedBalanceReturn)
+					const value = new BigNumber(
+						token?.result?.[0]?.toString() || 0,
+					)
+					const amount = new BigNumber(
+						value.toString() || 0,
+					).dividedBy(10 ** YAXIS.decimals)
+					memo[rewardsContracts[i][0]] = {
+						...YAXIS,
+						value,
+						amount,
+					}
+					return memo
+			  }, {} as StakedBalanceReturn)
 			: defaultStakedBalancesState
 	}, [account, rewardsContracts, balances])
 }
@@ -268,31 +267,31 @@ export function useApprovedAmounts(
 			() =>
 				spender && owner && validatedTokens.length > 0
 					? validatedTokens.reduce<ApprovedAmounts>(
-						(memo, token, i) => {
-							const value = new BigNumber(
-								balances?.[i]?.result?.[0]?.toString() || 0,
-							)
-							memo[token.tokenId] = {
-								...token,
-								approved: value,
-								spender,
-								owner,
-							}
-							return memo
-						},
-						{},
-					)
-					: Object.fromEntries(
-						tokens.map((t) => [
-							t.tokenId,
-							{
-								...t,
-								approved: new BigNumber(0),
-								spender,
-								owner,
+							(memo, token, i) => {
+								const value = new BigNumber(
+									balances?.[i]?.result?.[0]?.toString() || 0,
+								)
+								memo[token.tokenId] = {
+									...token,
+									approved: value,
+									spender,
+									owner,
+								}
+								return memo
 							},
-						]),
-					),
+							{},
+					  )
+					: Object.fromEntries(
+							tokens.map((t) => [
+								t.tokenId,
+								{
+									...t,
+									approved: new BigNumber(0),
+									spender,
+									owner,
+								},
+							]),
+					  ),
 			[spender, owner, tokens, validatedTokens, balances],
 		),
 		anyLoading,
@@ -474,7 +473,7 @@ export const useReturns = () => {
 
 	const earned = useMultipleContractSingleData(
 		contracts &&
-		Object.values(contracts?.rewards || {}).map((c) => c.address),
+			Object.values(contracts?.rewards || {}).map((c) => c.address),
 		contracts && contracts.rewards.MetaVault.interface,
 		'earned',
 		[account],
@@ -697,23 +696,32 @@ export function useVaultsBalances() {
 	const vaults = useVaults()
 	const [balances, loading] = useAllTokenBalances()
 	const { prices } = usePrices()
-	return useMemo(() =>
-		Object.entries(vaults).reduce(
-			(accumulator, [vault, data]) => {
-				const vaultToken = balances[`cv:${vault}`]
-				const gaugeToken = balances[`cv:${vault}-gauge`]
-				const totalToken = (vaultToken?.amount || new BigNumber(0)).plus((gaugeToken?.amount || new BigNumber(0)))
-				const usd = totalToken
-					.multipliedBy(data.pricePerFullShare)
-					.multipliedBy(prices[vault])
-				accumulator[vault] = {
-					...data,
-					vaultToken, gaugeToken, totalToken, usd
-				}
-				accumulator.total.usd = accumulator.total.usd.plus(usd)
-				return accumulator
-			}, { loading, total: { usd: new BigNumber(0) } })
-		, [vaults, balances, prices, loading])
+	return useMemo(
+		() =>
+			Object.entries(vaults).reduce(
+				(accumulator, [vault, data]) => {
+					const vaultToken = balances[`cv:${vault}`]
+					const gaugeToken = balances[`cv:${vault}-gauge`]
+					const totalToken = (
+						vaultToken?.amount || new BigNumber(0)
+					).plus(gaugeToken?.amount || new BigNumber(0))
+					const usd = totalToken
+						.multipliedBy(data.pricePerFullShare)
+						.multipliedBy(prices[vault])
+					accumulator[vault] = {
+						...data,
+						vaultToken,
+						gaugeToken,
+						totalToken,
+						usd,
+					}
+					accumulator.total.usd = accumulator.total.usd.plus(usd)
+					return accumulator
+				},
+				{ loading, total: { usd: new BigNumber(0) } },
+			),
+		[vaults, balances, prices, loading],
+	)
 }
 
 export function useHasVaultTokenBalance() {
@@ -743,44 +751,59 @@ export function useLPsBalance() {
 	} = usePrices()
 
 	return useMemo(() => {
-		return Object.keys(pools).reduce((previous, current) => {
-			const { walletBalance, stakedBalance } = poolAccounts[current]
-			const { reserves, totalSupply } = pools[current]
+		return Object.keys(pools).reduce(
+			(previous, current) => {
+				const { walletBalance, stakedBalance } = poolAccounts[current]
+				const { reserves, totalSupply } = pools[current]
 
-			if (!reserves || !eth || !yaxis || !totalSupply || !stakedBalance)
+				if (
+					!reserves ||
+					!eth ||
+					!yaxis ||
+					!totalSupply ||
+					!stakedBalance
+				)
+					return previous
+
+				const share = new BigNumber(stakedBalance?.value || 0)
+					.plus(new BigNumber(walletBalance?.value || 0))
+					.div(totalSupply.toString())
+				const shareT0 = new BigNumber(
+					reserves?.['_reserve0']?.toString() || 0,
+				)
+					.multipliedBy(share)
+					.dividedBy(10 ** 18)
+				const shareT1 = new BigNumber(
+					reserves?.['_reserve1']?.toString() || 0,
+				)
+					.multipliedBy(share)
+					.dividedBy(10 ** 18)
+				const balanceUSD = shareT0
+					.multipliedBy(yaxis)
+					.plus(shareT1.multipliedBy(eth))
+
+				previous[current].usd = balanceUSD
+				previous[current].token = balanceUSD
+				previous.total.usd = previous.total.usd.plus(balanceUSD)
+
 				return previous
-
-			const share = new BigNumber(stakedBalance?.value || 0)
-				.plus(new BigNumber(walletBalance?.value || 0))
-				.div(totalSupply.toString())
-			const shareT0 = new BigNumber(reserves?.['_reserve0']?.toString() || 0)
-				.multipliedBy(share)
-				.dividedBy(10 ** 18)
-			const shareT1 = new BigNumber(reserves?.['_reserve1']?.toString() || 0)
-				.multipliedBy(share)
-				.dividedBy(10 ** 18)
-			const balanceUSD = shareT0.multipliedBy(yaxis).plus(shareT1.multipliedBy(eth))
-
-			previous[current].usd = balanceUSD
-			previous[current].token = balanceUSD
-			previous.total.usd = previous.total.usd.plus(balanceUSD)
-
-			return previous
-		}, {
-			"Uniswap YAX/ETH": {
-				usd: new BigNumber(0)
 			},
-			"Uniswap YAXIS/ETH": {
-				usd: new BigNumber(0)
+			{
+				'Uniswap YAX/ETH': {
+					usd: new BigNumber(0),
+				},
+				'Uniswap YAXIS/ETH': {
+					usd: new BigNumber(0),
+				},
+				'Linkswap YAX/ETH': {
+					usd: new BigNumber(0),
+				},
+				total: {
+					usd: new BigNumber(0),
+				},
 			},
-			"Linkswap YAX/ETH": {
-				usd: new BigNumber(0)
-			},
-			total: {
-				usd: new BigNumber(0)
-			},
-		})
-	}, [eth, poolAccounts, pools, yaxis,])
+		)
+	}, [eth, poolAccounts, pools, yaxis])
 }
 
 export function useVotingPower() {
@@ -788,15 +811,11 @@ export function useVotingPower() {
 	const { contracts } = useContracts()
 	const results = useSingleContractMultipleMethods(
 		contracts?.internal.votingEscrow,
-		[
-			['balanceOf(address)', [account]],
-		],
+		[['balanceOf(address)', [account]]],
 	)
 
 	return useMemo(() => {
-		const [
-			balanceOf
-		] = results.map(({ result, loading }, i) => {
+		const [balanceOf] = results.map(({ result, loading }, i) => {
 			if (loading) return ethers.BigNumber.from(0)
 			if (!result) return ethers.BigNumber.from(0)
 			return result
@@ -820,14 +839,12 @@ export function useLock() {
 	)
 
 	useEffect(() => {
-		if (results.every(({ valid, loading }) => valid && !loading)) setLoading(false)
+		if (results.every(({ valid, loading }) => valid && !loading))
+			setLoading(false)
 	}, [results])
 
 	return useMemo(() => {
-		const [
-			locked_end,
-			locked
-		] = results.map(({ result, loading }, i) => {
+		const [locked_end, locked] = results.map(({ result, loading }, i) => {
 			if (loading) return ethers.BigNumber.from(0)
 			if (!result) return ethers.BigNumber.from(0)
 			return result
@@ -837,30 +854,82 @@ export function useLock() {
 			loading,
 			hasLock: !new BigNumber(locked_end.toString()).isZero(),
 			end: new BigNumber(locked_end.toString()),
-			locked: new BigNumber(locked.toString().split(',')[0]).div(10 ** 18),
+			locked: new BigNumber(locked.toString().split(',')[0]).div(
+				10 ** 18,
+			),
 		}
 	}, [results, loading])
 }
 
 export function useUserGaugeWeights() {
 	const { account } = useWeb3Provider()
-	const { contracts } = useContracts()
+	const { contracts, loading: loadingContracts } = useContracts()
 
-	const results = useSingleContractMultipleMethods(
-		contracts?.internal.votingEscrow,
-		[
-			['locked__end', [account]],
-		],
+	const [loading, setLoading] = useState(true)
+
+	const callInputs = useMemo(() => {
+		if (!account || !contracts?.vaults) return []
+		return Object.values(Vaults).map((vault) => [
+			account,
+			contracts?.vaults[vault].gauge.address,
+		])
+	}, [account, contracts?.vaults])
+
+	const results = useSingleContractMultipleData(
+		contracts?.internal.gaugeController,
+		'vote_user_slopes',
+		callInputs,
 	)
 
-	return useMemo(() => {
-		const [
-			locked__end
-		] = results.map(({ result, loading }, i) => {
-			if (loading) return ethers.BigNumber.from(0)
-			if (!result) return ethers.BigNumber.from(0)
-			return result
-		})
-		return !new BigNumber(locked__end.toString()).isZero()
+	const resultsWithDefaults = useMemo(() => {
+		if (results.length)
+			return results.map(({ result, loading }, i) => {
+				if (loading)
+					return [
+						ethers.BigNumber.from(0),
+						ethers.BigNumber.from(0),
+						ethers.BigNumber.from(0),
+					]
+				if (!result)
+					return [
+						ethers.BigNumber.from(0),
+						ethers.BigNumber.from(0),
+						ethers.BigNumber.from(0),
+					]
+				return result
+			})
+
+		return Object.values(Vaults).map(() => [
+			ethers.BigNumber.from(0),
+			ethers.BigNumber.from(0),
+			ethers.BigNumber.from(0),
+		])
 	}, [results])
+
+	useEffect(() => {
+		if (
+			!loadingContracts &&
+			results.every(({ valid, loading }) => valid && !loading) &&
+			loading
+		)
+			setLoading(false)
+	}, [results, loadingContracts, loading])
+
+	return useMemo(() => {
+		return [
+			loading,
+			Object.fromEntries(
+				Object.values(Vaults).map((vault, i) => {
+					return [
+						vault,
+						{
+							slope: resultsWithDefaults[i][0],
+							power: resultsWithDefaults[i][1],
+							end: resultsWithDefaults[i][2],
+						},
+					]
+				}),
+			),
+		]
+	}, [loading, resultsWithDefaults])
 }
