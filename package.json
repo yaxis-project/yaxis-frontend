@@ -3,6 +3,7 @@
 	"version": "3.0.0",
 	"private": true,
 	"dependencies": {
+		"@ant-design/charts": "^1.2.14",
 		"@data-ui/sparkline": "^0.0.84",
 		"@reduxjs/toolkit": "^1.6.0",
 		"@web3-react/authereum-connector": "^6.2.0",
