@@ -14,6 +14,7 @@ import {
 	RewardsContracts,
 	LiquidityPool,
 	Vaults,
+	TVaults,
 } from '../../constants/type'
 import { usePrices } from '../prices/hooks'
 import {
@@ -29,9 +30,11 @@ import { ethers } from 'ethers'
 import { Interface } from '@ethersproject/abi'
 import { useBlockNumber } from '../application/hooks'
 import ERC20Abi from '../../constants/abis/mainnet/erc20.json'
+import GaugeAbi from '../../constants/abis/mainnet/gauge.json'
 import { useVaults, useLiquidityPools } from '../internal/hooks'
 
 const ERC20_INTERFACE = new Interface(ERC20Abi)
+const GAUGE_INTERFACE = new Interface(GaugeAbi)
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -169,7 +172,9 @@ export function useAllTokenBalances(): [
 			(pool) => pool.tokenContract,
 		) || []
 	const VAULT =
-		Object.values(contracts?.vaults || {}).map((vault) => vault.token) || []
+		Object.entries(contracts?.vaults || {})
+			.filter(([vault]) => vault !== 'yaxis')
+			.map(([, data]) => data.token) || []
 	const GAUGE =
 		Object.values(contracts?.vaults || {}).map(
 			(vault) => vault.gaugeToken,
@@ -692,36 +697,101 @@ export function useRewardsBalances(token: string, name: TRewardsContracts) {
 	}, [staked, wallet])
 }
 
+type VaultBalance = {
+	[key in TVaults]: {
+		vaultToken: CurrencyValue
+		gaugeToken: CurrencyValue
+		totalToken: BigNumber
+		usd: BigNumber
+		balance: BigNumber
+		totalSupply: BigNumber
+		pricePerFullShare: BigNumber
+	}
+}
+
+interface TVaultsBalances {
+	loading: boolean
+	balances: VaultBalance
+	total: {
+		usd: BigNumber
+	}
+}
+
 export function useVaultsBalances() {
 	const vaults = useVaults()
 	const [balances, loading] = useAllTokenBalances()
 	const { prices } = usePrices()
-	return useMemo(
-		() =>
-			Object.entries(vaults).reduce(
-				(accumulator, [vault, data]) => {
-					const vaultToken = balances[`cv:${vault}`]
-					const gaugeToken = balances[`cv:${vault}-gauge`]
-					const totalToken = (
-						vaultToken?.amount || new BigNumber(0)
-					).plus(gaugeToken?.amount || new BigNumber(0))
-					const usd = totalToken
-						.multipliedBy(data.pricePerFullShare)
-						.multipliedBy(prices[vault])
-					accumulator[vault] = {
-						...data,
-						vaultToken,
-						gaugeToken,
-						totalToken,
-						usd,
-					}
-					accumulator.total.usd = accumulator.total.usd.plus(usd)
-					return accumulator
-				},
-				{ loading, total: { usd: new BigNumber(0) } },
-			),
-		[vaults, balances, prices, loading],
-	)
+	return useMemo(() => {
+		const defaultState = {
+			loading,
+			total: { usd: new BigNumber(0) },
+			balances: Object.fromEntries(
+				(Object.keys(vaults) as TVaults[]).map((vault) => [
+					vault,
+					{
+						vaultToken: {
+							amount: new BigNumber(0),
+							value: new BigNumber(0),
+						},
+						gaugeToken: {
+							amount: new BigNumber(0),
+							value: new BigNumber(0),
+						},
+						totalToken: new BigNumber(0),
+						usd: new BigNumber(0),
+						balance: new BigNumber(0),
+						totalSupply: new BigNumber(0),
+						pricePerFullShare: new BigNumber(0),
+					},
+				]),
+			) as VaultBalance,
+		}
+		const withData = Object.entries(vaults).reduce<TVaultsBalances>(
+			(accumulator, [vault, data]) => {
+				const vaultToken = balances[`cv:${vault}`]
+				const gaugeToken = balances[`cv:${vault}-gauge`]
+				const totalToken = (
+					vaultToken?.amount || new BigNumber(0)
+				).plus(gaugeToken?.amount || new BigNumber(0))
+				const usd = totalToken
+					.multipliedBy(data.pricePerFullShare)
+					.multipliedBy(prices[vault])
+				accumulator.balances[vault] = {
+					...data,
+					vaultToken,
+					gaugeToken,
+					totalToken,
+					usd,
+				}
+				accumulator.total.usd = accumulator.total.usd.plus(usd)
+				return accumulator
+			},
+			defaultState,
+		)
+
+		// Add YAXIS Gauge data
+
+		const yaxisVaultToken = balances['yaxis']
+		const yaxisGaugeToken = balances['yaxis-gauge']
+		const yaxisTotalToken = (
+			yaxisVaultToken?.amount || new BigNumber(0)
+		).plus(yaxisGaugeToken?.amount || new BigNumber(0))
+		const yaxisUsd = (yaxisGaugeToken?.amount || new BigNumber(0))
+			.multipliedBy(1)
+			.multipliedBy(prices['yaxis'])
+		withData.balances.yaxis = {
+			vaultToken: yaxisVaultToken,
+			gaugeToken: yaxisGaugeToken,
+			totalToken: yaxisTotalToken,
+			usd: yaxisUsd,
+			balance: new BigNumber(0),
+			totalSupply: new BigNumber(0),
+			pricePerFullShare: new BigNumber(1),
+		}
+		withData.total.usd = withData.total.usd.plus(yaxisUsd)
+
+		return withData
+	}, [vaults, balances, prices, loading])
 }
 
 export function useHasVaultTokenBalance() {
@@ -932,4 +1002,36 @@ export function useUserGaugeWeights() {
 			),
 		]
 	}, [loading, resultsWithDefaults])
+}
+
+export function useUserGauges() {
+	const { account } = useWeb3Provider()
+	const { contracts } = useContracts()
+	const results = useMultipleContractSingleData(
+		Object.values(contracts?.vaults || {}).map(
+			(vault) => vault.gauge.address,
+		),
+		GAUGE_INTERFACE,
+		'claimable_tokens',
+		[account],
+	)
+
+	return useMemo<[boolean, { [vault in TVaults]: BigNumber }]>(() => {
+		const names = Object.keys(contracts?.vaults || {})
+		const loading =
+			results.length > 0 ? results.some(({ loading }) => loading) : true
+		return [
+			loading,
+			Object.fromEntries(
+				results.map(({ result }, i) => {
+					return [
+						names[i] as TVaults,
+						new BigNumber(
+							(result || ethers.BigNumber.from(0)).toString(),
+						),
+					]
+				}),
+			) as { [vault in TVaults]: BigNumber },
+		]
+	}, [contracts?.vaults, results])
 }

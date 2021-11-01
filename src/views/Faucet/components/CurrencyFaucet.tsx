@@ -33,7 +33,12 @@ export default function CurrencyFaucet({ currency, contractName }) {
 		>
 			<Row gutter={10} align="middle">
 				<Col>
-					<img src={Currency.icon} height="36" alt="logo" />
+					<img
+						src={Currency.icon}
+						height="36"
+						width="36"
+						alt="logo"
+					/>
 				</Col>
 				<Col>{currency.toUpperCase()}</Col>
 			</Row>

@@ -4,44 +4,51 @@ export const configs: Record<number, Config> = {
 	42: {
 		vaults: {
 			'3crv': {
-				vault: '0x626e2bE9Ef5d5C2a28Be4Cd18eedB34fb8F34Cd2',
+				vault: '0xaf9F7B66dc8996a72890ef7aE662D514E0f79A07',
 				token: 'CV:3CRV',
-				tokenContract: '0x583c34a81B2700E1f19970aF609d9eFFB3b17D72',
-				gauge: '0xf7e019C206BcF787b52a23669da36c1D94B1c76e',
+				tokenContract: '0xCeb5324a2f0B5D8bD25a70Ba5768b67D5dF5578E',
+				gauge: '0x7B2bEFA84aD29DB691A714EAA2dd0F83396683c5',
 			},
 			wbtc: {
-				vault: '0x22CEab5a459E9fb807768d90fc6b16CF2B30E9A8',
+				vault: '0x46F807F583956A67A2502afA4ACDaE6a96fD49F2',
 				token: 'CV:WBTC',
-				tokenContract: '0x1b01D5495Da81453b1A74eCEDd4CBDe47c2474F8',
-				gauge: '0xe3cE52a51DC5fd3edcf7264F662a58B8867B46E6',
+				tokenContract: '0x40319C212995e7dfaE1646f18e89615028C5f54A',
+				gauge: '0xE7dE842bB9c20D06CD697B9199b2bDCCA22e5f82',
 			},
 			weth: {
-				vault: '0x68f6AE036011eA92bFa2bDAF58Dc5eb48E39f683',
+				vault: '0xFD2506D8D1Aa621FFE00c2AA84b47Ba20e7B2Ca9',
 				token: 'CV:WETH',
-				tokenContract: '0xb3fCf30686978Fd21AFDc0BAD14e9C37A53C0A42',
-				gauge: '0xBD6ECdbD385F8B8D0CC66f2182382A2a9241fDD3',
+				tokenContract: '0x54CE5D9DD3CCA7AaA41F5D0E742b2B2eDa584885',
+				gauge: '0x41f9d8079462FD6b1a2df23C50a8E0cEC3C1acdf',
 			},
 			link: {
-				vault: '0xDDC5EAE80fC4Dd9caC854387089BC3CFd40D8368',
+				vault: '0x2947D5F0f5644eD20CA65C672b5A0cF97497162F',
 				token: 'CV:LINK',
-				tokenContract: '0x6D7204f8109432105FF05003D7516cB254CB16c3',
-				gauge: '0xb35593c0c267b739a7ABc1C7c23BB39A39ff6350',
+				tokenContract: '0xA85115D019905724CA6076C1a6f1cb784d207F9a',
+				gauge: '0xB917ae2dd8d49caDF3e8d322b192834ba30A400a',
+			},
+			yaxis: {
+				vault: '',
+				gauge: '0xc6cF1665Cd2d81075464789d795b7cb8fB5Aa3D3',
+				token: 'YAXIS',
+				tokenContract: '0x8624474F9E886b59A3317F3Ab598fFA63e050E96',
 			},
 		},
 		internal: {
 			// Current
-			vaultHelper: '0x448223929ab973E3d97afc5A7bE48f2d74651497',
-			minter: '0x9652EC937545F28efb2c7e813A93D659d02D5e39',
+			controller: '0x9A1bad98A98591f05697D4770c4EF4C8F6E476DB',
+			vaultHelper: '0x39f7a810f8D36fcC65fe6C8d539D55BaD8A9b50C',
+			minter: '0xDef86CF671C842633F57e09e439e17a34236d6a0',
 			stableSwap3PoolConverter:
-				'0x1A17D5dbBcdBe9E95c3110b2CAc35312Ed82909e',
-			votingEscrow: '0x9B95f3164eA9CE0f04747e82F5A2232a5448845A',
-			gaugeController: '0xA6Ac7751565b4Cf63B20315950EB9af6961f560e',
+				'0x08730602dce4F451766D9362405580C9D33105a1',
+			votingEscrow: '0x7057f6fA594abA4C0a4f23A5FF2d9220db12F632',
+			gaugeController: '0x7B7e1d1b44BEf6DDaD4AF20D9604692adffb2001',
 			merkleDistributor: '0x51A8F76b848E478e08B771DE55e5e17370DE1D25',
 			// Legacy
-			swap: '0x90D647a323DE34057ABb36cC05D530C59a102f9A',
-			yaxisChef: '0x7eD746d742166bc8465Ed04dD23a62DA4524bCAa',
+			swap: '0x68ED8AE5F7DBcA0208D197f0D59DB4c7D4a13758',
+			yaxisChef: '0x9bE749cF55D933F3ffBfe9a8F06665E8600de183',
 			xYaxStaking: '0xc5598a5FE5aFFb55308ac06593Af31784606de4C',
-			yAxisMetaVault: '0xF293DbBe39EDC5793Ed02d3731170f618538b0D9',
+			yAxisMetaVault: '0x8b2E56c78Cb8a9bf8e00836B8baC22f5B779563E',
 		},
 		external: {
 			multicall: '0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A',
@@ -52,25 +59,25 @@ export const configs: Record<number, Config> = {
 		},
 		rewards: {
 			MetaVault: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8',
-			Yaxis: '0x8Dd07469b35C02cfa294071D456a2d98b5D42Fa9',
-			'Uniswap YAXIS/ETH': '0x71d8189DF0515ac3E2339599FeC1627e6e3AFB72',
+			Yaxis: '0x3d075CA6F631782F06d76bE8B014031B28a79b88',
+			'Uniswap YAXIS/ETH': '0xDF0eE62F51080B0E3f8bDFef95FE191CD66CCF99',
 		},
 		currencies: {
 			ERC20: {
-				wbtc: '0x508996CeC62aD89457B3C4c434bB4b2e0Eda9A1B',
-				link: '0xa2dB763BbEB1dDA3EeB0845C6C23D379A9Cc0F53',
-				mim: '0x7F3331ea41B6A839EA623cbc26Cbf92E625BEa07',
-				cvx: '0x5Ca82b87E5d82C69Cb0Ab873107F77fdEb537b8a',
-				yax: '0x32f5Bc5949591215297594a8A62b991F665f8041', //
-				usdc: '0xc3Fe4D1658B567C03f626C3FA9dd2e1D15904Dd7',
-				dai: '0x4f4242Dd31b7F8f93Fd54EEBf2dA81ccEf797681',
-				usdt: '0x817807eB931C1d55629C1010BDda4320e9988de7',
-				'3crv': '0x81C0257A53341f9d9e679376804AF94F5B0e748F',
-				weth: '0x3C54f058cD7EA85C4CE13d5d77A6Bb3AE0eF9910',
-				mvlt: '0xF293DbBe39EDC5793Ed02d3731170f618538b0D9',
+				wbtc: '0x9582FC9Ae82ba6203df2bFE5Ce6F77C15a08CDF6',
+				link: '0x28AAca872F220889ECBA3DB1f336f2ee99F9aA47',
+				mim: '0x40d4ec95E3c4F24A5465ffB648d92fe07776FC25',
+				cvx: '0x8c0dDFd1946E1252ceD33D9D87361195357b2BF2',
+				yax: '0x78B267322aE686D7097eB963b661a4e598b9aa58', //
+				usdc: '0xafa14C9a90903FFB4BA6b957Aa3737555571013d',
+				dai: '0x20255E92B44cD44C560DCc58FE4c384ec198BCDC',
+				usdt: '0x550132578B16a60FE6F7dda0963f927fE3965972',
+				'3crv': '0x5DA448b03e6d3e0bc1fA7D2e133cc3043e9375Ea',
+				weth: '0xDc8EBcc8776f114c7b01FcC39B726F52E086D244',
+				mvlt: '0x8b2E56c78Cb8a9bf8e00836B8baC22f5B779563E',
 			},
 			ERC677: {
-				yaxis: '0x8624474F9E886b59A3317F3Ab598fFA63e050E96',
+				yaxis: '0xCf424e898F63B699408e852f0B4Fa1123aC70653',
 			},
 		},
 		pools: {
@@ -78,8 +85,8 @@ export const configs: Record<number, Config> = {
 				active: true,
 				legacy: false,
 				type: 'uniswap',
-				liquidId: '0x85C09c861E228fcB537BD598264Efe3e32558224/ETH',
-				lpAddress: '0xa18644Cd7FB63571f856BAf354FbF3745173254D',
+				liquidId: '0xCf424e898F63B699408e852f0B4Fa1123aC70653/ETH',
+				lpAddress: '0x2C47923B589bCeb86d8897eBFECF3b7A0995cf1d',
 				lpUrl: '',
 				lpTokens: [
 					{
@@ -89,7 +96,7 @@ export const configs: Record<number, Config> = {
 						tokenId: 'eth',
 					},
 				],
-				tokenAddress: '0x85C09c861E228fcB537BD598264Efe3e32558224',
+				tokenAddress: '0xCf424e898F63B699408e852f0B4Fa1123aC70653',
 				name: 'Uniswap YAXIS/ETH',
 				symbol: 'YAXIS/ETH UNI-V2 LP',
 				tokenSymbol: 'YAXIS_ETH_UNISWAP_LP',
@@ -101,7 +108,7 @@ export const configs: Record<number, Config> = {
 				active: false,
 				legacy: true,
 				type: 'uniswap',
-				liquidId: '0x42407091d2079a739E993696DBa74840fFCD4f2C/ETH',
+				liquidId: '0x78B267322aE686D7097eB963b661a4e598b9aa58/ETH',
 				lpAddress: '0x3E2461587293851d27787BDF44B1D5F4e74B1dcF',
 				lpUrl: '',
 				lpTokens: [
@@ -112,7 +119,7 @@ export const configs: Record<number, Config> = {
 						tokenId: 'eth',
 					},
 				],
-				tokenAddress: '0x42407091d2079a739E993696DBa74840fFCD4f2C',
+				tokenAddress: '0x78B267322aE686D7097eB963b661a4e598b9aa58',
 				name: 'Uniswap YAX/ETH',
 				symbol: 'YAX/ETH UNI-V2 LP',
 				tokenSymbol: 'YAX_ETH_UNISWAP_LP',
@@ -145,6 +152,7 @@ export const configs: Record<number, Config> = {
 	1: {
 		internal: {
 			// Curent
+			controller: '',
 			vaultHelper: '',
 			minter: '',
 			stableSwap3PoolConverter:
@@ -157,7 +165,6 @@ export const configs: Record<number, Config> = {
 			yaxisChef: '0xc330e7e73717cd13fb6ba068ee871584cf8a194f',
 			xYaxStaking: '0xeF31Cb88048416E301Fee1eA13e7664b887BA7e8',
 			yAxisMetaVault: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
-
 		},
 		external: {
 			multicall: '0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441',
@@ -213,6 +220,12 @@ export const configs: Record<number, Config> = {
 				token: 'CV:LINK',
 				tokenContract: '',
 				gauge: '',
+			},
+			yaxis: {
+				vault: '',
+				gauge: '',
+				token: 'YAXIS',
+				tokenContract: '',
 			},
 		},
 		pools: {

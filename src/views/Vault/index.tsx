@@ -31,7 +31,7 @@ const Vault: React.FC = () => {
 	} = useVaultsBalances()
 
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
-	const address = currentConfig(chainId).internal.yAxisMetaVault
+	const address = currentConfig(chainId).internal.controller
 
 	return (
 		<div className="investing-view">

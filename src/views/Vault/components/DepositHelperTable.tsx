@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react'
 import { Vaults } from '../../../constants/type'
 import { Currencies, Currency } from '../../../constants/currencies'
+import { useNewAPY } from '../../../state/internal/hooks'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import useTranslation from '../../../hooks/useTranslation'
@@ -45,7 +46,7 @@ const makeColumns = (
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
 				<Row align="middle">
-					<img src={record.icon} height="36" alt="logo" />
+					<img src={record.icon} height="36" width="36" alt="logo" />
 					<StyledText>{record.name}</StyledText>
 				</Row>
 			),
@@ -63,7 +64,7 @@ const makeColumns = (
 						numberPrefix="$"
 					/>
 					<Text type="secondary">
-						{record.balance.toFixed(2)} {record.name}
+						{record.balance.toFormat(2)} {record.name}
 					</Text>
 				</>
 			),
@@ -100,19 +101,15 @@ const makeColumns = (
 			},
 		},
 		{
-			title: translate('APY'),
+			title: translate('Total APR'),
 			key: 'apy',
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
 				<>
-					<Row style={{ fontWeight: 'bolder' }} justify="center">
-						<Text type="secondary">{record.minApy}%</Text>
-					</Row>
-					<Row justify="center">
-						<Text type="secondary">to</Text>
-					</Row>
-					<Row style={{ fontWeight: 'bolder' }} justify="center">
-						<Text type="secondary">{record.maxApy}%</Text>
+					<Row style={{ fontWeight: 'bolder' }}>
+						<Text type="secondary">
+							{record.minApy?.toFixed(2)}%
+						</Text>
 					</Row>
 				</>
 			),
@@ -150,6 +147,8 @@ export default function DepositHelperTable() {
 
 	const [balances, loading] = useAllTokenBalances()
 
+	const apy = useNewAPY()
+
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
 
@@ -158,6 +157,13 @@ export default function DepositHelperTable() {
 		method: 'depositVault',
 		description: `Vault deposit`,
 	})
+
+	const { call: handleStakeYAXIS, loading: isSubmittingYAXIS } =
+		useContractWrite({
+			contractName: 'vaults.yaxis.gauge',
+			method: 'deposit(uint256)',
+			description: `staked in YAXIS Gauge`,
+		})
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
@@ -180,28 +186,44 @@ export default function DepositHelperTable() {
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = SUPPORTED_CURRENCIES.reduce<[string, string][]>(
-			(previous, current) => {
-				const _v = currencyValues[current.tokenId]
-				if (_v)
-					previous.push([
+		const transactions = SUPPORTED_CURRENCIES.reduce<
+			[string, [string, string]][]
+		>((previous, current) => {
+			const _v = currencyValues[current.tokenId]
+			if (_v)
+				previous.push([
+					current.tokenId,
+					[
 						contracts.vaults[current.tokenId].vault.address,
 						numberToDecimal(_v, current.decimals),
-					])
+					],
+				])
+			return previous
+		}, [])
 
-				return previous
-			},
-			[],
-		)
 		if (transactions.length > 0) {
 			await Promise.allSettled(
-				transactions.map((args) =>
-					handleDeposit({ args, descriptionExtra: totalDepositing }),
-				),
+				transactions.map(([vault, args]) => {
+					// Stake YAXIS into gauge
+					if (vault === 'yaxis')
+						return handleStakeYAXIS({ args: [args[1]] })
+
+					// Deposit others using Vault Helper
+					return handleDeposit({
+						args,
+						descriptionExtra: totalDepositing,
+					})
+				}),
 			)
 			setCurrencyValues(initialCurrencyValues)
 		}
-	}, [currencyValues, handleDeposit, totalDepositing, contracts])
+	}, [
+		currencyValues,
+		handleDeposit,
+		totalDepositing,
+		contracts,
+		handleStakeYAXIS,
+	])
 
 	const data = useMemo(
 		() =>
@@ -224,11 +246,11 @@ export default function DepositHelperTable() {
 					inputValue: currencyValues[currency.name.toLowerCase()],
 					key: currency.tokenId,
 					//  TODO
-					minApy: 0,
+					minApy: apy[currency.tokenId],
 					maxApy: 0,
 				}
 			}),
-		[prices, balances, currencyValues],
+		[prices, balances, currencyValues, apy],
 	)
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])
@@ -243,6 +265,27 @@ export default function DepositHelperTable() {
 			body: {
 				row: ({ children, className, ...props }) => {
 					const key = props['data-row-key']
+					if (key === 'yaxis')
+						return (
+							<tr
+								key={key}
+								className={className}
+								style={{
+									transform: 'translateY(0)',
+								}}
+							>
+								<ApprovalCover
+									contractName={`currencies.ERC677.${key}.contract`}
+									approvee={
+										contracts?.vaults[key].gauge.address
+									}
+									noWrapper
+									buttonText={'Gauge'}
+								>
+									{children}
+								</ApprovalCover>
+							</tr>
+						)
 					return (
 						<tr
 							key={key}
@@ -310,7 +353,7 @@ export default function DepositHelperTable() {
 				</Title>
 				<Button
 					disabled={disabled}
-					loading={isSubmitting}
+					loading={isSubmitting || isSubmittingYAXIS}
 					onClick={handleSubmit}
 					style={{ fontSize: '18px' }}
 				>

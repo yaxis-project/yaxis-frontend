@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Row, Col, DatePicker } from 'antd'
+import { Row, Col, Slider } from 'antd'
 import Typography from '../../../components/Typography'
 import Button from '../../../components/Button'
 import Input from '../../../components/Input'
@@ -15,6 +15,8 @@ import useTranslation from '../../../hooks/useTranslation'
 
 const { Text } = Typography
 
+const WEEK_TIME = 602400
+
 const CreateLock: React.FC = () => {
 	const translate = useTranslation()
 
@@ -27,8 +29,7 @@ const CreateLock: React.FC = () => {
 	const [balances, loadingBalances] = useAllTokenBalances()
 
 	const [amount, setAmount] = useState('0')
-	const [length, setLength] = useState(Math.floor(Date.now() / 1000) + 602400)
-
+	const [length, setLength] = useState(WEEK_TIME)
 	return (
 		<StyledRow justify="center">
 			<Col>
@@ -70,80 +71,27 @@ const CreateLock: React.FC = () => {
 				<Row style={{ marginBottom: '14px' }}>
 					<StyledText>
 						{translate('It will unlock')}{' '}
-						{moment(length * 1000).fromNow()}. {translate('On')}{' '}
-						{moment(length * 1000).format('MMM Do YYYY, h:mm:ss a')}
+						{moment(Date.now() + length * 1000).fromNow()}.{' '}
+						{translate('On')}{' '}
+						{moment(Date.now() + length * 1000).format(
+							'MMM Do YYYY, h:mm:ss a',
+						)}
 						.
 					</StyledText>
 				</Row>
 				<Row justify="space-around" style={{ marginBottom: '10px' }}>
-					<Button
-						block={false}
-						loading={loadingCreateLock}
-						onClick={() => setLength(length + 602400)}
-					>
-						<Row align="middle">
-							<span style={{ fontSize: '30px' }}>+</span>
-							<span
-								style={{
-									marginTop: '4px',
-									paddingLeft: '3px',
-								}}
-							>
-								{translate('1 week')}
-							</span>
-						</Row>
-					</Button>
-					<Button
-						block={false}
-						loading={loadingCreateLock}
-						onClick={() => setLength(length + 602400)}
-					>
-						<Row align="middle">
-							<span style={{ fontSize: '30px' }}>-</span>
-							<span
-								style={{
-									marginTop: '4px',
-									paddingLeft: '3px',
-								}}
-							>
-								{translate('1 week')}
-							</span>
-						</Row>
-					</Button>
-					<Button
-						block={false}
-						loading={loadingCreateLock}
-						onClick={() => setLength(length + 31324800)}
-					>
-						<Row align="middle">
-							<span style={{ fontSize: '30px' }}>-</span>
-							<span
-								style={{
-									marginTop: '4px',
-									paddingLeft: '3px',
-								}}
-							>
-								{translate('1 year')}
-							</span>
-						</Row>
-					</Button>
-					<Button
-						block={false}
-						loading={loadingCreateLock}
-						onClick={() => setLength(length + 31324800)}
-					>
-						<Row align="middle">
-							<span style={{ fontSize: '30px' }}>+</span>
-							<span
-								style={{
-									marginTop: '4px',
-									paddingLeft: '3px',
-								}}
-							>
-								{translate('1 year')}
-							</span>
-						</Row>
-					</Button>
+					<Slider
+						style={{ width: '90%' }}
+						value={length / WEEK_TIME}
+						min={1}
+						max={52}
+						tipFormatter={(value) =>
+							value > 1 ? `${value} weeks` : `${value} week`
+						}
+						onChange={(value) => {
+							setLength(WEEK_TIME * value)
+						}}
+					/>
 				</Row>
 			</Col>
 			<Button
@@ -156,7 +104,7 @@ const CreateLock: React.FC = () => {
 							new BigNumber(amount)
 								.multipliedBy(10 ** 18)
 								.toString(),
-							length,
+							Math.floor(Date.now() / 1000) + length,
 						],
 					})
 				}
@@ -197,8 +145,18 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 	const [balances, loadingBalances] = useAllTokenBalances()
 
 	const [amount, setAmount] = useState('0')
-	const [length, setLength] = useState(Math.floor(Date.now() / 1000) + 602400)
+	const [length, setLength] = useState(0)
 
+	// useEffect(
+	// 	() =>
+	// 		setLength(
+	// 			Math.floor(Date.now() / 1000) +
+	// 				(end.toNumber() - Math.floor(Date.now() / 1000)) +
+	// 				WEEK_TIME * 2,
+	// 		),
+	// 	[end],
+	// )
+	// const disabled = useMemo(() => {}, [])
 	return (
 		<StyledRow justify="center">
 			<Col>
@@ -253,8 +211,11 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 				<Row style={{ marginBottom: '14px' }}>
 					<StyledText>
 						{translate('It will unlock')}{' '}
-						{moment(length * 1000).fromNow()}. {translate('On')}{' '}
-						{moment(length * 1000).format('MMM Do YYYY, h:mm:ss a')}
+						{moment((end.toNumber() + length) * 1000).fromNow()}.{' '}
+						{translate('On')}{' '}
+						{moment((end.toNumber() + length) * 1000).format(
+							'MMM Do YYYY, h:mm:ss a',
+						)}
 						.
 					</StyledText>
 				</Row>
@@ -264,88 +225,35 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 					picker="week"
 				/> */}
 				<Row justify="space-around" style={{ marginBottom: '10px' }}>
-					<Button
-						block={false}
-						onClick={() => setLength(length + 602400)}
-					>
-						<Row align="middle">
-							<span style={{ fontSize: '30px' }}>+</span>
-							<span
-								style={{
-									marginTop: '4px',
-									paddingLeft: '3px',
-								}}
-							>
-								{translate('1 week')}
-							</span>
-						</Row>
-					</Button>
-					<Button
-						block={false}
-						onClick={() => setLength(length + 602400)}
-					>
-						<Row align="middle">
-							<span style={{ fontSize: '30px' }}>-</span>
-							<span
-								style={{
-									marginTop: '4px',
-									paddingLeft: '3px',
-								}}
-							>
-								{translate('1 week')}
-							</span>
-						</Row>
-					</Button>
-					<Button
-						block={false}
-						onClick={() => setLength(length + 31324800)}
-					>
-						<Row align="middle">
-							<span style={{ fontSize: '30px' }}>-</span>
-							<span
-								style={{
-									marginTop: '4px',
-									paddingLeft: '3px',
-								}}
-							>
-								{translate('1 year')}
-							</span>
-						</Row>
-					</Button>
-					<Button
-						block={false}
-						onClick={() => setLength(length + 31324800)}
-					>
-						<Row align="middle">
-							<span style={{ fontSize: '30px' }}>+</span>
-							<span
-								style={{
-									marginTop: '4px',
-									paddingLeft: '3px',
-								}}
-							>
-								{translate('1 year')}
-							</span>
-						</Row>
-					</Button>
+					<Slider
+						style={{ width: '90%' }}
+						value={length / WEEK_TIME}
+						min={0}
+						max={52}
+						tipFormatter={(value) =>
+							value > 1 || value === 0
+								? `${value} weeks`
+								: `${value} week`
+						}
+						onChange={(value) => {
+							setLength(WEEK_TIME * value)
+						}}
+					/>
 				</Row>
 			</Col>
 			<Button
 				style={{ marginTop: '14px' }}
-				disabled={loadingBalances || balances?.yaxis?.amount?.isZero()}
-				onClick={
-					() => {}
-					// call({
-					// 	args: [
-					// 		new BigNumber(amount)
-					// 			.multipliedBy(10 ** 18)
-					// 			.toString(),
-					// 		length,
-					// 	],
-					// })
+				disabled={
+					loadingBalances
+					// || balances?.yaxis?.amount?.isZero()
+				}
+				onClick={() =>
+					callIncreaseTime({
+						args: [end.toNumber() + length],
+					})
 				}
 			>
-				{translate('Create Lock')}
+				{translate('Extend Lock')}
 			</Button>
 		</StyledRow>
 	)

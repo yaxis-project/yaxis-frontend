@@ -131,7 +131,12 @@ export default function LPAccountOverview() {
 				header={
 					<Row gutter={16}>
 						<Col xs={6} sm={2} md={2} lg={3}>
-							<StyledImage2 src={logo} height="36" alt="logo" />
+							<StyledImage2
+								src={logo}
+								height="36"
+								width="36"
+								alt="logo"
+							/>
 						</Col>
 
 						<Col xs={24} sm={21} md={14}>

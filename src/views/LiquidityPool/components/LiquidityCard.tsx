@@ -42,7 +42,7 @@ const LiquidityRow = (props: LiquidityRowProps) => {
 			}}
 		>
 			<Col span={9}>
-				<img src={icon} height="36" alt="logo" />
+				<img src={icon} height="36" width="36" alt="logo" />
 				<Text>{name}</Text>
 			</Col>
 			<Col span={15}>

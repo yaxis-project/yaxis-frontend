@@ -4,6 +4,7 @@ import { Row } from 'antd'
 
 const Offchain: React.FC = () => (
 	<Row style={{ paddingTop: '5%' }} justify="center">
+		{/* TODO: What is snapshot? */}
 		<StyledLinkButton
 			target="_blank"
 			href="https://gov.yaxis.io/#/"

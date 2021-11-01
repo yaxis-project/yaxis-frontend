@@ -45,7 +45,7 @@ const makeColumns = (
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
 				<Row align="middle">
-					<img src={record.icon} height="36" alt="logo" />
+					<img src={record.icon} height="36" width="36" alt="logo" />
 					<StyledText>{record.name}</StyledText>
 				</Row>
 			),
@@ -100,21 +100,13 @@ const makeColumns = (
 			},
 		},
 		{
-			title: translate('APY'),
+			title: translate('Total APR'),
 			key: 'apy',
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
-				<>
-					<Row style={{ fontWeight: 'bolder' }} justify="center">
-						<Text type="secondary">{record.minApy}%</Text>
-					</Row>
-					<Row justify="center">
-						<Text type="secondary">to</Text>
-					</Row>
-					<Row style={{ fontWeight: 'bolder' }} justify="center">
-						<Text type="secondary">{record.maxApy}%</Text>
-					</Row>
-				</>
+				<Row style={{ fontWeight: 'bolder' }}>
+					<Text type="secondary">{record.minApy}%</Text>
+				</Row>
 			),
 		},
 	]

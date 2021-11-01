@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { Row, Col } from 'antd'
 import { CardRow } from '../../components/ExpandableSidePanel'
 import Value from '../../components/Value'
@@ -8,35 +7,43 @@ import { useSingleCallResultByName } from '../../state/onchain/hooks'
 import { getBalanceNumber } from '../../utils/formatBalance'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import BigNumber from 'bignumber.js'
-import { currentConfig } from '../../constants/configs'
 import { TVaults, TRewardsContracts } from '../../constants/type'
 import useTranslation from '../../hooks/useTranslation'
+import { useContracts } from '../../contexts/Contracts'
 
 type Props = { vault?: TVaults; rewardsContract?: TRewardsContracts }
 
 const Claim: React.FC<Props> = ({ vault, rewardsContract }) => {
 	const translate = useTranslation()
 
-	const { account, chainId } = useWeb3Provider()
-
-	const vaults = useMemo(() => currentConfig(chainId).vaults, [chainId])
+	const { account } = useWeb3Provider()
 
 	if (!vault && !rewardsContract)
 		throw new Error(
 			translate('Claim button must have either a vault or rewards type.'),
 		)
 
-	const { call: handleClaim, loading: loadingClaim } = useContractWrite({
-		contractName: vault ? `vaults.${vault}` : `rewards.${rewardsContract}`,
-		method: vault ? 'claim_rewards' : 'getReward',
-		description: translate(`claim YAXIS`),
-	})
+	const { contracts } = useContracts()
+
+	const { call: handleRewardsClaim, loading: loadingRewardsClaim } =
+		useContractWrite({
+			contractName: rewardsContract ? `rewards.${rewardsContract}` : '',
+			method: 'getReward',
+			description: translate(`claim YAXIS`),
+		})
+
+	const { call: handleGaugeClaim, loading: loadingGaugeClaim } =
+		useContractWrite({
+			contractName: `internal.minter`,
+			method: 'mint',
+			description: translate(`claim YAXIS`),
+		})
 
 	const { loading: loadingClaimable, result: claimable } =
 		useSingleCallResultByName(
-			vault ? `vaults.${vault}` : `rewards.${rewardsContract}`,
-			vault ? 'claimable_reward' : 'earned',
-			vault ? [account, vaults[vault].vault] : [account],
+			vault ? `vaults.${vault}.gauge` : `rewards.${rewardsContract}`,
+			vault ? 'claimable_tokens' : 'earned',
+			vault ? [account] : [account],
 		)
 
 	return (
@@ -45,7 +52,7 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract }) => {
 			secondary={
 				<Value
 					value={getBalanceNumber(
-						new BigNumber(claimable?.toString() || 0),
+						new BigNumber(claimable?.[0]?.toString() || 0),
 					)}
 					numberSuffix=" YAXIS"
 					decimals={2}
@@ -61,8 +68,17 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract }) => {
 									claimable?.toString() || 0,
 								).isZero()
 							}
-							onClick={() => handleClaim()}
-							loading={loadingClaim}
+							onClick={() => {
+								if (rewardsContract) handleRewardsClaim()
+								if (vault)
+									handleGaugeClaim({
+										args: [
+											contracts?.vaults[vault].gauge
+												.address,
+										],
+									})
+							}}
+							loading={loadingRewardsClaim || loadingGaugeClaim}
 							height={'40px'}
 						>
 							{translate('Claim')}

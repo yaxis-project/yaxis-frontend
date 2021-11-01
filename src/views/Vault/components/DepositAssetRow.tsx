@@ -66,7 +66,12 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 			>
 				<Col xs={7} sm={6} md={6}>
 					<Row align="middle">
-						<img src={currency.icon} height="36" alt="logo" />
+						<img
+							src={currency.icon}
+							height="36"
+							width="36"
+							alt="logo"
+						/>
 						<StyledText>{currency.name}</StyledText>
 					</Row>
 				</Col>

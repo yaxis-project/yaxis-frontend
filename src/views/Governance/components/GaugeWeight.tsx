@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Slider, Row, Tooltip } from 'antd'
+import { Row, Slider, Tooltip } from 'antd'
 import Table from '../../../components/Table'
 import Button from '../../../components/Button'
 import Typography from '../../../components/Typography'
@@ -9,6 +9,7 @@ import { useContracts } from '../../../contexts/Contracts'
 import useTranslation from '../../../hooks/useTranslation'
 import { useLock, useUserGaugeWeights } from '../../../state/wallet/hooks'
 import moment from 'moment'
+import { Currencies } from '../../../constants/currencies'
 
 const WEIGHT_VOTE_DELAY = 10 * 86400
 
@@ -20,6 +21,10 @@ const GaugeWeight: React.FC = () => {
 	const translate = useTranslation()
 
 	const [weights, setWeights] = useState(initialWeights)
+	const totalWeight = useMemo(
+		() => weights.reduce((acc, curr) => acc + curr, 0),
+		[weights],
+	)
 	const [hasInitialWeights, setHasInitialWeight] = useState(false)
 	const { contracts } = useContracts()
 
@@ -73,38 +78,59 @@ const GaugeWeight: React.FC = () => {
 		() => [
 			{
 				title: translate('Name'),
-				dataIndex: 'name',
 				key: 'name',
-				render: (text) => <Text>{text}</Text>,
+				render: (record) => (
+					<Row align={'middle'}>
+						<img
+							src={Currencies[record.name].icon}
+							height="36"
+							width="36"
+							alt="logo"
+							style={{ marginRight: '10px' }}
+						/>
+						<Text>{record.name}</Text>
+					</Row>
+				),
 			},
 			{
 				title: translate('Weight'),
 				key: 'action',
-				render: (record) => (
-					<div style={{ width: '300px' }}>
-						<Slider
-							value={weights[record.key]}
-							tipFormatter={(value) => `${value}%`}
-							disabled={
-								disabled ||
-								moment().isBefore(
-									moment(record.end.toNumber() * 1000).add(
-										WEIGHT_VOTE_DELAY * 1000,
-									),
-								)
-							}
-							onChange={(value) => {
-								const nextWeights = [...weights]
-								nextWeights.splice(record.key, 1, value)
-								const total = nextWeights.reduce(
-									(acc, curr) => acc + curr,
-									0,
-								)
-								if (total <= 100) setWeights(nextWeights)
-							}}
-						/>
-					</div>
-				),
+				render: (record) => {
+					const cooldown = moment(record.end.toNumber() * 1000).add(
+						WEIGHT_VOTE_DELAY * 1000,
+					)
+					return (
+						<div style={{ width: '300px', position: 'relative' }}>
+							{record.end.gt(0) && (
+								<div
+									style={{
+										position: 'absolute',
+										top: -20,
+										left: 30,
+									}}
+								>
+									Unlocks in {cooldown.fromNow()}
+								</div>
+							)}
+							<Slider
+								value={weights[record.key]}
+								tipFormatter={(value) => `${value}%`}
+								disabled={
+									disabled || moment().isBefore(cooldown)
+								}
+								onChange={(value) => {
+									const nextWeights = [...weights]
+									nextWeights.splice(record.key, 1, value)
+									const total = nextWeights.reduce(
+										(acc, curr) => acc + curr,
+										0,
+									)
+									if (total <= 100) setWeights(nextWeights)
+								}}
+							/>
+						</div>
+					)
+				},
 			},
 		],
 		[translate, weights, disabled],
@@ -112,7 +138,11 @@ const GaugeWeight: React.FC = () => {
 
 	return (
 		<>
-			{/* TODO: What is this? */}
+			<Row>{/* TODO: What is this? */}</Row>
+			<Row justify={'center'} style={{ margin: '10px 0' }}>
+				Voting power left to distribute {100 - totalWeight}.
+			</Row>
+
 			<Row justify="center">
 				<Table columns={columns} dataSource={data} pagination={false} />
 			</Row>
@@ -133,7 +163,7 @@ const GaugeWeight: React.FC = () => {
 				>
 					<Button
 						loading={loading}
-						disabled={disabled}
+						// disabled={disabled}
 						onClick={() => {
 							weights.forEach((weight, i) => {
 								if (weight > 0)

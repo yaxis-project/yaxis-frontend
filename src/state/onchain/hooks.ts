@@ -208,9 +208,9 @@ export function useSingleContractMultipleMethods(
 					const callData =
 						fragment && contract && isValidMethodArgs(callInputs)
 							? contract.interface.encodeFunctionData(
-								fragment,
-								callInputs,
-							)
+									fragment,
+									callInputs,
+							  )
 							: undefined
 					return [fragment, callData]
 				},
@@ -258,14 +258,14 @@ export function useSingleContractMultipleData(
 		() =>
 			contract && fragment && callInputs && callInputs.length > 0
 				? callInputs.map<Call>((inputs) => {
-					return {
-						address: contract.address,
-						callData: contract.interface.encodeFunctionData(
-							fragment,
-							inputs,
-						),
-					}
-				})
+						return {
+							address: contract.address,
+							callData: contract.interface.encodeFunctionData(
+								fragment,
+								inputs,
+							),
+						}
+				  })
 				: [],
 		[callInputs, contract, fragment],
 	)
@@ -293,10 +293,10 @@ export function useMultipleContractSingleData(
 	callInputs?: OptionalMethodInputs,
 	options?: ListenerOptions,
 ): CallState[] {
-	const fragment = useMemo(() => contractInterface?.getFunction(methodName), [
-		contractInterface,
-		methodName,
-	])
+	const fragment = useMemo(
+		() => contractInterface?.getFunction(methodName),
+		[contractInterface, methodName],
+	)
 	const callData: string | undefined = useMemo(
 		() =>
 			fragment && isValidMethodArgs(callInputs)
@@ -309,13 +309,13 @@ export function useMultipleContractSingleData(
 		() =>
 			fragment && addresses && addresses.length > 0 && callData
 				? addresses.map<Call | undefined>((address) => {
-					return address && callData
-						? {
-							address,
-							callData,
-						}
-						: undefined
-				})
+						return address && callData
+							? {
+									address,
+									callData,
+							  }
+							: undefined
+				  })
 				: [],
 		[addresses, callData, fragment],
 	)
@@ -345,14 +345,14 @@ export function useSingleCallResult(
 	const calls = useMemo<Call[]>(() => {
 		return contract && fragment && isValidMethodArgs(inputs)
 			? [
-				{
-					address: contract.address,
-					callData: contract.interface.encodeFunctionData(
-						fragment,
-						inputs,
-					),
-				},
-			]
+					{
+						address: contract.address,
+						callData: contract.interface.encodeFunctionData(
+							fragment,
+							inputs,
+						),
+					},
+			  ]
 			: []
 	}, [contract, fragment, inputs])
 

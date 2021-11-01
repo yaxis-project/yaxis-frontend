@@ -44,7 +44,7 @@ const makeColumns = (
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
 				<Row align="middle">
-					<img src={record.icon} height="36" alt="logo" />
+					<img src={record.icon} height="36" width="36" alt="logo" />
 					<StyledText>{record.name}</StyledText>
 				</Row>
 			),
@@ -58,12 +58,12 @@ const makeColumns = (
 			render: (text, record) => (
 				<>
 					<Value
-						value={record.balanceUSD}
+						value={record.balanceUSD.toFixed(2)}
 						numberPrefix="$"
 						decimals={2}
 					/>
 					<Text type="secondary">
-						{record.balance.toFixed(2)} {record.vaultCurrency}
+						{record.balance.toFormat(2)} {record.vaultCurrency}
 					</Text>
 				</>
 			),
@@ -141,6 +141,13 @@ export default function WithdrawTable() {
 		description: `Vault withdraw`,
 	})
 
+	const { call: handleUnstakeYAXIS, loading: isSubmittingYAXIS } =
+		useContractWrite({
+			contractName: 'vaults.yaxis.gauge',
+			method: 'withdraw(uint256)',
+			description: `unstaked from YAXIS Gauge`,
+		})
+
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		initialCurrencyValues,
@@ -156,36 +163,66 @@ export default function WithdrawTable() {
 		[currencyValues, prices],
 	)
 
+	const disabled = useMemo(() => {
+		const noValue = !Object.values(currencyValues).find(
+			(v) => parseFloat(v) > 0,
+		)
+		const insufficientBalance = !!Object.entries(currencyValues).find(
+			([tokenId, v]) => {
+				const value = new BigNumber(v || 0)
+				const currency = balances.balances[tokenId]
+				return (
+					!!!currency || value.gt(currency?.gaugeToken?.amount || 0)
+				)
+			},
+		)
+		return noValue || insufficientBalance
+	}, [currencyValues, balances])
+
 	const handleSubmit = useCallback(async () => {
-		const transactions = SUPPORTED_CURRENCIES.reduce<[string, string][]>(
-			(previous, current) => {
-				const _v = currencyValues[current.tokenId]
-				if (_v)
-					previous.push([
+		const transactions = SUPPORTED_CURRENCIES.reduce<
+			[string, [string, string]][]
+		>((previous, current) => {
+			const _v = currencyValues[current.tokenId]
+			if (_v)
+				previous.push([
+					current.tokenId,
+					[
 						contracts.vaults[current.tokenId].vault.address,
 						numberToDecimal(_v, current.decimals),
-					])
+					],
+				])
 
-				return previous
-			},
-			[],
-		)
+			return previous
+		}, [])
+
 		if (transactions.length > 0) {
 			await Promise.allSettled(
-				transactions.map((args) =>
-					handleWithdraw({
+				transactions.map(([vault, args]) => {
+					// Stake YAXIS into gauge
+					if (vault === 'yaxis')
+						return handleUnstakeYAXIS({ args: [args[1]] })
+
+					// Withdraw others using Vault Helper
+					return handleWithdraw({
 						args,
 						descriptionExtra: totalWithdrawing,
-					}),
-				),
+					})
+				}),
 			)
 			setCurrencyValues(initialCurrencyValues)
 		}
-	}, [contracts, currencyValues, handleWithdraw, totalWithdrawing])
+	}, [
+		contracts,
+		currencyValues,
+		handleWithdraw,
+		totalWithdrawing,
+		handleUnstakeYAXIS,
+	])
 
 	const data = useMemo(() => {
 		return SUPPORTED_CURRENCIES.map<TableDataEntry>((currency) => {
-			const balance = balances[currency.tokenId]
+			const balance = balances.balances[currency.tokenId]
 			return {
 				...currency,
 				vault: currency.tokenId,
@@ -218,6 +255,27 @@ export default function WithdrawTable() {
 			body: {
 				row: ({ children, className, ...props }) => {
 					const key = props['data-row-key']
+					if (key === 'yaxis')
+						return (
+							<tr
+								key={key}
+								className={className}
+								style={{
+									transform: 'translateY(0)',
+								}}
+							>
+								<ApprovalCover
+									contractName={`currencies.ERC677.${key}.contract`}
+									approvee={
+										contracts?.vaults[key].gauge.address
+									}
+									noWrapper
+									buttonText={'Gauge'}
+								>
+									{children}
+								</ApprovalCover>
+							</tr>
+						)
 					return (
 						<tr
 							key={key}
@@ -284,8 +342,8 @@ export default function WithdrawTable() {
 					${totalWithdrawing}
 				</Title>
 				<Button
-					// disabled={disabled}
-					loading={isSubmitting}
+					disabled={disabled}
+					loading={isSubmitting || isSubmittingYAXIS}
 					onClick={handleSubmit}
 					style={{ fontSize: '18px' }}
 				>

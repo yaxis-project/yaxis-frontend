@@ -4,14 +4,18 @@ import { useContracts } from '../../contexts/Contracts'
 import {
 	useSingleContractMultipleMethods,
 	useSingleCallResult,
+	useSingleContractMultipleData,
 } from '../onchain/hooks'
 import BigNumber from 'bignumber.js'
 import { usePrices } from '../prices/hooks'
 import { useCurveRewardsAPR, useCurvePoolAPR } from '../external/hooks'
 import { numberToFloat } from '../../utils/number'
-import { TLiquidityPools, TRewardsContracts, Vaults, TVaults } from '../../constants/type'
+import {
+	TLiquidityPools,
+	TRewardsContracts,
+	TVaults,
+} from '../../constants/type'
 import ERC20Abi from '../../constants/abis/mainnet/erc20.json'
-
 
 const ERC20_INTERFACE = new ethers.utils.Interface(ERC20Abi)
 
@@ -70,22 +74,23 @@ export function useMetaVaultData() {
 export function useVault(name: TVaults) {
 	const { contracts } = useContracts()
 
-	const vaultContracts = useMemo(() => contracts?.vaults[name], [contracts, name])
+	const vaultContracts = useMemo(
+		() => contracts?.vaults[name],
+		[contracts, name],
+	)
 
 	const vaultData = useSingleContractMultipleMethods(vaultContracts?.vault, [
 		['balance'],
 		['getPricePerFullShare'],
 	])
 
-	const tokenData = useSingleContractMultipleMethods(vaultContracts?.token.contract, [
-		['totalSupply'],
-	])
+	const tokenData = useSingleContractMultipleMethods(
+		vaultContracts?.token.contract,
+		[['totalSupply']],
+	)
 
 	return useMemo(() => {
-		const [
-			balance,
-			pricePerFullShare
-		] = vaultData.map(
+		const [balance, pricePerFullShare] = vaultData.map(
 			({ result, loading }, i) => {
 				if (loading) return ethers.BigNumber.from(0)
 				if (!result) return ethers.BigNumber.from(0)
@@ -93,174 +98,128 @@ export function useVault(name: TVaults) {
 			},
 		)
 
-		const [
-			totalSupply,
-		] = tokenData.map(
-			({ result, loading }, i) => {
-				if (loading) return ethers.BigNumber.from(0)
-				if (!result) return ethers.BigNumber.from(0)
-				return result
-			},
-		)
+		const [totalSupply] = tokenData.map(({ result, loading }, i) => {
+			if (loading) return ethers.BigNumber.from(0)
+			if (!result) return ethers.BigNumber.from(0)
+			return result
+		})
 		return {
-			balance: new BigNumber(
-				balance?.toString()
-			),
-			totalSupply: new BigNumber(
-				totalSupply?.toString()
-			),
+			balance: new BigNumber(balance?.toString()),
+			totalSupply: new BigNumber(totalSupply?.toString()),
 			pricePerFullShare: new BigNumber(
-				pricePerFullShare?.toString()
-			).dividedBy(10 ** 18)
+				pricePerFullShare?.toString(),
+			).dividedBy(10 ** 18),
 		}
-	}, [
-		vaultData, tokenData
+	}, [vaultData, tokenData])
+}
+
+export function useGauge(name: TVaults) {
+	const { contracts } = useContracts()
+
+	const vaultContracts = useMemo(
+		() => contracts?.vaults[name],
+		[contracts, name],
+	)
+
+	const data = useSingleContractMultipleMethods(vaultContracts?.gauge, [
+		['reward_contract'],
+		// ['reward_tokens'],
 	])
+
+	// const data2 = useSingleContractMultipleMethods(
+	// 	contracts?.internal.gaugeController,
+	// 	[
+	// 		[
+	// 			'get_gauge_weight(address)',
+	// 			[contracts?.vaults[name].gauge.address],
+	// 		],
+	// 		// ['reward_tokens'],
+	// 	],
+	// )
+
+	return useMemo(() => {
+		// const [
+		// 	reward_contract,
+		// 	reward_tokens
+		// ] = data.map(
+		// 	({ result, loading }, i) => {
+		// 		// if (loading) return ethers.BigNumber.from(0)
+		// 		// if (!result) return ethers.BigNumber.from(0)
+		// 		return result
+		// 	},
+		// )
+		// console.log(reward_contract, reward_tokens)
+		return {
+			// reward_contract: new BigNumber(
+			// 	reward_contract?.toString()
+			// ),
+			// reward_tokens: new BigNumber(
+			// 	reward_tokens?.toString()
+			// ),
+		}
+	}, [data])
 }
 
 export function useVaultAPR(name: TVaults) {
 	const { contracts } = useContracts()
-	const multicall = useMemo(() => contracts?.external.multicall, [contracts])
 
-	const AbiCoder = useMemo(() => new ethers.utils.AbiCoder(), [])
+	// gauge.working_balances * ( gauge.inflation_rate * gauge_controller.gauge_relative_weight * time / gauge.working_supply) / 10**18
 
-	// const {
-	// 	prices: { crv, btc },
-	// } = usePrices()
+	const gauge = useSingleContractMultipleMethods(
+		contracts?.vaults[name].gauge,
+		[['inflation_rate'], ['working_supply']],
+	)
 
-	// const weights = useMemo(
-	// 	() =>
-	// 		['0x2e46090E9e02D4c4CCF75aa008640E24Fa0F7F4F'].map((gauge) => [
-	// 			'0xA634255116c248bB995318F6BCD69520c3E0EBB7',
-	// 			'0x6207d866000000000000000000000000' + gauge.slice(2),
-	// 		]),
-	// 	[],
-	// )
-	// const weightCalls = useSingleCallResult(multicall, 'aggregate', [weights])
+	const controller = useSingleCallResult(
+		contracts?.internal.gaugeController,
+		'gauge_relative_weight(address)',
+		[contracts?.vaults[name].gauge.address],
+	)
 
-	// const decodedWeights = useMemo(() => {
-	// 	return (
-	// 		weightCalls.result?.[1]?.map((hex, i: number) => {
-	// 			return [
-	// 				weightCalls.result[0],
-	// 				hex === '0x'
-	// 					? 0
-	// 					: (AbiCoder.decode(['uint256'], hex) as any) / 1e18,
-	// 			]
-	// 		}) || []
-	// 	)
-	// }, [weightCalls, AbiCoder])
+	return useMemo(() => {
+		const [inflation_rate, working_supply] = gauge.map(
+			({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			},
+		)
 
-	// const rateCalls = useSingleCallResult(multicall, 'aggregate', [
-	// 	['0x2e46090E9e02D4c4CCF75aa008640E24Fa0F7F4F']
-	// 		.map((gauge) => [
-	// 			[gauge, '0x180692d0'],
-	// 			[gauge, '0x17e28089'],
-	// 		])
-	// 		.flat(),
-	// ])
+		const { result: relative_weight } = controller
 
-	// const decodedRates = useMemo(() => {
-	// 	return (
-	// 		rateCalls?.result?.[1]?.map((hex) => {
-	// 			return hex === '0x' ? 0 : AbiCoder.decode(['uint256'], hex)
-	// 		}) || []
-	// 	)
-	// }, [rateCalls, AbiCoder])
+		const working_balances = new BigNumber(1)
+		const time = new BigNumber(1342)
 
-	// const virtualPrices = useMemo(
-	// 	() => Object.values(poolInfo).map((v) => [v.swap, '0xbb7b8b80']),
-	// 	[],
-	// )
-	// const virtualPriceCalls = useSingleCallResult(multicall, 'aggregate', [
-	// 	virtualPrices,
-	// ])
+		if (new BigNumber(working_supply.toString()).isZero())
+			return new BigNumber(0)
 
-	// const decodedVirtualPrices = useMemo(() => {
-	// 	return (
-	// 		virtualPriceCalls?.result?.[1]?.map((hex, i: number) => [
-	// 			virtualPrices[i][0],
-	// 			hex === '0x'
-	// 				? 0
-	// 				: (AbiCoder.decode(['uint256'], hex) as any) / 1e18,
-	// 		]) || []
-	// 	)
-	// }, [virtualPrices, virtualPriceCalls, AbiCoder])
-
-	// return useMemo(() => {
-	// 	const apys = defaultApys
-
-	// 	if (
-	// 		decodedVirtualPrices.length &&
-	// 		decodedWeights.length &&
-	// 		decodedRates.length
-	// 	)
-	// 		try {
-	// 			let gaugeRates = decodedRates
-	// 				.filter((_: any, i: number) => i % 2 === 0)
-	// 				.map((v: number) => v / 1e18)
-	// 			let workingSupplies = decodedRates
-	// 				.filter((_: any, i: number) => i % 2 === 1)
-	// 				.map((v: number) => v / 1e18)
-
-	// 			decodedWeights.forEach((w: any, i: number) => {
-	// 				let pool: string = Object.values(poolInfo).find((v) => {
-	// 					return (
-	// 						v.gauge.toLowerCase() ===
-	// 						'0x' + weights[i][1].slice(34).toLowerCase()
-	// 					)
-	// 				}).name
-	// 				let swap_address = poolInfo[pool].swap
-	// 				let virtual_price = decodedVirtualPrices.find(
-	// 					(v: any) =>
-	// 						v[0].toLowerCase() === swap_address.toLowerCase(),
-	// 				)[1]
-	// 				let _working_supply = workingSupplies[i]
-	// 				if (['ren', 'sbtc'].includes(pool)) _working_supply *= btc
-	// 				let rate =
-	// 					(((gaugeRates[i] * w[1] * 31536000) / _working_supply) *
-	// 						0.4) /
-	// 					virtual_price
-	// 				let apy = rate * crv * 100
-	// 				if (isNaN(apy)) apy = 0
-	// 				Object.values(poolInfo).find(
-	// 					(v: any) => v.name === pool,
-	// 				).gauge_relative_weight = w[1]
-	// 				apys[pool] = apy
-	// 			})
-	// 		} catch (e) {
-	// 			console.error('[getYAxisAPY]', e)
-	// 		}
-	// 	return apys
-	// }, [btc, crv, decodedRates, decodedVirtualPrices, weights, decodedWeights])
+		return working_balances
+			.multipliedBy(
+				new BigNumber(inflation_rate.toString())
+					.multipliedBy(
+						new BigNumber(relative_weight?.toString() || 0),
+					)
+					.multipliedBy(time)
+					.dividedBy(new BigNumber(working_supply.toString())),
+			)
+			.dividedBy(10 ** 18)
+	}, [gauge, controller])
 }
 
 export function useVaults() {
-
 	const v3crv = useVault('3crv')
 	const wbtc = useVault('wbtc')
 	const weth = useVault('weth')
 	const link = useVault('link')
 
 	return useMemo(() => {
-		// const stables = {
-		// 	balance: new BigNumber(0),
-		// 	totalSupply: new BigNumber(0),
-		// 	pricePerFullShare: new BigNumber(0),
-		// 	getTokens: new BigNumber(0)
-		// }
 		return {
 			'3crv': v3crv,
-			wbtc
-			, weth,
-			link
+			wbtc,
+			weth,
+			link,
 		}
-	}, [
-		v3crv,
-		wbtc
-		, weth
-		, link
-	])
+	}, [v3crv, wbtc, weth, link])
 }
 
 export function useYaxisSupply() {
@@ -344,21 +303,17 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 
 		const balanceBN = new BigNumber(balance?.result?.toString() || 0)
 		let funding = new BigNumber(0)
-		if (rewardsContract === 'Yaxis')
-			funding =
-				new BigNumber(0)
-		else if (rewardsContract === 'MetaVault')
-			funding =
-				new BigNumber(0)
+		if (rewardsContract === 'Yaxis') funding = new BigNumber(0)
+		else if (rewardsContract === 'MetaVault') funding = new BigNumber(0)
 		else funding = balanceBN
 		const period = new BigNumber(duration.toString() || 0).dividedBy(86400)
 		const AVERAGE_BLOCKS_PER_DAY = 6450
 		const rewardsPerBlock = funding.isZero()
 			? new BigNumber(0)
 			: funding
-				.dividedBy(period)
-				.dividedBy(AVERAGE_BLOCKS_PER_DAY)
-				.dividedBy(10 ** 18)
+					.dividedBy(period)
+					.dividedBy(AVERAGE_BLOCKS_PER_DAY)
+					.dividedBy(10 ** 18)
 
 		const rewardPerToken = tvl.isZero()
 			? new BigNumber(0)
@@ -528,8 +483,7 @@ export function useAPY(
 			.minus(1)
 			.times(100)
 			.decimalPlaces(18)
-		threeCrvApyPercent =
-			threeCrvApyPercent.multipliedBy(strategyPercentage)
+		threeCrvApyPercent = threeCrvApyPercent.multipliedBy(strategyPercentage)
 
 		const totalAPR = rewardsAPR.plus(lpApyPercent).plus(threeCrvApyPercent)
 		const totalAPY = yaxisApyPercent
@@ -553,6 +507,24 @@ export function useAPY(
 		strategyPercentage,
 		rewardsPerBlock,
 	])
+}
+
+export function useNewAPY() {
+	const v3crv = useVaultAPR('3crv')
+	const wbtc = useVaultAPR('wbtc')
+	const weth = useVaultAPR('weth')
+	const link = useVaultAPR('link')
+	const yaxis = useVaultAPR('yaxis')
+
+	return useMemo(() => {
+		return {
+			'3crv': v3crv,
+			wbtc,
+			weth,
+			link,
+			yaxis,
+		}
+	}, [v3crv, wbtc, weth, link, yaxis])
 }
 
 /**
@@ -580,4 +552,71 @@ export function useAnnualProfits(): BigNumber {
 
 		return strategyAPY.times(metavaultTvl)
 	}, [curveRewardsAPRs, curveBaseAPR, metavaultTvl])
+}
+
+export function useVaultStrategies() {
+	const { contracts } = useContracts()
+
+	const strategies = useSingleContractMultipleMethods(
+		contracts?.internal.controller,
+		Object.values(contracts?.vaults || {})
+			.slice(0, 1)
+			.map((data) => ['strategies(address)', [data.vault.address]]),
+	)
+
+	return useMemo(() => {
+		// TODO
+	}, [])
+}
+
+export function useGauges() {
+	const { contracts } = useContracts()
+
+	const callInputs = useMemo(() => {
+		if (!contracts?.vaults) return []
+		return Object.keys(contracts?.vaults).map((vault) => [
+			contracts?.vaults[vault].gauge.address,
+		])
+	}, [contracts?.vaults])
+
+	const results = useSingleContractMultipleData(
+		contracts?.internal.gaugeController,
+		'gauge_relative_weight(address)',
+		callInputs,
+	)
+
+	const resultsWithDefaults = useMemo(() => {
+		if (results.length)
+			return results.map(({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			})
+
+		return Object.keys(contracts?.vaults || {}).map(() =>
+			ethers.BigNumber.from(0),
+		)
+	}, [results, contracts?.vaults])
+
+	const loading = useMemo(
+		() =>
+			results.length > 0 ? results.some(({ loading }) => loading) : true,
+		[results],
+	)
+
+	return useMemo(() => {
+		return [
+			loading,
+			Object.fromEntries(
+				Object.keys(contracts?.vaults || {}).map((vault, i) => {
+					return [
+						vault,
+						new BigNumber(
+							resultsWithDefaults[i][0]?.toString(),
+						).dividedBy(10 ** 18),
+					]
+				}),
+			),
+		]
+	}, [loading, contracts?.vaults, resultsWithDefaults])
 }

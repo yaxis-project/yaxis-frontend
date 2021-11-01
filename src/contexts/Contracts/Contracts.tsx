@@ -4,7 +4,7 @@ import { Contracts } from '../../constants/contracts'
 
 export interface ContractContext {
 	contracts?: Contracts
-	loading: Boolean
+	loading: boolean
 }
 
 export const Context = createContext<ContractContext>({

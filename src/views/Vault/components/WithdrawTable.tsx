@@ -44,7 +44,7 @@ const makeColumns = (
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
 				<Row align="middle">
-					<img src={record.icon} height="36" alt="logo" />
+					<img src={record.icon} height="36" width="36" alt="logo" />
 					<StyledText>{record.name}</StyledText>
 				</Row>
 			),
@@ -230,7 +230,7 @@ export default function WithdrawTable() {
 	const data = useMemo(() => {
 		return SUPPORTED_CURRENCIES.map<TableDataEntry>((currency) => {
 			const token = `${currency.tokenId}`
-			const balance = balances[token] || new BigNumber(0)
+			const balance = balances.balances[token] || new BigNumber(0)
 			return {
 				...currency,
 				vault: currency.tokenId,
