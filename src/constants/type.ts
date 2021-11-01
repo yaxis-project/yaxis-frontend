@@ -79,7 +79,8 @@ export const InternalContracts = <const>[
 	'stableSwap3PoolConverter',
 	'merkleDistributor',
 	'votingEscrow',
-	'gaugeController'
+	'gaugeController',
+	'controller',
 ]
 export type TInternalContracts = typeof InternalContracts[number]
 
@@ -92,12 +93,7 @@ export const ExternalContracts = <const>[
 ]
 export type TExternalContracts = typeof ExternalContracts[number]
 
-export const Vaults = <const>[
-	'3crv',
-	'wbtc',
-	'weth',
-	'link'
-]
+export const Vaults = <const>['3crv', 'wbtc', 'weth', 'link']
 export type TVaults = typeof Vaults[number]
 export interface Vault {
 	vault: string

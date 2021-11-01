@@ -162,8 +162,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 261
+		"type": "function"
 	},
 	{
 		"name": "integrate_checkpoint",
@@ -175,8 +174,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 1997
+		"type": "function"
 	},
 	{
 		"name": "user_checkpoint",
@@ -193,8 +191,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 2069525
+		"type": "function"
 	},
 	{
 		"name": "claimable_tokens",
@@ -211,8 +208,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 1989830
+		"type": "function"
 	},
 	{
 		"name": "claimable_reward",
@@ -233,8 +229,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 1017930
+		"type": "function"
 	},
 	{
 		"name": "claim_rewards",
@@ -293,8 +288,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 2074713
+		"type": "function"
 	},
 	{
 		"name": "set_approve_deposit",
@@ -310,8 +304,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 35981
+		"type": "function"
 	},
 	{
 		"name": "deposit",
@@ -351,8 +344,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 3141937
+		"type": "function"
 	},
 	{
 		"name": "allowance",
@@ -373,8 +365,7 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 1911
+		"type": "function"
 	},
 	{
 		"name": "transfer",
@@ -395,8 +386,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 12160044
+		"type": "function"
 	},
 	{
 		"name": "transferFrom",
@@ -421,8 +411,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 12196694
+		"type": "function"
 	},
 	{
 		"name": "approve",
@@ -443,8 +432,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 38244
+		"type": "function"
 	},
 	{
 		"name": "increaseAllowance",
@@ -465,8 +453,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 39488
+		"type": "function"
 	},
 	{
 		"name": "decreaseAllowance",
@@ -487,8 +474,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 39512
+		"type": "function"
 	},
 	{
 		"name": "set_rewards",
@@ -508,8 +494,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 2304194
+		"type": "function"
 	},
 	{
 		"name": "set_killed",
@@ -521,8 +506,7 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 36878
+		"type": "function"
 	},
 	{
 		"name": "commit_transfer_ownership",
@@ -534,16 +518,14 @@
 			}
 		],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 38258
+		"type": "function"
 	},
 	{
 		"name": "accept_transfer_ownership",
 		"outputs": [],
 		"inputs": [],
 		"stateMutability": "nonpayable",
-		"type": "function",
-		"gas": 38203
+		"type": "function"
 	},
 	{
 		"name": "minter",
@@ -555,8 +537,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 1811
+		"type": "function"
 	},
 	{
 		"name": "crv_token",
@@ -568,8 +549,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 1841
+		"type": "function"
 	},
 	{
 		"name": "lp_token",
@@ -581,8 +561,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 1871
+		"type": "function"
 	},
 	{
 		"name": "controller",
@@ -594,8 +573,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 1901
+		"type": "function"
 	},
 	{
 		"name": "voting_escrow",
@@ -607,8 +585,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 1931
+		"type": "function"
 	},
 	{
 		"name": "future_epoch_time",
@@ -620,8 +597,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 1961
+		"type": "function"
 	},
 	{
 		"name": "balanceOf",
@@ -638,8 +614,7 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2206
+		"type": "function"
 	},
 	{
 		"name": "totalSupply",
@@ -651,8 +626,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2021
+		"type": "function"
 	},
 	{
 		"name": "name",
@@ -664,8 +638,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 8453
+		"type": "function"
 	},
 	{
 		"name": "symbol",
@@ -677,8 +650,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 7506
+		"type": "function"
 	},
 	{
 		"name": "approved_to_deposit",
@@ -699,8 +671,7 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2541
+		"type": "function"
 	},
 	{
 		"name": "working_balances",
@@ -717,8 +688,7 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2356
+		"type": "function"
 	},
 	{
 		"name": "working_supply",
@@ -730,8 +700,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2171
+		"type": "function"
 	},
 	{
 		"name": "period",
@@ -743,8 +712,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2201
+		"type": "function"
 	},
 	{
 		"name": "period_timestamp",
@@ -761,8 +729,7 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2340
+		"type": "function"
 	},
 	{
 		"name": "integrate_inv_supply",
@@ -779,8 +746,7 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2370
+		"type": "function"
 	},
 	{
 		"name": "integrate_inv_supply_of",
@@ -797,8 +763,7 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2506
+		"type": "function"
 	},
 	{
 		"name": "integrate_checkpoint_of",
@@ -815,8 +780,7 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2536
+		"type": "function"
 	},
 	{
 		"name": "integrate_fraction",
@@ -833,8 +797,7 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2566
+		"type": "function"
 	},
 	{
 		"name": "inflation_rate",
@@ -846,8 +809,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2381
+		"type": "function"
 	},
 	{
 		"name": "reward_contract",
@@ -859,8 +821,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2411
+		"type": "function"
 	},
 	{
 		"name": "reward_tokens",
@@ -877,8 +838,7 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2550
+		"type": "function"
 	},
 	{
 		"name": "reward_integral",
@@ -895,8 +855,7 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2686
+		"type": "function"
 	},
 	{
 		"name": "reward_integral_for",
@@ -917,8 +876,7 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2931
+		"type": "function"
 	},
 	{
 		"name": "admin",
@@ -930,8 +888,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2531
+		"type": "function"
 	},
 	{
 		"name": "future_admin",
@@ -943,8 +900,7 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2561
+		"type": "function"
 	},
 	{
 		"name": "is_killed",
@@ -956,7 +912,6 @@
 		],
 		"inputs": [],
 		"stateMutability": "view",
-		"type": "function",
-		"gas": 2591
+		"type": "function"
 	}
 ]
