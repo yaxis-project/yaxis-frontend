@@ -122,7 +122,12 @@ export default function Stable3PoolWithdraw() {
 					<Text>You have</Text>
 				</Col>
 				<Col span={3}>
-					<img src={threeCRV.icon} height="36" alt="logo" />
+					<img
+						src={threeCRV.icon}
+						height="36"
+						width="36"
+						alt="logo"
+					/>
 				</Col>
 				<Col>
 					<Title
@@ -268,7 +273,12 @@ const WithdrawAssetRow: React.FC<WithdrawAssetRowProps> = ({
 				</Col>
 				<Col xs={7} sm={7} md={7}>
 					<Row align="middle" style={{ paddingLeft: '8px' }}>
-						<img src={currency.icon} height="36" alt="logo" />
+						<img
+							src={currency.icon}
+							height="36"
+							width="36"
+							alt="logo"
+						/>
 						<StyledText>{currency.name}</StyledText>
 					</Row>
 				</Col>

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
-import { useAPY } from '../../../state/internal/hooks'
+import { useAPY, useGauge } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { Tooltip, Row } from 'antd'
 import APYCalculator from '../../../components/APYCalculator'
@@ -62,8 +62,10 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 		totalAPR,
 	} = useAPY('MetaVault')
 
+	const g = useGauge(vault)
+
 	return (
-		<DetailOverviewCard title={t['Account Overview']}>
+		<DetailOverviewCard title={t('Account Overview')}>
 			<Claim vault={vault} />
 			{/* <CardRow
 				main={
