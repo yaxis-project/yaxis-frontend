@@ -1,42 +1,36 @@
 import React from 'react'
-import styled from 'styled-components'
 import { Row } from 'antd'
+import Typography from '../../../components/Typography'
+import Button from '../../../components/Button'
+
+const { Text } = Typography
 
 const Offchain: React.FC = () => (
-	<Row style={{ paddingTop: '5%' }} justify="center">
-		{/* TODO: What is snapshot? */}
-		<StyledLinkButton
-			target="_blank"
-			href="https://gov.yaxis.io/#/"
-			rel="noopener noreferrer"
-		>
-			<span
-				style={{
-					position: 'relative',
-					fontSize: '20px',
-					top: '3px',
-				}}
+	<>
+		<Row style={{ margin: '7%' }}>
+			<Text>Participate in the DAO by voting on YIPs.</Text>
+		</Row>
+		<Row style={{ margin: '5% 10% 5% 10%' }} justify="center">
+			<Button
+				target="_blank"
+				href="https://gov.yaxis.io/#/"
+				rel="noopener noreferrer"
 			>
-				⚡️
-			</span>
-			<span style={{ color: 'black' }}>Snapshot</span>
-		</StyledLinkButton>
-	</Row>
+				<div style={{ marginTop: '8px' }}>
+					<span
+						style={{
+							position: 'relative',
+							fontSize: '20px',
+							top: '3px',
+						}}
+					>
+						⚡️
+					</span>
+					Snapshot
+				</div>
+			</Button>
+		</Row>
+	</>
 )
 
 export { Offchain }
-
-const StyledLinkButton = styled.a`
-	padding: 10px ${(props) => props.theme.spacing[3]}px;
-	text-decoration: none;
-	font-size: 16px;
-	width: 200px;
-	border: 1px solid grey;
-	border-radius: 18px;
-	text-align: center;
-	background: ${(props) => props.theme.colors.aliceBlue};
-
-	&:hover {
-		border: 1px solid ${(props) => props.theme.primary.hover};
-	}
-`

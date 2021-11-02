@@ -14,8 +14,8 @@ const CurrentDistribution: React.FC = () => {
 
 	const data = useMemo(() => {
 		if (loading) return []
-		return Object.entries(gauges).map(([gauge, distribution]) => {
-			return { type: gauge, value: distribution.toNumber() }
+		return Object.entries(gauges).map(([gauge, { relativeWeight }]) => {
+			return { type: gauge, value: relativeWeight.toNumber() }
 		})
 	}, [loading, gauges])
 
@@ -26,7 +26,7 @@ const CurrentDistribution: React.FC = () => {
 			colorField: 'type',
 			radius: 1,
 			legend: false as any,
-
+			padding: 0,
 			label: {
 				type: 'inner',
 				offset: '-30%',
@@ -45,14 +45,7 @@ const CurrentDistribution: React.FC = () => {
 
 	return (
 		<ExpandableSidePanel header={translate('Current Distribution')}>
-			<CardRow
-				main={
-					<div>
-						<Pie {...config} />
-					</div>
-				}
-				secondary={null}
-			/>
+			<CardRow main={<Pie {...config} />} secondary={null} last />
 		</ExpandableSidePanel>
 	)
 }

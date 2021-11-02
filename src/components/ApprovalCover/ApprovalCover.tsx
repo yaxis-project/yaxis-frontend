@@ -87,7 +87,7 @@ const ApprovalCover: React.FC<Props> = ({
 		)
 
 	return (
-		<div style={{ position: 'relative' }}>
+		<div style={{ position: 'relative', width: '100%' }}>
 			{children}
 			{visible && cover}
 		</div>

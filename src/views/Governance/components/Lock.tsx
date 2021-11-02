@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Row, Col, Slider } from 'antd'
+import { Row, Col } from 'antd'
 import Typography from '../../../components/Typography'
 import Button from '../../../components/Button'
+import Divider from '../../../components/Divider'
 import Input from '../../../components/Input'
+import Slider from '../../../components/Slider'
 import { useLock } from '../../../state/wallet/hooks'
 import { useContracts } from '../../../contexts/Contracts'
 import useContractWrite from '../../../hooks/useContractWrite'
@@ -31,69 +33,87 @@ const CreateLock: React.FC = () => {
 	const [amount, setAmount] = useState('0')
 	const [length, setLength] = useState(WEEK_TIME)
 	return (
-		<StyledRow justify="center">
-			<Col>
-				<Row style={{ marginBottom: '10px' }}>
-					<StyledText>
-						{translate('You have')}{' '}
-						<span style={{ fontWeight: 600 }}>
-							{balances?.yaxis?.amount
-								? balances?.yaxis?.amount.toNumber()
-								: '-'}{' '}
-							YAXIS
-						</span>
-					</StyledText>
-				</Row>
-				<Row gutter={10} style={{ marginBottom: '10px' }}>
-					<Col>
-						<StyledText>{translate('Lock up')}</StyledText>
-					</Col>
-					<Col>
-						<Input
-							onChange={(e) => {
-								setAmount(e.target.value)
+		<>
+			<Row style={{ width: '100%' }}>
+				<Col span={8}>
+					<Text>Create Lock</Text>
+				</Col>
+				<Col span={16}>
+					<Row style={{ marginBottom: '10px' }}>
+						<StyledText>
+							{translate('You have')}{' '}
+							<span style={{ fontWeight: 600 }}>
+								{balances?.yaxis?.amount
+									? balances?.yaxis?.amount.toNumber()
+									: '-'}{' '}
+								YAXIS
+							</span>
+						</StyledText>
+					</Row>
+					<Row
+						gutter={10}
+						style={{ marginBottom: '10px' }}
+						align="middle"
+					>
+						<Col>
+							<StyledText>{translate('Lock up')}</StyledText>
+						</Col>
+						<Col>
+							<Input
+								onChange={(e) => {
+									setAmount(e.target.value)
+								}}
+								value={amount}
+								min={'0'}
+								placeholder="0"
+								disabled={
+									balances?.yaxis?.amount
+										? balances?.yaxis?.amount.isZero()
+										: true
+								}
+								suffix={'YAXIS'}
+								onClickMax={() =>
+									setAmount(
+										balances?.yaxis?.amount.toString(),
+									)
+								}
+							/>
+						</Col>
+					</Row>
+					<Row
+						justify="space-around"
+						style={{ marginBottom: '10px' }}
+					>
+						<Slider
+							style={{ width: '100%' }}
+							value={length / WEEK_TIME}
+							min={1}
+							max={52}
+							tipFormatter={(value) =>
+								value > 1 ? `${value} weeks` : `${value} week`
+							}
+							onChange={(value) => {
+								setLength(WEEK_TIME * value)
 							}}
-							value={amount}
-							min={'0'}
-							placeholder="0"
-							disabled={
-								balances?.yaxis?.amount
-									? balances?.yaxis?.amount.isZero()
-									: true
-							}
-							suffix={'YAXIS'}
-							onClickMax={() =>
-								setAmount(balances?.yaxis?.amount.toString())
-							}
 						/>
-					</Col>
-				</Row>
-				<Row style={{ marginBottom: '14px' }}>
-					<StyledText>
-						{translate('It will unlock')}{' '}
-						{moment(Date.now() + length * 1000).fromNow()}.{' '}
-						{translate('On')}{' '}
-						{moment(Date.now() + length * 1000).format(
-							'MMM Do YYYY, h:mm:ss a',
-						)}
-						.
-					</StyledText>
-				</Row>
-				<Row justify="space-around" style={{ marginBottom: '10px' }}>
-					<Slider
-						style={{ width: '90%' }}
-						value={length / WEEK_TIME}
-						min={1}
-						max={52}
-						tipFormatter={(value) =>
-							value > 1 ? `${value} weeks` : `${value} week`
-						}
-						onChange={(value) => {
-							setLength(WEEK_TIME * value)
-						}}
-					/>
-				</Row>
-			</Col>
+					</Row>
+					<Row justify="center">
+						<StyledSmallText>
+							{translate('It will unlock')}{' '}
+							{moment(Date.now() + length * 1000).fromNow()}.
+						</StyledSmallText>
+					</Row>
+					<Row style={{ marginBottom: '14px' }} justify="center">
+						<StyledSmallText>
+							{translate('On')}{' '}
+							{moment(Date.now() + length * 1000).format(
+								'MMM Do YYYY, h:mm:ss a',
+							)}
+						</StyledSmallText>
+					</Row>
+				</Col>
+			</Row>
+
 			<Button
 				style={{ marginTop: '14px' }}
 				disabled={loadingBalances || balances?.yaxis?.amount?.isZero()}
@@ -111,7 +131,7 @@ const CreateLock: React.FC = () => {
 			>
 				{translate('Create Lock')}
 			</Button>
-		</StyledRow>
+		</>
 	)
 }
 
@@ -147,115 +167,134 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 	const [amount, setAmount] = useState('0')
 	const [length, setLength] = useState(0)
 
-	// useEffect(
-	// 	() =>
-	// 		setLength(
-	// 			Math.floor(Date.now() / 1000) +
-	// 				(end.toNumber() - Math.floor(Date.now() / 1000)) +
-	// 				WEEK_TIME * 2,
-	// 		),
-	// 	[end],
-	// )
-	// const disabled = useMemo(() => {}, [])
 	return (
-		<StyledRow justify="center">
-			<Col>
-				<Row style={{ marginBottom: '10px' }}>
-					<StyledText>
-						{translate('You have')}{' '}
-						<span style={{ fontWeight: 600 }}>
-							{locked.toString()} YAXIS
-						</span>
-					</StyledText>
-				</Row>
-				<Row style={{ marginBottom: '10px' }}>
-					<StyledText>
-						Unlocks in {moment(end.toNumber() * 1000).fromNow()}
-					</StyledText>
-				</Row>
-				<Row style={{ marginBottom: '10px' }}>
-					<StyledText>
-						{translate('You have')}{' '}
-						<span style={{ fontWeight: 600 }}>
-							{balances?.yaxis?.amount
-								? balances?.yaxis?.amount.toNumber()
-								: '-'}{' '}
-							YAXIS
-						</span>
-					</StyledText>
-				</Row>
-				<Row gutter={10} style={{ marginBottom: '10px' }}>
-					<Col>
-						<StyledText>{translate('Lock up')}</StyledText>
-					</Col>
-					<Col>
-						<Input
-							onChange={(e) => {
-								setAmount(e.target.value)
+		<>
+			<Row style={{ width: '100%' }}>
+				<Col span={8}>
+					<Text>Current Lock</Text>
+				</Col>
+				<Col span={16}>
+					<Row style={{ marginBottom: '10px' }}>
+						<StyledText>
+							{translate('You have')}{' '}
+							<span style={{ fontWeight: 600 }}>
+								{locked.toString()} YAXIS
+							</span>
+						</StyledText>
+					</Row>
+					<Row style={{ marginBottom: '10px' }}>
+						<StyledText>
+							Unlocks in {moment(end.toNumber() * 1000).fromNow()}
+						</StyledText>
+					</Row>
+				</Col>
+			</Row>
+			<Divider />
+			<Row style={{ width: '100%' }}>
+				<Col span={8}>
+					<Text>Extend Lock</Text>
+				</Col>
+				<Col span={16}>
+					<Row style={{ marginBottom: '10px' }}>
+						<StyledText>
+							{translate('You have')}{' '}
+							<span style={{ fontWeight: 600 }}>
+								{balances?.yaxis?.amount
+									? balances?.yaxis?.amount.toNumber()
+									: '-'}{' '}
+								YAXIS
+							</span>
+						</StyledText>
+					</Row>
+					<Row
+						gutter={10}
+						style={{ marginBottom: '10px' }}
+						align="middle"
+					>
+						<Col>
+							<StyledText>{translate('Lock up')}</StyledText>
+						</Col>
+						<Col>
+							<Input
+								onChange={(e) => {
+									setAmount(e.target.value)
+								}}
+								value={amount}
+								min={'0'}
+								placeholder="0"
+								disabled={
+									balances?.yaxis?.amount
+										? balances?.yaxis?.amount.isZero()
+										: true
+								}
+								suffix={'YAXIS'}
+								onClickMax={() =>
+									setAmount(
+										balances?.yaxis?.amount.toString(),
+									)
+								}
+							/>
+						</Col>
+					</Row>
+
+					<Row
+						justify="space-around"
+						style={{ marginBottom: '10px' }}
+					>
+						<Slider
+							style={{ width: '100%' }}
+							value={length / WEEK_TIME}
+							min={0}
+							max={52}
+							tipFormatter={(value) =>
+								value > 1 || value === 0
+									? `${value} weeks`
+									: `${value} week`
+							}
+							onChange={(value) => {
+								setLength(WEEK_TIME * value)
 							}}
-							value={amount}
-							min={'0'}
-							placeholder="0"
-							disabled={
-								balances?.yaxis?.amount
-									? balances?.yaxis?.amount.isZero()
-									: true
-							}
-							suffix={'YAXIS'}
-							onClickMax={() =>
-								setAmount(balances?.yaxis?.amount.toString())
-							}
 						/>
-					</Col>
-				</Row>
-				<Row style={{ marginBottom: '14px' }}>
-					<StyledText>
-						{translate('It will unlock')}{' '}
-						{moment((end.toNumber() + length) * 1000).fromNow()}.{' '}
-						{translate('On')}{' '}
-						{moment((end.toNumber() + length) * 1000).format(
-							'MMM Do YYYY, h:mm:ss a',
-						)}
-						.
-					</StyledText>
-				</Row>
-				{/* <DatePicker
-					onChange={() => {}}
-					dateRender={() => <div>hi</div>}
-					picker="week"
-				/> */}
-				<Row justify="space-around" style={{ marginBottom: '10px' }}>
-					<Slider
-						style={{ width: '90%' }}
-						value={length / WEEK_TIME}
-						min={0}
-						max={52}
-						tipFormatter={(value) =>
-							value > 1 || value === 0
-								? `${value} weeks`
-								: `${value} week`
-						}
-						onChange={(value) => {
-							setLength(WEEK_TIME * value)
-						}}
-					/>
-				</Row>
-			</Col>
+					</Row>
+					<Row justify="center">
+						<StyledSmallText>
+							{translate('It will unlock')}{' '}
+							{moment((end.toNumber() + length) * 1000).fromNow()}
+							.
+						</StyledSmallText>
+					</Row>
+					<Row style={{ marginBottom: '14px' }} justify="center">
+						<StyledSmallText>
+							{translate('On')}{' '}
+							{moment((end.toNumber() + length) * 1000).format(
+								'MMM Do YYYY, h:mm:ss a',
+							)}
+						</StyledSmallText>
+					</Row>
+				</Col>
+			</Row>
 			<Button
 				style={{ marginTop: '14px' }}
-				disabled={
-					loadingBalances
-					// || balances?.yaxis?.amount?.isZero()
-				}
-				onClick={() =>
-					callIncreaseTime({
-						args: [end.toNumber() + length],
-					})
-				}
+				disabled={loadingBalances || (!length && !Number(amount))}
+				loading={loadingIncreaseTime || loadingIncreaseAmount}
+				onClick={() => {
+					if (length)
+						callIncreaseTime({
+							args: [end.toNumber() + length],
+						})
+					if (amount)
+						callIncreaseAmount({
+							args: [
+								new BigNumber(amount)
+									.multipliedBy(10 ** 18)
+									.toString(),
+							],
+						})
+				}}
 			>
 				{translate('Extend Lock')}
 			</Button>
-		</StyledRow>
+		</>
 	)
 }
 
@@ -280,18 +319,19 @@ const Lock: React.FC = () => {
 					'These decay over time. Extend the lock up time to get the most benefits.',
 				)}
 			</StyledText>
+			<Divider />
 			{lock.hasLock ? (
-				<StyledRow justify="center">
-					<ExtendLock data={lock} />
-				</StyledRow>
+				<ExtendLock data={lock} />
 			) : (
-				<ApprovalCover
-					contractName={`currencies.ERC677.yaxis.contract`}
-					approvee={contracts?.internal.votingEscrow.address}
-					hidden={false}
-				>
-					<CreateLock />
-				</ApprovalCover>
+				<Row style={{ width: '100%' }}>
+					<ApprovalCover
+						contractName={`currencies.ERC677.yaxis.contract`}
+						approvee={contracts?.internal.votingEscrow.address}
+						hidden={false}
+					>
+						<CreateLock />
+					</ApprovalCover>
+				</Row>
 			)}
 		</StyledRow>
 	)
@@ -300,10 +340,14 @@ const Lock: React.FC = () => {
 export { Lock }
 
 const StyledRow = styled(Row)`
-	padding: 30px;
+	padding: 20px;
 	width: 100%;
 `
 
 const StyledText = styled(Text)`
 	font-size: 20px;
+`
+
+const StyledSmallText = styled(Text)`
+	font-size: 16px;
 `

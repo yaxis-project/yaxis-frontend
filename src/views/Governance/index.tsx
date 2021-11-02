@@ -13,6 +13,7 @@ import {
 	GaugesOverview,
 	BoostCalculator,
 	DAOResources,
+	FutureRewards,
 } from './components'
 import { useLocation, useHistory, Redirect } from 'react-router-dom'
 import { useVotingPower } from '../../state/wallet/hooks'
@@ -50,7 +51,7 @@ const Governance: React.FC = () => {
 			value={votingPower.toString()}
 			valueInfo={translate('Voting Power')}
 		>
-			<Row gutter={16}>
+			<Row gutter={16} style={{ paddingTop: '40px' }}>
 				<Col xs={24} sm={24} md={24} lg={16}>
 					<Card>
 						<Tabs
@@ -86,7 +87,12 @@ const Governance: React.FC = () => {
 							<BoostCalculator />
 						</>
 					)}
-					{activeKey === '#onchain' && <CurrentDistribution />}
+					{activeKey === '#onchain' && (
+						<>
+							<CurrentDistribution />
+							<FutureRewards />
+						</>
+					)}
 					{activeKey === '#offchain' && <DAOResources />}
 				</StyledCol>
 			</Row>

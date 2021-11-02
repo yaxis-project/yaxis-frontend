@@ -16,40 +16,50 @@ const Button: React.FC<Props> = () => {
 	const setLanguage = useSetLanguage()
 	const translate = useTranslation()
 	return (
-		<StyledDropdown
-			placement="bottomCenter"
-			overlay={
-				<StyledMenu>
-					{Object.values(LanguagesDisplay)
-						.filter(({ key }) => key !== language)
-						.map(({ key, flag, name }) => (
-							<Menu.Item
-								onClick={() =>
-									setLanguage(key.toUpperCase() as TLanguages)
-								}
-							>
-								<Row align="middle" gutter={10}>
-									<Col
-										style={{
-											fontSize: '26px',
-										}}
-									>
-										{flag}
-									</Col>
-									<Col>
-										<Text>{translate(name)}</Text>
-									</Col>
-								</Row>
-							</Menu.Item>
-						))}
-				</StyledMenu>
-			}
+		<Row
+			style={{
+				margin: '0 10px',
+			}}
 		>
-			<div>
-				{language}
-				<CaretDownOutlined style={{ paddingLeft: '1px' }} />
-			</div>
-		</StyledDropdown>
+			<StyledDropdown
+				placement="bottomCenter"
+				overlay={
+					<StyledMenu>
+						{Object.values(LanguagesDisplay)
+							.filter(({ key }) => key !== language)
+							.map(({ key, flag, name }) => (
+								<Menu.Item
+									onClick={() =>
+										setLanguage(
+											key.toUpperCase() as TLanguages,
+										)
+									}
+								>
+									<Row align="middle" gutter={10}>
+										<Col
+											style={{
+												fontSize: '26px',
+											}}
+										>
+											{flag}
+										</Col>
+										<Col>
+											<Text>{translate(name)}</Text>
+										</Col>
+									</Row>
+								</Menu.Item>
+							))}
+					</StyledMenu>
+				}
+			>
+				<Row align="middle">
+					<Col>{language}</Col>
+					<Col>
+						<CaretDownOutlined style={{ paddingLeft: '1px' }} />
+					</Col>
+				</Row>
+			</StyledDropdown>
+		</Row>
 	)
 }
 

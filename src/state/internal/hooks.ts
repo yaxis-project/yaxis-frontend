@@ -579,15 +579,15 @@ export function useGauges() {
 		])
 	}, [contracts?.vaults])
 
-	const results = useSingleContractMultipleData(
+	const relativeWeights = useSingleContractMultipleData(
 		contracts?.internal.gaugeController,
 		'gauge_relative_weight(address)',
 		callInputs,
 	)
 
-	const resultsWithDefaults = useMemo(() => {
-		if (results.length)
-			return results.map(({ result, loading }, i) => {
+	const relativeWeightsWithDefaults = useMemo(() => {
+		if (relativeWeights.length)
+			return relativeWeights.map(({ result, loading }, i) => {
 				if (loading) return ethers.BigNumber.from(0)
 				if (!result) return ethers.BigNumber.from(0)
 				return result
@@ -596,13 +596,36 @@ export function useGauges() {
 		return Object.keys(contracts?.vaults || {}).map(() =>
 			ethers.BigNumber.from(0),
 		)
-	}, [results, contracts?.vaults])
+	}, [relativeWeights, contracts?.vaults])
 
-	const loading = useMemo(
-		() =>
-			results.length > 0 ? results.some(({ loading }) => loading) : true,
-		[results],
+	const times = useSingleContractMultipleData(
+		contracts?.internal.gaugeController,
+		'time_weight',
+		callInputs,
 	)
+
+	const timesWithDefaults = useMemo(() => {
+		if (times.length)
+			return times.map(({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			})
+
+		return Object.keys(contracts?.vaults || {}).map(() =>
+			ethers.BigNumber.from(0),
+		)
+	}, [times, contracts?.vaults])
+
+	const loading = useMemo(() => {
+		const weightsLoading =
+			relativeWeights.length > 0
+				? relativeWeights.some(({ loading }) => loading)
+				: true
+		const timesLoading =
+			times.length > 0 ? times.some(({ loading }) => loading) : true
+		return weightsLoading || timesLoading
+	}, [relativeWeights, times])
 
 	return useMemo(() => {
 		return [
@@ -611,12 +634,22 @@ export function useGauges() {
 				Object.keys(contracts?.vaults || {}).map((vault, i) => {
 					return [
 						vault,
-						new BigNumber(
-							resultsWithDefaults[i][0]?.toString(),
-						).dividedBy(10 ** 18),
+						{
+							relativeWeight: new BigNumber(
+								relativeWeightsWithDefaults[i][0]?.toString(),
+							).dividedBy(10 ** 18),
+							time: new BigNumber(
+								timesWithDefaults[i][0]?.toString(),
+							),
+						},
 					]
 				}),
 			),
 		]
-	}, [loading, contracts?.vaults, resultsWithDefaults])
+	}, [
+		loading,
+		contracts?.vaults,
+		relativeWeightsWithDefaults,
+		timesWithDefaults,
+	])
 }

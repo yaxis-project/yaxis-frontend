@@ -10,7 +10,7 @@ const BoostCalculator: React.FC = () => {
 
 	return (
 		<ExpandableSidePanel header={translate('Boost Calculator')}>
-			<CardRow main={<div></div>} secondary={null} />
+			<CardRow main={<div></div>} secondary={null} last />
 		</ExpandableSidePanel>
 	)
 }

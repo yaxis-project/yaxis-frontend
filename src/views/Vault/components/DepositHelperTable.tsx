@@ -43,6 +43,7 @@ const makeColumns = (
 		{
 			title: translate('Asset'),
 			key: 'asset',
+			width: '150px',
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
 				<Row align="middle">

@@ -15,12 +15,6 @@ import { NETWORK_NAMES } from '../../connectors'
 import { useVaultsBalances } from '../../state/wallet/hooks'
 import useTranslation from '../../hooks/useTranslation'
 
-const StyledCol = styled(Col)`
-	@media only screen and (max-width: 991px) {
-		margin-top: 16px;
-	}
-`
-
 const Vault: React.FC = () => {
 	const translate = useTranslation()
 
@@ -39,7 +33,6 @@ const Vault: React.FC = () => {
 				loading={false}
 				mainTitle={translate('Vault Account')}
 				secondaryText={translate('Canonical Vaults')}
-				// TODO: update URL
 				secondaryTextLink={
 					address &&
 					etherscanUrl(`/address/${address}#code`, networkName)
@@ -66,3 +59,9 @@ const Vault: React.FC = () => {
 }
 
 export default Vault
+
+const StyledCol = styled(Col)`
+	@media only screen and (max-width: 991px) {
+		margin-top: 16px;
+	}
+`

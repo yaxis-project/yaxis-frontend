@@ -7,8 +7,10 @@ type Props = ButtonProps & { height?: string }
 const StyledButton = styled<any>(BaseButton)`
 	background: #0186d3;
 	border: none;
+	border-radius: 7px;
 	margin-top: 20;
-	height: ${(props) => props.height || '60px'};
+	height: ${(props) => props.height || '50px'};
+	font-size: 17px;
 	font-weight: 700;
 	&:hover {
 		background-color: #016eac;

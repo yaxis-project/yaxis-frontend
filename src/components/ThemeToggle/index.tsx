@@ -18,7 +18,7 @@ export default function App() {
 }
 
 const ThemeToggle = styled(Row)`
-	padding-right: 5px;
+	margin: 0 5px;
 	font-size: 24px;
 	cursor: pointer;
 	margin-top: 3px;

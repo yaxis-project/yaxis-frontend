@@ -27,7 +27,7 @@ const Header = ({ home }: any) => {
 							<Nav />
 						</Col>
 						<Col>
-							<ThemeToggle></ThemeToggle>
+							<ThemeToggle />
 						</Col>
 						<Col>
 							<LanguageSelect />

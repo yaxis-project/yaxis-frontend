@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Row, Slider, Tooltip } from 'antd'
+import { Row, Tooltip } from 'antd'
 import Table from '../../../components/Table'
 import Button from '../../../components/Button'
+import Slider from '../../../components/Slider'
 import Typography from '../../../components/Typography'
 import { Vaults } from '../../../constants/type'
 import useContractWrite from '../../../hooks/useContractWrite'
@@ -77,8 +78,9 @@ const GaugeWeight: React.FC = () => {
 	const columns = useMemo(
 		() => [
 			{
-				title: translate('Name'),
-				key: 'name',
+				title: translate('Vault').toUpperCase(),
+				key: 'vault',
+				width: '20%',
 				render: (record) => (
 					<Row align={'middle'}>
 						<img
@@ -93,14 +95,15 @@ const GaugeWeight: React.FC = () => {
 				),
 			},
 			{
-				title: translate('Weight'),
+				title: translate('Weight').toUpperCase(),
 				key: 'action',
+				width: '80%',
 				render: (record) => {
 					const cooldown = moment(record.end.toNumber() * 1000).add(
 						WEIGHT_VOTE_DELAY * 1000,
 					)
 					return (
-						<div style={{ width: '300px', position: 'relative' }}>
+						<div style={{ position: 'relative' }}>
 							{record.end.gt(0) && (
 								<div
 									style={{
@@ -138,16 +141,16 @@ const GaugeWeight: React.FC = () => {
 
 	return (
 		<>
-			<Row>{/* TODO: What is this? */}</Row>
+			<Row style={{ marginTop: '10px' }}>{/* TODO: What is this? */}</Row>
 			<Row justify={'center'} style={{ margin: '10px 0' }}>
-				Voting power left to distribute {100 - totalWeight}.
+				<Text>
+					Voting power left to distribute: {100 - totalWeight}%.
+				</Text>
 			</Row>
 
-			<Row justify="center">
-				<Table columns={columns} dataSource={data} pagination={false} />
-			</Row>
+			<Table columns={columns} dataSource={data} pagination={false} />
 
-			<Row style={{ padding: '2% 30% 0 30%' }}>
+			<Row style={{ padding: '5%' }}>
 				<Tooltip
 					visible={
 						!lock.loading &&

@@ -1,10 +1,7 @@
 import styled from 'styled-components'
 import { Col, Tooltip } from 'antd'
 import Typography from '../../../components/Typography'
-import {
-	DetailOverviewCard,
-	DetailOverviewCardRow,
-} from '../../../components/DetailOverviewCard'
+import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import { CardRow } from '../../../components/ExpandableSidePanel'
 import useTranslation from '../../../hooks/useTranslation'
 import Value from '../../../components/Value'

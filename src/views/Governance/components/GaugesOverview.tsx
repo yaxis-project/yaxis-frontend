@@ -10,7 +10,7 @@ const GaugesOverview: React.FC = () => {
 
 	return (
 		<ExpandableSidePanel header={translate('Gauges Overview')}>
-			<CardRow main={<div></div>} secondary={null} />
+			<CardRow main={<div></div>} secondary={null} last />
 		</ExpandableSidePanel>
 	)
 }

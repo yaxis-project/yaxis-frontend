@@ -8,5 +8,9 @@ const StyledCard = styled(Card)`
 	.ant-card-head {
 		border-bottom: 1px solid ${(props) => props.theme.secondary.border};
 	}
+
+	.ant-card-body {
+		padding: 0;
+	}
 `
 export default StyledCard

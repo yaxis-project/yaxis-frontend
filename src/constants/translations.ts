@@ -183,6 +183,15 @@ export type Phrases =
 	| 'Gauges Overview'
 	| 'DAO Resources'
 	| 'Boost Calculator'
+	| 'Future Distribution'
+	| 'Participate in the discussion'
+	| 'Join the community!'
+	| 'Read more about yAxis'
+	| 'yAxis Learn'
+	| 'Forum'
+	| 'Starts on'
+	| 'Unlocks in'
+	| 'Voting power left to distribute'
 	// TODO: Might need tweaks
 	| 'claim YAXIS'
 	// Langauges
@@ -379,6 +388,15 @@ const EN: Translations = {
 	'Must be locked for more than 7 days to vote!':
 		'Must be locked for more than 7 days to vote!',
 	'Current Distribution': 'Current Distribution',
+	'Future Distribution': 'Future Distribution',
+	'Participate in the discussion': 'Participate in the discussion',
+	'Join the community!': 'Join the community!',
+	'Read more about yAxis': 'Read more about yAxis',
+	'yAxis Learn': 'yAxis Learn',
+	Forum: 'Forum',
+	'Starts on': 'Starts on',
+	'Unlocks in': 'Unlocks in',
+	'Voting power left to distribute': 'Voting power left to distribute',
 	'Gauges Overview': 'Gauges Overview',
 	'DAO Resources': 'DAO Resources',
 	'Boost Calculator': 'Boost Calculator',
@@ -555,6 +573,15 @@ const KO: Translations = {
 	'Approve Gauge': '',
 	'Must be locked for more than 7 days to vote!': '',
 	'Current Distribution': '',
+	'Future Distribution': '',
+	'Participate in the discussion': '',
+	'Join the community!': '',
+	'Read more about yAxis': '',
+	'yAxis Learn': '',
+	Forum: '',
+	'Starts on': '',
+	'Unlocks in': '',
+	'Voting power left to distribute': '',
 	'Gauges Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',
@@ -731,6 +758,16 @@ const ZH: Translations = {
 	'Approve Gauge': '',
 	'Must be locked for more than 7 days to vote!': '',
 	'Current Distribution': '',
+	'Future Distribution': '',
+	'Participate in the discussion': '',
+	'Join the community!': '',
+	'Read more about yAxis': '',
+	'yAxis Learn': '',
+	Forum: '',
+	'Starts on': '',
+	'Unlocks in': '',
+	'Voting power left to distribute': '',
+
 	'Gauges Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',
@@ -908,6 +945,16 @@ const RU: Translations = {
 	'Approve Gauge': '',
 	'Must be locked for more than 7 days to vote!': '',
 	'Current Distribution': '',
+	'Future Distribution': '',
+	'Participate in the discussion': '',
+	'Join the community!': '',
+	'Read more about yAxis': '',
+	'yAxis Learn': '',
+	Forum: '',
+	'Starts on': '',
+	'Unlocks in': '',
+	'Voting power left to distribute': '',
+
 	'Gauges Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',
@@ -1084,6 +1131,16 @@ const JA: Translations = {
 	'Approve Gauge': '',
 	'Must be locked for more than 7 days to vote!': '',
 	'Current Distribution': '',
+	'Future Distribution': '',
+	'Participate in the discussion': '',
+	'Join the community!': '',
+	'Read more about yAxis': '',
+	'yAxis Learn': '',
+	Forum: '',
+	'Starts on': '',
+	'Unlocks in': '',
+	'Voting power left to distribute': '',
+
 	'Gauges Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',

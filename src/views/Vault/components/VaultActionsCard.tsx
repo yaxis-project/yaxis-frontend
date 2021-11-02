@@ -28,6 +28,11 @@ const TABS = {
 	'#withdraw': '#withdraw',
 }
 
+const TABS_AUTOSTAKE = {
+	'#deposit': '#deposit',
+	'#withdraw': '#withdraw',
+}
+
 const StyledButton = styled(Button)`
 	background: ${(props) => props.theme.secondary.background};
 	border: none;
@@ -96,7 +101,11 @@ export default function VaultActionsCard() {
 
 	const autoStake = useVaultAutoStake()
 
-	if (location.hash && !TABS[location.hash]) return <Redirect to="/vault" />
+	if (
+		location.hash &&
+		(autoStake ? !TABS_AUTOSTAKE[location.hash] : !TABS[location.hash])
+	)
+		return <Redirect to="/vault" />
 
 	return (
 		<StyledCard>
