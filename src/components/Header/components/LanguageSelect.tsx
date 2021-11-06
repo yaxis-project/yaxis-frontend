@@ -29,6 +29,7 @@ const Button: React.FC<Props> = () => {
 							.filter(({ key }) => key !== language)
 							.map(({ key, flag, name }) => (
 								<Menu.Item
+									key={key}
 									onClick={() =>
 										setLanguage(
 											key.toUpperCase() as TLanguages,

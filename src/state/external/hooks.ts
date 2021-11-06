@@ -13,8 +13,14 @@ import { usePrices } from '../prices/hooks'
 import {
 	useSingleCallResult,
 	useSingleContractMultipleMethods,
+	useMultipleContractSingleData,
 } from '../onchain/hooks'
 import BigNumber from 'bignumber.js'
+import useWeb3Provider from '../../hooks/useWeb3Provider'
+import { currentConfig } from '../../constants/configs'
+import { abis } from '../../constants/abis/mainnet'
+import { Interface } from '@ethersproject/abi'
+const CURVE_POOL_INTERFACE = new Interface(abis.CurvePoolABI)
 
 const defaultApys = Object.fromEntries(CurvePools.map((p) => [p, 0]))
 
@@ -145,9 +151,7 @@ export function useCurvePoolAPR(name: string) {
 					await fetch('https://stats.curve.fi/raw-stats/apys.json')
 				).json()
 				setCurveApy(
-					apy?.day && apy?.day[name]
-						? parseFloat(apy?.day[name])
-						: 0,
+					apy?.day && apy?.day[name] ? parseFloat(apy?.day[name]) : 0,
 				)
 			} catch (e) {
 				console.error('Unable to get curve.fi stats: ', e)
@@ -218,4 +222,35 @@ export function useLP(name: TLiquidityPools) {
 			tvl,
 		}
 	}, [contract, data, t0p, t1p])
+}
+
+export function useCrvLPPrices() {
+	const { chainId } = useWeb3Provider()
+	const vaults = useMemo(
+		() => Object.values(currentConfig(chainId).vaults),
+		[chainId],
+	)
+
+	const data = useMultipleContractSingleData(
+		vaults.map((vault) => vault.tokenPoolContract),
+		CURVE_POOL_INTERFACE,
+		'get_virtual_price()',
+	)
+
+	return useMemo(() => {
+		const virtualPrices = data.map(({ result, loading }, i) => {
+			if (loading) return ethers.BigNumber.from(0)
+			if (!result) return ethers.BigNumber.from(0)
+			return result
+		})
+		return Object.fromEntries(
+			virtualPrices.map((price, i) => {
+				const { token } = vaults[i]
+				return [
+					token,
+					new BigNumber(price.toNumber()).dividedBy(10 ** 18),
+				]
+			}),
+		)
+	}, [vaults, data])
 }

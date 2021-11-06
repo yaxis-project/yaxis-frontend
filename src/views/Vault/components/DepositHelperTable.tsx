@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
-import { Vaults } from '../../../constants/type'
+import { LPVaults } from '../../../constants/type'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useNewAPY } from '../../../state/internal/hooks'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
@@ -24,6 +24,7 @@ import BigNumber from 'bignumber.js'
 import Value from '../../../components/Value'
 import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
+import { DoubleApprovalCover } from '../../../components/ApprovalCover/DoubleApprovalCover'
 
 const { Text, Title } = Typography
 
@@ -44,11 +45,11 @@ const makeColumns = (
 			title: translate('Asset'),
 			key: 'asset',
 			width: '150px',
-			sorter: (a, b) => a.name.length - b.name.length,
+			sorter: (a, b) => a.vault.length - b.vault.length,
 			render: (text, record) => (
 				<Row align="middle">
 					<img src={record.icon} height="36" width="36" alt="logo" />
-					<StyledText>{record.name}</StyledText>
+					<StyledText>{record.vault.toUpperCase()}</StyledText>
 				</Row>
 			),
 		},
@@ -120,8 +121,8 @@ const makeColumns = (
 
 const { useBreakpoint } = Grid
 
-const SUPPORTED_CURRENCIES: Currency[] = Vaults.map(
-	(c) => Currencies[c.toUpperCase()],
+const SUPPORTED_CURRENCIES: Currency[] = LPVaults.map(
+	([lpToken]) => Currencies[lpToken.toUpperCase()],
 )
 
 const initialCurrencyValues: CurrencyValues = reduce(
@@ -187,20 +188,24 @@ export default function DepositHelperTable() {
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = SUPPORTED_CURRENCIES.reduce<
-			[string, [string, string]][]
-		>((previous, current) => {
-			const _v = currencyValues[current.tokenId]
-			if (_v)
-				previous.push([
-					current.tokenId,
-					[
-						contracts.vaults[current.tokenId].vault.address,
-						numberToDecimal(_v, current.decimals),
-					],
-				])
-			return previous
-		}, [])
+		const transactions = LPVaults.reduce<[string, [string, string]][]>(
+			(previous, [lpToken, vault]) => {
+				const _v = currencyValues[lpToken]
+				if (_v)
+					previous.push([
+						vault,
+						[
+							contracts.vaults[vault].vault.address,
+							numberToDecimal(
+								_v,
+								Currencies[lpToken.toUpperCase()].decimals,
+							),
+						],
+					])
+				return previous
+			},
+			[],
+		)
 
 		if (transactions.length > 0) {
 			await Promise.allSettled(
@@ -228,26 +233,22 @@ export default function DepositHelperTable() {
 
 	const data = useMemo(
 		() =>
-			SUPPORTED_CURRENCIES.map<TableDataEntry>((currency) => {
-				const balance =
-					balances[currency.tokenId]?.amount || new BigNumber(0)
+			LPVaults.map<TableDataEntry>(([lpToken, vault]) => {
+				const currency = Currencies[lpToken.toUpperCase()]
+				const balance = balances[lpToken]?.amount || new BigNumber(0)
 				return {
 					...currency,
-					vault: currency.tokenId,
+					vault,
 					balance,
-					balanceUSD: new BigNumber(prices[currency.priceMapKey])
+					balanceUSD: new BigNumber(prices[lpToken])
 						.times(balance)
 						.toFixed(2),
 					value: currencyValues
-						? new BigNumber(
-								currencyValues[currency.name.toLowerCase()] ||
-									0,
-						  )
+						? new BigNumber(currencyValues[lpToken] || 0)
 						: new BigNumber(0),
-					inputValue: currencyValues[currency.name.toLowerCase()],
-					key: currency.tokenId,
-					//  TODO
-					minApy: apy[currency.tokenId],
+					inputValue: currencyValues[lpToken],
+					key: vault,
+					minApy: apy[vault],
 					maxApy: 0,
 				}
 			}),
@@ -281,7 +282,9 @@ export default function DepositHelperTable() {
 										contracts?.vaults[key].gauge.address
 									}
 									noWrapper
-									buttonText={'Gauge'}
+									// Note: We display "Vault" to the user,
+									// but it is really interacting with the Gauge
+									buttonText={'Vault'}
 								>
 									{children}
 								</ApprovalCover>
@@ -295,23 +298,19 @@ export default function DepositHelperTable() {
 								transform: 'translateY(0)',
 							}}
 						>
-							<ApprovalCover
-								contractName={`currencies.ERC20.${key}.contract`}
-								approvee={contracts?.vaults[key].vault.address}
+							<DoubleApprovalCover
 								noWrapper
-								buttonText={'Vault'}
+								contractName1={`vaults.${key}.token.contract`}
+								approvee1={contracts?.vaults[key].vault.address}
+								buttonText1={'Vault'}
+								contractName2={`vaults.${key}.token.contract`}
+								approvee2={
+									contracts?.internal.vaultHelper.address
+								}
+								buttonText2={'Automatic Staking'}
 							>
-								<ApprovalCover
-									contractName={`currencies.ERC20.${key}.contract`}
-									approvee={
-										contracts?.internal.vaultHelper.address
-									}
-									noWrapper
-									buttonText={'Automatic Staking'}
-								>
-									{children}
-								</ApprovalCover>
-							</ApprovalCover>
+								{children}
+							</DoubleApprovalCover>
 						</tr>
 					)
 				},
@@ -326,20 +325,6 @@ export default function DepositHelperTable() {
 				columns={columns}
 				dataSource={data}
 				pagination={false}
-				onRow={(record, rowIndex) => {
-					return {
-						// onClick: (event) => {
-						// 	history.push(
-						// 		`/vault/${(record as TableDataEntry).vault}`,
-						// 	)
-						// },
-						// click row
-						onDoubleClick: (event) => {}, // double click row
-						onContextMenu: (event) => {}, // right button click row
-						onMouseEnter: (event) => {}, // mouse enter row
-						onMouseLeave: (event) => {}, // mouse leave row
-					}
-				}}
 			/>
 			<div
 				style={
@@ -356,7 +341,7 @@ export default function DepositHelperTable() {
 					disabled={disabled}
 					loading={isSubmitting || isSubmittingYAXIS}
 					onClick={handleSubmit}
-					style={{ fontSize: '18px' }}
+					style={{ fontSize: '18px', width: '100%' }}
 				>
 					{translate('Deposit')}
 				</Button>

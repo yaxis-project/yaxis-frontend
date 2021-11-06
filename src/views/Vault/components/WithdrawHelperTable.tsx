@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useVaultsBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-import { Vaults } from '../../../constants/type'
+import { LPVaults } from '../../../constants/type'
 import { reduce } from 'lodash'
 import { Row, Grid, Form } from 'antd'
 import styled from 'styled-components'
@@ -21,6 +21,7 @@ import BigNumber from 'bignumber.js'
 import Value from '../../../components/Value'
 import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
+import { DoubleApprovalCover } from '../../../components/ApprovalCover/DoubleApprovalCover'
 import useTranslation from '../../../hooks/useTranslation'
 
 const { Text, Title } = Typography
@@ -41,11 +42,11 @@ const makeColumns = (
 		{
 			title: translate('Asset'),
 			key: 'asset',
-			sorter: (a, b) => a.name.length - b.name.length,
+			sorter: (a, b) => a.vault.length - b.vault.length,
 			render: (text, record) => (
 				<Row align="middle">
 					<img src={record.icon} height="36" width="36" alt="logo" />
-					<StyledText>{record.name}</StyledText>
+					<StyledText>{record.vault.toUpperCase()}</StyledText>
 				</Row>
 			),
 		},
@@ -104,8 +105,8 @@ const makeColumns = (
 
 const { useBreakpoint } = Grid
 
-const SUPPORTED_CURRENCIES: Currency[] = Vaults.map(
-	(c) => Currencies[c.toUpperCase()],
+const SUPPORTED_CURRENCIES: Currency[] = LPVaults.map(
+	([lpToken]) => Currencies[lpToken.toUpperCase()],
 )
 
 const initialCurrencyValues: CurrencyValues = reduce(
@@ -170,7 +171,10 @@ export default function WithdrawTable() {
 		const insufficientBalance = !!Object.entries(currencyValues).find(
 			([tokenId, v]) => {
 				const value = new BigNumber(v || 0)
-				const currency = balances.balances[tokenId]
+				const [, vault] = LPVaults.find(
+					([lpToken]) => tokenId === lpToken,
+				)
+				const currency = balances.balances[vault]
 				return (
 					!!!currency || value.gt(currency?.gaugeToken?.amount || 0)
 				)
@@ -180,21 +184,24 @@ export default function WithdrawTable() {
 	}, [currencyValues, balances])
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = SUPPORTED_CURRENCIES.reduce<
-			[string, [string, string]][]
-		>((previous, current) => {
-			const _v = currencyValues[current.tokenId]
-			if (_v)
-				previous.push([
-					current.tokenId,
-					[
-						contracts.vaults[current.tokenId].vault.address,
-						numberToDecimal(_v, current.decimals),
-					],
-				])
-
-			return previous
-		}, [])
+		const transactions = LPVaults.reduce<[string, [string, string]][]>(
+			(previous, [lpToken, vault]) => {
+				const _v = currencyValues[lpToken]
+				if (_v)
+					previous.push([
+						vault,
+						[
+							contracts.vaults[vault].vault.address,
+							numberToDecimal(
+								_v,
+								Currencies[lpToken.toUpperCase()].decimals,
+							),
+						],
+					])
+				return previous
+			},
+			[],
+		)
 
 		if (transactions.length > 0) {
 			await Promise.allSettled(
@@ -220,25 +227,29 @@ export default function WithdrawTable() {
 		handleUnstakeYAXIS,
 	])
 
-	const data = useMemo(() => {
-		return SUPPORTED_CURRENCIES.map<TableDataEntry>((currency) => {
-			const balance = balances.balances[currency.tokenId]
-			return {
-				...currency,
-				vault: currency.tokenId,
-				vaultCurrency: currency.name,
-				balance: balance?.gaugeToken?.amount || new BigNumber(0),
-				balanceUSD: balance?.usd || new BigNumber(0),
-				value: currencyValues
-					? new BigNumber(
-							currencyValues[currency.name.toLowerCase()] || 0,
-					  )
-					: new BigNumber(0),
-				inputValue: currencyValues[currency.name.toLowerCase()],
-				key: currency.tokenId,
-			}
-		})
-	}, [balances, currencyValues])
+	const data = useMemo(
+		() =>
+			LPVaults.map<TableDataEntry>(([lpToken, vault]) => {
+				const currency = Currencies[lpToken.toUpperCase()]
+				const balance = balances.balances[vault]
+				return {
+					...currency,
+					vault,
+					vaultCurrency: currency.name,
+					balance: balance?.gaugeToken?.amount || new BigNumber(0),
+					balanceUSD: balance?.usd || new BigNumber(0),
+					value: currencyValues
+						? new BigNumber(
+								currencyValues[currency.name.toLowerCase()] ||
+									0,
+						  )
+						: new BigNumber(0),
+					inputValue: currencyValues[currency.name.toLowerCase()],
+					key: vault,
+				}
+			}),
+		[balances, currencyValues],
+	)
 
 	const columns = useMemo(
 		() =>
@@ -284,23 +295,19 @@ export default function WithdrawTable() {
 								transform: 'translateY(0)',
 							}}
 						>
-							<ApprovalCover
-								contractName={`vaults.${key}.gaugeToken.contract`}
-								approvee={contracts?.vaults[key].gauge.address}
+							<DoubleApprovalCover
 								noWrapper
-								buttonText={'Vault'}
+								contractName1={`vaults.${key}.gaugeToken.contract`}
+								approvee1={contracts?.vaults[key].gauge.address}
+								buttonText1={'Vault'}
+								contractName2={`vaults.${key}.gaugeToken.contract`}
+								approvee2={
+									contracts?.internal.vaultHelper.address
+								}
+								buttonText2={'Automatic Staking'}
 							>
-								<ApprovalCover
-									contractName={`vaults.${key}.gaugeToken.contract`}
-									approvee={
-										contracts?.internal.vaultHelper.address
-									}
-									noWrapper
-									buttonText={'Automatic Staking'}
-								>
-									{children}
-								</ApprovalCover>
-							</ApprovalCover>
+								{children}
+							</DoubleApprovalCover>
 						</tr>
 					)
 				},
@@ -345,7 +352,7 @@ export default function WithdrawTable() {
 					disabled={disabled}
 					loading={isSubmitting || isSubmittingYAXIS}
 					onClick={handleSubmit}
-					style={{ fontSize: '18px' }}
+					style={{ fontSize: '18px', width: '100%' }}
 				>
 					{translate('Withdraw')}
 				</Button>

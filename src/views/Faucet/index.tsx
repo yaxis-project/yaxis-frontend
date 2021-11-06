@@ -28,7 +28,7 @@ const Faucet: React.FC = () => {
 				{Object.keys(contracts.currencies.ERC20)
 					.filter((name) => name !== 'mvlt') // MVLT has no facuet
 					.map((name) => (
-						<Col xs={24} sm={24} md={24} lg={8}>
+						<Col key={name} xs={24} sm={24} md={24} lg={8}>
 							<Row justify="center">
 								<CurrencyFaucet
 									currency={name}
@@ -37,6 +37,16 @@ const Faucet: React.FC = () => {
 							</Row>
 						</Col>
 					))}
+				{Object.entries(contracts.vaults).map(([name, vault]) => (
+					<Col key={name} xs={24} sm={24} md={24} lg={8}>
+						<Row justify="center">
+							<CurrencyFaucet
+								currency={vault.token.tokenId}
+								contractName={`vaults.${name}.token.contract`}
+							/>
+						</Row>
+					</Col>
+				))}
 				<Col xs={24} sm={24} md={24} lg={8}>
 					<Row justify="center">
 						<Col>

@@ -12,6 +12,7 @@ const StyledButton = styled<any>(BaseButton)`
 	height: ${(props) => props.height || '50px'};
 	font-size: 17px;
 	font-weight: 700;
+
 	&:hover {
 		background-color: #016eac;
 	}
@@ -26,10 +27,15 @@ const StyledButton = styled<any>(BaseButton)`
 		background-color: #f0f0f0;
 		border: none;
 	}
+
+	// .ant-btn-loading-icon {
+	// 	position: absolute;
+	// 	top: 12px;
+	// }
 `
 
 const Button: React.FC<Props> = ({ children, ...rest }) => (
-	<StyledButton block type="primary" {...rest}>
+	<StyledButton type="primary" {...rest}>
 		{children}
 	</StyledButton>
 )

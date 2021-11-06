@@ -14,15 +14,13 @@ export interface CurrencyValues {
  * @param key
  * @param value
  */
-export const handleFormInputChange = (setCurrencyValues: Function) => (
-	key: string,
-	value: string | number,
-) => {
-	setCurrencyValues((prev: any) => ({
-		...prev,
-		[key]: value,
-	}))
-}
+export const handleFormInputChange =
+	(setCurrencyValues: Function) => (key: string, value: string | number) => {
+		setCurrencyValues((prev: any) => ({
+			...prev,
+			[key]: value,
+		}))
+	}
 
 /**
  * Iterates over the stored values data to determine if any have an insufficient balance before depositing.
@@ -65,7 +63,6 @@ export const computeTotalDepositing = (
 			return new BigNumber(isNaN(inputNumber) ? 0 : inputNumber).times(
 				new BigNumber(priceMap[priceMapKey] || 0),
 			)
-		}
-		)
+		})
 		.reduce((total, current) => total.plus(current), new BigNumber(0))
 		.toFormat(2)

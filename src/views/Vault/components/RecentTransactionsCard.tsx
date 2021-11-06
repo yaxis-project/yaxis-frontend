@@ -132,7 +132,7 @@ export default function RecentTransactionsCard() {
 	const txRows = useMemo(
 		() =>
 			mvTxs.map(([hash, val]) => (
-				<Col span={24}>
+				<Col span={24} key={hash}>
 					<RecentTransactionRow
 						key={hash}
 						main={val.summary}

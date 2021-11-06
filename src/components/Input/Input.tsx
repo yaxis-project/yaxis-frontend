@@ -28,7 +28,6 @@ const Input: React.FC<InputProps> = ({
 					{suffix && <Text type="secondary">{suffix}</Text>}
 					&nbsp;
 					<Button
-						block
 						size="small"
 						onClick={onClickMax}
 						disabled={disabled}

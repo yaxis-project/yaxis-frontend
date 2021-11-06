@@ -187,22 +187,17 @@ export function useVaultAPR(name: TVaults) {
 
 		const { result: relative_weight } = controller
 
-		const working_balances = new BigNumber(1)
-		const time = new BigNumber(1342)
+		const year_time = new BigNumber(31536000)
 
 		if (new BigNumber(working_supply.toString()).isZero())
 			return new BigNumber(0)
 
-		return working_balances
-			.multipliedBy(
-				new BigNumber(inflation_rate.toString())
-					.multipliedBy(
-						new BigNumber(relative_weight?.toString() || 0),
-					)
-					.multipliedBy(time)
-					.dividedBy(new BigNumber(working_supply.toString())),
-			)
+		const rate = new BigNumber(inflation_rate.toString())
+			.multipliedBy(new BigNumber(relative_weight?.toString() || 0))
+			.multipliedBy(year_time)
+			.dividedBy(new BigNumber(working_supply.toString()))
 			.dividedBy(10 ** 18)
+		return rate
 	}, [gauge, controller])
 }
 

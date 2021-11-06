@@ -15,6 +15,7 @@ import {
 	LiquidityPool,
 	Vaults,
 	TVaults,
+	LPVaults,
 } from '../../constants/type'
 import { usePrices } from '../prices/hooks'
 import {
@@ -171,10 +172,14 @@ export function useAllTokenBalances(): [
 		Object.values(contracts?.pools || {}).map(
 			(pool) => pool.tokenContract,
 		) || []
-	const VAULT =
+	const DEPOSIT_VAULT =
 		Object.entries(contracts?.vaults || {})
 			.filter(([vault]) => vault !== 'yaxis')
 			.map(([, data]) => data.token) || []
+	const VAULT =
+		Object.entries(contracts?.vaults || {})
+			.filter(([vault]) => vault !== 'yaxis')
+			.map(([, data]) => data.vaultToken) || []
 	const GAUGE =
 		Object.values(contracts?.vaults || {}).map(
 			(vault) => vault.gaugeToken,
@@ -184,6 +189,7 @@ export function useAllTokenBalances(): [
 		...ERC20,
 		...ERC677,
 		...LP,
+		...DEPOSIT_VAULT,
 		...VAULT,
 		...GAUGE,
 	])
@@ -748,6 +754,9 @@ export function useVaultsBalances() {
 		}
 		const withData = Object.entries(vaults).reduce<TVaultsBalances>(
 			(accumulator, [vault, data]) => {
+				const [lpToken] = LPVaults.find(
+					([, vaultName]) => vault === vaultName,
+				)
 				const vaultToken = balances[`cv:${vault}`]
 				const gaugeToken = balances[`cv:${vault}-gauge`]
 				const totalToken = (
@@ -755,7 +764,7 @@ export function useVaultsBalances() {
 				).plus(gaugeToken?.amount || new BigNumber(0))
 				const usd = totalToken
 					.multipliedBy(data.pricePerFullShare)
-					.multipliedBy(prices[vault])
+					.multipliedBy(prices[lpToken])
 				accumulator.balances[vault] = {
 					...data,
 					vaultToken,
@@ -792,24 +801,6 @@ export function useVaultsBalances() {
 
 		return withData
 	}, [vaults, balances, prices, loading])
-}
-
-export function useHasVaultTokenBalance() {
-	const [balances] = useAllTokenBalances()
-
-	return useMemo(() => {
-		const wbtcBalance = balances['cv:wbtc']
-		return !wbtcBalance?.amount.isZero()
-	}, [balances])
-}
-
-export function useHasGaugeTokenBalance() {
-	const [balances] = useAllTokenBalances()
-
-	return useMemo(() => {
-		const wbtcBalance = balances['cv:wbtc-gauge']
-		return !wbtcBalance?.amount.isZero()
-	}, [balances])
 }
 
 export function useLPsBalance() {

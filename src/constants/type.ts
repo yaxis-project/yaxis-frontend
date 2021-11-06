@@ -64,10 +64,19 @@ export type TCurrenciesERC677 = typeof CurrenciesERC677[number]
 export const additionalCurrencies = <const>['eth', 'btc', 'crv']
 export type TAdditionalCurrencies = typeof additionalCurrencies[number]
 
+export const crvLPCurrencies = <const>[
+	'mim3crv',
+	'rencrv',
+	'alethcrv',
+	'linkcrv',
+]
+export type TCrvLPCurrencies = typeof crvLPCurrencies[number]
+
 export type Ticker =
 	| TCurrenciesERC20
 	| TCurrenciesERC677
 	| TAdditionalCurrencies
+	| TCrvLPCurrencies
 
 export const InternalContracts = <const>[
 	'vaultHelper',
@@ -93,13 +102,25 @@ export const ExternalContracts = <const>[
 ]
 export type TExternalContracts = typeof ExternalContracts[number]
 
+export const LPVaults = <const>[
+	['mim3crv', '3crv'],
+	['rencrv', 'wbtc'],
+	['alethcrv', 'weth'],
+	['linkcrv', 'link'],
+	['yaxis', 'yaxis'],
+]
+
 export const Vaults = <const>['3crv', 'wbtc', 'weth', 'link', 'yaxis']
 export type TVaults = typeof Vaults[number]
 export interface Vault {
-	vault: string
-	gauge: string
+	url: string
 	token: string
 	tokenContract: string
+	tokenPoolContract: string
+	vault: string
+	vaultToken: string
+	vaultTokenContract: string
+	gauge: string
 }
 
 export interface Config {

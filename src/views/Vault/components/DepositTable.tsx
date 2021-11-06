@@ -1,8 +1,9 @@
 import { useState, useMemo, useCallback } from 'react'
-import { Vaults } from '../../../constants/type'
+import { LPVaults } from '../../../constants/type'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
+import { useNewAPY } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { reduce } from 'lodash'
 import { Row, Grid, Form } from 'antd'
@@ -43,11 +44,11 @@ const makeColumns = (
 			title: translate('Asset'),
 			key: 'asset',
 			width: '150px',
-			sorter: (a, b) => a.name.length - b.name.length,
+			sorter: (a, b) => a.vault.length - b.vault.length,
 			render: (text, record) => (
 				<Row align="middle">
 					<img src={record.icon} height="36" width="36" alt="logo" />
-					<StyledText>{record.name}</StyledText>
+					<StyledText>{record.vault.toUpperCase()}</StyledText>
 				</Row>
 			),
 		},
@@ -106,7 +107,7 @@ const makeColumns = (
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
 				<Row style={{ fontWeight: 'bolder' }}>
-					<Text type="secondary">{record.minApy}%</Text>
+					<Text type="secondary">{record.minApy?.toFixed(2)}%</Text>{' '}
 				</Row>
 			),
 		},
@@ -115,8 +116,11 @@ const makeColumns = (
 
 const { useBreakpoint } = Grid
 
-const SUPPORTED_CURRENCIES: Currency[] = Vaults.map(
-	(c) => Currencies[c.toUpperCase()],
+// YAXIS only has a gauge, so we filter it out
+const LPVaultsNoYAXIS = LPVaults.filter(([LPVault]) => LPVault !== 'yaxis')
+
+const SUPPORTED_CURRENCIES: Currency[] = LPVaultsNoYAXIS.map(
+	([lpToken]) => Currencies[lpToken.toUpperCase()],
 )
 
 const initialCurrencyValues: CurrencyValues = reduce(
@@ -145,6 +149,8 @@ export default function DepositTable() {
 
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
+
+	const apy = useNewAPY()
 
 	const { call: handleDepositWETH, loading: isSubmittingWETH } =
 		useContractWrite({
@@ -217,19 +223,23 @@ export default function DepositTable() {
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = SUPPORTED_CURRENCIES.reduce<[string, string][]>(
-			(previous, current) => {
-				const _v = currencyValues[current.tokenId]
+		const transactions = LPVaultsNoYAXIS.reduce<[string, string][]>(
+			(previous, [lpToken, vault]) => {
+				const _v = currencyValues[lpToken]
 				if (_v)
 					previous.push([
-						current.tokenId.toUpperCase(),
-						numberToDecimal(_v, current.decimals),
+						vault.toUpperCase(),
+						numberToDecimal(
+							_v,
+							Currencies[lpToken.toUpperCase()].decimals,
+						),
 					])
 
 				return previous
 			},
 			[],
 		)
+
 		if (transactions.length > 0) {
 			await Promise.allSettled(
 				transactions.map(([token, amount]) =>
@@ -245,30 +255,26 @@ export default function DepositTable() {
 
 	const data = useMemo(
 		() =>
-			SUPPORTED_CURRENCIES.map<TableDataEntry>((currency) => {
-				const balance =
-					balances[currency.tokenId]?.amount || new BigNumber(0)
+			LPVaultsNoYAXIS.map<TableDataEntry>(([lpToken, vault]) => {
+				const currency = Currencies[lpToken.toUpperCase()]
+				const balance = balances[lpToken]?.amount || new BigNumber(0)
 				return {
 					...currency,
-					vault: currency.tokenId,
+					vault,
 					balance,
-					balanceUSD: new BigNumber(prices[currency.priceMapKey])
+					balanceUSD: new BigNumber(prices[lpToken])
 						.times(balance)
 						.toFixed(2),
 					value: currencyValues
-						? new BigNumber(
-								currencyValues[currency.name.toLowerCase()] ||
-									0,
-						  )
+						? new BigNumber(currencyValues[lpToken] || 0)
 						: new BigNumber(0),
-					inputValue: currencyValues[currency.name.toLowerCase()],
-					key: currency.tokenId,
-					//  TODO
-					minApy: 0,
+					inputValue: currencyValues[lpToken],
+					key: vault,
+					minApy: apy[vault],
 					maxApy: 0,
 				}
 			}),
-		[prices, balances, currencyValues],
+		[prices, balances, currencyValues, apy],
 	)
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])
@@ -292,7 +298,7 @@ export default function DepositTable() {
 							}}
 						>
 							<ApprovalCover
-								contractName={`currencies.ERC20.${key}.contract`}
+								contractName={`vaults.${key}.token.contract`}
 								approvee={contracts?.vaults[key].vault.address}
 								noWrapper
 								buttonText={'Vault'}
@@ -313,20 +319,6 @@ export default function DepositTable() {
 				columns={columns}
 				dataSource={data}
 				pagination={false}
-				onRow={(record, rowIndex) => {
-					return {
-						// onClick: (event) => {
-						// 	history.push(
-						// 		`/vault/${(record as TableDataEntry).vault}`,
-						// 	)
-						// },
-						// click row
-						onDoubleClick: (event) => {}, // double click row
-						onContextMenu: (event) => {}, // right button click row
-						onMouseEnter: (event) => {}, // mouse enter row
-						onMouseLeave: (event) => {}, // mouse leave row
-					}
-				}}
 			/>
 			<div
 				style={
@@ -348,7 +340,7 @@ export default function DepositTable() {
 						callsLookup.isSubmitting3CRV
 					}
 					onClick={handleSubmit}
-					style={{ fontSize: '18px' }}
+					style={{ fontSize: '18px', width: '100%' }}
 				>
 					{translate('Deposit')}
 				</Button>

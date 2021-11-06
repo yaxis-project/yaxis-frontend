@@ -115,6 +115,20 @@ export const threeCRV: Currency = {
 	priceMapKey: '3crv',
 }
 
+export const MIM3CRV: Currency = {
+	name: 'MIM3CRV',
+	tokenId: 'mim3crv',
+	icon: crv3,
+	decimals: 18,
+}
+
+export const ALETHCRV: Currency = {
+	name: 'alETHCRV',
+	tokenId: 'alethcrv',
+	icon: eth,
+	decimals: 18,
+}
+
 export const WETH: Currency = {
 	name: 'wETH',
 	tokenId: 'weth',
@@ -139,12 +153,26 @@ export const WBTC: Currency = {
 	priceMapKey: 'wbtc',
 }
 
+export const RENCRV: Currency = {
+	name: 'RENCRV',
+	tokenId: 'rencrv',
+	icon: wbtc,
+	decimals: 18,
+}
+
 export const LINK: Currency = {
 	name: 'LINK',
 	tokenId: 'link',
 	icon: link,
 	decimals: 18,
 	priceMapKey: 'link',
+}
+
+export const LINKCRV: Currency = {
+	name: 'LINKCRV',
+	tokenId: 'linkcrv',
+	icon: link,
+	decimals: 18,
 }
 
 export const MIM: Currency = {
@@ -260,6 +288,10 @@ export const Currencies = {
 	DAI,
 	USDC,
 	USDT,
+	RENCRV,
+	MIM3CRV,
+	ALETHCRV,
+	LINKCRV,
 	'3CRV': threeCRV,
 	PICKLE,
 	UNISWAP_LP,

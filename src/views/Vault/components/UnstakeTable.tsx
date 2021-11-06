@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useVaultsBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-import { Vaults } from '../../../constants/type'
+import { Vaults, LPVaults } from '../../../constants/type'
 import { reduce } from 'lodash'
 import { Row, Grid, Form } from 'antd'
 import styled from 'styled-components'
@@ -41,11 +41,11 @@ const makeColumns = (
 		{
 			title: translate('Asset'),
 			key: 'asset',
-			sorter: (a, b) => a.name.length - b.name.length,
+			sorter: (a, b) => a.vault.length - b.vault.length,
 			render: (text, record) => (
 				<Row align="middle">
 					<img src={record.icon} height="36" width="36" alt="logo" />
-					<StyledText>{record.name}</StyledText>
+					<StyledText>{record.vault.toUpperCase()}</StyledText>
 				</Row>
 			),
 		},
@@ -63,7 +63,7 @@ const makeColumns = (
 						decimals={2}
 					/>
 					<Text type="secondary">
-						{record.balance.toFixed(2)} {record.vaultCurrency}
+						{record.balance.toFixed(2)} {record.name}
 					</Text>
 				</>
 			),
@@ -90,7 +90,7 @@ const makeColumns = (
 							max={`${record.balance}`}
 							placeholder="0"
 							disabled={loading || record.balance.isZero()}
-							suffix={`${record.name}-G`}
+							suffix={`${record.name}`}
 							onClickMax={() =>
 								onChange(record.tokenId, record.balance || '0')
 							}
@@ -104,9 +104,11 @@ const makeColumns = (
 
 const { useBreakpoint } = Grid
 
-const SUPPORTED_CURRENCIES: Currency[] = Vaults.map(
-	(c) => Currencies[c.toUpperCase()],
-)
+const SUPPORTED_CURRENCIES: Currency[] = Vaults.map((vault) => {
+	const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+	const gaugeToken = `${vaultToken}-gauge`
+	return Currencies[gaugeToken.toUpperCase()]
+})
 
 const initialCurrencyValues: CurrencyValues = reduce(
 	SUPPORTED_CURRENCIES,
@@ -163,6 +165,13 @@ export default function WithdrawTable() {
 			description: `unstaked from LINK Gauge`,
 		})
 
+	const { call: handleUnstakeYAXIS, loading: isSubmittingYAXIS } =
+		useContractWrite({
+			contractName: 'vaults.yaxis.gauge',
+			method: 'withdraw(uint256)',
+			description: `unstaked from YAXIS Gauge`,
+		})
+
 	const callsLookup = useMemo(() => {
 		return {
 			handleUnstakeWETH,
@@ -173,6 +182,8 @@ export default function WithdrawTable() {
 			isSubmitting3CRV,
 			handleUnstakeLINK,
 			isSubmittingLINK,
+			handleUnstakeYAXIS,
+			isSubmittingYAXIS,
 		}
 	}, [
 		handleUnstakeWETH,
@@ -183,12 +194,28 @@ export default function WithdrawTable() {
 		isSubmitting3CRV,
 		handleUnstakeLINK,
 		isSubmittingLINK,
+		handleUnstakeYAXIS,
+		isSubmittingYAXIS,
 	])
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		initialCurrencyValues,
 	)
+
+	const disabled = useMemo(() => {
+		const noValue = !Object.values(currencyValues).find(
+			(v) => parseFloat(v) > 0,
+		)
+		const insufficientBalance = !!Vaults.find((vault) => {
+			const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+			const gaugeToken = `${vaultToken}-gauge`
+			const value = new BigNumber(currencyValues[gaugeToken] || 0)
+			const currency = balances.balances[vault].gaugeToken
+			return !!!currency || value.gt(currency?.amount || 0)
+		})
+		return noValue || insufficientBalance
+	}, [currencyValues, balances])
 
 	const totalWithdrawing = useMemo(
 		() =>
@@ -201,19 +228,25 @@ export default function WithdrawTable() {
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = SUPPORTED_CURRENCIES.reduce<[string, string][]>(
-			(previous, current) => {
-				const _v = currencyValues[current.tokenId]
+		const transactions = Vaults.reduce<[string, string][]>(
+			(previous, vault) => {
+				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+				const gaugeToken = `${vaultToken}-gauge`
+				const _v = currencyValues[gaugeToken]
 				if (_v)
 					previous.push([
-						current.tokenId.toUpperCase(),
-						numberToDecimal(_v, current.decimals),
+						vault.toUpperCase(),
+						numberToDecimal(
+							_v,
+							Currencies[gaugeToken.toUpperCase()].decimals,
+						),
 					])
 
 				return previous
 			},
 			[],
 		)
+
 		if (transactions.length > 0) {
 			await Promise.allSettled(
 				transactions.map(([token, amount]) =>
@@ -227,26 +260,34 @@ export default function WithdrawTable() {
 		}
 	}, [currencyValues, callsLookup, totalWithdrawing])
 
-	const data = useMemo(() => {
-		return SUPPORTED_CURRENCIES.map<TableDataEntry>((currency) => {
-			const token = `${currency.tokenId}`
-			const balance = balances.balances[token] || new BigNumber(0)
-			return {
-				...currency,
-				vault: currency.tokenId,
-				vaultCurrency: `${currency.name}-G`,
-				balance: balance?.gaugeToken?.amount || new BigNumber(0),
-				balanceUSD: balance?.usd || new BigNumber(0),
-				value: currencyValues
-					? new BigNumber(
-							currencyValues[currency.name.toLowerCase()] || 0,
-					  )
-					: new BigNumber(0),
-				inputValue: currencyValues[currency.name.toLowerCase()],
-				key: currency.tokenId,
-			}
-		})
-	}, [balances, currencyValues])
+	const data = useMemo(
+		() =>
+			Vaults.map<TableDataEntry>((vault) => {
+				const [lpToken] = LPVaults.find(
+					([, vaultName]) => vault === vaultName,
+				)
+				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+				const gaugeToken = `${vaultToken}-gauge`
+				const currency = Currencies[gaugeToken.toUpperCase()]
+				const balance =
+					balances.balances[vault]?.gaugeToken?.amount ||
+					new BigNumber(0)
+				return {
+					...currency,
+					vault,
+					balance,
+					balanceUSD: new BigNumber(prices[lpToken])
+						.times(balance)
+						.toFixed(2),
+					value: currencyValues
+						? new BigNumber(currencyValues[gaugeToken] || 0)
+						: new BigNumber(0),
+					inputValue: currencyValues[gaugeToken],
+					key: vault,
+				}
+			}),
+		[balances, currencyValues, prices],
+	)
 
 	const columns = useMemo(
 		() =>
@@ -258,65 +299,9 @@ export default function WithdrawTable() {
 		[translate, loadingBalances],
 	)
 
-	const components = useMemo(() => {
-		return {
-			body: {
-				row: ({ children, className, ...props }) => {
-					const key = props['data-row-key']
-					return (
-						<tr
-							key={key}
-							className={className}
-							style={{
-								transform: 'translateY(0)',
-							}}
-						>
-							<ApprovalCover
-								contractName={`vaults.${key}.gaugeToken.contract`}
-								approvee={contracts?.vaults[key].gauge.address}
-								noWrapper
-								buttonText={'Vault'}
-							>
-								<ApprovalCover
-									contractName={`vaults.${key}.gaugeToken.contract`}
-									approvee={
-										contracts?.internal.vaultHelper.address
-									}
-									noWrapper
-									buttonText={'Automatic Staking'}
-								>
-									{children}
-								</ApprovalCover>
-							</ApprovalCover>
-						</tr>
-					)
-				},
-			},
-		}
-	}, [contracts?.internal.vaultHelper.address, contracts?.vaults])
-
 	return (
 		<>
-			<Table
-				columns={columns}
-				dataSource={data}
-				pagination={false}
-				onRow={(record, rowIndex) => {
-					return {
-						// onClick: (event) => {
-						// 	history.push(
-						// 		`/vault/${(record as TableDataEntry).vault}`,
-						// 	)
-						// },
-						// click row
-						onDoubleClick: (event) => {}, // double click row
-						onContextMenu: (event) => {}, // right button click row
-						onMouseEnter: (event) => {}, // mouse enter row
-						onMouseLeave: (event) => {}, // mouse leave row
-					}
-				}}
-				components={components}
-			/>
+			<Table columns={columns} dataSource={data} pagination={false} />
 			<div
 				style={
 					md
@@ -329,7 +314,7 @@ export default function WithdrawTable() {
 					${totalWithdrawing}
 				</Title>
 				<Button
-					// disabled={disabled}
+					disabled={disabled}
 					loading={
 						callsLookup.isSubmittingWETH ||
 						callsLookup.isSubmittingWBTC ||
@@ -337,9 +322,9 @@ export default function WithdrawTable() {
 						callsLookup.isSubmitting3CRV
 					}
 					onClick={handleSubmit}
-					style={{ fontSize: '18px' }}
+					style={{ fontSize: '18px', width: '100%' }}
 				>
-					{translate('Withdraw')}
+					{translate('Unstake')}
 				</Button>
 				<Text
 					type="secondary"

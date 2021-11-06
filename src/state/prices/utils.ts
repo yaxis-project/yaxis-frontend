@@ -20,6 +20,10 @@ const tokenCgkIdMap: { [key in Ticker]: CoinGeckoID } = {
 	btc: 'bitcoin',
 	crv: 'curve-dao-token',
 	mvlt: '',
+	mim3crv: '',
+	rencrv: '',
+	alethcrv: '',
+	linkcrv: '',
 }
 
 export async function getCoinGeckoPrices() {

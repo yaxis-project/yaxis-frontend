@@ -54,25 +54,23 @@ const ApprovalCover: React.FC<Props> = ({
 	const cover = useMemo(
 		() => (
 			<Cover align="middle" justify="center">
-				<Col span={7}>
-					<Button
-						height={'40px'}
-						style={{ minWidth: '100px' }}
-						loading={loadingApprove}
-						onClick={async () => {
-							await handleApprove({
-								args: [
-									approvee,
-									ethers.constants.MaxUint256.toString(),
-								],
-							})
-						}}
-					>
-						{translate(
-							buttonText ? `Approve ${buttonText}` : 'Approve',
-						)}
-					</Button>
-				</Col>
+				<Button
+					height={'40px'}
+					style={{ minWidth: '100px' }}
+					loading={loadingApprove}
+					onClick={async () => {
+						await handleApprove({
+							args: [
+								approvee,
+								ethers.constants.MaxUint256.toString(),
+							],
+						})
+					}}
+				>
+					{translate(
+						buttonText ? `Approve ${buttonText}` : 'Approve',
+					)}
+				</Button>
 			</Cover>
 		),
 		[translate, handleApprove, loadingApprove, approvee, buttonText],

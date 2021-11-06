@@ -1,8 +1,9 @@
 import { useState, useMemo, useCallback } from 'react'
-import { Vaults } from '../../../constants/type'
+import { Vaults, LPVaults } from '../../../constants/type'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
+import { useNewAPY } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { reduce } from 'lodash'
 import { Row, Grid, Form } from 'antd'
@@ -43,11 +44,11 @@ const makeColumns = (
 			title: translate('Asset'),
 			key: 'asset',
 			width: '150px',
-			sorter: (a, b) => a.name.length - b.name.length,
+			sorter: (a, b) => a.vault.length - b.vault.length,
 			render: (text, record) => (
 				<Row align="middle">
 					<img src={record.icon} height="36" width="36" alt="logo" />
-					<StyledText>{record.name}</StyledText>
+					<StyledText>{record.vault.toUpperCase()}</StyledText>
 				</Row>
 			),
 		},
@@ -106,7 +107,7 @@ const makeColumns = (
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
 				<Row style={{ fontWeight: 'bolder' }}>
-					<Text type="secondary">{record.minApy}%</Text>
+					<Text type="secondary">{record.minApy?.toFixed(2)}%</Text>{' '}
 				</Row>
 			),
 		},
@@ -115,9 +116,10 @@ const makeColumns = (
 
 const { useBreakpoint } = Grid
 
-const SUPPORTED_CURRENCIES: Currency[] = Vaults.map(
-	(c) => Currencies[c.toUpperCase()],
-)
+const SUPPORTED_CURRENCIES: Currency[] = Vaults.map((vault) => {
+	const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+	return Currencies[vaultToken.toUpperCase()]
+})
 
 const initialCurrencyValues: CurrencyValues = reduce(
 	SUPPORTED_CURRENCIES,
@@ -145,6 +147,8 @@ export default function StakeTable() {
 
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
+
+	const apy = useNewAPY()
 
 	const { call: handleStakeWETH, loading: isSubmittingWETH } =
 		useContractWrite({
@@ -174,6 +178,13 @@ export default function StakeTable() {
 			description: `staked in LINK Gauge`,
 		})
 
+	const { call: handleStakeYAXIS, loading: isSubmittingYAXIS } =
+		useContractWrite({
+			contractName: 'vaults.yaxis.gauge',
+			method: 'deposit(uint256)',
+			description: `staked in YAXIS Gauge`,
+		})
+
 	const callsLookup = useMemo(() => {
 		return {
 			handleStakeWETH,
@@ -184,6 +195,8 @@ export default function StakeTable() {
 			isSubmitting3CRV,
 			handleStakeLINK,
 			isSubmittingLINK,
+			handleStakeYAXIS,
+			isSubmittingYAXIS,
 		}
 	}, [
 		handleStakeWETH,
@@ -194,6 +207,8 @@ export default function StakeTable() {
 		isSubmitting3CRV,
 		handleStakeLINK,
 		isSubmittingLINK,
+		handleStakeYAXIS,
+		isSubmittingYAXIS,
 	])
 
 	const { prices } = usePrices()
@@ -201,10 +216,9 @@ export default function StakeTable() {
 		initialCurrencyValues,
 	)
 
-	const disabled = useMemo(
-		() => computeInsufficientBalance(currencyValues, balances),
-		[currencyValues, balances],
-	)
+	const disabled = useMemo(() => {
+		return computeInsufficientBalance(currencyValues, balances)
+	}, [currencyValues, balances])
 
 	const totalDepositing = useMemo(
 		() =>
@@ -217,19 +231,24 @@ export default function StakeTable() {
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = SUPPORTED_CURRENCIES.reduce<[string, string][]>(
-			(previous, current) => {
-				const _v = currencyValues[current.tokenId]
+		const transactions = Vaults.reduce<[string, string][]>(
+			(previous, vault) => {
+				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+				const _v = currencyValues[vaultToken]
 				if (_v)
 					previous.push([
-						current.tokenId.toUpperCase(),
-						numberToDecimal(_v, current.decimals),
+						vault.toUpperCase(),
+						numberToDecimal(
+							_v,
+							Currencies[vaultToken.toUpperCase()].decimals,
+						),
 					])
 
 				return previous
 			},
 			[],
 		)
+
 		if (transactions.length > 0) {
 			await Promise.allSettled(
 				transactions.map(([token, amount]) =>
@@ -245,30 +264,30 @@ export default function StakeTable() {
 
 	const data = useMemo(
 		() =>
-			SUPPORTED_CURRENCIES.map<TableDataEntry>((currency) => {
-				const token = `cv:${currency.tokenId}`
-				const balance = balances[token]?.amount || new BigNumber(0)
+			Vaults.map<TableDataEntry>((vault) => {
+				const [lpToken] = LPVaults.find(
+					([, vaultName]) => vault === vaultName,
+				)
+				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+				const currency = Currencies[vaultToken.toUpperCase()]
+				const balance = balances[vaultToken]?.amount || new BigNumber(0)
 				return {
 					...currency,
-					vault: currency.tokenId,
+					vault,
 					balance,
-					balanceUSD: new BigNumber(prices[currency.priceMapKey])
+					balanceUSD: new BigNumber(prices[lpToken])
 						.times(balance)
 						.toFixed(2),
 					value: currencyValues
-						? new BigNumber(
-								currencyValues[currency.name.toLowerCase()] ||
-									0,
-						  )
+						? new BigNumber(currencyValues[vaultToken] || 0)
 						: new BigNumber(0),
-					inputValue: currencyValues[currency.name.toLowerCase()],
-					key: currency.tokenId,
-					//  TODO
-					minApy: 0,
+					inputValue: currencyValues[vaultToken],
+					key: vault,
+					minApy: apy[vault],
 					maxApy: 0,
 				}
 			}),
-		[prices, balances, currencyValues],
+		[prices, balances, currencyValues, apy],
 	)
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])
@@ -292,7 +311,7 @@ export default function StakeTable() {
 							}}
 						>
 							<ApprovalCover
-								contractName={`vaults.${key}.token.contract`}
+								contractName={`vaults.${key}.vaultToken.contract`}
 								approvee={contracts?.vaults[key].gauge.address}
 								noWrapper
 								buttonText={'Gauge'}
@@ -313,20 +332,6 @@ export default function StakeTable() {
 				columns={columns}
 				dataSource={data}
 				pagination={false}
-				onRow={(record, rowIndex) => {
-					return {
-						// onClick: (event) => {
-						// 	history.push(
-						// 		`/vault/${(record as TableDataEntry).vault}`,
-						// 	)
-						// },
-						// click row
-						onDoubleClick: (event) => {}, // double click row
-						onContextMenu: (event) => {}, // right button click row
-						onMouseEnter: (event) => {}, // mouse enter row
-						onMouseLeave: (event) => {}, // mouse leave row
-					}
-				}}
 			/>
 			<div
 				style={
@@ -348,9 +353,9 @@ export default function StakeTable() {
 						callsLookup.isSubmitting3CRV
 					}
 					onClick={handleSubmit}
-					style={{ fontSize: '18px' }}
+					style={{ fontSize: '18px', width: '100%' }}
 				>
-					{translate('Deposit')}
+					{translate('Stake')}
 				</Button>
 				<Text
 					type="secondary"

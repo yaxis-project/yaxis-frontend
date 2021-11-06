@@ -3,7 +3,7 @@ import { JsonFragment } from '@ethersproject/abi'
 export const abis = {
 	ControllerABI: require('./Controller.json') as JsonFragment[],
 	BalancerAbi: require('./balancer.json') as JsonFragment[],
-	Curve3poolABI: require('./Curve3Pool.json') as JsonFragment[],
+	CurvePoolABI: require('./CurvePool.json') as JsonFragment[],
 	ERC20Abi: require('./erc20.json') as JsonFragment[],
 	ERC677Abi: require('./erc677.json') as JsonFragment[],
 	GaugeABI: require('./gauge.json') as JsonFragment[],

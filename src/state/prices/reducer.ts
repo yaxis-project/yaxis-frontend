@@ -5,6 +5,7 @@ import {
 	CurrenciesERC20,
 	CurrenciesERC677,
 	additionalCurrencies,
+	crvLPCurrencies,
 } from '../../constants/type'
 
 const currentTimestamp = () => new Date().getTime()
@@ -22,6 +23,7 @@ export const initialState: PriceState = {
 		...CurrenciesERC20.map((c) => [c, 0]),
 		...CurrenciesERC677.map((c) => [c, 0]),
 		...additionalCurrencies.map((c) => [c, 0]),
+		...crvLPCurrencies.map((c) => [c, 0]),
 	]) as TPrices,
 	timestamp: currentTimestamp(),
 }

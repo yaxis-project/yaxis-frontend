@@ -49,9 +49,10 @@ type LiquidityPoolC = {
 	[key in TLiquidityPools]: LiquidityPoolWithContract
 }
 interface VaultC {
-	vault: Contract
-	gauge: Contract
 	token: CurrencyContract
+	vault: Contract
+	vaultToken: CurrencyContract
+	gauge: Contract
 	gaugeToken: CurrencyContract
 }
 type VaultsC = {
@@ -82,11 +83,22 @@ export class Contracts {
 
 		this.external = {} as ExternalC
 		for (const title of ExternalContracts) {
-			this.external[title] = new Contract(
-				this.config.external[title],
-				abis[`${title.slice(0, 1).toUpperCase()}${title.slice(1)}ABI`],
-				provider,
-			)
+			if (title === 'curve3pool') {
+				// TODO: make pools property for multiple pools
+				this.external[title] = new Contract(
+					this.config.external[title],
+					abis[`CurvePoolABI`],
+					provider,
+				)
+			} else {
+				this.external[title] = new Contract(
+					this.config.external[title],
+					abis[
+						`${title.slice(0, 1).toUpperCase()}${title.slice(1)}ABI`
+					],
+					provider,
+				)
+			}
 		}
 
 		this.rewards = {} as RewardsC
@@ -167,31 +179,48 @@ export class Contracts {
 			const vaultConfig = this.config.vaults[vault]
 			const VaultCurrency = Currencies[vaultConfig.token.toUpperCase()]
 			if (!VaultCurrency)
-				console.error(`Currency not found: ${vaultConfig.token.toUpperCase()}`)
-			const GaugeCurrency = Currencies[vaultConfig.token.toUpperCase() + '-GAUGE']
+				console.error(
+					`Currency not found: ${vaultConfig.token.toUpperCase()}`,
+				)
+			const VaultTokenCurrency =
+				Currencies[vaultConfig.vaultToken.toUpperCase()]
+			if (!VaultTokenCurrency)
+				console.error(
+					`Currency not found: ${vaultConfig.token.toUpperCase()}`,
+				)
+			const GaugeCurrency =
+				Currencies[vaultConfig.vaultToken.toUpperCase() + '-GAUGE']
 			if (!GaugeCurrency)
-				console.error(`Currency not found: ${vaultConfig.token.toUpperCase()}-GAUGE`)
+				console.error(
+					`Currency not found: ${vaultConfig.vaultToken.toUpperCase()}-GAUGE`,
+				)
 			this.vaults[vault] = {
-				vault:
-					new Contract(
-						this.config.vaults[vault].vault,
-						abis.VaultABI,
-						provider,
-					),
-				gauge:
-					new Contract(
-						this.config.vaults[vault].gauge,
-						abis.GaugeABI,
-						provider,
-					),
 				token: {
 					...VaultCurrency,
 					contract: new Contract(
 						vaultConfig.tokenContract,
+						abis.ERC20Abi,
+						provider,
+					),
+				},
+				vault: new Contract(
+					this.config.vaults[vault].vault,
+					abis.VaultABI,
+					provider,
+				),
+				vaultToken: {
+					...VaultTokenCurrency,
+					contract: new Contract(
+						vaultConfig.vaultTokenContract,
 						abis.VaultTokenABI,
 						provider,
 					),
 				},
+				gauge: new Contract(
+					this.config.vaults[vault].gauge,
+					abis.GaugeABI,
+					provider,
+				),
 				gaugeToken: {
 					...GaugeCurrency,
 					contract: new Contract(
