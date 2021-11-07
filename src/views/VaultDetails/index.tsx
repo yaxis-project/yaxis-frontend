@@ -45,7 +45,7 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 			value={'$' + formatBN(balances.balances[vault].usd)}
 			valueInfo="Balance"
 		>
-			<Row gutter={16} style={{ padding: '35px 0' }}>
+			<Row gutter={16}>
 				<Col xs={24} sm={24} md={24} lg={16}>
 					<UsersVaultDetails />
 					<Converter vault={vault} />

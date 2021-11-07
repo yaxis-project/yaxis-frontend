@@ -14,7 +14,7 @@ const StyledCol = styled(Col)`
 const Staking: React.FC = () => {
 	return (
 		<Page>
-			<Row gutter={16} style={{ paddingTop: '20px' }}>
+			<Row gutter={16}>
 				<Col md={24} lg={24} xl={16}>
 					<SwapInfo />
 				</Col>

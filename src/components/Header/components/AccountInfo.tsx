@@ -116,7 +116,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 									text: `${account}`,
 									tooltips: false,
 								}}
-							></Text>
+							/>
 						</StyledRow>
 						<StyledRow>
 							<BlockOutlined />

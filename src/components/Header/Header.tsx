@@ -1,7 +1,6 @@
+import { useMemo } from 'react'
 import styled from 'styled-components'
 import { Layout, Row, Col, Grid } from 'antd'
-import Logo from '../Logo'
-
 import AccountButton from './components/AccountButton'
 import Nav from './components/Nav'
 import NavTablet from './components/Nav_Tablet'
@@ -11,36 +10,52 @@ import ThemeToggle from '../ThemeToggle'
 const { Header: BaseHeader } = Layout
 const { useBreakpoint } = Grid
 
-const Header = ({ home }: any) => {
+const Logo = () => (
+	<a href="https://yaxis.io">
+		<img
+			src={require('../../assets/img/yaxisLogoFull.svg').default}
+			height={42}
+			alt={`yAxis logo`}
+		/>
+	</a>
+)
+
+const Header = () => {
 	const { lg } = useBreakpoint()
+
+	const content = useMemo(() => {
+		if (lg)
+			return (
+				<>
+					<Col flex="auto" style={{ color: 'white' }}>
+						<Nav />
+					</Col>
+					<Col>
+						<ThemeToggle />
+					</Col>
+					<Col>
+						<LanguageSelect />
+					</Col>
+					<StyledAccountButtonWrapper>
+						<AccountButton />
+					</StyledAccountButtonWrapper>
+				</>
+			)
+
+		return (
+			<Col style={{ display: 'flex', alignItems: 'center' }}>
+				<NavTablet />
+			</Col>
+		)
+	}, [lg])
+
 	return (
 		<StyledHeader>
 			<StyledTopBar gutter={4} align="middle">
 				<Col style={{ padding: '0px 13px 13px 2px' }}>
-					<StyledLogoWrapper>
-						<Logo />
-					</StyledLogoWrapper>
+					<Logo />
 				</Col>
-				{lg ? (
-					<>
-						<Col flex="auto" style={{ color: 'white' }}>
-							<Nav />
-						</Col>
-						<Col>
-							<ThemeToggle />
-						</Col>
-						<Col>
-							<LanguageSelect />
-						</Col>
-						<StyledAccountButtonWrapper>
-							<AccountButton />
-						</StyledAccountButtonWrapper>
-					</>
-				) : (
-					<Col style={{ display: 'flex', alignItems: 'center' }}>
-						<NavTablet />
-					</Col>
-				)}
+				{content}
 			</StyledTopBar>
 		</StyledHeader>
 	)
@@ -51,19 +66,10 @@ const StyledHeader = styled(BaseHeader)`
 	padding: 0 10%;
 	display: flex;
 	justify-content: center;
+	background: linear-gradient(180deg, #016eac 0%, #3c9fcf 100%);
 
 	@media only screen and (max-width: 600px) {
 		padding: 0;
-	}
-`
-
-const StyledLogoWrapper = styled.div`
-	img {
-		width: auto;
-		height: auto;
-	}
-	@media (max-width: 400px) {
-		width: auto;
 	}
 `
 

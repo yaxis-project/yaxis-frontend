@@ -50,6 +50,13 @@ const StyledCollapse = styled(Collapse)`
 	background: ${(props) => props.theme.secondary.background};
 	border-color: ${(props) => props.theme.secondary.border};
 
+	.ant-collapse-item {
+		.ant-collapse-header {
+			padding: 26px 22px;
+			font-size: 22px;
+		}
+	}
+
 	svg {
 		fill: ${(props) => props.theme.primary.font};
 	}

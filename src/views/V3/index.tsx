@@ -6,7 +6,7 @@ import SwapCard from './components/SwapCard'
 const Staking: React.FC = () => {
 	return (
 		<Page>
-			<Row gutter={16} style={{ paddingTop: '20px' }}>
+			<Row gutter={16}>
 				<SwapCard />
 			</Row>
 		</Page>

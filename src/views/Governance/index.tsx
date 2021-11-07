@@ -51,7 +51,7 @@ const Governance: React.FC = () => {
 			value={votingPower.toString()}
 			valueInfo={translate('Voting Power')}
 		>
-			<Row gutter={16} style={{ paddingTop: '40px' }}>
+			<Row gutter={16}>
 				<Col xs={24} sm={24} md={24} lg={16}>
 					<Card>
 						<Tabs

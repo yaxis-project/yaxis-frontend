@@ -38,10 +38,9 @@ const Liquidity: React.FC = () => {
 	)
 	const history = useHistory()
 	return (
-		<div className="liquidity-view">
-			<Page>
-				<>
-					{/* <Card
+		<Page>
+			<>
+				{/* <Card
 						title={
 							<Col
 								style={{
@@ -58,19 +57,61 @@ const Liquidity: React.FC = () => {
 					>
 					</Card> */}
 
-					<Card
-						title={
-							<Col style={{ fontSize: '18px', fontWeight: 700 }}>
-								<Text>
-									{translate('Active Liquidity Pools')}
-								</Text>
-							</Col>
+				<Card
+					title={
+						<Col style={{ fontSize: '18px', fontWeight: 700 }}>
+							<Text>{translate('Active Liquidity Pools')}</Text>
+						</Col>
+					}
+					bodyStyle={{ padding: 0 }}
+				>
+					<StyledTable
+						columns={columns}
+						dataSource={activePools}
+						pagination={false}
+						rowKey={'name'}
+						rowClassName="LP-Table-Row"
+						onRow={(record, rowIndex) => {
+							return {
+								onClick: (event) =>
+									history.push(
+										`/liquidity/${record.lpAddress}`,
+									),
+							}
+						}}
+					/>
+				</Card>
+
+				<Collapse expandIconPosition="right">
+					<StyledPanel
+						header={
+							<Row gutter={10}>
+								<Col>
+									<Text>
+										{translate('Legacy Liquidity Pools')}
+									</Text>
+								</Col>
+								<Col>
+									<Tooltip
+										title={translate(
+											'LPs that are no longer supported',
+										)}
+										placement={'right'}
+									>
+										<StyledInfoIcon
+											alt={translate(
+												'Legacy Liquidity Pools info',
+											)}
+										/>
+									</Tooltip>
+								</Col>
+							</Row>
 						}
-						bodyStyle={{ padding: 0 }}
+						key="1"
 					>
 						<StyledTable
 							columns={columns}
-							dataSource={activePools}
+							dataSource={legacyPools}
 							pagination={false}
 							rowKey={'name'}
 							rowClassName="LP-Table-Row"
@@ -83,57 +124,10 @@ const Liquidity: React.FC = () => {
 								}
 							}}
 						/>
-					</Card>
-
-					<Collapse expandIconPosition="right">
-						<StyledPanel
-							header={
-								<Row gutter={10}>
-									<Col>
-										<Text>
-											{translate(
-												'Legacy Liquidity Pools',
-											)}
-										</Text>
-									</Col>
-									<Col>
-										<Tooltip
-											title={translate(
-												'LPs that are no longer supported',
-											)}
-											placement={'right'}
-										>
-											<StyledInfoIcon
-												alt={translate(
-													'Legacy Liquidity Pools info',
-												)}
-											/>
-										</Tooltip>
-									</Col>
-								</Row>
-							}
-							key="1"
-						>
-							<StyledTable
-								columns={columns}
-								dataSource={legacyPools}
-								pagination={false}
-								rowKey={'name'}
-								rowClassName="LP-Table-Row"
-								onRow={(record, rowIndex) => {
-									return {
-										onClick: (event) =>
-											history.push(
-												`/liquidity/${record.lpAddress}`,
-											),
-									}
-								}}
-							/>
-						</StyledPanel>
-					</Collapse>
-				</>
-			</Page>
-		</div>
+					</StyledPanel>
+				</Collapse>
+			</>
+		</Page>
 	)
 }
 

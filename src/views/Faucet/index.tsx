@@ -83,13 +83,9 @@ const Faucet: React.FC = () => {
 	}, [contracts, chainId])
 
 	return (
-		<div className="savings-view">
-			<Page>
-				<DetailOverviewCard title={'Faucets'}>
-					{body}
-				</DetailOverviewCard>
-			</Page>
-		</div>
+		<Page>
+			<DetailOverviewCard title={'Faucets'}>{body}</DetailOverviewCard>
+		</Page>
 	)
 }
 

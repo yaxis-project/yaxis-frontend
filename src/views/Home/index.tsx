@@ -1,7 +1,6 @@
-import './index.less'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import { HomePage } from '../../components/Page'
+import Page from '../../components/Page'
 import YaxisPriceGraph from '../../components/Graph/YaxisPriceGraph'
 import AccountOverviewCard from './components/AccountOverviewCard'
 import HomeOverviewCard from './components/HomeOverviewCard'
@@ -24,8 +23,8 @@ const StyledCol = styled(Col)`
 const Home: React.FC = () => {
 	const { lg } = useBreakpoint()
 	return (
-		<div className="home-view">
-			<HomePage>
+		<div className={'home-view'}>
+			<Page>
 				<Row gutter={lg ? 16 : 0}>
 					<Col md={24} lg={16} className={'home-left'}>
 						<YaxisPriceGraph />
@@ -38,7 +37,7 @@ const Home: React.FC = () => {
 						<HomeExpandableOverview />
 					</StyledCol>
 				</Row>
-			</HomePage>
+			</Page>
 		</div>
 	)
 }
@@ -50,11 +49,11 @@ const GovernanceAccountOverview: React.FC = () => {
 	const translate = useTranslation()
 
 	const { Yaxis } = useStakedBalances()
-	// TODO
 
 	const {
 		prices: { yaxis },
 	} = usePrices()
+
 	const balanceUSD = useMemo(
 		() => '$' + formatBN(Yaxis.amount.multipliedBy(yaxis)),
 		[Yaxis, yaxis],

@@ -21,6 +21,7 @@ const StyledImage = styled.img`
 
 const StyledCard = styled(Card)`
 	margin-top: 10px;
+	padding: 20px 22px;
 `
 
 const StyledTitle = styled.div`
@@ -41,7 +42,7 @@ export default function AccountOverviewCard(props: AccountOverviewCardProps) {
 	const { mainTitle, secondaryText, value } = props
 	return (
 		<StyledCard>
-			<Row gutter={16}>
+			<Row gutter={16} align="middle">
 				<Col xs={6} sm={2} md={2} lg={3}>
 					<StyledImage src={logo} height="36" width="36" alt="logo" />
 				</Col>
