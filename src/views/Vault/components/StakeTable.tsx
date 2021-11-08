@@ -24,6 +24,7 @@ import BigNumber from 'bignumber.js'
 import Value from '../../../components/Value'
 import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
+import { TYaxisManagerData } from '../../../state/internal/hooks'
 
 const { Text, Title } = Typography
 
@@ -137,10 +138,14 @@ interface TableDataEntry extends Currency {
 	vault: string
 }
 
+interface StakeTableProps {
+	fees: TYaxisManagerData
+}
+
 /**
  * Creates a stake table for the Vault account.
  */
-export default function StakeTable() {
+const StakeTable: React.FC<StakeTableProps> = ({ fees }) => {
 	const translate = useTranslation()
 
 	const [balances, loading] = useAllTokenBalances()
@@ -361,9 +366,12 @@ export default function StakeTable() {
 					type="secondary"
 					style={{ marginTop: '10px', display: 'block' }}
 				>
-					{translate('Withdraw Fee')}: 0.1%
+					{translate('Withdraw Fee')}:{' '}
+					{fees.withdrawalProtectionFee.dividedBy(100).toNumber()}%
 				</Text>
 			</div>
 		</>
 	)
 }
+
+export default StakeTable

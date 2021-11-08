@@ -113,6 +113,31 @@ export function useVault(name: TVaults) {
 	}, [vaultData, tokenData])
 }
 
+export function useYaxisGauge() {
+	const { contracts } = useContracts()
+
+	const gaugeData = useSingleContractMultipleMethods(
+		contracts?.vaults.yaxis.gauge,
+		[['working_supply'], ['totalSupply']],
+	)
+
+	return useMemo(() => {
+		const [working_supply, totalSupply] = gaugeData.map(
+			({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			},
+		)
+
+		return {
+			balance: new BigNumber(working_supply?.toString()),
+			totalSupply: new BigNumber(totalSupply?.toString()),
+			pricePerFullShare: new BigNumber(1),
+		}
+	}, [gaugeData])
+}
+
 export function useGauge(name: TVaults) {
 	const { contracts } = useContracts()
 
@@ -206,6 +231,7 @@ export function useVaults() {
 	const wbtc = useVault('wbtc')
 	const weth = useVault('weth')
 	const link = useVault('link')
+	const yaxis = useYaxisGauge()
 
 	return useMemo(() => {
 		return {
@@ -213,8 +239,9 @@ export function useVaults() {
 			wbtc,
 			weth,
 			link,
+			yaxis,
 		}
-	}, [v3crv, wbtc, weth, link])
+	}, [v3crv, wbtc, weth, link, yaxis])
 }
 
 export function useYaxisSupply() {
@@ -225,10 +252,18 @@ export function useYaxisSupply() {
 		'totalSupply',
 	)
 
+	const DEV_FUND_ADDRESS = '0x5118Df9210e1b97a4de0df15FBbf438499d6b446'
+	const TEAM_FUND_ADDRESS = '0xEcD3aD054199ced282F0608C4f0cea4eb0B139bb'
+	const TREASURY_ADDRESS = '0xC1d40e197563dF727a4d3134E8BD1DeF4B498C6f'
+	// unswapped yaxis, check swap contract
+	// rewards contracts
+	// gauges
+
 	return useMemo(() => {
 		const { result: stakedSupply } = totalSupply
 		return {
-			totalSupply: new BigNumber(stakedSupply?.toString() || 0),
+			total: new BigNumber(stakedSupply?.toString() || 0),
+			circulating: new BigNumber(0),
 		}
 	}, [totalSupply])
 }
@@ -405,8 +440,8 @@ export function useLiquidityPools() {
 
 export function useTVL() {
 	const { contracts } = useContracts()
-	// TODO
-	const { metaVaultTVL } = { metaVaultTVL: 0 }
+
+	const vaults = useVaults()
 
 	const { prices } = usePrices()
 
@@ -424,20 +459,45 @@ export function useTVL() {
 			.times(prices.yaxis)
 
 		const liquidityTvl = Object.values(pools)?.reduce(
-			(c, { active, tvl }, i) => {
-				return c.plus(active && !tvl.isZero() ? tvl : 0)
+			(total, { active, tvl }) =>
+				total.plus(active && !tvl.isNaN() ? tvl : 0),
+			new BigNumber(0),
+		)
+
+		const vaultTvl = Object.fromEntries(
+			Object.entries(vaults).map(([vault, data]) => {
+				const token = contracts?.vaults[vault].token.name.toLowerCase()
+				return [
+					vault,
+					new BigNumber(
+						data.pricePerFullShare
+							.multipliedBy(data.totalSupply.dividedBy(10 ** 18))
+							.multipliedBy(prices[token] || 0),
+					),
+				]
+			}),
+		)
+
+		const vaultsTvl = Object.entries(vaults).reduce(
+			(total, [vault, data]) => {
+				const token = contracts?.vaults[vault].token.name.toLowerCase()
+				return total.plus(
+					data.pricePerFullShare
+						.multipliedBy(data.totalSupply.dividedBy(10 ** 18))
+						.multipliedBy(prices[token] || 0),
+				)
 			},
 			new BigNumber(0),
 		)
 
-		const metavaultTvl = new BigNumber(metaVaultTVL || 0)
 		return {
+			vaultTvl,
+			vaultsTvl,
 			stakingTvl,
 			liquidityTvl,
-			metavaultTvl,
-			tvl: stakingTvl.plus(liquidityTvl).plus(metavaultTvl),
+			tvl: stakingTvl.plus(liquidityTvl).plus(vaultsTvl),
 		}
-	}, [pools, metaVaultTVL, totalSupply, prices])
+	}, [contracts, pools, totalSupply, vaults, prices])
 }
 
 export function useAPY(
@@ -522,32 +582,39 @@ export function useNewAPY() {
 	}, [v3crv, wbtc, weth, link, yaxis])
 }
 
-/**
- * Computes the current annual profits for the MetaVault.
- */
-export function useAnnualProfits(): BigNumber {
-	// TODO: by strategy
-	const curveRewardsAPRs = useCurveRewardsAPR()
-	const curveBaseAPR = useCurvePoolAPR('3pool')
-	const { metavaultTvl } = useTVL()
+export function useYaxisManager() {
+	const { contracts } = useContracts()
+
+	const data = useSingleContractMultipleMethods(contracts?.internal.manager, [
+		['treasuryFee'],
+		['withdrawalProtectionFee'],
+		['stakingPoolShareFee'],
+		['insuranceFee'],
+		['insurancePoolFee'],
+	])
 
 	return useMemo(() => {
-		const strategyAPR = new BigNumber(curveBaseAPR).plus(
-			curveRewardsAPRs['3pool'] || 0,
-		)
-
-		const strategyAPY = strategyAPR
-			.div(100)
-			.div(100)
-			.div(12)
-			.plus(1)
-			.pow(12)
-			.minus(1)
-			.times(100)
-
-		return strategyAPY.times(metavaultTvl)
-	}, [curveRewardsAPRs, curveBaseAPR, metavaultTvl])
+		const [
+			treasuryFee,
+			withdrawalProtectionFee,
+			stakingPoolShareFee,
+			insuranceFee,
+			insurancePoolFee,
+		] = data.map(({ result, loading }) => {
+			if (loading) return new BigNumber(0)
+			if (!result) return new BigNumber(0)
+			return new BigNumber(result.toString())
+		})
+		return {
+			treasuryFee,
+			withdrawalProtectionFee,
+			stakingPoolShareFee,
+			insuranceFee,
+			insurancePoolFee,
+		}
+	}, [data])
 }
+export type TYaxisManagerData = ReturnType<typeof useYaxisManager>
 
 export function useVaultStrategies() {
 	const { contracts } = useContracts()

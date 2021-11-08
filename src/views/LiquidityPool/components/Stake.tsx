@@ -209,18 +209,20 @@ export default function ApprovalWrapper({ pool }) {
 		if (staking.isEqualTo(0))
 			return (
 				<>
-					<Row justify="center" style={{ paddingBottom: '20px' }}>
+					<Row justify="center" style={{ padding: '20px 0' }}>
 						<Col>
 							<Text>
 								{translate(
 									'To start staking, first approve the Rewards contract to use your LP token',
 								)}
+								.
 							</Text>
 						</Col>
 					</Row>
-					<Row justify="center">
+					<Row justify="center" style={{ paddingBottom: '20px' }}>
 						<Col span={4}>
 							<Button
+								style={{ width: '100%' }}
 								onClick={() =>
 									onApprove({
 										args: [

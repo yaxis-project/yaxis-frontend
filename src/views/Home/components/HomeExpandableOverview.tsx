@@ -50,8 +50,9 @@ export default function HomeExpandableOverview() {
 	const { contracts } = useContracts()
 	const { prices } = usePrices()
 
-	const { tvl, stakingTvl, metavaultTvl, liquidityTvl } = useTVL()
-	const { totalSupply } = useYaxisSupply()
+	const { tvl, stakingTvl, vaultsTvl, liquidityTvl } = useTVL()
+	const { circulating, total } = useYaxisSupply()
+
 	return (
 		<>
 			<ExpandableSidePanel header={translate('yAxis Overview')} key="1">
@@ -61,8 +62,8 @@ export default function HomeExpandableOverview() {
 							title={
 								<>
 									<TooltipRow
-										main={translate('Total Vault value')}
-										value={metavaultTvl.toNumber()}
+										main={translate('Total Vaults value')}
+										value={vaultsTvl.toNumber()}
 									/>
 									<TooltipRow
 										main={translate(
@@ -131,16 +132,17 @@ export default function HomeExpandableOverview() {
 						<Row gutter={3}>
 							<Col>
 								{/*  TODO */}
-								<Value value={'3,222,243'} decimals={0} />
+								<Value
+									value={circulating
+										.dividedBy(10 ** 18)
+										.toNumber()}
+									decimals={0}
+								/>
 							</Col>
 							<Col>{' / '}</Col>
 							<Col>
 								<Value
-									value={
-										totalSupply
-											? getBalanceNumber(totalSupply)
-											: ''
-									}
+									value={total.dividedBy(10 ** 18).toNumber()}
 									decimals={0}
 								/>
 							</Col>

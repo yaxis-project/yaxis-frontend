@@ -10,6 +10,7 @@ import { NETWORK_NAMES } from '../../connectors'
 import AccountOverview from './components/AccountOverview'
 import VaultStatsCard from './components/VaultStatsCard'
 import UsersVaultDetails from './components/UsersVaultDetails'
+import CurvePool from './components/CurvePool'
 import { Converter } from './components/Converter'
 import { useVaultsBalances } from '../../state/wallet/hooks'
 import { useVaultStrategies } from '../../state/internal/hooks'
@@ -47,6 +48,7 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 		>
 			<Row gutter={16}>
 				<Col xs={24} sm={24} md={24} lg={16}>
+					<CurvePool vault={vault} />
 					<UsersVaultDetails />
 					<Converter vault={vault} />
 				</Col>

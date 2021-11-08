@@ -15,6 +15,7 @@ import {
 	useVaultAutoStake,
 	useSetVaultAutoStake,
 } from '../../../state/user/hooks'
+import { TYaxisManagerData } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 
 const { TabPane } = Tabs
@@ -93,7 +94,11 @@ const Operations = () => (
 	</div>
 )
 
-export default function VaultActionsCard() {
+interface VaultActionsCardProps {
+	fees: TYaxisManagerData
+}
+
+const VaultActionsCard: React.FC<VaultActionsCardProps> = ({ fees }) => {
 	const translate = useTranslation()
 
 	const history = useHistory()
@@ -115,25 +120,35 @@ export default function VaultActionsCard() {
 				tabBarExtraContent={<Operations />}
 			>
 				<TabPane tab={translate('Deposit')} key="#deposit">
-					{autoStake ? <DepositHelperTable /> : <DepositTable />}
+					{autoStake ? (
+						<DepositHelperTable fees={fees} />
+					) : (
+						<DepositTable fees={fees} />
+					)}
 				</TabPane>
 				{!autoStake && (
 					<TabPane tab={translate('Stake')} key="#stake">
-						<StakeTable />
+						<StakeTable fees={fees} />
 					</TabPane>
 				)}
 				{!autoStake && (
 					<TabPane tab={translate('Unstake')} key="#unstake">
-						<UnstakeTable />
+						<UnstakeTable fees={fees} />
 					</TabPane>
 				)}
 				<TabPane tab={translate('Withdraw')} key="#withdraw">
-					{autoStake ? <WithdrawHelperTable /> : <WithdrawTable />}
+					{autoStake ? (
+						<WithdrawHelperTable fees={fees} />
+					) : (
+						<WithdrawTable fees={fees} />
+					)}
 				</TabPane>
 			</Tabs>
 		</StyledCard>
 	)
 }
+
+export default VaultActionsCard
 
 const StyledCard = styled(Card)`
 	.ant-card-body {

@@ -115,7 +115,7 @@ const CreateLock: React.FC = () => {
 			</Row>
 
 			<Button
-				style={{ marginTop: '14px' }}
+				style={{ width: '100%', marginTop: '14px' }}
 				disabled={loadingBalances || balances?.yaxis?.amount?.isZero()}
 				loading={loadingCreateLock}
 				onClick={() =>
@@ -274,7 +274,7 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 				</Col>
 			</Row>
 			<Button
-				style={{ marginTop: '14px' }}
+				style={{ width: '100%', marginTop: '14px' }}
 				disabled={loadingBalances || (!length && !Number(amount))}
 				loading={loadingIncreaseTime || loadingIncreaseAmount}
 				onClick={() => {

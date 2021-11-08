@@ -14,7 +14,7 @@ import useTranslation from '../../../hooks/useTranslation'
 export default function VaultStatsCard() {
 	const t = useTranslation()
 
-	const { metavaultTvl } = useTVL()
+	// const { metavaultTvl } = useTVL()
 	const { rewardsPerBlock } = useAPY('MetaVault')
 
 	// const { strategy } = useMetaVaultData()

@@ -12,6 +12,7 @@ const Offchain: React.FC = () => (
 		</Row>
 		<Row style={{ margin: '5% 10% 5% 10%' }} justify="center">
 			<Button
+				style={{ width: '100%' }}
 				target="_blank"
 				href="https://gov.yaxis.io/#/"
 				rel="noopener noreferrer"

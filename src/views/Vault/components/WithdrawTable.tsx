@@ -8,7 +8,6 @@ import { Row, Grid, Form } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
 import useContractWrite from '../../../hooks/useContractWrite'
-import { useContracts } from '../../../contexts/Contracts'
 import Button from '../../../components/Button'
 import Table from '../../../components/Table'
 import Typography from '../../../components/Typography'
@@ -21,8 +20,8 @@ import {
 import BigNumber from 'bignumber.js'
 import Value from '../../../components/Value'
 import Input from '../../../components/Input'
-import ApprovalCover from '../../../components/ApprovalCover'
 import useTranslation from '../../../hooks/useTranslation'
+import { TYaxisManagerData } from '../../../state/internal/hooks'
 
 const { Text, Title } = Typography
 
@@ -129,15 +128,18 @@ interface TableDataEntry extends Currency {
 	vault: string
 }
 
+interface WithdrawTableProps {
+	fees: TYaxisManagerData
+}
+
 /**
  * Creates a deposit table for the savings account.
  */
-export default function WithdrawTable() {
+const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees }) => {
 	const translate = useTranslation()
 
 	const [balances, loading] = useAllTokenBalances()
 
-	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
 
 	const { call: handleWithdrawWETH, loading: isSubmittingWETH } =
@@ -305,9 +307,12 @@ export default function WithdrawTable() {
 					type="secondary"
 					style={{ marginTop: '10px', display: 'block' }}
 				>
-					{translate('Withdraw Fee')}: 0.1%
+					{translate('Withdraw Fee')}:{' '}
+					{fees.withdrawalProtectionFee.dividedBy(100).toNumber()}%
 				</Text>
 			</div>
 		</>
 	)
 }
+
+export default WithdrawTable

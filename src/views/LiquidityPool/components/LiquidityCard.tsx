@@ -126,6 +126,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 			<Row gutter={18} justify="center" style={{ padding: '20px' }}>
 				<Col span={12}>
 					<Button
+						style={{ width: '100%' }}
 						disabled={!lpUrl || !walletBalance?.amount.toNumber()}
 						icon={<MinusOutlined />}
 						onClick={() =>
@@ -141,6 +142,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 				{!pool?.legacy && (
 					<Col span={12}>
 						<Button
+							style={{ width: '100%' }}
 							disabled={!lpUrl}
 							icon={<PlusOutlined />}
 							onClick={() => window.open(lpUrl, '_blank')}

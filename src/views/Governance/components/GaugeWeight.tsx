@@ -165,8 +165,9 @@ const GaugeWeight: React.FC = () => {
 					zIndex={1}
 				>
 					<Button
+						style={{ width: '100%' }}
 						loading={loading}
-						// disabled={disabled}
+						disabled={disabled}
 						onClick={() => {
 							weights.forEach((weight, i) => {
 								if (weight > 0)

@@ -57,4 +57,5 @@ export { DAOResources }
 
 const StyledButton = styled(Button)`
 	font-size: 12px;
+	width: 100%;
 `

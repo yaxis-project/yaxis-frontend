@@ -25,6 +25,7 @@ import Value from '../../../components/Value'
 import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
 import { DoubleApprovalCover } from '../../../components/ApprovalCover/DoubleApprovalCover'
+import { TYaxisManagerData } from '../../../state/internal/hooks'
 
 const { Text, Title } = Typography
 
@@ -141,10 +142,14 @@ interface TableDataEntry extends Currency {
 	vault: string
 }
 
+interface DepositHelperTableProps {
+	fees: TYaxisManagerData
+}
+
 /**
  * Creates a deposit and stake table for the Vault account.
  */
-export default function DepositHelperTable() {
+const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 	const translate = useTranslation()
 
 	const [balances, loading] = useAllTokenBalances()
@@ -349,9 +354,12 @@ export default function DepositHelperTable() {
 					type="secondary"
 					style={{ marginTop: '10px', display: 'block' }}
 				>
-					{translate('Withdraw Fee')}: 0.1%
+					{translate('Withdraw Fee')}:{' '}
+					{fees.withdrawalProtectionFee.dividedBy(100).toNumber()}%
 				</Text>
 			</div>
 		</>
 	)
 }
+
+export default DepositHelperTable

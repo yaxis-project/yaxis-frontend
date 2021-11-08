@@ -23,6 +23,7 @@ import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
 import { DoubleApprovalCover } from '../../../components/ApprovalCover/DoubleApprovalCover'
 import useTranslation from '../../../hooks/useTranslation'
+import { TYaxisManagerData } from '../../../state/internal/hooks'
 
 const { Text, Title } = Typography
 
@@ -125,10 +126,14 @@ interface TableDataEntry extends Currency {
 	vault: string
 }
 
+interface WithdrawHelperTableProps {
+	fees: TYaxisManagerData
+}
+
 /**
  * Creates a deposit table for the savings account.
  */
-export default function WithdrawTable() {
+const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({ fees }) => {
 	const translate = useTranslation()
 
 	const { loading: loadingBalances, ...balances } = useVaultsBalances()
@@ -360,9 +365,12 @@ export default function WithdrawTable() {
 					type="secondary"
 					style={{ marginTop: '10px', display: 'block' }}
 				>
-					{translate('Withdraw Fee')}: 0.1%
+					{translate('Withdraw Fee')}:{' '}
+					{fees.withdrawalProtectionFee.dividedBy(100).toNumber()}%
 				</Text>
 			</div>
 		</>
 	)
 }
+
+export default WithdrawHelperTable

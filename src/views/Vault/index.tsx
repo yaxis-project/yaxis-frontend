@@ -13,6 +13,7 @@ import { formatBN } from '../../utils/number'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { NETWORK_NAMES } from '../../connectors'
 import { useVaultsBalances } from '../../state/wallet/hooks'
+import { useYaxisManager } from '../../state/internal/hooks'
 import useTranslation from '../../hooks/useTranslation'
 
 const Vault: React.FC = () => {
@@ -26,6 +27,8 @@ const Vault: React.FC = () => {
 
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 	const address = currentConfig(chainId).internal.controller
+
+	const fees = useYaxisManager()
 
 	return (
 		<div className="investing-view">
@@ -42,7 +45,7 @@ const Vault: React.FC = () => {
 			>
 				<Row gutter={16}>
 					<Col xs={24} sm={24} md={24} lg={16}>
-						<VaultActionsCard />
+						<VaultActionsCard fees={fees} />
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<InvestmentDetailOverview

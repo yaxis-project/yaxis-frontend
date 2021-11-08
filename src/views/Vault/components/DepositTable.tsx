@@ -24,6 +24,7 @@ import BigNumber from 'bignumber.js'
 import Value from '../../../components/Value'
 import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
+import { TYaxisManagerData } from '../../../state/internal/hooks'
 
 const { Text, Title } = Typography
 
@@ -139,10 +140,14 @@ interface TableDataEntry extends Currency {
 	vault: string
 }
 
+interface DepositTableProps {
+	fees: TYaxisManagerData
+}
+
 /**
  * Creates a deposit table for the Vault account.
  */
-export default function DepositTable() {
+const DepositTable: React.FC<DepositTableProps> = ({ fees }) => {
 	const translate = useTranslation()
 
 	const [balances, loading] = useAllTokenBalances()
@@ -348,9 +353,12 @@ export default function DepositTable() {
 					type="secondary"
 					style={{ marginTop: '10px', display: 'block' }}
 				>
-					{translate('Withdraw Fee')}: 0.1%
+					{translate('Withdraw Fee')}:{' '}
+					{fees.withdrawalProtectionFee.dividedBy(100).toNumber()}%
 				</Text>
 			</div>
 		</>
 	)
 }
+
+export default DepositTable
