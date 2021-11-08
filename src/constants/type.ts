@@ -90,6 +90,7 @@ export const InternalContracts = <const>[
 	'votingEscrow',
 	'gaugeController',
 	'controller',
+	'manager',
 ]
 export type TInternalContracts = typeof InternalContracts[number]
 

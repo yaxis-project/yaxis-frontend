@@ -8,6 +8,7 @@ export const abis = {
 	ERC677Abi: require('./erc677.json') as JsonFragment[],
 	GaugeABI: require('./gauge.json') as JsonFragment[],
 	GaugeControllerABI: require('./GaugeController.json') as JsonFragment[],
+	ManagerABI: require('./Manager.json') as JsonFragment[],
 	MerkleDistributorABI: require('./MerkleDistributor.json') as JsonFragment[],
 	MinterABI: require('./minter.json') as JsonFragment[],
 	MulticallABI: require('./Multicall.json') as JsonFragment[],

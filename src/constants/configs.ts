@@ -61,6 +61,7 @@ export const configs: Record<number, Config> = {
 		},
 		internal: {
 			// Current
+			manager: '0x5D68Ddd47357a29714CB08bb48397E3Fe3d6F425',
 			controller: '0x9A1bad98A98591f05697D4770c4EF4C8F6E476DB',
 			vaultHelper: '0x448223929ab973E3d97afc5A7bE48f2d74651497',
 			minter: '0x9652EC937545F28efb2c7e813A93D659d02D5e39',
@@ -177,6 +178,7 @@ export const configs: Record<number, Config> = {
 	1: {
 		internal: {
 			// Current
+			manager: '',
 			controller: '',
 			vaultHelper: '',
 			minter: '',

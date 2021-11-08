@@ -1,13 +1,14 @@
 import { JsonFragment } from '@ethersproject/abi'
 
 export const abis = {
-	ControllerABI: require('./Controller.json') as JsonFragment[],
 	BalancerAbi: require('./balancer.json') as JsonFragment[],
+	ControllerABI: require('./Controller.json') as JsonFragment[],
 	CurvePoolABI: require('./CurvePool.json') as JsonFragment[],
 	ERC20Abi: require('./erc20.json') as JsonFragment[],
 	ERC677Abi: require('./erc677.json') as JsonFragment[],
 	GaugeABI: require('./gauge.json') as JsonFragment[],
 	GaugeControllerABI: require('./GaugeController.json') as JsonFragment[],
+	ManagerABI: require('./Manager.json') as JsonFragment[],
 	MerkleDistributorABI: require('./MerkleDistributor.json') as JsonFragment[],
 	MinterABI: require('./minter.json') as JsonFragment[],
 	MulticallABI: require('./Multicall.json') as JsonFragment[],

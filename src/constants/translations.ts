@@ -192,6 +192,7 @@ export type Phrases =
 	| 'Starts on'
 	| 'Unlocks in'
 	| 'Voting power left to distribute'
+	| 'Total Vaults value'
 	// TODO: Might need tweaks
 	| 'claim YAXIS'
 	// Langauges
@@ -400,6 +401,7 @@ const EN: Translations = {
 	'Gauges Overview': 'Gauges Overview',
 	'DAO Resources': 'DAO Resources',
 	'Boost Calculator': 'Boost Calculator',
+	'Total Vaults value': 'Total Vaults value',
 	English: 'English',
 	Korean: 'Korean',
 	Japanese: 'Japanese',
@@ -585,6 +587,7 @@ const KO: Translations = {
 	'Gauges Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',
+	'Total Vaults value': '',
 	English: '',
 	Korean: '',
 	Japanese: '',
@@ -771,6 +774,7 @@ const ZH: Translations = {
 	'Gauges Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',
+	'Total Vaults value': '',
 	English: '',
 	Korean: '',
 	Japanese: '',
@@ -958,6 +962,7 @@ const RU: Translations = {
 	'Gauges Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',
+	'Total Vaults value': '',
 	English: 'Английский',
 	Korean: 'Корейский',
 	Japanese: 'Японский',
@@ -1144,6 +1149,7 @@ const JA: Translations = {
 	'Gauges Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',
+	'Total Vaults value': '',
 	English: '',
 	Korean: '',
 	Japanese: '',
