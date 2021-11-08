@@ -2,46 +2,33 @@ import {
 	ExpandableSidePanel,
 	CardRow,
 } from '../../../components/ExpandableSidePanel'
-import { useTVL } from '../../../state/internal/hooks'
+import { useTVL, useVaultStrategies } from '../../../state/internal/hooks'
 import Value from '../../../components/Value'
-import { useAPY } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
-// import { useMetaVaultData / from '../../../state/internal/hooks'
+import { TVaults } from '../../../constants/type'
 
-/**
- * Generates investing vault stats card for the current signed in user.
- */
-export default function VaultStatsCard() {
+interface UserVaultDetailsProps {
+	vault: TVaults
+}
+
+const VaultStatsCard: React.FC<UserVaultDetailsProps> = ({ vault }) => {
 	const t = useTranslation()
 
-	// const { metavaultTvl } = useTVL()
-	const { rewardsPerBlock } = useAPY('MetaVault')
+	const { vaultTvl } = useTVL()
+	const strategies = useVaultStrategies()
 
-	// const { strategy } = useMetaVaultData()
 	return (
 		<>
-			<ExpandableSidePanel header={t('Global Vault Stats')} key="1">
-				{/* <CardRow
+			<ExpandableSidePanel header={t('Vault Stats')} key="1">
+				<CardRow
 					main="Current Strategy"
-					secondary={
-						strategy ? (
-							<>
-								<div>{strategy}</div>
-								<div>YearnV2: DAI</div>
-							</>
-						) : (
-							<div></div>
-						)
-					}
-				/> */}
+					secondary={strategies[vault] || t('None')}
+				/>
 				<CardRow
 					main={t('Total Value Locked')}
 					secondary={
 						<Value
-							value={
-								0
-								// metavaultTvl.toNumber()
-							}
+							value={vaultTvl[vault]?.toNumber()}
 							numberPrefix="$"
 							decimals={2}
 						/>
@@ -62,3 +49,5 @@ export default function VaultStatsCard() {
 		</>
 	)
 }
+
+export default VaultStatsCard

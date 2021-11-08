@@ -1,22 +1,20 @@
 import { CardRow } from '../../../components/ExpandableSidePanel'
-import { useTVL } from '../../../state/internal/hooks'
+// import { useAPY } from '../../../state/internal/hooks'
 import Value from '../../../components/Value'
-import { useAPY } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
-// import { useMetaVaultData / from '../../../state/internal/hooks'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import { Row, Col } from 'antd'
+import { TVaults } from '../../../constants/type'
 
-/**
- * Generates investing vault stats card for the current signed in user.
- */
-export default function VaultStatsCard() {
+interface UserVaultDetailsProps {
+	vault: TVaults
+}
+
+const UserVaultDetails: React.FC<UserVaultDetailsProps> = ({ vault }) => {
 	const t = useTranslation()
 
-	// const { metavaultTvl } = useTVL()
-	const { rewardsPerBlock } = useAPY('MetaVault')
+	// const apy = useAPY()
 
-	// const { strategy } = useMetaVaultData()
 	return (
 		<DetailOverviewCard title={t('Vault Overview')}>
 			<Row justify="space-around">
@@ -27,7 +25,7 @@ export default function VaultStatsCard() {
 							<Value
 								value={
 									0
-									// metavaultTvl.toNumber()
+									// TODO
 								}
 								numberSuffix="%"
 								decimals={2}
@@ -43,7 +41,7 @@ export default function VaultStatsCard() {
 							<Value
 								value={
 									0
-									// metavaultTvl.toNumber()
+									// TODO
 								}
 								numberSuffix="%"
 								decimals={2}
@@ -56,3 +54,5 @@ export default function VaultStatsCard() {
 		</DetailOverviewCard>
 	)
 }
+
+export default UserVaultDetails

@@ -13,6 +13,7 @@ import { numberToFloat } from '../../utils/number'
 import {
 	TLiquidityPools,
 	TRewardsContracts,
+	Vaults,
 	TVaults,
 } from '../../constants/type'
 import ERC20Abi from '../../constants/abis/mainnet/erc20.json'
@@ -619,16 +620,33 @@ export type TYaxisManagerData = ReturnType<typeof useYaxisManager>
 export function useVaultStrategies() {
 	const { contracts } = useContracts()
 
+	const vaults = useMemo(
+		() =>
+			Object.entries(contracts?.vaults || {}).filter(
+				([, data]) => data.vaultToken.name !== 'YAXIS',
+			),
+		[contracts?.vaults],
+	)
+
 	const strategies = useSingleContractMultipleMethods(
 		contracts?.internal.controller,
-		Object.values(contracts?.vaults || {})
-			.slice(0, 1)
-			.map((data) => ['strategies(address)', [data.vault.address]]),
+		vaults.map(([, data]) => ['strategies(address)', [data.vault.address]]),
 	)
 
 	return useMemo(() => {
-		// TODO
-	}, [])
+		const strategiesWithDefaults = strategies.map(({ result, loading }) => {
+			if (loading) return ''
+			if (!result) return ''
+			return result.toString()
+		})
+
+		return Object.fromEntries(
+			vaults.map(([vault], i) => {
+				const strategy = strategiesWithDefaults[i] || ''
+				return [vault, strategy]
+			}),
+		)
+	}, [vaults, strategies])
 }
 
 export function useGauges() {

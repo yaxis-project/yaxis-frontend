@@ -193,6 +193,8 @@ export type Phrases =
 	| 'Unlocks in'
 	| 'Voting power left to distribute'
 	| 'Total Vaults value'
+	| 'Vault Stats'
+	| 'None'
 	// TODO: Might need tweaks
 	| 'claim YAXIS'
 	// Langauges
@@ -402,6 +404,8 @@ const EN: Translations = {
 	'DAO Resources': 'DAO Resources',
 	'Boost Calculator': 'Boost Calculator',
 	'Total Vaults value': 'Total Vaults value',
+	'Vault Stats': 'Vault Stats',
+	None: 'None',
 	English: 'English',
 	Korean: 'Korean',
 	Japanese: 'Japanese',
@@ -588,6 +592,9 @@ const KO: Translations = {
 	'DAO Resources': '',
 	'Boost Calculator': '',
 	'Total Vaults value': '',
+	'Vault Stats': '',
+	None: '',
+
 	English: '',
 	Korean: '',
 	Japanese: '',
@@ -775,6 +782,8 @@ const ZH: Translations = {
 	'DAO Resources': '',
 	'Boost Calculator': '',
 	'Total Vaults value': '',
+	'Vault Stats': '',
+	None: '',
 	English: '',
 	Korean: '',
 	Japanese: '',
@@ -963,6 +972,8 @@ const RU: Translations = {
 	'DAO Resources': '',
 	'Boost Calculator': '',
 	'Total Vaults value': '',
+	'Vault Stats': '',
+	None: '',
 	English: 'Английский',
 	Korean: 'Корейский',
 	Japanese: 'Японский',
@@ -1150,6 +1161,8 @@ const JA: Translations = {
 	'DAO Resources': '',
 	'Boost Calculator': '',
 	'Total Vaults value': '',
+	'Vault Stats': '',
+	None: '',
 	English: '',
 	Korean: '',
 	Japanese: '',

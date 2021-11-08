@@ -13,7 +13,6 @@ import UsersVaultDetails from './components/UsersVaultDetails'
 import CurvePool from './components/CurvePool'
 import { Converter } from './components/Converter'
 import { useVaultsBalances } from '../../state/wallet/hooks'
-import { useVaultStrategies } from '../../state/internal/hooks'
 import { TVaults } from '../../constants/type'
 
 const StyledCol = styled(Col)`
@@ -29,7 +28,6 @@ interface Props {
 const VaultDetails: React.FC<Props> = ({ vault }) => {
 	const { chainId } = useWeb3Provider()
 
-	const t = useVaultStrategies()
 	const { loading, ...balances } = useVaultsBalances()
 
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
@@ -49,7 +47,7 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 			<Row gutter={16}>
 				<Col xs={24} sm={24} md={24} lg={16}>
 					<CurvePool vault={vault} />
-					<UsersVaultDetails />
+					<UsersVaultDetails vault={vault} />
 					<Converter vault={vault} />
 				</Col>
 				<StyledCol xs={24} sm={24} md={24} lg={8}>
@@ -60,7 +58,7 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 						balanceLoading={false}
 						vault={vault}
 					/>
-					<VaultStatsCard />
+					<VaultStatsCard vault={vault} />
 				</StyledCol>
 			</Row>
 		</Page>
