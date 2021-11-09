@@ -162,7 +162,7 @@ export type Phrases =
 	| 'Lock up your YAXIS for extra APY and voting power.'
 	| 'rewards'
 	| 'Gather pending MetaVault rewards'
-	| 'First, exit the previous contract'
+	| 'First, exit the previous contracts'
 	| 'Approve the new rewards contract to use your MVLT.'
 	| 'Connect a wallet to see if actions are needed.'
 	| 'Version 3'
@@ -195,6 +195,8 @@ export type Phrases =
 	| 'Total Vaults value'
 	| 'Vault Stats'
 	| 'None'
+	| 'Unstake from the previous Rewards contract'
+	| 'Boost rewards'
 	// TODO: Might need tweaks
 	| 'claim YAXIS'
 	// Langauges
@@ -370,7 +372,7 @@ const EN: Translations = {
 		'Lock up your YAXIS for extra APY and voting power.',
 	rewards: 'rewards',
 	'Gather pending MetaVault rewards': 'Gather pending MetaVault rewards',
-	'First, exit the previous contract': 'First, exit the previous contract',
+	'First, exit the previous contracts': 'First, exit the previous contracts',
 	'Approve the new rewards contract to use your MVLT.':
 		'Approve the new rewards contract to use your MVLT.',
 	'Connect a wallet to see if actions are needed.':
@@ -405,6 +407,9 @@ const EN: Translations = {
 	'Boost Calculator': 'Boost Calculator',
 	'Total Vaults value': 'Total Vaults value',
 	'Vault Stats': 'Vault Stats',
+	'Unstake from the previous Rewards contract':
+		'Unstake from the previous Rewards contract',
+	'Boost rewards': 'Boost rewards',
 	None: 'None',
 	English: 'English',
 	Korean: 'Korean',
@@ -561,7 +566,7 @@ const KO: Translations = {
 	'Lock up your YAXIS for extra APY and voting power.': '',
 	rewards: '',
 	'Gather pending MetaVault rewards': '',
-	'First, exit the previous contract': '',
+	'First, exit the previous contracts': '',
 	'Approve the new rewards contract to use your MVLT.': '',
 	'Connect a wallet to see if actions are needed.': '',
 	'Version 3': '',
@@ -594,7 +599,8 @@ const KO: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
-
+	'Unstake from the previous Rewards contract': '',
+	'Boost rewards': '',
 	English: '',
 	Korean: '',
 	Japanese: '',
@@ -750,7 +756,7 @@ const ZH: Translations = {
 	'Lock up your YAXIS for extra APY and voting power.': '',
 	rewards: '',
 	'Gather pending MetaVault rewards': '',
-	'First, exit the previous contract': '',
+	'First, exit the previous contracts': '',
 	'Approve the new rewards contract to use your MVLT.': '',
 	'Connect a wallet to see if actions are needed.': '',
 	'Version 3': '',
@@ -784,6 +790,8 @@ const ZH: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Unstake from the previous Rewards contract': '',
+	'Boost rewards': '',
 	English: '',
 	Korean: '',
 	Japanese: '',
@@ -940,7 +948,7 @@ const RU: Translations = {
 	'Lock up your YAXIS for extra APY and voting power.': '',
 	rewards: '',
 	'Gather pending MetaVault rewards': '',
-	'First, exit the previous contract': '',
+	'First, exit the previous contracts': '',
 	'Approve the new rewards contract to use your MVLT.': '',
 	'Connect a wallet to see if actions are needed.': '',
 	'Version 3': '',
@@ -974,6 +982,8 @@ const RU: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Unstake from the previous Rewards contract': '',
+	'Boost rewards': '',
 	English: 'Английский',
 	Korean: 'Корейский',
 	Japanese: 'Японский',
@@ -1129,7 +1139,7 @@ const JA: Translations = {
 	'Lock up your YAXIS for extra APY and voting power.': '',
 	rewards: '',
 	'Gather pending MetaVault rewards': '',
-	'First, exit the previous contract': '',
+	'First, exit the previous contracts': '',
 	'Approve the new rewards contract to use your MVLT.': '',
 	'Connect a wallet to see if actions are needed.': '',
 	'Version 3': '',
@@ -1156,13 +1166,14 @@ const JA: Translations = {
 	'Starts on': '',
 	'Unlocks in': '',
 	'Voting power left to distribute': '',
-
 	'Gauges Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Unstake from the previous Rewards contract': '',
+	'Boost rewards': '',
 	English: '',
 	Korean: '',
 	Japanese: '',

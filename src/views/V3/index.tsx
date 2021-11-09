@@ -1,16 +1,16 @@
 import React from 'react'
 import Page from '../../components/Page/Page'
 import { Row } from 'antd'
-import SwapCard from './components/SwapCard'
+import MigrationCard from './components/MigrationCard'
 
-const Staking: React.FC = () => {
+const V3: React.FC = () => {
 	return (
 		<Page>
 			<Row gutter={16}>
-				<SwapCard />
+				<MigrationCard />
 			</Row>
 		</Page>
 	)
 }
 
-export default Staking
+export default V3

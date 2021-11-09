@@ -36,9 +36,11 @@ export default function SwapCard() {
 
 	const step2 = useMemo(
 		() =>
-			balances?.dai?.amount.gt(0) ||
-			balances?.usdc?.amount.gt(0) ||
-			balances?.usdt?.amount.gt(0),
+			balances?.['3crv']?.amount.gt(0) ||
+			balances?.['dai']?.amount.gt(0) ||
+			balances?.['usdt']?.amount.gt(0) ||
+			balances?.['usdc']?.amount.gt(0) ||
+			balances?.['mim3crv']?.amount.gt(0),
 		[balances],
 	)
 
@@ -79,12 +81,16 @@ export default function SwapCard() {
 				current={current}
 				setCurrent={setCurrent}
 				complete={toDo[1]}
-				usdcBalance={balances?.usdc?.amount || new BigNumber(0)}
-				usdtBalance={balances?.usdt?.amount || new BigNumber(0)}
-				daiBalance={balances?.dai?.amount || new BigNumber(0)}
+				balance3crv={balances?.['3crv']?.amount || new BigNumber(0)}
+				balance3crvmim={
+					balances?.['3crvmim']?.amount || new BigNumber(0)
+				}
+				balanceDai={balances?.['dai']?.amount || new BigNumber(0)}
+				balanceUSDT={balances?.['usdc']?.amount || new BigNumber(0)}
+				balanceUSDC={balances?.['usdt']?.amount || new BigNumber(0)}
 			/>
 		),
-		[current, toDo, balances?.usdc, balances?.dai, balances?.usdt],
+		[current, toDo, balances],
 	)
 
 	const UnstakeContent = useMemo(

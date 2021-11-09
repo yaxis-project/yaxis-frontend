@@ -1,4 +1,5 @@
 import { useMemo, Dispatch, SetStateAction } from 'react'
+import { NavLink } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { Row } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
@@ -29,14 +30,10 @@ const StepBoost: React.FC<StepBoostProps> = ({ yaxisBalance }) => {
 			return (
 				<Step
 					title={
-						<StyledButton
-							onClick={async () => {
-								// TODO
-								//route to lock
-							}}
-							height={'40px'}
-						>
-							{translate('Stake')} YAXIS
+						<StyledButton height={'40px'}>
+							<NavLink to={'/governance#lock'}>
+								{translate('Boost rewards')}
+							</NavLink>
 						</StyledButton>
 					}
 					description={translate(
@@ -47,7 +44,7 @@ const StepBoost: React.FC<StepBoostProps> = ({ yaxisBalance }) => {
 			)
 		return (
 			<Step
-				title={translate('Stake') + ' YAXIS'}
+				title={translate('Lock up') + ' YAXIS'}
 				description={translate('Done.')}
 				status="finish"
 			/>
@@ -56,7 +53,14 @@ const StepBoost: React.FC<StepBoostProps> = ({ yaxisBalance }) => {
 
 	const message = useMemo(() => {
 		if (yaxisBalance.gt(0))
-			return translate('Stake your tokens to receive emissions!')
+			return (
+				<div>
+					<div>Deposit in the YAXIS vault to receive emissions!</div>
+					<div style={{ textAlign: 'center', marginTop: '5px' }}>
+						OR
+					</div>
+				</div>
+			)
 		return translate('Step complete.')
 	}, [translate, yaxisBalance])
 

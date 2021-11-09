@@ -8,8 +8,6 @@ import Steps from '../../../components/Steps'
 import Button from '../../../components/Button'
 import useContractWrite from '../../../hooks/useContractWrite'
 import useTranslation from '../../../hooks/useTranslation'
-import { MAX_UINT } from '../../../utils/number'
-import { ethers } from 'ethers'
 
 const { Step } = Steps
 
@@ -27,13 +25,11 @@ interface StepUnstakeProps extends StepProps {
 const StepUnstake: React.FC<StepUnstakeProps> = ({ stakedYAXIS }) => {
 	const translate = useTranslation()
 
-	const { call: handleUnstake, loading: loadingStakeMVLT } = useContractWrite(
-		{
-			contractName: `rewards.MetaVault`,
-			method: 'stake',
-			description: `stake MVLT`,
-		},
-	)
+	const { call: handleUnstake, loading: loadingUnstake } = useContractWrite({
+		contractName: `rewards.Yaxis`,
+		method: 'withdraw',
+		description: `unstake YAXIS`,
+	})
 
 	const yaxis = useMemo(() => {
 		if (stakedYAXIS.gt(0))
@@ -43,34 +39,31 @@ const StepUnstake: React.FC<StepUnstakeProps> = ({ stakedYAXIS }) => {
 						<StyledButton
 							onClick={() =>
 								handleUnstake({
-									args: [],
+									args: [stakedYAXIS.multipliedBy(10 ** 18)],
 								})
 							}
-							loading={loadingStakeMVLT}
+							loading={loadingUnstake}
 							height={'40px'}
 						>
-							{translate('Approve')} MVLT
+							{translate('Unstake')} YAXIS
 						</StyledButton>
 					}
-					description={translate(
-						'Approve the new rewards contract to use your MVLT.',
-					)}
 					icon={<StyledIcon />}
 					status="wait"
 				/>
 			)
 		return (
 			<Step
-				title={translate('Stake') + ' MVLT'}
+				title={translate('Unstake') + ' YAXIS'}
 				description={translate('Done.')}
 				status="finish"
 			/>
 		)
-	}, [translate, stakedYAXIS, handleUnstake, loadingStakeMVLT])
+	}, [translate, stakedYAXIS, handleUnstake, loadingUnstake])
 
 	const message = useMemo(() => {
 		if (stakedYAXIS.gt(0))
-			return translate('Stake your tokens to receive emissions!')
+			return translate('Unstake from the previous Rewards contract') + '.'
 
 		return translate('Step complete.')
 	}, [translate, stakedYAXIS])

@@ -416,6 +416,42 @@ export function useSwapApprovals() {
 	}, [allowanceSYAX, loadingAllowanceYAX, allowanceYAX, loadingAllowanceSYAX])
 }
 
+export function useV3Approvals() {
+	const { contracts } = useContracts()
+	const { account } = useWeb3Provider()
+
+	const { result: allowanceVault, loading: loadingAllowanceVault } =
+		useSingleCallResult(
+			contracts?.vaults['3crv'].token.contract,
+			'allowance',
+			[account, contracts?.vaults['3crv'].vault.address],
+		)
+
+	const { result: allowanceHelper, loading: loadingAllowanceHelper } =
+		useSingleCallResult(
+			contracts?.vaults['3crv'].token.contract,
+			'allowance',
+			[account, contracts?.internal.vaultHelper.address],
+		)
+
+	return useMemo(() => {
+		return {
+			loading:
+				!allowanceHelper ||
+				!allowanceVault ||
+				loadingAllowanceVault ||
+				loadingAllowanceHelper,
+			helper: new BigNumber(allowanceHelper?.toString() || 0),
+			vault: new BigNumber(allowanceVault?.toString() || 0),
+		}
+	}, [
+		allowanceVault,
+		allowanceHelper,
+		loadingAllowanceVault,
+		loadingAllowanceHelper,
+	])
+}
+
 const defaultUseClaimedState = {
 	claimedMetaVault: ethers.BigNumber.from(0),
 	claimedLp: ethers.BigNumber.from(0),
@@ -631,7 +667,9 @@ export function useAccountLP(lp: LiquidityPool) {
 		const userBalance = new BigNumber(
 			walletBalance?.amount.toString() || 0,
 		).plus(stakedBalance?.amount.toString() || 0)
-		const poolShare = userBalance.dividedBy(totalSupply)
+		const poolShare = totalSupply.isZero()
+			? new BigNumber(0)
+			: userBalance.dividedBy(totalSupply)
 		return { poolShare, walletBalance, stakedBalance }
 	}, [walletBalance, stakedBalance, totalSupply])
 }
