@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import { Row, Col } from 'antd'
+import { Row } from 'antd'
 import { useSingleCallResultByName } from '../../state/onchain/hooks'
 import useContractWrite from '../../hooks/useContractWrite'
 import useWeb3Provider from '../../hooks/useWeb3Provider'

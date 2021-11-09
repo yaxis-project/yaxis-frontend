@@ -37,7 +37,7 @@ export const Update: React.FC = () => {
 			}
 			visible={visible}
 			onCancel={() => {
-				// setLastSeenUpdate(LATEST_VERSION)
+				setLastSeenUpdate(LATEST_VERSION)
 				closeModal()
 			}}
 			footer={null}

@@ -33,7 +33,8 @@ export const Body: React.FC = () => {
 								style={contentStyle}
 							>
 								<Col>
-									<h3>1</h3>
+									{/* TODO: Add image */}
+									<h3>Multi token canonical vaults</h3>
 								</Col>
 							</Row>
 						</div>
@@ -45,7 +46,8 @@ export const Body: React.FC = () => {
 								style={contentStyle}
 							>
 								<Col>
-									<h3>2</h3>
+									{/* TODO: Add image */}
+									<h3>Boost rewards by locking YAXIS</h3>
 								</Col>
 							</Row>
 						</div>
@@ -57,7 +59,11 @@ export const Body: React.FC = () => {
 								style={contentStyle}
 							>
 								<Col>
-									<h3>3</h3>
+									{/* TODO: Add image */}
+									<h3>
+										Vote to get more rewards for your
+										favorite token
+									</h3>
 								</Col>
 							</Row>
 						</div>
@@ -69,7 +75,8 @@ export const Body: React.FC = () => {
 								style={contentStyle}
 							>
 								<Col>
-									<h3>4</h3>
+									{/* TODO: Add image */}
+									<h3>Dark mode and language support</h3>
 								</Col>
 							</Row>
 						</div>
@@ -79,7 +86,8 @@ export const Body: React.FC = () => {
 			<Row justify="center" style={{ margin: '40px 20px 20px 20px' }}>
 				<Col span={16}>
 					<Button
-						onClick={(event) => {
+						style={{ width: '100%' }}
+						onClick={() => {
 							setLastSeenUpdate('V3_0_0')
 							history.push(`/V3`)
 						}}

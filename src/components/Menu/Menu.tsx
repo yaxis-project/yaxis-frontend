@@ -2,11 +2,12 @@ import React from 'react'
 import styled from 'styled-components'
 import { Menu as BaseMenu, MenuProps as BaseMenuProps } from 'antd'
 
-// TODO
 const StyledMenu = styled(BaseMenu)`
-	.ant-dropdown-menu-item:hover,
-	.ant-dropdown-menu-submenu-title:hover {
-		background-color: red;
+	border-bottom: none;
+	background: none;
+
+	svg {
+		fill: ${(props) => props.theme.primary.font};
 	}
 `
 
@@ -14,4 +15,27 @@ export interface MenuProps extends BaseMenuProps {}
 
 const Menu: React.FC<MenuProps> = (props) => <StyledMenu {...props} />
 
-export default Menu
+// TODO: background color
+
+const StyledSubMenu = styled(BaseMenu.SubMenu)`
+	.ant-dropdown-menu-submenu-title:hover {
+		// background: red;
+	}
+
+	// .ant-dropdown-menu-item:hover {
+	// 	background: red;
+	// }
+
+	// .ant-dropdown-menu-item-active {
+	// 	background: red;
+	// }
+`
+
+const StyledMenus = {
+	Menu,
+	SubMenu: StyledSubMenu,
+	Divider: BaseMenu.Divider,
+	Item: BaseMenu.Item,
+	ItemGroup: BaseMenu.ItemGroup,
+}
+export default StyledMenus

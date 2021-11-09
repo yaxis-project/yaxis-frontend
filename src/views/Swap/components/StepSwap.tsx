@@ -6,10 +6,13 @@ import { useContracts } from '../../../contexts/Contracts'
 import { useSwapApprovals } from '../../../state/wallet/hooks'
 import useContractWrite from '../../../hooks/useContractWrite'
 import Button from '../../../components/Button'
+import Typography from '../../../components/Typography'
 import { ArrowRightOutlined, ArrowDownOutlined } from '@ant-design/icons'
 import { formatBN, MAX_UINT } from '../../../utils/number'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
+
+const { Text } = Typography
 
 const BalanceTitle = styled(Row)`
 	font-size: 18px;
@@ -127,6 +130,7 @@ const StepSwap: React.FC<StepSwapProps> = ({
 				loading={loadingSwap}
 				disabled={totalYAX.eq(0)}
 				onClick={async () => await call()}
+				style={{ width: '100%' }}
 			>
 				Swap
 			</Button>
@@ -152,13 +156,19 @@ const StepSwap: React.FC<StepSwapProps> = ({
 		<>
 			{yaxBalance.gt(0) && (
 				<DetailOverviewCardRow>
-					<BalanceTitle>Account Balance</BalanceTitle>
+					<BalanceTitle>
+						<Text>Account Balance</Text>
+					</BalanceTitle>
 					<BalanceRow justify={'space-around'}>
 						<Col span={longWalletBalance ? 24 : 8}>
 							<Row justify="center">
-								{formatBN(yaxBalance, { showDust: true })}
+								<Text>
+									{formatBN(yaxBalance, { showDust: true })}
+								</Text>
 							</Row>
-							<Row justify="center">YAX</Row>
+							<Row justify="center">
+								<Text>YAX</Text>
+							</Row>
 						</Col>
 						<Col span={longWalletBalance ? 24 : 2}>
 							<Row justify="center">
@@ -174,21 +184,29 @@ const StepSwap: React.FC<StepSwapProps> = ({
 							</Row>
 						</Col>
 						<Col span={longWalletBalance ? 24 : 8}>
-							<Row justify="center">{formatBN(yaxBalance)}</Row>
-							<Row justify="center">YAXIS</Row>
+							<Row justify="center">
+								<Text>{formatBN(yaxBalance)}</Text>
+							</Row>
+							<Row justify="center">
+								<Text>YAXIS</Text>
+							</Row>
 						</Col>
 					</BalanceRow>
 				</DetailOverviewCardRow>
 			)}
 			{stakedBalance.gt(0) && (
 				<DetailOverviewCardRow>
-					<BalanceTitle>Staked Balance</BalanceTitle>
+					<BalanceTitle>
+						<Text>Staked Balance</Text>
+					</BalanceTitle>
 					<BalanceRow justify={'space-around'}>
 						<Col span={longStakedBalance ? 24 : 8}>
 							<Row justify="center">
-								{formatBN(stakedBalance)}
+								<Text>{formatBN(stakedBalance)}</Text>
 							</Row>
-							<Row justify="center">YAX</Row>
+							<Row justify="center">
+								<Text>YAX</Text>
+							</Row>
 						</Col>
 						<Col span={longStakedBalance ? 24 : 2}>
 							<Row justify="center">
@@ -205,9 +223,11 @@ const StepSwap: React.FC<StepSwapProps> = ({
 						</Col>
 						<Col span={longStakedBalance ? 24 : 8}>
 							<Row justify="center">
-								{formatBN(stakedBalance)}
+								<Text>{formatBN(stakedBalance)}</Text>
 							</Row>
-							<Row justify="center">YAXIS</Row>
+							<Row justify="center">
+								<Text>YAXIS</Text>
+							</Row>
 						</Col>
 					</BalanceRow>
 				</DetailOverviewCardRow>
@@ -216,16 +236,18 @@ const StepSwap: React.FC<StepSwapProps> = ({
 				{stakedBalance.plus(yaxBalance).gt(0) ? (
 					<BalanceTitle justify="center">
 						<Col>
-							You will receive{' '}
-							{formatBN(stakedBalance.plus(yaxBalance))} YAXIS
+							<Text>
+								You will receive{' '}
+								{formatBN(stakedBalance.plus(yaxBalance))} YAXIS
+							</Text>
 						</Col>
 					</BalanceTitle>
 				) : (
 					<Row style={{ padding: '30px' }} justify="center">
-						Step complete.
+						<Text>Step complete.</Text>
 					</Row>
 				)}
-				{button}
+				<Row justify="center">{button}</Row>
 			</DetailOverviewCardRow>
 		</>
 	)

@@ -63,7 +63,7 @@ const Nav: React.FC = () => {
 					</StyledLink>
 					<StyledLink
 						target="_blank"
-						href="https://discord.gg/u8KZPCMJ6x"
+						href="https://discord.gg/yaxis-project"
 						rel="noopener noreferrer"
 					>
 						<HoverableIcon component={discord} />

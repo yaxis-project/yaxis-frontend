@@ -19,7 +19,14 @@ const DAOResources: React.FC = () => {
 				rightContent={
 					<Row justify="end" style={{ paddingRight: '20px' }}>
 						<div style={{ width: '100px' }}>
-							<StyledButton height={'32px'}>Forum</StyledButton>
+							<StyledButton
+								height={'32px'}
+								href="https://yaxis.discourse.group/"
+								rel="noopener noreferrer"
+								target="_blank"
+							>
+								<div style={{ marginTop: '2px' }}>Forum</div>
+							</StyledButton>
 						</div>
 					</Row>
 				}
@@ -30,7 +37,14 @@ const DAOResources: React.FC = () => {
 				rightContent={
 					<Row justify="end" style={{ paddingRight: '20px' }}>
 						<div style={{ width: '100px' }}>
-							<StyledButton height={'32px'}>Discord</StyledButton>
+							<StyledButton
+								height={'32px'}
+								href="https://discord.gg/yaxis-project"
+								rel="noopener noreferrer"
+								target="_blank"
+							>
+								<div style={{ marginTop: '2px' }}>Discord</div>
+							</StyledButton>
 						</div>
 					</Row>
 				}
@@ -41,8 +55,15 @@ const DAOResources: React.FC = () => {
 				rightContent={
 					<Row justify="end" style={{ paddingRight: '20px' }}>
 						<div style={{ width: '100px' }}>
-							<StyledButton height={'32px'}>
-								yAxis Learn
+							<StyledButton
+								height={'32px'}
+								href="https://resources.yaxis.io/"
+								rel="noopener noreferrer"
+								target="_blank"
+							>
+								<div style={{ marginTop: '2px' }}>
+									yAxis Learn
+								</div>
 							</StyledButton>
 						</div>
 					</Row>

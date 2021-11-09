@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { Row, Col, Collapse, Typography } from 'antd'
+import { Row, Col } from 'antd'
+import Typography from '../../../components/Typography'
+import Collapse from '../../../components/Collapse'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import styled from 'styled-components'
 import { NavLink } from 'react-router-dom'
@@ -10,17 +12,30 @@ const StyledCollapse = styled(Collapse)<any>`
 	${(props) =>
 		props.active
 			? `
-			border: 1px solid ${props.theme.primary.main};
-	.ant-collapse-item {
-		color: white;
-		background: ${props.theme.primary.main};
-		transition: background 0.5s;
-	}
-	.ant-collapse-header.ant-collapse-header {
-		color: white;
-	}
-	`
-			: ``}
+				border: 1px solid ${props.theme.primary.main};
+				background-color: ${(props) => props.theme.primary.background};
+
+				.ant-collapse-item {
+					color: white;
+					background: ${props.theme.primary.main};
+					transition: background 0.5s;
+				}
+
+				.ant-collapse-header.ant-collapse-header {
+					color: white;
+				}
+
+				.ant-collapse-content {
+					background-color: ${(props) => props.theme.primary.background};
+				}
+			`
+			: `
+			.ant-collapse-item {
+				color: white;
+				background: ${props.theme.primary.background};
+				transition: background 0.5s;
+			}
+			`}
 `
 
 export default function SwapInfo() {
@@ -75,7 +90,10 @@ export default function SwapInfo() {
 							}
 							active={active.includes('0')}
 						>
-							<Panel header={'What do I need to do?'} key="0">
+							<StyledPanel
+								header={'What do I need to do?'}
+								key="0"
+							>
 								<Body>
 									It's as easy as following the Steps section
 									on this page.
@@ -98,7 +116,7 @@ export default function SwapInfo() {
 									Finally re-stake your tokens for some juicy
 									emissions.
 								</Body>
-							</Panel>
+							</StyledPanel>
 						</StyledCollapse>
 						<StyledCollapse
 							activeKey={active}
@@ -108,7 +126,7 @@ export default function SwapInfo() {
 							}
 							active={active.includes('5')}
 						>
-							<Panel
+							<StyledPanel
 								header={"What's changing about MetaVault?"}
 								key="5"
 							>
@@ -133,7 +151,7 @@ export default function SwapInfo() {
 									</StyledNavLink>{' '}
 									page.
 								</Body>
-							</Panel>
+							</StyledPanel>
 						</StyledCollapse>
 						<StyledCollapse
 							activeKey={active}
@@ -143,7 +161,10 @@ export default function SwapInfo() {
 							}
 							active={active.includes('3')}
 						>
-							<Panel header={'What are the benefits?'} key="3">
+							<StyledPanel
+								header={'What are the benefits?'}
+								key="3"
+							>
 								<Body>
 									There are 2 main benefits from this token
 									swap:
@@ -159,7 +180,7 @@ export default function SwapInfo() {
 										</li>
 									</ul>
 								</Body>
-							</Panel>
+							</StyledPanel>
 						</StyledCollapse>
 						<StyledCollapse
 							activeKey={active}
@@ -169,7 +190,7 @@ export default function SwapInfo() {
 							}
 							active={active.includes('1')}
 						>
-							<Panel
+							<StyledPanel
 								header={'What about the Liquidity Pools?'}
 								key="1"
 							>
@@ -196,7 +217,7 @@ export default function SwapInfo() {
 									</ol>
 									The extra rewards will be well worth it!
 								</Body>
-							</Panel>
+							</StyledPanel>
 						</StyledCollapse>
 						<StyledCollapse
 							activeKey={active}
@@ -206,7 +227,7 @@ export default function SwapInfo() {
 							}
 							active={active.includes('2')}
 						>
-							<Panel
+							<StyledPanel
 								header={'Why switch to an ERC677 token?'}
 								key="2"
 							>
@@ -234,7 +255,7 @@ export default function SwapInfo() {
 									over other platforms. There are no conflicts
 									with trading, using wallets, etc. as normal.
 								</Body>
-							</Panel>
+							</StyledPanel>
 						</StyledCollapse>
 						<StyledCollapse
 							activeKey={active}
@@ -244,7 +265,7 @@ export default function SwapInfo() {
 							}
 							active={active.includes('4')}
 						>
-							<Panel
+							<StyledPanel
 								header={'How will the tokens be distributed?'}
 								key="4"
 							>
@@ -313,7 +334,7 @@ export default function SwapInfo() {
 									</TextLink>
 									.
 								</Body>
-							</Panel>
+							</StyledPanel>
 						</StyledCollapse>
 					</Col>
 				</Row>
@@ -333,6 +354,8 @@ const BodyMain = styled.div`
 const Body = styled(Paragraph)`
 	margin: 5% 10%;
 `
+
+const StyledPanel = styled(Panel)``
 
 const TextLink = styled.a`
 	color: ${(props) => props.theme.primary.main};

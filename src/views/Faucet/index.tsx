@@ -1,15 +1,14 @@
 import React, { useMemo } from 'react'
 import Page from '../../components/Page/Page'
 import { Row, Col } from 'antd'
-import Card from '../../components/Card'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { Redirect } from 'react-router-dom'
 import { DetailOverviewCard } from '../../components/DetailOverviewCard'
 import Button from '../../components/Button'
 import Typography from '../../components/Typography'
+import Divider from '../../components/Divider'
 import { Currencies } from '../../constants/currencies'
 import { useContracts } from '../../contexts/Contracts'
-import icon from '../../assets/img/faucet.svg'
 import CurrencyFaucet from './components/CurrencyFaucet'
 
 const Faucet: React.FC = () => {
@@ -25,6 +24,13 @@ const Faucet: React.FC = () => {
 
 		return (
 			<Row style={{ padding: '20px' }} gutter={[0, 20]} justify="center">
+				<Col span={24}>
+					<Row justify="center" style={{ fontSize: '18px' }}>
+						To get YAXIS, faucet YAX and send through the swap
+						contract
+					</Row>
+				</Col>
+				<Divider />
 				{Object.keys(contracts.currencies.ERC20)
 					.filter((name) => name !== 'mvlt') // MVLT has no facuet
 					.map((name) => (
@@ -37,16 +43,18 @@ const Faucet: React.FC = () => {
 							</Row>
 						</Col>
 					))}
-				{Object.entries(contracts.vaults).map(([name, vault]) => (
-					<Col key={name} xs={24} sm={24} md={24} lg={8}>
-						<Row justify="center">
-							<CurrencyFaucet
-								currency={vault.token.tokenId}
-								contractName={`vaults.${name}.token.contract`}
-							/>
-						</Row>
-					</Col>
-				))}
+				{Object.entries(contracts.vaults)
+					.filter(([name]) => name !== 'yaxis')
+					.map(([name, vault]) => (
+						<Col key={name} xs={24} sm={24} md={24} lg={8}>
+							<Row justify="center">
+								<CurrencyFaucet
+									currency={vault.token.tokenId}
+									contractName={`vaults.${name}.token.contract`}
+								/>
+							</Row>
+						</Col>
+					))}
 				<Col xs={24} sm={24} md={24} lg={8}>
 					<Row justify="center">
 						<Col>

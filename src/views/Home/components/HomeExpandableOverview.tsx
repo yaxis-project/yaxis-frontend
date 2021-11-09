@@ -156,9 +156,7 @@ export default function HomeExpandableOverview() {
 }
 
 const StyledInfoIcon = styled(InfoCircleOutlined)`
-	position: relative;
-	top: 1px;
-	margin-left: 2px;
+	margin-left: 5px;
 	svg {
 		fill: ${(props) => props.theme.secondary.font};
 	}

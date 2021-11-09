@@ -63,7 +63,7 @@ const Header = () => {
 
 const StyledHeader = styled(BaseHeader)`
 	height: 80px;
-	padding: 0 10%;
+	padding: 0 8%;
 	display: flex;
 	justify-content: center;
 	background: linear-gradient(180deg, #016eac 0%, #3c9fcf 100%);

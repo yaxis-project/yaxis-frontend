@@ -4,7 +4,7 @@ import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { NavLink } from 'react-router-dom'
 import { currentConfig } from '../../../constants/configs'
 import AccountInfo from './AccountInfo'
-import { Row, Menu, Dropdown, Button, Typography } from 'antd'
+import { Row, Dropdown, Button, Typography } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
 import { useOpenModal } from '../../../state/application/hooks'
 import { ApplicationModal } from '../../../state/application/actions'
@@ -16,48 +16,8 @@ import {
 import ThemeToggle from '../../ThemeToggle'
 import { useWeb3React } from '@web3-react/core'
 import useTranslation from '../../../hooks/useTranslation'
+import Menu from '../../Menu'
 
-const StyledMenu = styled(Menu)`
-	background: ${(props) => props.theme.secondary.background};
-	padding: 10px;
-`
-const StyledLink = styled(NavLink)`
-	font-weight: 400;
-	text-decoration: none;
-`
-const MenuItem = styled(Menu.Item)`
-	color: ${(props) => props.theme.primary.font};
-	height: 38px;
-	font-size: 18px;
-`
-const StyledSpan = styled.span`
-	font-size: 18px;
-	color: ${(props) => props.theme.primary.font};
-`
-
-const StyledSubMenu = styled(Menu.SubMenu)`
-	height: 38px;
-`
-
-const MenuText = styled(Typography.Text)`
-	display: block;
-`
-
-const ItemGroup = styled(Menu.ItemGroup)`
-	height: 30px;
-`
-
-const Connect = styled(Menu.Item)`
-	font-weight: bold;
-	font-size: 1.3em;
-	color: #016eac;
-	display: flex;
-	background-color: #f5f5f5;
-	border-radius: 5px;
-	&:hover {
-		color: rgb(67, 210, 255);
-	}
-`
 interface NavTabletProps {}
 
 const NavTablet: React.FC<NavTabletProps> = () => {
@@ -99,6 +59,14 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 	const menu = useMemo(
 		() => (
 			<StyledMenu>
+				<Row
+					align="middle"
+					justify="center"
+					style={{ margin: '10px 0' }}
+				>
+					<ThemeToggle />
+				</Row>
+
 				{!account ? (
 					<Connect onClick={openModal}>
 						{translate('Connect')}
@@ -121,19 +89,19 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 					key={'/vault'}
 					title={
 						<StyledLink activeClassName="active" to="/vault">
-							{translate('Vault')}{' '}
+							{translate('Vault')}
 						</StyledLink>
 					}
 				>
 					{vaults.map((vault) => (
-						<Menu.Item key={`/vault/${vault}`}>
+						<MenuItem key={`/vault/${vault}`}>
 							<StyledLink
 								activeClassName="active"
 								to={`/vault/${vault}`}
 							>
 								<MenuText>{vault.toUpperCase()}</MenuText>
 							</StyledLink>
-						</Menu.Item>
+						</MenuItem>
 					))}
 				</StyledSubMenu>
 
@@ -161,13 +129,6 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 				</MenuItem>
 
 				<Menu.Divider />
-				<Row
-					align="middle"
-					justify="center"
-					style={{ margin: '10px 0' }}
-				>
-					<ThemeToggle />
-				</Row>
 
 				<MenuItem>
 					<a
@@ -195,6 +156,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 			friendlyNetworkName,
 			currentPools,
 			handleSignOutClick,
+			vaults,
 		],
 	)
 	return (
@@ -211,3 +173,51 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 }
 
 export default NavTablet
+
+const StyledMenu = styled(Menu.Menu)`
+	background: ${(props) => props.theme.secondary.background};
+	padding: 10px;
+`
+const StyledLink = styled(NavLink)`
+	font-size: 18px;
+	font-weight: 400;
+	text-decoration: none;
+	color: ${(props) => props.theme.primary.font} !important;
+`
+const MenuItem = styled(Menu.Item)`
+	color: ${(props) => props.theme.primary.font};
+	height: 38px;
+	font-size: 18px;
+
+	svg {
+		fill: white;
+	}
+`
+const StyledSpan = styled.span`
+	font-size: 18px;
+	color: ${(props) => props.theme.primary.font};
+`
+
+const StyledSubMenu = styled(Menu.SubMenu)`
+	height: 38px;
+`
+
+const MenuText = styled(Typography.Text)`
+	display: block;
+`
+
+const ItemGroup = styled(Menu.ItemGroup)`
+	height: 30px;
+`
+
+const Connect = styled(Menu.Item)`
+	font-weight: bold;
+	font-size: 1.3em;
+	color: #016eac;
+	display: flex;
+	background-color: #f5f5f5;
+	border-radius: 5px;
+	&:hover {
+		color: rgb(67, 210, 255);
+	}
+`

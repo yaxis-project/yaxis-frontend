@@ -9,6 +9,7 @@ const StyledText = styled(Typography.Text)`
 const SecondaryStyledText = styled(Typography.Text)`
 	&&& {
 		color: ${(props) => props.theme.secondary.font};
+		font-size: 16px;
 	}
 `
 const StyledLink = styled(Typography.Link)`
@@ -41,7 +42,6 @@ const SecondaryStyledTitle = styled(Typography.Title)`
 		color: ${(props) => props.theme.secondary.font};
 	}
 `
-
 const StyledTypography = {
 	Text: StyledText,
 	SecondaryText: SecondaryStyledText,

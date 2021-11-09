@@ -171,7 +171,7 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 		<>
 			<Row style={{ width: '100%' }}>
 				<Col span={8}>
-					<Text>Current Lock</Text>
+					<StyledText>Current Lock</StyledText>
 				</Col>
 				<Col span={16}>
 					<Row style={{ marginBottom: '10px' }}>
@@ -192,7 +192,7 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 			<Divider />
 			<Row style={{ width: '100%' }}>
 				<Col span={8}>
-					<Text>Extend Lock</Text>
+					<StyledText>Extend Lock</StyledText>
 				</Col>
 				<Col span={16}>
 					<Row style={{ marginBottom: '10px' }}>

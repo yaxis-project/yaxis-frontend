@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react'
 import { NavLink } from 'react-router-dom'
-import { Menu, Typography } from 'antd'
+import { Row, Col, Typography } from 'antd'
+import Menu from '../../Menu'
 import styled from 'styled-components'
 import { currentConfig } from '../../../constants/configs'
+import { Currencies } from '../../../constants/currencies'
 import { CaretDownFilled } from '@ant-design/icons'
 import { useWeb3React } from '@web3-react/core'
 import useTranslation from '../../../hooks/useTranslation'
@@ -54,7 +56,24 @@ const Nav: React.FC = () => {
 							activeClassName="active"
 							to={`/vault/${vault}`}
 						>
-							<MenuText>{vault.toUpperCase()}</MenuText>
+							<Row gutter={10} align="middle">
+								<Col>
+									<Row align="middle">
+										<img
+											src={
+												Currencies[vault.toUpperCase()]
+													.icon
+											}
+											height="36"
+											width="36"
+											alt="logo"
+										/>
+									</Row>
+								</Col>
+								<Col>
+									<MenuText>{vault.toUpperCase()}</MenuText>
+								</Col>
+							</Row>
 						</StyledLink>
 					</Menu.Item>
 				))}
@@ -91,11 +110,11 @@ const Nav: React.FC = () => {
 	)
 }
 
-const StyledMenu = styled(Menu)`
-	border-bottom: none;
-	background: none;
+const StyledMenu = styled(Menu.Menu)`
+	svg {
+		fill: white;
+	}
 `
-
 const StyledSubMenu = styled(Menu.SubMenu)`
 	height: 38px;
 `

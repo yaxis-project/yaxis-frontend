@@ -8,7 +8,7 @@ import Value from '../../../components/Value'
 import { useReturns } from '../../../state/wallet/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
 
-const { Text } = Typography
+const { SecondaryText } = Typography
 
 interface TooltipRowProps {
 	main: string
@@ -84,8 +84,7 @@ export default function HomeOverviewCard() {
 						</Tooltip>
 					</StyledText>
 				}
-				secondary={null}
-				rightContent={
+				secondary={
 					<Col>
 						<Value
 							numberPrefix="$"
@@ -138,8 +137,7 @@ export default function HomeOverviewCard() {
 						</Tooltip>
 					</StyledText>
 				}
-				secondary={null}
-				rightContent={
+				secondary={
 					<Col>
 						<Value
 							numberPrefix="$"
@@ -165,7 +163,7 @@ export default function HomeOverviewCard() {
 	)
 }
 
-const StyledText = styled(Text)`
+const StyledText = styled(SecondaryText)`
 	@media only screen and (max-width: 600px) {
 		margin-right: 55px;
 	}

@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Dropdown, Menu, Row, Col } from 'antd'
+import { Menu, Row, Col } from 'antd'
 import { CaretDownOutlined } from '@ant-design/icons'
 import { useLanguage, useSetLanguage } from '../../../state/user/hooks'
 import { TLanguages, LanguagesDisplay } from '../../../constants/translations'
@@ -16,50 +16,45 @@ const Button: React.FC<Props> = () => {
 	const setLanguage = useSetLanguage()
 	const translate = useTranslation()
 	return (
-		<Row
-			style={{
-				margin: '0 10px',
-			}}
-		>
-			<StyledDropdown
-				placement="bottomCenter"
-				overlay={
-					<StyledMenu>
-						{Object.values(LanguagesDisplay)
-							.filter(({ key }) => key !== language)
-							.map(({ key, flag, name }) => (
-								<Menu.Item
-									key={key}
-									onClick={() =>
-										setLanguage(
-											key.toUpperCase() as TLanguages,
-										)
-									}
-								>
-									<Row align="middle" gutter={10}>
-										<Col
-											style={{
-												fontSize: '26px',
-											}}
-										>
-											{flag}
-										</Col>
-										<Col>
-											<Text>{translate(name)}</Text>
-										</Col>
-									</Row>
-								</Menu.Item>
-							))}
-					</StyledMenu>
-				}
-			>
-				<Row align="middle">
-					<Col>{language}</Col>
-					<Col>
-						<CaretDownOutlined style={{ paddingLeft: '1px' }} />
-					</Col>
-				</Row>
-			</StyledDropdown>
+		<Row>
+			<StyledMenu mode="horizontal">
+				<StyledSubMenu
+					title={
+						<LanguageSelector align="middle">
+							<Col>{language}</Col>
+							<Col>
+								<CaretDownOutlined
+									style={{ paddingLeft: '1px' }}
+								/>
+							</Col>
+						</LanguageSelector>
+					}
+				>
+					{Object.values(LanguagesDisplay)
+						.filter(({ key }) => key !== language)
+						.map(({ key, flag, name }) => (
+							<Menu.Item
+								key={key}
+								onClick={() =>
+									setLanguage(key.toUpperCase() as TLanguages)
+								}
+							>
+								<Row align="middle" gutter={10}>
+									<Col
+										style={{
+											fontSize: '26px',
+										}}
+									>
+										{flag}
+									</Col>
+									<Col>
+										<Text>{translate(name)}</Text>
+									</Col>
+								</Row>
+							</Menu.Item>
+						))}
+				</StyledSubMenu>
+			</StyledMenu>
 		</Row>
 	)
 }
@@ -67,11 +62,22 @@ const Button: React.FC<Props> = () => {
 export default Button
 
 const StyledMenu = styled(Menu)`
-	background: ${(props) => props.theme.primary.background};
-	padding: 8px;
-	color: ${(props) => props.theme.primary.main};
+	border-bottom: none;
+	background: none;
+	color: ${(props) => props.theme.colors.white} !important;
+	font-weight: 600;
+	font-size: 18px;
+	text-decoration: none;
 `
-const StyledDropdown = styled(Dropdown)`
-	font-size: 1rem;
-	color: white;
+
+const StyledSubMenu = styled(Menu.SubMenu)`
+	padding: 0 !important;
+	width: 40px;
+`
+
+const LanguageSelector = styled(Row)`
+	-webkit-user-select: none; /* Safari */
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+/Edge */
+	user-select: none; /* Standard */
 `
