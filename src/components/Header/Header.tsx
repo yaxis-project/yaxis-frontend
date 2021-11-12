@@ -31,10 +31,10 @@ const Header = () => {
 						<Nav />
 					</Col>
 					<Col>
-						<ThemeToggle />
+						<LanguageSelect />
 					</Col>
 					<Col>
-						<LanguageSelect />
+						<ThemeToggle />
 					</Col>
 					<StyledAccountButtonWrapper>
 						<AccountButton />

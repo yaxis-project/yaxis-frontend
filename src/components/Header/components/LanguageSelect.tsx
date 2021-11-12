@@ -29,6 +29,7 @@ const Button: React.FC<Props> = () => {
 							</Col>
 						</LanguageSelector>
 					}
+					popupOffset={[-50, 5]}
 				>
 					{Object.values(LanguagesDisplay)
 						.filter(({ key }) => key !== language)
