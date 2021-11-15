@@ -1,53 +1,74 @@
 import React, { useMemo } from 'react'
+import styled from 'styled-components'
 import useTranslation from '../../../hooks/useTranslation'
-import {
-	ExpandableSidePanel,
-	CardRow,
-} from '../../../components/ExpandableSidePanel'
+import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
 import { Pie } from '@ant-design/charts'
-import { useGauges } from '../../../state/internal/hooks'
+import { useGauges, useRewardRate } from '../../../state/internal/hooks'
 
 const CurrentDistribution: React.FC = () => {
 	const translate = useTranslation()
 
 	const [loading, gauges] = useGauges()
 
+	const rate = useRewardRate()
+
 	const data = useMemo(() => {
 		if (loading) return []
 		return Object.entries(gauges).map(([gauge, { relativeWeight }]) => {
-			return { type: gauge, value: relativeWeight.toNumber() }
+			return {
+				type: gauge.toUpperCase(),
+				value: relativeWeight.toNumber(),
+			}
 		})
 	}, [loading, gauges])
 
-	const config = useMemo(() => {
-		return {
-			data: data,
-			angleField: 'value',
-			colorField: 'type',
-			radius: 1,
-			legend: false as any,
-			padding: 0,
-			label: {
-				type: 'inner',
-				offset: '-30%',
-				content: function content(_ref) {
-					var percent = _ref.percent
-					return ''.concat((percent * 100).toFixed(0), '%')
-				},
-				style: {
-					fontSize: 14,
-					textAlign: 'center',
-				},
-			},
-			interactions: [{ type: 'element-active' }],
-		}
-	}, [data])
-
 	return (
 		<ExpandableSidePanel header={translate('Current Distribution')}>
-			<CardRow main={<Pie {...config} />} secondary={null} last />
+			<StyledRow>
+				<Pie
+					data={data}
+					angleField={'value'}
+					colorField={'type'}
+					radius={1}
+					legend={false}
+					padding={10}
+					label={{
+						type: 'inner',
+						offset: '-30%',
+						content: function content(_ref) {
+							var percent = _ref.percent
+							return ''.concat((percent * 100).toFixed(0), '%')
+						},
+						style: {
+							fontSize: 26,
+							textAlign: 'center',
+						},
+					}}
+					tooltip={{
+						formatter: ({ type, value }) => {
+							return {
+								name: type,
+								value:
+									rate
+										.multipliedBy(60 * 60 * 24)
+										.multipliedBy(value)
+										.dividedBy(100)
+										.toFixed(3) + ' YAXIS / day',
+							}
+						},
+					}}
+					interactions={[{ type: 'element-active' }]}
+				/>
+			</StyledRow>
 		</ExpandableSidePanel>
 	)
 }
 
 export { CurrentDistribution }
+
+const StyledRow = styled.div`
+	&&& {
+		background: ${(props) => props.theme.secondary.background};
+		border-color: ${(props) => props.theme.secondary.border};
+	}
+`

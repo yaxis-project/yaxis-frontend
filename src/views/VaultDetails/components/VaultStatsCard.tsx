@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import {
 	ExpandableSidePanel,
 	CardRow,
@@ -17,13 +18,16 @@ const VaultStatsCard: React.FC<UserVaultDetailsProps> = ({ vault }) => {
 	const { vaultTvl } = useTVL()
 	const strategies = useVaultStrategies()
 
+	const strategy = useMemo(() => {
+		const names = strategies[vault]
+		if (!names) return t('None')
+		return names.map((strategy) => <div>{strategy}</div>)
+	}, [strategies, t, vault])
+
 	return (
 		<>
 			<ExpandableSidePanel header={t('Vault Stats')} key="1">
-				<CardRow
-					main="Current Strategy"
-					secondary={strategies[vault] || t('None')}
-				/>
+				<CardRow main={t('Current Strategies')} secondary={strategy} />
 				<CardRow
 					main={t('Total Value Locked')}
 					secondary={

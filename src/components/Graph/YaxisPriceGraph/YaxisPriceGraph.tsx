@@ -81,6 +81,10 @@ const StyledText = styled.span`
 	color: ${(props) => props.theme.primary.font};
 `
 
+const StyledLoadingOutlined = styled(LoadingOutlined)`
+	color: ${(props) => props.theme.primary.font};
+`
+
 /**
  * Generates a sparkline graph card for YAX prices.
  */
@@ -159,7 +163,7 @@ const PriceGraph: React.FC = () => {
 			<WithTooltip
 				renderTooltip={({ index }) => {
 					const date = moment(data.dates[index]).format(
-						'Do MMM YY @ HH:mm',
+						'MMM Do YYYY @ HH:mm',
 					)
 					const price = data.values[index].toFixed(2)
 
@@ -183,7 +187,7 @@ const PriceGraph: React.FC = () => {
 				</Sparkline>
 			</WithTooltip>
 
-			{isLoading && <LoadingOutlined className={'loading-icon'} />}
+			{isLoading && <StyledLoadingOutlined className={'loading-icon'} />}
 		</StyledCard>
 	)
 }

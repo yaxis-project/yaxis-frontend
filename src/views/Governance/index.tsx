@@ -10,7 +10,7 @@ import {
 	Offchain,
 	Onchain,
 	CurrentDistribution,
-	GaugesOverview,
+	GovernanceOverview,
 	BoostCalculator,
 	DAOResources,
 	FutureRewards,
@@ -48,8 +48,15 @@ const Governance: React.FC = () => {
 			loading={false}
 			mainTitle={translate('Governance')}
 			secondaryText={translate('Community Voting')}
-			value={votingPower.toString()}
-			valueInfo={translate('Voting Power')}
+			value={
+				(votingPower.totalSupply.isZero()
+					? '0.00'
+					: votingPower.balance
+							.dividedBy(votingPower.totalSupply)
+							.multipliedBy(100)
+							.toFormat(2)) + '%'
+			}
+			valueInfo={translate('of total Voting Power')}
 		>
 			<Row gutter={16}>
 				<Col xs={24} sm={24} md={24} lg={16}>
@@ -62,11 +69,14 @@ const Governance: React.FC = () => {
 							centered
 							destroyInactiveTabPane
 						>
-							<TabPane tab={translate('Boost')} key="#lock">
+							<TabPane
+								tab={translate('Lock & Boost')}
+								key="#lock"
+							>
 								<Lock />
 							</TabPane>
 							<TabPane
-								tab={translate('Reward Distribution')}
+								tab={translate('Distribute Rewards')}
 								key="#onchain"
 							>
 								<Onchain />
@@ -83,7 +93,7 @@ const Governance: React.FC = () => {
 				<StyledCol xs={24} sm={24} md={24} lg={8}>
 					{activeKey === '#lock' && (
 						<>
-							<GaugesOverview />
+							<GovernanceOverview />
 							<BoostCalculator />
 						</>
 					)}

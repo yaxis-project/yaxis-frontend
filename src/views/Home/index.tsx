@@ -7,7 +7,7 @@ import HomeOverviewCard from './components/HomeOverviewCard'
 import LPAccountOverview from './components/LPAccountOverview'
 import HomeExpandableOverview from './components/HomeExpandableOverview'
 import { Row, Col, Grid } from 'antd'
-import { useStakedBalances, useVaultsBalances } from '../../state/wallet/hooks'
+import { useLock, useVaultsBalances } from '../../state/wallet/hooks'
 import { usePrices } from '../../state/prices/hooks'
 import { formatBN } from '../../utils/number'
 import useTranslation from '../../hooks/useTranslation'
@@ -48,21 +48,21 @@ const Home: React.FC = () => {
 const GovernanceAccountOverview: React.FC = () => {
 	const translate = useTranslation()
 
-	const { Yaxis } = useStakedBalances()
+	const lock = useLock()
 
 	const {
 		prices: { yaxis },
 	} = usePrices()
 
 	const balanceUSD = useMemo(
-		() => '$' + formatBN(Yaxis.amount.multipliedBy(yaxis)),
-		[Yaxis, yaxis],
+		() => '$' + formatBN(lock.locked.multipliedBy(yaxis)),
+		[lock, yaxis],
 	)
 	return (
 		<AccountOverviewCard
 			loading={false}
 			mainTitle={translate('Governance Account')}
-			secondaryText={translate('YAXIS Staking')}
+			secondaryText={''}
 			value={balanceUSD}
 		/>
 	)
@@ -82,7 +82,7 @@ const VaultAccountOverview: React.FC = () => {
 		<AccountOverviewCard
 			loading={false}
 			mainTitle={translate('Vault Account')}
-			secondaryText={translate('Canonical Vaults')}
+			secondaryText={''}
 			value={'$' + formatBN(balanceUSD)}
 		/>
 	)

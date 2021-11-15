@@ -8,7 +8,9 @@ const { Text } = Typography
 const Offchain: React.FC = () => (
 	<>
 		<Row style={{ margin: '7%' }}>
-			<Text>Participate in the DAO by voting on YIPs.</Text>
+			<Text style={{ fontSize: '18px' }}>
+				Participate in the DAO by voting on yAxis Improvement Proposals.
+			</Text>
 		</Row>
 		<Row style={{ margin: '5% 10% 5% 10%' }} justify="center">
 			<Button

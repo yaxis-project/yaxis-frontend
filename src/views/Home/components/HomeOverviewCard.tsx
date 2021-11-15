@@ -13,9 +13,10 @@ const { SecondaryText } = Typography
 interface TooltipRowProps {
 	main: string
 	value: any
+	prefix?: string
 }
 
-const TooltipRow = ({ main, value }: TooltipRowProps) => (
+const TooltipRow = ({ main, value, prefix }: TooltipRowProps) => (
 	<>
 		<div
 			style={{ textDecoration: 'underline', textUnderlineOffset: '4px' }}
@@ -25,7 +26,7 @@ const TooltipRow = ({ main, value }: TooltipRowProps) => (
 		<div>
 			<Value
 				value={value}
-				numberPrefix="$"
+				numberPrefix={prefix || '$'}
 				decimals={2}
 				color={'white'}
 			/>
@@ -59,24 +60,12 @@ export default function HomeOverviewCard() {
 											fontWeight: 700,
 										}}
 									>
-										{translate('Your YAXIS rewards')}:
+										Your Vault returns:
 									</div>
-									<TooltipRow
-										main={translate('Vault rewards')}
-										value={metaVault.toNumber()}
-									/>
-									<TooltipRow
-										main={translate(
-											'Governance (YAXIS) rewards',
-										)}
-										value={governance.toNumber()}
-									/>
-									<TooltipRow
-										main={translate(
-											'Liquidity Pool token rewards',
-										)}
-										value={lp.toNumber()}
-									/>
+									<TooltipRow main={'3CRV'} value={0} />
+									<TooltipRow main={'wETH'} value={0} />
+									<TooltipRow main={'wBTC'} value={0} />
+									<TooltipRow main={'LINK'} value={0} />
 								</>
 							}
 						>
@@ -120,16 +109,18 @@ export default function HomeOverviewCard() {
 									/>
 									<TooltipRow
 										main={translate(
-											'Governance (YAXIS) rewards',
-										)}
-										value={governance.toNumber()}
-									/>
-									<TooltipRow
-										main={translate(
 											'Liquidity Pool token rewards',
 										)}
 										value={lp.toNumber()}
 									/>
+									{governance.gt(0) && (
+										<TooltipRow
+											main={
+												'YAXIS staking rewards (LEGACY)'
+											}
+											value={governance.toNumber()}
+										/>
+									)}
 								</>
 							}
 						>

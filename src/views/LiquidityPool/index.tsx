@@ -73,6 +73,7 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 						: 'Your Position',
 				)}
 				background={pool?.legacy ? red[100] : undefined}
+				backNavigate="/liquidity"
 			>
 				<Row gutter={16}>
 					<Col xs={24} sm={24} md={24} lg={16}>

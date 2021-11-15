@@ -32,15 +32,22 @@ const CurvePool: React.FC<Props> = ({ vault }) => {
 	return (
 		<Card style={{ padding: '8px', fontSize: '16px' }}>
 			<Row justify="center">
-				This Vault accepts {vaultData.token.toUpperCase()} deposits, a
-				Curve.fi Liqidity Pool token.
+				<Text>
+					This Vault accepts {vaultData.token.toUpperCase()} deposits,
+					a Curve.fi Liqidity Pool token.
+				</Text>
 			</Row>
 			<Row justify="center">
-				Get some by
-				<TextLink style={{ marginLeft: '4px' }} href={vaultData.url}>
-					depositing your {vault.toUpperCase()}
-				</TextLink>
-				.
+				<Text>
+					Get some by
+					<TextLink
+						style={{ marginLeft: '4px' }}
+						href={vaultData.url}
+					>
+						depositing your {vault.toUpperCase()}
+					</TextLink>
+					.
+				</Text>
 			</Row>
 		</Card>
 	)

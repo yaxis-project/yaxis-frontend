@@ -910,16 +910,21 @@ export function useVotingPower() {
 	const { contracts } = useContracts()
 	const results = useSingleContractMultipleMethods(
 		contracts?.internal.votingEscrow,
-		[['balanceOf(address)', [account]]],
+		[['balanceOf(address)', [account]], ['totalSupply()']],
 	)
 
 	return useMemo(() => {
-		const [balanceOf] = results.map(({ result, loading }, i) => {
-			if (loading) return ethers.BigNumber.from(0)
-			if (!result) return ethers.BigNumber.from(0)
-			return result
-		})
-		return new BigNumber(balanceOf.toString())
+		const [balanceOf, totalSupply] = results.map(
+			({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			},
+		)
+		return {
+			balance: new BigNumber(balanceOf.toString()),
+			totalSupply: new BigNumber(totalSupply.toString()),
+		}
 	}, [results])
 }
 
@@ -1064,3 +1069,101 @@ export function useUserGauges() {
 		]
 	}, [contracts?.vaults, results])
 }
+
+const TOKENLESS_PRODUCTION = 40
+export function useUserBoost(vault: TVaults) {
+	const { account } = useWeb3Provider()
+
+	const { contracts } = useContracts()
+
+	const [balances] = useAllTokenBalances()
+
+	const results = useSingleContractMultipleMethods(
+		contracts?.vaults[vault]?.gauge,
+		[
+			['integrate_checkpoint_of', [account]],
+			['working_balances', [account]],
+		],
+	)
+	const workingBalanceWithDefault = useMemo(() => {
+		const timestamp = results[1]
+		if (timestamp.loading || !timestamp.result) return null
+		const result = new BigNumber(timestamp.result.toString())
+		if (result.isZero()) return null
+		return result
+	}, [results])
+
+	return useMemo<[boolean, BigNumber]>(() => {
+		const defaultBoost = new BigNumber(1)
+
+		const userLPToken =
+			balances[contracts?.vaults[vault]?.gaugeToken.name.toLowerCase()]
+				?.value
+
+		if (workingBalanceWithDefault?.isEqualTo(userLPToken))
+			return [false, defaultBoost]
+
+		const limit = userLPToken
+			?.multipliedBy(TOKENLESS_PRODUCTION)
+			.dividedBy(100)
+
+		if (!limit || limit.isZero()) return [false, defaultBoost]
+
+		const loading = false
+		// TODO: loading
+
+		return [loading, workingBalanceWithDefault?.dividedBy(limit.toFixed(0))]
+	}, [vault, balances, contracts?.vaults, workingBalanceWithDefault])
+}
+
+export function useUserBoosts() {
+	const { account } = useWeb3Provider()
+
+	const { contracts } = useContracts()
+
+	const [balances, loading] = useAllTokenBalances()
+
+	return useMemo<[boolean, 0]>(() => {
+		const loading = true
+		return [loading, 0]
+	}, [contracts?.vaults])
+}
+
+// const timestampWithDefault = useMemo(() => {
+// 	const timestamp = results[0]
+// 	if (timestamp.loading || !timestamp.result) return null
+// 	const result = new BigNumber(timestamp.result.toString())
+// 	if (result.isZero()) return null
+// 	return result
+// }, [results])
+
+// const votingBalance = useSingleCallResult(
+// 	contracts?.internal.votingEscrow,
+// 	'balanceOf(address,uint256)',
+// 	timestampWithDefault
+// 		? [account, timestampWithDefault.toString()]
+// 		: null,
+// )
+
+// const votingTotal = useSingleCallResult(
+// 	contracts?.internal.votingEscrow,
+// 	'totalSupply(uint256)',
+// 	timestampWithDefault ? [timestampWithDefault.toString()] : null,
+// )
+
+// const voting_balance = new BigNumber(votingBalance?.result?.toString())
+// const voting_total = new BigNumber(votingTotal?.result?.toString())
+
+// const totalLPToken = workingBalanceWithDefault
+// 	.minus(limit)
+// 	.dividedBy(voting_balance)
+// 	.multipliedBy(
+// 		voting_total
+// 			.dividedBy(100 - TOKENLESS_PRODUCTION)
+// 			.multipliedBy(100),
+// 	)
+
+// const workingBalanceNoBoost = totalLPToken.
+//  = (L * voting_balance / voting_total * (100 - TOKENLESS_PRODUCTION) / 100)
+
+// lim = min(l, lim)

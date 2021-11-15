@@ -223,34 +223,3 @@ export function useLP(name: TLiquidityPools) {
 		}
 	}, [contract, data, t0p, t1p])
 }
-
-export function useCrvLPPrices() {
-	const { chainId } = useWeb3Provider()
-	const vaults = useMemo(
-		() => Object.values(currentConfig(chainId).vaults),
-		[chainId],
-	)
-
-	const data = useMultipleContractSingleData(
-		vaults.map((vault) => vault.tokenPoolContract),
-		CURVE_POOL_INTERFACE,
-		'get_virtual_price()',
-	)
-
-	return useMemo(() => {
-		const virtualPrices = data.map(({ result, loading }, i) => {
-			if (loading) return ethers.BigNumber.from(0)
-			if (!result) return ethers.BigNumber.from(0)
-			return result
-		})
-		return Object.fromEntries(
-			virtualPrices.map((price, i) => {
-				const { token } = vaults[i]
-				return [
-					token,
-					new BigNumber(price.toNumber()).dividedBy(10 ** 18),
-				]
-			}),
-		)
-	}, [vaults, data])
-}

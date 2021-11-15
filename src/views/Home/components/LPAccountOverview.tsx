@@ -136,7 +136,7 @@ export default function LPAccountOverview() {
 		<StyledCollapse expandIconPosition="right">
 			<Panel
 				header={
-					<Row gutter={16}>
+					<Row gutter={16} align="middle">
 						<Col xs={6} sm={2} md={2} lg={3}>
 							<StyledImage2
 								src={logo}

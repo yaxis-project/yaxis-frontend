@@ -16,6 +16,7 @@ interface PageProps {
 	valueInfo?: string
 	children: React.ReactElement
 	background?: string
+	backNavigate?: string
 }
 
 const Page: React.FC<PageProps> = ({ children, ...props }) => (

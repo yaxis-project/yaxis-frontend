@@ -11,6 +11,8 @@ import { Currencies } from '../../constants/currencies'
 import { useContracts } from '../../contexts/Contracts'
 import CurrencyFaucet from './components/CurrencyFaucet'
 
+const { Text } = Typography
+
 const Faucet: React.FC = () => {
 	const { chainId } = useWeb3Provider()
 	const { contracts } = useContracts()
@@ -26,8 +28,10 @@ const Faucet: React.FC = () => {
 			<Row style={{ padding: '20px' }} gutter={[0, 20]} justify="center">
 				<Col span={24}>
 					<Row justify="center" style={{ fontSize: '18px' }}>
-						To get YAXIS, faucet YAX and send through the swap
-						contract
+						<Text>
+							To get YAXIS, faucet YAX and send through the swap
+							contract.
+						</Text>
 					</Row>
 				</Col>
 				<Divider />
@@ -79,9 +83,7 @@ const Faucet: React.FC = () => {
 								</Button>
 							</Row>
 							<div>
-								<Typography.Text>
-									( GitHub sign in required )
-								</Typography.Text>
+								<Text>( GitHub sign in required )</Text>
 							</div>
 						</Col>
 					</Row>

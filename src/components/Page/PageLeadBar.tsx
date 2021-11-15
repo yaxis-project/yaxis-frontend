@@ -86,6 +86,7 @@ interface PageLeadBarProps {
 	value?: string
 	valueInfo?: string
 	background?: string
+	backNavigate?: string
 }
 
 /**
@@ -101,6 +102,7 @@ const PageLeadBar = (props: PageLeadBarProps) => {
 		value,
 		valueInfo,
 		background,
+		backNavigate,
 	} = props
 	if (
 		!mainTitle &&
@@ -123,14 +125,12 @@ const PageLeadBar = (props: PageLeadBarProps) => {
 			>
 				<Col xs={3} sm={2} md={2}>
 					<Row>
-						<NavLink to="/">
+						<NavLink to={backNavigate || '/'}>
 							<StyledBackArrow />
 						</NavLink>
 					</Row>
 				</Col>
-				<Col xs={6} sm={4} md={2}>
-					<img src={logo} height="51" alt="logo" />
-				</Col>
+
 				<Col xs={15} sm={18} md={7}>
 					<StyledTitle2 level={5}>{mainTitle}</StyledTitle2>
 
@@ -151,13 +151,13 @@ const PageLeadBar = (props: PageLeadBarProps) => {
 						</StyledSecondaryText3>
 					)}
 				</Col>
-				{md || lg ? (
+
+				{(md || lg) && (
 					<Col md={1} style={{ marginTop: '8px' }}>
 						<StyledDivider type={'vertical'} />
 					</Col>
-				) : (
-					<></>
 				)}
+
 				<Col xs={22} sm={22} md={12} style={{ marginTop: '8px' }}>
 					<StyledTitle
 						style={{

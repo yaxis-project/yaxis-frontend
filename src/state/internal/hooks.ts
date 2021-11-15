@@ -5,6 +5,7 @@ import {
 	useSingleContractMultipleMethods,
 	useSingleCallResult,
 	useSingleContractMultipleData,
+	useMultipleContractSingleData,
 } from '../onchain/hooks'
 import BigNumber from 'bignumber.js'
 import { usePrices } from '../prices/hooks'
@@ -13,12 +14,13 @@ import { numberToFloat } from '../../utils/number'
 import {
 	TLiquidityPools,
 	TRewardsContracts,
-	Vaults,
 	TVaults,
 } from '../../constants/type'
-import ERC20Abi from '../../constants/abis/mainnet/erc20.json'
+import { abis } from '../../constants/abis/mainnet'
+import { uniq } from 'lodash'
 
-const ERC20_INTERFACE = new ethers.utils.Interface(ERC20Abi)
+const ERC20_INTERFACE = new ethers.utils.Interface(abis.ERC20Abi)
+const STRATEGY_INTERFACE = new ethers.utils.Interface(abis.StrategyABI)
 
 export function useMetaVaultData() {
 	const { contracts } = useContracts()
@@ -86,7 +88,7 @@ export function useVault(name: TVaults) {
 	])
 
 	const tokenData = useSingleContractMultipleMethods(
-		vaultContracts?.token.contract,
+		vaultContracts?.vaultToken.contract,
 		[['totalSupply']],
 	)
 
@@ -104,6 +106,7 @@ export function useVault(name: TVaults) {
 			if (!result) return ethers.BigNumber.from(0)
 			return result
 		})
+
 		return {
 			balance: new BigNumber(balance?.toString()),
 			totalSupply: new BigNumber(totalSupply?.toString()),
@@ -137,53 +140,6 @@ export function useYaxisGauge() {
 			pricePerFullShare: new BigNumber(1),
 		}
 	}, [gaugeData])
-}
-
-export function useGauge(name: TVaults) {
-	const { contracts } = useContracts()
-
-	const vaultContracts = useMemo(
-		() => contracts?.vaults[name],
-		[contracts, name],
-	)
-
-	const data = useSingleContractMultipleMethods(vaultContracts?.gauge, [
-		['reward_contract'],
-		// ['reward_tokens'],
-	])
-
-	// const data2 = useSingleContractMultipleMethods(
-	// 	contracts?.internal.gaugeController,
-	// 	[
-	// 		[
-	// 			'get_gauge_weight(address)',
-	// 			[contracts?.vaults[name].gauge.address],
-	// 		],
-	// 		// ['reward_tokens'],
-	// 	],
-	// )
-
-	return useMemo(() => {
-		// const [
-		// 	reward_contract,
-		// 	reward_tokens
-		// ] = data.map(
-		// 	({ result, loading }, i) => {
-		// 		// if (loading) return ethers.BigNumber.from(0)
-		// 		// if (!result) return ethers.BigNumber.from(0)
-		// 		return result
-		// 	},
-		// )
-		// console.log(reward_contract, reward_tokens)
-		return {
-			// reward_contract: new BigNumber(
-			// 	reward_contract?.toString()
-			// ),
-			// reward_tokens: new BigNumber(
-			// 	reward_tokens?.toString()
-			// ),
-		}
-	}, [data])
 }
 
 export function useVaultAPR(name: TVaults) {
@@ -633,6 +589,45 @@ export function useVaultStrategies() {
 		vaults.map(([, data]) => ['strategies(address)', [data.vault.address]]),
 	)
 
+	const uniqueStrategies = useMemo(() => {
+		const output = []
+		if (!strategies.length) return output
+
+		strategies.forEach(({ loading, result }) => {
+			if (!loading && result) {
+				if (Array.isArray(result)) {
+					for (const address of result) {
+						if (Array.isArray(result)) {
+							for (const addr of address) {
+								output.push(addr)
+							}
+						} else output.push(address)
+					}
+				} else output.push(result)
+			}
+		})
+
+		return uniq(output)
+	}, [strategies])
+
+	const strategyNames = useMultipleContractSingleData(
+		uniqueStrategies,
+		STRATEGY_INTERFACE,
+		'name',
+	)
+
+	const strategyLookUp = useMemo(() => {
+		return Object.fromEntries(
+			uniqueStrategies.map((address, i) => {
+				const { loading, result } = strategyNames[i]
+				const name = !loading && result ? result : ''
+				return [address, name]
+			}),
+		)
+	}, [strategyNames, uniqueStrategies])
+
+	// TODO: add getCap(vault, strategy) to get caps
+
 	return useMemo(() => {
 		const strategiesWithDefaults = strategies.map(({ result, loading }) => {
 			if (loading) return ''
@@ -642,11 +637,14 @@ export function useVaultStrategies() {
 
 		return Object.fromEntries(
 			vaults.map(([vault], i) => {
-				const strategy = strategiesWithDefaults[i] || ''
-				return [vault, strategy]
+				const strategies = strategiesWithDefaults[i] || ''
+				const names = strategies
+					.split(',')
+					.map((strategy) => strategyLookUp[strategy] || '')
+				return [vault, names]
 			}),
 		)
-	}, [vaults, strategies])
+	}, [vaults, strategies, strategyLookUp])
 }
 
 export function useGauges() {
@@ -732,4 +730,15 @@ export function useGauges() {
 		relativeWeightsWithDefaults,
 		timesWithDefaults,
 	])
+}
+
+export function useRewardRate() {
+	const { contracts } = useContracts()
+
+	const rate = useSingleCallResult(contracts?.internal.minterWrapper, 'rate')
+
+	return useMemo(() => {
+		const { result } = rate
+		return new BigNumber(result?.toString() || 0).dividedBy(10 ** 18)
+	}, [rate])
 }

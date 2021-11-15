@@ -54,6 +54,7 @@ interface VaultC {
 	vaultToken: CurrencyContract
 	gauge: Contract
 	gaugeToken: CurrencyContract
+	tokenPool: Contract
 }
 type VaultsC = {
 	[key in TVaults]: VaultC
@@ -229,6 +230,11 @@ export class Contracts {
 						provider,
 					),
 				},
+				tokenPool: new Contract(
+					this.config.vaults[vault].tokenPoolContract,
+					abis.CurvePoolABI,
+					provider,
+				),
 			}
 		}
 	}

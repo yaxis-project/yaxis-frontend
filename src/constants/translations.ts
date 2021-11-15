@@ -150,12 +150,12 @@ export type Phrases =
 	| 'Lock'
 	| 'Create Lock'
 	| 'Extend Lock'
-	| 'These decay over time. Extend the lock up time to get the most benefits.'
+	| 'Voting power diminishes with time. Extend the lock up time or amount to get the most benefits.'
 	| 'Lock up your YAXIS token to increase your Vault rewards and get voting power toward governance decisions.'
 	| '1 week'
 	| '1 year'
 	| 'It will unlock'
-	| 'On'
+	| 'at'
 	| 'Stake your tokens to receive emissions!'
 	| 'Step complete.'
 	| 'Done.'
@@ -180,7 +180,7 @@ export type Phrases =
 	| 'Approve Gauge'
 	| 'Must be locked for more than 7 days to vote!'
 	| 'Current Distribution'
-	| 'Gauges Overview'
+	| 'Governance Overview'
 	| 'DAO Resources'
 	| 'Boost Calculator'
 	| 'Future Distribution'
@@ -190,13 +190,23 @@ export type Phrases =
 	| 'yAxis Learn'
 	| 'Forum'
 	| 'Starts on'
-	| 'Unlocks in'
+	| 'Unlocks'
 	| 'Voting power left to distribute'
 	| 'Total Vaults value'
 	| 'Vault Stats'
 	| 'None'
 	| 'Unstake from the previous Rewards contract'
 	| 'Boost rewards'
+	| 'Lock & Boost'
+	| 'Duration'
+	| 'Distribute Rewards'
+	| 'Current Strategies'
+	| 'Approve Automatic Unstaking'
+	| 'of total Voting Power'
+	| 'Approve Deposit'
+	| 'Approve Withdraw'
+	| 'Current APR'
+	// | 'Add to Lock'
 	// TODO: Might need tweaks
 	| 'claim YAXIS'
 	// Langauges
@@ -335,6 +345,7 @@ const EN: Translations = {
 	REPRESENTING: 'REPRESENTING',
 	'Pool Tokens': 'Pool Tokens',
 	'Total APR': 'Total APR',
+	'Current APR': 'Current APR',
 	'YAXIS rewards APR': 'YAXIS rewards APR',
 	'YAXIS rewards APY': 'YAXIS rewards APY',
 	'monthly compound': 'monthly compound',
@@ -356,14 +367,14 @@ const EN: Translations = {
 	Lock: 'Lock',
 	'Create Lock': 'Create Lock',
 	'Extend Lock': 'Extend Lock',
-	'These decay over time. Extend the lock up time to get the most benefits.':
-		'These decay over time. Extend the lock up time to get the most benefits.',
+	'Voting power diminishes with time. Extend the lock up time or amount to get the most benefits.':
+		'Voting power diminishes with time. Extend the lock up time or amount to get the most benefits.',
 	'Lock up your YAXIS token to increase your Vault rewards and get voting power toward governance decisions.':
 		'Lock up your YAXIS token to increase your Vault rewards and get voting power toward governance decisions.',
 	'1 week': '1 week',
 	'1 year': '1 year',
 	'It will unlock': 'It will unlock',
-	On: 'On',
+	at: 'at',
 	'Stake your tokens to receive emissions!':
 		'Stake your tokens to receive emissions!',
 	'Step complete.': 'Step complete.',
@@ -400,9 +411,9 @@ const EN: Translations = {
 	'yAxis Learn': 'yAxis Learn',
 	Forum: 'Forum',
 	'Starts on': 'Starts on',
-	'Unlocks in': 'Unlocks in',
+	Unlocks: 'Unlocks',
 	'Voting power left to distribute': 'Voting power left to distribute',
-	'Gauges Overview': 'Gauges Overview',
+	'Governance Overview': 'Governance Overview',
 	'DAO Resources': 'DAO Resources',
 	'Boost Calculator': 'Boost Calculator',
 	'Total Vaults value': 'Total Vaults value',
@@ -410,6 +421,14 @@ const EN: Translations = {
 	'Unstake from the previous Rewards contract':
 		'Unstake from the previous Rewards contract',
 	'Boost rewards': 'Boost rewards',
+	'Lock & Boost': 'Lock & Boost',
+	'Distribute Rewards': 'Distribute Rewards',
+	'Current Strategies': 'Current Strategies',
+	'of total Voting Power': 'of total Voting Power',
+	'Approve Automatic Unstaking': 'Approve Automatic Unstaking',
+	'Approve Deposit': 'Approve Deposit',
+	'Approve Withdraw': 'Approve Withdraw',
+	Duration: 'Duration',
 	None: 'None',
 	English: 'English',
 	Korean: 'Korean',
@@ -499,6 +518,7 @@ const KO: Translations = {
 	Rewards: '',
 	Claim: '',
 	'Claim All': '',
+	'Current APR': '',
 	'Claim button must have either a vault or rewards type.': '',
 	'claim YAXIS': '',
 	Security: '',
@@ -552,14 +572,14 @@ const KO: Translations = {
 	Lock: '',
 	'Create Lock': '',
 	'Extend Lock': '',
-	'These decay over time. Extend the lock up time to get the most benefits.':
+	'Voting power diminishes with time. Extend the lock up time or amount to get the most benefits.':
 		'',
 	'Lock up your YAXIS token to increase your Vault rewards and get voting power toward governance decisions.':
 		'',
 	'1 week': '',
 	'1 year': '',
 	'It will unlock': '',
-	On: '',
+	at: '',
 	'Stake your tokens to receive emissions!': '',
 	'Step complete.': '',
 	'Done.': '',
@@ -580,7 +600,11 @@ const KO: Translations = {
 	'Migrate over': '',
 	'What is a Liquidity Pool?': '',
 	'Approve Vault': '',
+	'Approve Deposit': '',
+	'Approve Withdraw': '',
 	'Approve Automatic Staking': '',
+	'Approve Automatic Unstaking': '',
+	'of total Voting Power': '',
 	'Approve Gauge': '',
 	'Must be locked for more than 7 days to vote!': '',
 	'Current Distribution': '',
@@ -591,9 +615,9 @@ const KO: Translations = {
 	'yAxis Learn': '',
 	Forum: '',
 	'Starts on': '',
-	'Unlocks in': '',
+	Unlocks: '',
 	'Voting power left to distribute': '',
-	'Gauges Overview': '',
+	'Governance Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',
 	'Total Vaults value': '',
@@ -601,6 +625,10 @@ const KO: Translations = {
 	None: '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
+	'Lock & Boost': '',
+	'Distribute Rewards': '',
+	'Current Strategies': '',
+	Duration: '',
 	English: '',
 	Korean: '',
 	Japanese: '',
@@ -689,6 +717,7 @@ const ZH: Translations = {
 	Rewards: '',
 	Claim: '',
 	'Claim All': '',
+	'Current APR': '',
 	'Claim button must have either a vault or rewards type.': '',
 	'claim YAXIS': '',
 	Security: '',
@@ -742,14 +771,14 @@ const ZH: Translations = {
 	Lock: '',
 	'Create Lock': '',
 	'Extend Lock': '',
-	'These decay over time. Extend the lock up time to get the most benefits.':
+	'Voting power diminishes with time. Extend the lock up time or amount to get the most benefits.':
 		'',
 	'Lock up your YAXIS token to increase your Vault rewards and get voting power toward governance decisions.':
 		'',
 	'1 week': '',
 	'1 year': '',
 	'It will unlock': '',
-	On: '',
+	at: '',
 	'Stake your tokens to receive emissions!': '',
 	'Step complete.': '',
 	'Done.': '',
@@ -770,7 +799,11 @@ const ZH: Translations = {
 	'Migrate over': '',
 	'What is a Liquidity Pool?': '',
 	'Approve Vault': '',
+	'Approve Deposit': '',
+	'Approve Withdraw': '',
 	'Approve Automatic Staking': '',
+	'Approve Automatic Unstaking': '',
+	'of total Voting Power': '',
 	'Approve Gauge': '',
 	'Must be locked for more than 7 days to vote!': '',
 	'Current Distribution': '',
@@ -781,10 +814,10 @@ const ZH: Translations = {
 	'yAxis Learn': '',
 	Forum: '',
 	'Starts on': '',
-	'Unlocks in': '',
+	Unlocks: '',
 	'Voting power left to distribute': '',
 
-	'Gauges Overview': '',
+	'Governance Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',
 	'Total Vaults value': '',
@@ -792,6 +825,10 @@ const ZH: Translations = {
 	None: '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
+	'Lock & Boost': '',
+	'Distribute Rewards': '',
+	'Current Strategies': '',
+	Duration: '',
 	English: '',
 	Korean: '',
 	Japanese: '',
@@ -881,6 +918,7 @@ const RU: Translations = {
 	Rewards: '',
 	Claim: '',
 	'Claim All': '',
+	'Current APR': '',
 	'Claim button must have either a vault or rewards type.': '',
 	'claim YAXIS': '',
 	Security: '',
@@ -934,14 +972,14 @@ const RU: Translations = {
 	Lock: '',
 	'Create Lock': '',
 	'Extend Lock': '',
-	'These decay over time. Extend the lock up time to get the most benefits.':
+	'Voting power diminishes with time. Extend the lock up time or amount to get the most benefits.':
 		'',
 	'Lock up your YAXIS token to increase your Vault rewards and get voting power toward governance decisions.':
 		'',
 	'1 week': '',
 	'1 year': '',
 	'It will unlock': '',
-	On: '',
+	at: '',
 	'Stake your tokens to receive emissions!': '',
 	'Step complete.': '',
 	'Done.': '',
@@ -962,7 +1000,11 @@ const RU: Translations = {
 	'Migrate over': '',
 	'What is a Liquidity Pool?': '',
 	'Approve Vault': '',
+	'Approve Deposit': '',
+	'Approve Withdraw': '',
 	'Approve Automatic Staking': '',
+	'Approve Automatic Unstaking': '',
+	'of total Voting Power': '',
 	'Approve Gauge': '',
 	'Must be locked for more than 7 days to vote!': '',
 	'Current Distribution': '',
@@ -973,10 +1015,10 @@ const RU: Translations = {
 	'yAxis Learn': '',
 	Forum: '',
 	'Starts on': '',
-	'Unlocks in': '',
+	Unlocks: '',
 	'Voting power left to distribute': '',
 
-	'Gauges Overview': '',
+	'Governance Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',
 	'Total Vaults value': '',
@@ -984,6 +1026,10 @@ const RU: Translations = {
 	None: '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
+	'Lock & Boost': '',
+	'Distribute Rewards': '',
+	'Current Strategies': '',
+	Duration: '',
 	English: 'Английский',
 	Korean: 'Корейский',
 	Japanese: 'Японский',
@@ -1072,6 +1118,7 @@ const JA: Translations = {
 	Rewards: '',
 	Claim: '',
 	'Claim All': '',
+	'Current APR': '',
 	'Claim button must have either a vault or rewards type.': '',
 	'claim YAXIS': '',
 	Security: '',
@@ -1125,14 +1172,14 @@ const JA: Translations = {
 	Lock: '',
 	'Create Lock': '',
 	'Extend Lock': '',
-	'These decay over time. Extend the lock up time to get the most benefits.':
+	'Voting power diminishes with time. Extend the lock up time or amount to get the most benefits.':
 		'',
 	'Lock up your YAXIS token to increase your Vault rewards and get voting power toward governance decisions.':
 		'',
 	'1 week': '',
 	'1 year': '',
 	'It will unlock': '',
-	On: '',
+	at: '',
 	'Stake your tokens to receive emissions!': '',
 	'Step complete.': '',
 	'Done.': '',
@@ -1153,7 +1200,11 @@ const JA: Translations = {
 	'Migrate over': '',
 	'What is a Liquidity Pool?': '',
 	'Approve Vault': '',
+	'Approve Deposit': '',
+	'Approve Withdraw': '',
 	'Approve Automatic Staking': '',
+	'Approve Automatic Unstaking': '',
+	'of total Voting Power': '',
 	'Approve Gauge': '',
 	'Must be locked for more than 7 days to vote!': '',
 	'Current Distribution': '',
@@ -1164,9 +1215,9 @@ const JA: Translations = {
 	'yAxis Learn': '',
 	Forum: '',
 	'Starts on': '',
-	'Unlocks in': '',
+	Unlocks: '',
 	'Voting power left to distribute': '',
-	'Gauges Overview': '',
+	'Governance Overview': '',
 	'DAO Resources': '',
 	'Boost Calculator': '',
 	'Total Vaults value': '',
@@ -1174,6 +1225,10 @@ const JA: Translations = {
 	None: '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
+	'Lock & Boost': '',
+	'Distribute Rewards': '',
+	'Current Strategies': '',
+	Duration: '',
 	English: '',
 	Korean: '',
 	Japanese: '',

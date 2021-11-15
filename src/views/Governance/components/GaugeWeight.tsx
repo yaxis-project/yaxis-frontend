@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Row, Tooltip } from 'antd'
+import { NavLink } from 'react-router-dom'
 import Table from '../../../components/Table'
 import Button from '../../../components/Button'
 import Slider from '../../../components/Slider'
@@ -9,6 +10,7 @@ import useContractWrite from '../../../hooks/useContractWrite'
 import { useContracts } from '../../../contexts/Contracts'
 import useTranslation from '../../../hooks/useTranslation'
 import { useLock, useUserGaugeWeights } from '../../../state/wallet/hooks'
+import { useRewardRate } from '../../../state/internal/hooks'
 import moment from 'moment'
 import { Currencies } from '../../../constants/currencies'
 
@@ -16,20 +18,22 @@ const WEIGHT_VOTE_DELAY = 10 * 86400
 
 const { Text } = Typography
 
-const initialWeights = Vaults.map(() => 0)
+const defaultWeights = Vaults.map(() => 0)
 
 const GaugeWeight: React.FC = () => {
 	const translate = useTranslation()
 
-	const [weights, setWeights] = useState(initialWeights)
+	const [weights, setWeights] = useState(defaultWeights)
 	const totalWeight = useMemo(
 		() => weights.reduce((acc, curr) => acc + curr, 0),
 		[weights],
 	)
-	const [hasInitialWeights, setHasInitialWeight] = useState(false)
+	const [initialWeights, setInitialWeights] = useState(-1)
 	const { contracts } = useContracts()
 
 	const lock = useLock()
+
+	const rate = useRewardRate()
 
 	const [loadingVotedWeights, votedWeights] = useUserGaugeWeights()
 
@@ -40,20 +44,19 @@ const GaugeWeight: React.FC = () => {
 	})
 
 	useEffect(() => {
-		if (!loadingVotedWeights && !hasInitialWeights) {
-			setHasInitialWeight(true)
-			setWeights(
-				Vaults.map((vault) =>
-					votedWeights[vault].power.div(100).toNumber(),
-				),
+		if (!loadingVotedWeights && initialWeights === -1) {
+			const nextWeights = Vaults.map((vault) =>
+				votedWeights[vault].power.div(100).toNumber(),
 			)
+			setInitialWeights(nextWeights.reduce((acc, curr) => acc + curr, 0))
+			setWeights(nextWeights)
 		}
 	}, [
 		loadingVotedWeights,
 		votedWeights,
-		hasInitialWeights,
+		initialWeights,
 		setWeights,
-		setHasInitialWeight,
+		setInitialWeights,
 	])
 
 	const data = useMemo(() => {
@@ -82,22 +85,24 @@ const GaugeWeight: React.FC = () => {
 				key: 'vault',
 				width: '20%',
 				render: (record) => (
-					<Row align={'middle'}>
-						<img
-							src={Currencies[record.name].icon}
-							height="36"
-							width="36"
-							alt="logo"
-							style={{ marginRight: '10px' }}
-						/>
-						<Text>{record.name}</Text>
-					</Row>
+					<NavLink to={`/vault/${record.name}`}>
+						<Row align={'middle'}>
+							<img
+								src={Currencies[record.name].icon}
+								height="36"
+								width="36"
+								alt="logo"
+								style={{ marginRight: '10px' }}
+							/>
+							<Text>{record.name}</Text>
+						</Row>
+					</NavLink>
 				),
 			},
 			{
 				title: translate('Weight').toUpperCase(),
 				key: 'action',
-				width: '80%',
+				width: '60%',
 				render: (record) => {
 					const cooldown = moment(record.end.toNumber() * 1000).add(
 						WEIGHT_VOTE_DELAY * 1000,
@@ -135,20 +140,49 @@ const GaugeWeight: React.FC = () => {
 					)
 				},
 			},
+			{
+				title: 'Total emissions per day',
+				key: 'rate',
+				width: '20%',
+				render: (record) => (
+					<Text>
+						{rate
+							.multipliedBy(60 * 60 * 24)
+							.multipliedBy(weights[record.key])
+							.dividedBy(100)
+							.toFixed(3)}
+					</Text>
+				),
+			},
 		],
-		[translate, weights, disabled],
+		[translate, weights, disabled, rate],
 	)
 
 	return (
 		<>
-			<Row style={{ marginTop: '10px' }}>{/* TODO: What is this? */}</Row>
-			<Row justify={'center'} style={{ margin: '10px 0' }}>
-				<Text>
-					Voting power left to distribute: {100 - totalWeight}%.
+			<Row style={{ marginTop: '10px' }} justify="center">
+				<Text style={{ fontSize: '18px', padding: '10px' }}>
+					There is a total of{' '}
+					{rate.multipliedBy(60 * 60 * 24).toFixed(3)} YAXIS reward
+					emissions every day.
+				</Text>
+				<Text style={{ fontSize: '18px', padding: '0 10px 10px 10px' }}>
+					Vote to determine which Vaults it gets distributed to.
 				</Text>
 			</Row>
 
 			<Table columns={columns} dataSource={data} pagination={false} />
+
+			{!lock.loading &&
+				moment(lock.end.toNumber() * 1000).isAfter(
+					moment().add(7, 'days'),
+				) && (
+					<Row justify={'center'} style={{ marginTop: '20px' }}>
+						<Text style={{ fontSize: '16px' }}>
+							{100 - totalWeight}% of your voting power available.
+						</Text>
+					</Row>
+				)}
 
 			<Row style={{ padding: '5%' }}>
 				<Tooltip
@@ -167,7 +201,7 @@ const GaugeWeight: React.FC = () => {
 					<Button
 						style={{ width: '100%' }}
 						loading={loading}
-						disabled={disabled}
+						disabled={disabled || initialWeights === totalWeight}
 						onClick={() => {
 							weights.forEach((weight, i) => {
 								if (weight > 0)

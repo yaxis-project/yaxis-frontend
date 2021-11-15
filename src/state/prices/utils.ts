@@ -1,4 +1,3 @@
-import { initialState } from './reducer'
 import { Ticker } from '../../constants/type'
 
 const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price'
@@ -33,7 +32,7 @@ export async function getCoinGeckoPrices() {
 	let prices = await (
 		await fetch(`${COINGECKO_API}?vs_currencies=usd&ids=${cgkIds}`)
 	).json()
-	let priceMap = { ...initialState.prices }
+	let priceMap = {}
 	for (let [symbol, cgkId] of Object.entries(tokenCgkIdMap)) {
 		const cgkPrice = prices[cgkId]?.usd
 		if (cgkPrice) priceMap[symbol] = cgkPrice

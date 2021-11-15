@@ -12,7 +12,7 @@ const Converter: React.FC<Props> = ({ vault }) => {
 	const t = useTranslation()
 
 	return (
-		<DetailOverviewCard title={''}>
+		<DetailOverviewCard title={'TODO: converter'}>
 			<Row justify="space-around">
 				{vault === '3crv' && <Helpers.Stable3PoolTabs />}
 			</Row>
