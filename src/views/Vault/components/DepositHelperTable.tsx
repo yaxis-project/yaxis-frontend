@@ -5,14 +5,16 @@ import { useNewAPY } from '../../../state/internal/hooks'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import useTranslation from '../../../hooks/useTranslation'
+import { NavLink } from 'react-router-dom'
 import { reduce } from 'lodash'
-import { Row, Grid, Form } from 'antd'
+import { Row, Grid, Form, Tooltip } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { useContracts } from '../../../contexts/Contracts'
 import Button from '../../../components/Button'
 import Table from '../../../components/Table'
+import Value from '../../../components/Value'
 import Typography from '../../../components/Typography'
 import {
 	CurrencyValues,
@@ -21,19 +23,14 @@ import {
 	computeTotalDepositing,
 } from '../utils'
 import BigNumber from 'bignumber.js'
-import Value from '../../../components/Value'
 import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
 import { DoubleApprovalCover } from '../../../components/ApprovalCover/DoubleApprovalCover'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 const { Text, Title } = Typography
 
-const StyledText = styled(Text)`
-	margin-left: 16px;
-	font-size: 18px;
-	line-height: 1em;
-`
 type SortOrder = 'descend' | 'ascend' | null
 
 const makeColumns = (
@@ -49,8 +46,15 @@ const makeColumns = (
 			sorter: (a, b) => a.vault.length - b.vault.length,
 			render: (text, record) => (
 				<Row align="middle">
-					<img src={record.icon} height="36" width="36" alt="logo" />
-					<StyledText>{record.vault.toUpperCase()}</StyledText>
+					<NavLink to={`/vault/${record.vault}`}>
+						<img
+							src={record.icon}
+							height="36"
+							width="36"
+							alt="logo"
+						/>
+						<StyledText>{record.vault.toUpperCase()}</StyledText>
+					</NavLink>
 				</Row>
 			),
 		},
@@ -104,7 +108,7 @@ const makeColumns = (
 			},
 		},
 		{
-			title: translate('Total APR'),
+			title: translate('Current APR'),
 			key: 'apy',
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
@@ -112,6 +116,24 @@ const makeColumns = (
 					<Row style={{ fontWeight: 'bolder' }}>
 						<Text type="secondary">
 							{record.minApy?.toFixed(2)}%
+							<Tooltip
+								style={{ minWidth: '350px' }}
+								placement="topLeft"
+								title={
+									<>
+										<TooltipRow
+											main={'Strategy APR'}
+											value={0}
+										/>
+										<TooltipRow
+											main={'Rewards APR'}
+											value={0}
+										/>
+									</>
+								}
+							>
+								<StyledInfoIcon />
+							</Tooltip>
 						</Text>
 					</Row>
 				</>
@@ -289,7 +311,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 									noWrapper
 									// Note: We display "Vault" to the user,
 									// but it is really interacting with the Gauge
-									buttonText={'Vault'}
+									buttonText={'Deposit'}
 								>
 									{children}
 								</ApprovalCover>
@@ -307,7 +329,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 								noWrapper
 								contractName1={`vaults.${key}.token.contract`}
 								approvee1={contracts?.vaults[key].vault.address}
-								buttonText1={'Vault'}
+								buttonText1={'Deposit'}
 								contractName2={`vaults.${key}.token.contract`}
 								approvee2={
 									contracts?.internal.vaultHelper.address
@@ -363,3 +385,38 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 }
 
 export default DepositHelperTable
+
+const StyledText = styled(Text)`
+	margin-left: 16px;
+	font-size: 18px;
+	line-height: 1em;
+`
+const StyledInfoIcon = styled(InfoCircleOutlined)`
+	margin-left: 5px;
+	color: ${(props) => props.theme.secondary.font};
+	font-size: 15px;
+`
+
+interface TooltipRowProps {
+	main: string
+	value: any
+	prefix?: string
+}
+
+const TooltipRow = ({ main, value, prefix }: TooltipRowProps) => (
+	<>
+		<div
+			style={{ textDecoration: 'underline', textUnderlineOffset: '4px' }}
+		>
+			{main}
+		</div>
+		<div>
+			<Value
+				value={value}
+				numberSuffix={'%'}
+				decimals={2}
+				color={'white'}
+			/>
+		</div>
+	</>
+)

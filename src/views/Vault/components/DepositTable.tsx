@@ -6,7 +6,7 @@ import { usePrices } from '../../../state/prices/hooks'
 import { useNewAPY } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { reduce } from 'lodash'
-import { Row, Grid, Form } from 'antd'
+import { Row, Grid, Form, Tooltip } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
 import useContractWrite from '../../../hooks/useContractWrite'
@@ -25,14 +25,10 @@ import Value from '../../../components/Value'
 import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 const { Text, Title } = Typography
 
-const StyledText = styled(Text)`
-	margin-left: 16px;
-	font-size: 18px;
-	line-height: 1em;
-`
 type SortOrder = 'descend' | 'ascend' | null
 
 const makeColumns = (
@@ -103,12 +99,32 @@ const makeColumns = (
 			},
 		},
 		{
-			title: translate('Total APR'),
+			title: translate('Current APR'),
 			key: 'apy',
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
 				<Row style={{ fontWeight: 'bolder' }}>
-					<Text type="secondary">{record.minApy?.toFixed(2)}%</Text>{' '}
+					<Text type="secondary">
+						{record.minApy?.toFixed(2)}%
+						<Tooltip
+							style={{ minWidth: '350px' }}
+							placement="topLeft"
+							title={
+								<>
+									<TooltipRow
+										main={'Strategy APR'}
+										value={0}
+									/>
+									<TooltipRow
+										main={'Rewards APR'}
+										value={0}
+									/>
+								</>
+							}
+						>
+							<StyledInfoIcon />
+						</Tooltip>
+					</Text>
 				</Row>
 			),
 		},
@@ -362,3 +378,39 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees }) => {
 }
 
 export default DepositTable
+
+const StyledText = styled(Text)`
+	margin-left: 16px;
+	font-size: 18px;
+	line-height: 1em;
+`
+
+const StyledInfoIcon = styled(InfoCircleOutlined)`
+	margin-left: 5px;
+	color: ${(props) => props.theme.secondary.font};
+	font-size: 15px;
+`
+
+interface TooltipRowProps {
+	main: string
+	value: any
+	prefix?: string
+}
+
+const TooltipRow = ({ main, value, prefix }: TooltipRowProps) => (
+	<>
+		<div
+			style={{ textDecoration: 'underline', textUnderlineOffset: '4px' }}
+		>
+			{main}
+		</div>
+		<div>
+			<Value
+				value={value}
+				numberSuffix={'%'}
+				decimals={2}
+				color={'white'}
+			/>
+		</div>
+	</>
+)
