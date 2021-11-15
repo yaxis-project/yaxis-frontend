@@ -35,19 +35,38 @@ const Nav: React.FC = () => {
 
 			<StyledCol2 xs={24} sm={24} md={7}>
 				<Row justify="center">
-					<StyledLinkButton
-						target="_blank"
-						href="https://certificate.quantstamp.com/full/meta-vault-v-2"
-						rel="noopener noreferrer"
-					>
-						<span style={{ color: 'black' }}>
-							{translate('Secured by')}
-						</span>{' '}
-						<img
-							src={quantstamp}
-							height="17"
-							alt="Quantstamp Audit Link"
-						/>
+					<StyledLinkButton>
+						<Row align="middle" justify="space-between">
+							<Col span={24}>
+								<span
+									style={{
+										color: '#5E5E63',
+										fontSize: '12px',
+									}}
+								>
+									{translate('Secured by').toUpperCase()}
+								</span>
+							</Col>
+							<Col span={10}>
+								<HaechiTitle
+									target="_blank"
+									href="https://github.com/yaxis-project/metavault/blob/main/audits/v3/Haechi-V3.pdf"
+									rel="noopener noreferrer"
+								>
+									HAECHI
+								</HaechiTitle>
+							</Col>
+							<Col span={1}>&amp;</Col>
+							<Col span={13}>
+								<C4Title
+									target="_blank"
+									href="https://code423n4.com/reports/2021-09-yaxis/"
+									rel="noopener noreferrer"
+								>
+									Code 423n4
+								</C4Title>
+							</Col>
+						</Row>
 					</StyledLinkButton>
 				</Row>
 			</StyledCol2>
@@ -118,6 +137,19 @@ const HoverableIcon = styled(Icon)`
 	font-size: 25px;
 `
 
+const HaechiTitle = styled.a`
+	font-size: 18px;
+	font-weight: 900;
+	color: #2990c8;
+`
+
+const C4Title = styled.a`
+	font-size: 14px;
+	text-decoration: underline;
+	color: #2990c8;
+	line-height: 10px;
+`
+
 const StyledLink = styled.a`
 	display: inline-block;
 	color: ${(props) => props.theme.primary.main};
@@ -128,13 +160,13 @@ const StyledLink = styled.a`
 	font-weight: 600;
 `
 
-const StyledLinkButton = styled.a`
-	padding: 10px ${(props) => props.theme.spacing[3]}px;
+const StyledLinkButton = styled.div`
+	padding: 5px ${(props) => props.theme.spacing[3]}px;
 	text-decoration: none;
 	font-size: 12px;
 	width: 200px;
 	border: 1px solid grey;
-	border-radius: 18px;
+	border-radius: 25px;
 	text-align: center;
 	background: ${(props) => props.theme.colors.aliceBlue};
 
