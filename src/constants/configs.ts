@@ -5,7 +5,7 @@ export const configs: Record<number, Config> = {
 		vaults: {
 			'3crv': {
 				url: 'https://curve.fi/mim/deposit',
-				tokenPoolContract: '0x5a6A4D54456819380173272A5E8E9B9904BdF41B',
+				tokenPoolContract: '0xa2373Ffc62cA0CA01aE9edfFC19762E3fC75F99C',
 				token: 'MIM3CRV',
 				tokenContract: '0x7D91365bC65CF9caDC6aE1d86d35f5add750Fe37',
 				vault: '0x631EB675F927ba765b6C6c02df0651144B9858e5',
@@ -16,7 +16,7 @@ export const configs: Record<number, Config> = {
 			},
 			wbtc: {
 				url: 'https://curve.fi/ren/deposit',
-				tokenPoolContract: '0x93054188d876f558f4a66b2ef1d97d16edf0895b',
+				tokenPoolContract: '0xa2373Ffc62cA0CA01aE9edfFC19762E3fC75F99C',
 				token: 'RENCRV',
 				tokenContract: '0xA8A28853C2CefF3f7B4EC75A07E7B84d637B9a88',
 				vault: '0xF269F793F2a774d4019F22C7D519f1e748643C9a',
@@ -28,9 +28,9 @@ export const configs: Record<number, Config> = {
 			weth: {
 				url: 'https://curve.fi/factory/38/deposit',
 				token: 'alETHCRV',
-				tokenPoolContract: '0xC4C319E2D4d66CcA4464C0c2B32c9Bd23ebe784e',
-				tokenContract: '0x1D854D30B656152C2467c4A679430Ae0c2B0BFe6',
-				vault: '0xa39A76778ea9b693aF54f205419853938Cd87E08',
+				tokenPoolContract: '0xa2373Ffc62cA0CA01aE9edfFC19762E3fC75F99C',
+				tokenContract: '0x59C9B21eDdBFC04Cb453f49b7f3dA18d0F573838',
+				vault: '0x0596235bF475e1c16247D5E1f2C4e5B3bbb9279c',
 				vaultToken: 'CV:WETH',
 				vaultTokenContract:
 					'0x56b27181fa92DFC5909F1B537f0D5A5929Fbc765',
@@ -38,7 +38,7 @@ export const configs: Record<number, Config> = {
 			},
 			link: {
 				url: 'https://curve.fi/link/deposit',
-				tokenPoolContract: '0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0',
+				tokenPoolContract: '0xa2373Ffc62cA0CA01aE9edfFC19762E3fC75F99C',
 				token: 'LINKCRV',
 				tokenContract: '0x540c8a922Cc7E186AA0fd63b0B6aEDd5B5F08007',
 				vault: '0x41A757B13d49f56A69Ec78093a823730747D8D61',
@@ -65,6 +65,7 @@ export const configs: Record<number, Config> = {
 			controller: '0x2998B1809115511A5856a74552a100E7599D282f',
 			vaultHelper: '0x62a56BeBA6820ef698D2Cf21E18A7243c387C20E',
 			minter: '0x8430b8840cFE3d5a6fE61D010d5B2ec3B32B776B',
+			minterWrapper: '0xdf87daD061CD6460D18A171BCB9d50dd0F75Bcd3',
 			stableSwap3PoolConverter:
 				'0x1A17D5dbBcdBe9E95c3110b2CAc35312Ed82909e',
 			votingEscrow: '0x2721D6A92d52b655C6bdaC5648dC89483F6400E5',
@@ -182,6 +183,7 @@ export const configs: Record<number, Config> = {
 			controller: '',
 			vaultHelper: '',
 			minter: '',
+			minterWrapper: '',
 			stableSwap3PoolConverter:
 				'0x2eab685d85AA52E4d8b6699Ba5aAC3b0c3992C3B',
 			votingEscrow: '',
@@ -225,8 +227,8 @@ export const configs: Record<number, Config> = {
 		},
 		vaults: {
 			'3crv': {
-				url: '',
-				tokenPoolContract: '',
+				url: 'https://curve.fi/mim/deposit',
+				tokenPoolContract: '0x5a6A4D54456819380173272A5E8E9B9904BdF41B',
 				token: 'MIM3CRV',
 				tokenContract: '',
 				vault: '',
@@ -235,8 +237,8 @@ export const configs: Record<number, Config> = {
 				gauge: '',
 			},
 			wbtc: {
-				url: '',
-				tokenPoolContract: '',
+				url: 'https://curve.fi/ren/deposit',
+				tokenPoolContract: '0x93054188d876f558f4a66b2ef1d97d16edf0895b',
 				token: 'RENCRV',
 				tokenContract: '',
 				vault: '',
@@ -245,8 +247,8 @@ export const configs: Record<number, Config> = {
 				gauge: '',
 			},
 			weth: {
-				url: '',
-				tokenPoolContract: '',
+				url: 'https://curve.fi/factory/38/deposit',
+				tokenPoolContract: '0xC4C319E2D4d66CcA4464C0c2B32c9Bd23ebe784e',
 				token: 'ALETHCRV',
 				tokenContract: '',
 				vault: '',
@@ -255,8 +257,8 @@ export const configs: Record<number, Config> = {
 				gauge: '',
 			},
 			link: {
-				url: '',
-				tokenPoolContract: '',
+				url: 'https://curve.fi/link/deposit',
+				tokenPoolContract: '0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0',
 				token: 'LINKCRV',
 				tokenContract: '',
 				vault: '',

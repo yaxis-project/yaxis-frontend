@@ -81,6 +81,7 @@ export type Ticker =
 export const InternalContracts = <const>[
 	'vaultHelper',
 	'minter',
+	'minterWrapper',
 	'swap',
 	'yaxisChef',
 	'xYaxStaking',
