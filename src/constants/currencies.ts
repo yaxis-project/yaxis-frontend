@@ -107,6 +107,14 @@ export const DAI: Currency = {
 	priceMapKey: 'dai',
 }
 
+export const CRV: Currency = {
+	name: 'CRV',
+	tokenId: 'crv',
+	icon: crv3,
+	decimals: 18,
+	priceMapKey: 'crv',
+}
+
 export const threeCRV: Currency = {
 	name: '3CRV',
 	tokenId: '3crv',
@@ -283,6 +291,7 @@ export const Currencies = {
 	'CV:LINK-GAUGE': CVLINKgauge,
 	MIM,
 	CVX,
+	CRV,
 	WBTC,
 	LINK,
 	DAI,

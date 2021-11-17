@@ -44,6 +44,7 @@ export interface LiquidityPool {
 }
 
 export const CurrenciesERC20 = <const>[
+	'crv',
 	'wbtc',
 	'link',
 	'mim',
@@ -61,7 +62,7 @@ export type TCurrenciesERC20 = typeof CurrenciesERC20[number]
 export const CurrenciesERC677 = <const>['yaxis']
 export type TCurrenciesERC677 = typeof CurrenciesERC677[number]
 
-export const additionalCurrencies = <const>['eth', 'btc', 'crv']
+export const additionalCurrencies = <const>['eth', 'btc']
 export type TAdditionalCurrencies = typeof additionalCurrencies[number]
 
 export const crvLPCurrencies = <const>[
@@ -95,12 +96,30 @@ export const InternalContracts = <const>[
 ]
 export type TInternalContracts = typeof InternalContracts[number]
 
+export const CurveLPContracts = <const>[
+	'mim3crv',
+	'rencrv',
+	'alethcrv',
+	'linkcrv',
+	'3pool',
+]
+export type TCurveLPContracts = typeof CurveLPContracts[number]
+
+export interface ExternalLP {
+	pool: string
+	gauge: string
+	token: string
+}
+
+export const ExternalLPContracts = <const>[...CurveLPContracts]
+export type TExternalLPContracts = typeof ExternalLPContracts[number]
+
 export const ExternalContracts = <const>[
 	'multicall',
 	'pickleChef',
 	'pickleJar',
 	'uniswapRouter',
-	'curve3pool',
+	'gaugeController',
 ]
 export type TExternalContracts = typeof ExternalContracts[number]
 
@@ -129,9 +148,17 @@ export interface Config {
 	internal: {
 		[key in TInternalContracts]: string
 	}
+
 	external: {
 		[key in TExternalContracts]: string
 	}
+
+	externalPools: {
+		curve: {
+			[key in TCurveLPContracts]: ExternalLP
+		}
+	}
+
 	currencies: {
 		ERC20: {
 			[key in TCurrenciesERC20]: string
@@ -140,12 +167,15 @@ export interface Config {
 			[key in TCurrenciesERC677]: string
 		}
 	}
+
 	rewards: {
 		[key in TRewardsContracts]: string
 	}
+
 	pools: {
 		[key in TLiquidityPools]: LiquidityPool
 	}
+
 	vaults: {
 		[key in TVaults]: Vault
 	}

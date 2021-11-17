@@ -19,7 +19,7 @@ const ContractProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (library) {
-			setContracts(new Contracts(library, chainId))
+			setContracts(new Contracts(library, 'ethereum', chainId))
 			setLoading(false)
 		}
 	}, [library, account, chainId])
