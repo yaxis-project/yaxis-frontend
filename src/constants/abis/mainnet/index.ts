@@ -13,7 +13,7 @@ export const abis = {
 	GaugeControllerABI: require('./GaugeController.json') as JsonFragment[],
 	ManagerABI: require('./Manager.json') as JsonFragment[],
 	MerkleDistributorABI: require('./MerkleDistributor.json') as JsonFragment[],
-	MinterABI: require('./Minter.json') as JsonFragment[],
+	MinterABI: require('./minter.json') as JsonFragment[],
 	MinterWrapperABI: require('./MinterWrapper.json') as JsonFragment[],
 	MulticallABI: require('./Multicall.json') as JsonFragment[],
 	PickleChefABI: require('./pickleChef.json') as JsonFragment[],
