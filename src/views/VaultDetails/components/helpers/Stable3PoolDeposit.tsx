@@ -55,11 +55,10 @@ export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
 
 	const { call: handleDeposit3Pool, loading: loadingDeposit3Pool } =
 		useContractWrite({
-			contractName: 'external.curve3pool',
+			contractName: 'externalLP.3pool.pool',
 			method: 'add_liquidity',
 			description: `get 3CRV`,
 		})
-
 	const handleSubmit = useCallback(async () => {
 		try {
 			const amounts = Currencies3Pool.map((c) => {
@@ -70,7 +69,7 @@ export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
 				return '0'
 			})
 			const expected =
-				(await contracts?.external.curve3pool.calc_token_amount(
+				(await contracts?.externalLP['3pool'].pool.calc_token_amount(
 					amounts,
 					true,
 				)) * 0.99
@@ -91,7 +90,7 @@ export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
 					onChange={handleFormInputChange(setCurrencyValues)}
 					value={currencyValues[currency.tokenId]}
 					contractName={`currencies.ERC20.${currency.tokenId}.contract`}
-					approvee={contracts?.external.curve3pool.address}
+					approvee={contracts?.externalLP['3pool'].pool.address}
 				/>
 			))}
 			<Row

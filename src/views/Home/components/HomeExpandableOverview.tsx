@@ -13,6 +13,7 @@ import {
 } from '../../../components/ExpandableSidePanel'
 import { Tooltip } from 'antd'
 import Button from '../../../components/Button'
+import Divider from '../../../components/Divider'
 import Typography from '../../../components/Typography'
 import useTranslation from '../../../hooks/useTranslation'
 
@@ -67,15 +68,23 @@ export default function HomeExpandableOverview() {
 									/>
 									<TooltipRow
 										main={translate(
-											'Total YAXIS Staking value',
-										)}
-										value={stakingTvl.toNumber()}
-									/>
-									<TooltipRow
-										main={translate(
 											'Total Liquidity Pool value',
 										)}
 										value={liquidityTvl.toNumber()}
+									/>
+									<TooltipRow
+										main={'Total Governance locked'}
+										value={
+											0
+											// TODO
+										}
+									/>
+									<Divider style={{ margin: '5px 0' }} />
+									<TooltipRow
+										main={
+											'Total YAXIS Staking value (LEGACY)'
+										}
+										value={stakingTvl.toNumber()}
 									/>
 								</>
 							}

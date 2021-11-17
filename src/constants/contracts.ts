@@ -32,6 +32,7 @@ type ExternalLpC = {
 		gauge?: Contract
 		pool: Contract
 		token: Contract
+		convexRewards: Contract
 	}
 }
 type ExternalC = {
@@ -119,6 +120,11 @@ export class Contracts {
 					abis.ERC20Abi,
 					provider,
 				),
+				convexRewards: new Contract(
+					this.config.externalPools.curve[title].convexRewards,
+					abis.ConvexRewardPoolABI,
+					provider,
+				),
 			}
 		}
 
@@ -141,7 +147,16 @@ export class Contracts {
 			if (!Currency)
 				console.error(`Currency not found: ${title.toUpperCase()}`)
 
-			if (title === 'crv') {
+			if (title === 'cvx') {
+				this.currencies.ERC20[title] = {
+					...Currency,
+					contract: new Contract(
+						this.config.currencies.ERC20[title],
+						abis.CVXABI,
+						provider,
+					),
+				}
+			} else if (title === 'crv') {
 				this.currencies.ERC20[title] = {
 					...Currency,
 					contract: new Contract(

@@ -80,9 +80,9 @@ export default function Stable3PoolWithdraw() {
 			const conversions = Object.fromEntries(
 				await Promise.all(
 					Currencies3Pool.map(async (c, i) => {
-						const conversion = await contracts?.external.curve3pool[
-							'calc_withdraw_one_coin'
-						](
+						const conversion = await contracts?.externalLP[
+							'3pool'
+						].pool['calc_withdraw_one_coin'](
 							new BigNumber(1)
 								.multipliedBy(10 ** threeCRV.decimals)
 								.toString(),
@@ -153,7 +153,7 @@ export default function Stable3PoolWithdraw() {
 						error={error}
 						balance={balance3CRV}
 						inputBalance={input3CRV}
-						approvee={contracts?.external.curve3pool.address}
+						approvee={contracts?.externalLP['3pool'].pool.address}
 					/>
 				</PaddedRow>
 			))}
@@ -209,7 +209,7 @@ const WithdrawAssetRow: React.FC<WithdrawAssetRowProps> = ({
 	const { contracts } = useContracts()
 
 	const { result: rate } = useSingleCallResult(
-		contracts?.external.curve3pool,
+		contracts?.externalLP['3pool'].pool,
 		'calc_withdraw_one_coin',
 		[new BigNumber(1).multipliedBy(10 ** 18).toString(), currencyIndex],
 	)

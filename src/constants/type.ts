@@ -109,6 +109,7 @@ export interface ExternalLP {
 	pool: string
 	gauge: string
 	token: string
+	convexRewards: string
 }
 
 export const ExternalLPContracts = <const>[...CurveLPContracts]
@@ -144,39 +145,47 @@ export interface Vault {
 	gauge: string
 }
 
+export type InternalConfig = {
+	[key in TInternalContracts]: string
+}
+
+export type ExternalConfig = {
+	[key in TExternalContracts]: string
+}
+
+export type ExternalPoolsConfig = {
+	curve: {
+		[key in TCurveLPContracts]: ExternalLP
+	}
+}
+
+export type CurrenciesConfig = {
+	ERC20: {
+		[key in TCurrenciesERC20]: string
+	}
+	ERC677: {
+		[key in TCurrenciesERC677]: string
+	}
+}
+
+export type RewardsConfig = {
+	[key in TRewardsContracts]: string
+}
+
+export type PoolsConfig = {
+	[key in TLiquidityPools]: LiquidityPool
+}
+
+export type VaultsConfig = {
+	[key in TVaults]: Vault
+}
+
 export interface Config {
-	internal: {
-		[key in TInternalContracts]: string
-	}
-
-	external: {
-		[key in TExternalContracts]: string
-	}
-
-	externalPools: {
-		curve: {
-			[key in TCurveLPContracts]: ExternalLP
-		}
-	}
-
-	currencies: {
-		ERC20: {
-			[key in TCurrenciesERC20]: string
-		}
-		ERC677: {
-			[key in TCurrenciesERC677]: string
-		}
-	}
-
-	rewards: {
-		[key in TRewardsContracts]: string
-	}
-
-	pools: {
-		[key in TLiquidityPools]: LiquidityPool
-	}
-
-	vaults: {
-		[key in TVaults]: Vault
-	}
+	internal: InternalConfig
+	external: ExternalConfig
+	externalPools: ExternalPoolsConfig
+	currencies: CurrenciesConfig
+	rewards: RewardsConfig
+	pools: PoolsConfig
+	vaults: VaultsConfig
 }

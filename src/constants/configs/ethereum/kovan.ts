@@ -1,44 +1,11 @@
-import { Config } from '../../type'
+import {
+	Config,
+	CurrenciesConfig,
+	ExternalConfig,
+	ExternalPoolsConfig,
+} from '../../type'
 
-const external = {
-	multicall: '0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A',
-	pickleChef: '0x76f4A0CE3753F745e97e588F8423230B83f4a2F4',
-	pickleJar: '0x13F4cc6C239aBaD03EbD2deAA6A7107E9c6c9BEB',
-	uniswapRouter: '0xff363bdCfbc52C0d0fA93F23416Ae9A5e015d10f',
-	gaugeController: '',
-}
-
-const externalPools = {
-	curve: {
-		mim3crv: {
-			pool: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
-			token: '',
-			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
-		},
-		rencrv: {
-			pool: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
-			token: '',
-			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
-		},
-		alethcrv: {
-			pool: '0x459416729cDC9345c20dd6D9eFC047e0CbB3842e',
-			token: '0x59C9B21eDdBFC04Cb453f49b7f3dA18d0F573838',
-			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
-		},
-		linkcrv: {
-			pool: '0xF0cCAbb34899652eFea9751616fd94A73E4bD501',
-			token: '',
-			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
-		},
-		'3pool': {
-			pool: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
-			token: '',
-			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
-		},
-	},
-}
-
-const currencies = {
+const currencies: CurrenciesConfig = {
 	ERC20: {
 		crv: '0xDB0E1fe102Be9c0fD355100271283dF18bA4797F',
 		wbtc: '0xf9Bba2B6CD5ABA1F8023AA9B8C5b50Ef4666157c',
@@ -55,6 +22,49 @@ const currencies = {
 	},
 	ERC677: {
 		yaxis: '0xDE78295b8a50413f5a6faBd1f4921E8449d2433C',
+	},
+}
+
+const external: ExternalConfig = {
+	multicall: '0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A',
+	pickleChef: '0x76f4A0CE3753F745e97e588F8423230B83f4a2F4',
+	pickleJar: '0x13F4cc6C239aBaD03EbD2deAA6A7107E9c6c9BEB',
+	uniswapRouter: '0xff363bdCfbc52C0d0fA93F23416Ae9A5e015d10f',
+	gaugeController: '',
+}
+
+const externalPools: ExternalPoolsConfig = {
+	curve: {
+		mim3crv: {
+			pool: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
+			token: '',
+			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
+			convexRewards: '',
+		},
+		rencrv: {
+			pool: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
+			token: '',
+			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
+			convexRewards: '',
+		},
+		alethcrv: {
+			pool: '0x459416729cDC9345c20dd6D9eFC047e0CbB3842e',
+			token: '0x59C9B21eDdBFC04Cb453f49b7f3dA18d0F573838',
+			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
+			convexRewards: '',
+		},
+		linkcrv: {
+			pool: '0xF0cCAbb34899652eFea9751616fd94A73E4bD501',
+			token: '',
+			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
+			convexRewards: '',
+		},
+		'3pool': {
+			pool: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
+			token: '',
+			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
+			convexRewards: '',
+		},
 	},
 }
 

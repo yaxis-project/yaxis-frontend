@@ -3,7 +3,7 @@ import { Vaults, LPVaults } from '../../../constants/type'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-import { useNewAPY } from '../../../state/internal/hooks'
+import { useVaultsAPY } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { reduce } from 'lodash'
 import { Row, Grid, Form, Tooltip } from 'antd'
@@ -169,7 +169,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees }) => {
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
 
-	const apy = useNewAPY()
+	const apy = useVaultsAPY()
 
 	const { call: handleStakeWETH, loading: isSubmittingWETH } =
 		useContractWrite({

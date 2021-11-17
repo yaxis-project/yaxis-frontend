@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react'
 import { LPVaults } from '../../../constants/type'
 import { Currencies, Currency } from '../../../constants/currencies'
-import { useNewAPY } from '../../../state/internal/hooks'
+import { useVaultsAPY } from '../../../state/internal/hooks'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import useTranslation from '../../../hooks/useTranslation'
@@ -176,7 +176,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 
 	const [balances, loading] = useAllTokenBalances()
 
-	const apy = useNewAPY()
+	const apy = useVaultsAPY()
 
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()

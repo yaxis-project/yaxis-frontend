@@ -19,6 +19,7 @@ const Button: React.FC<Props> = () => {
 		<Row>
 			<StyledMenu mode="horizontal">
 				<StyledSubMenu
+					key="language-select"
 					title={
 						<LanguageSelector align="middle">
 							<Col>{language}</Col>

@@ -9,7 +9,11 @@ import {
 } from '../onchain/hooks'
 import BigNumber from 'bignumber.js'
 import { usePrices } from '../prices/hooks'
-import { useCurveRewardsAPR, useCurvePoolAPR } from '../external/hooks'
+import {
+	useCurveRewardsAPR,
+	useFetchCurvePoolBaseAPR,
+	useCurvePoolRewards,
+} from '../external/hooks'
 import { numberToFloat } from '../../utils/number'
 import {
 	TLiquidityPools,
@@ -142,45 +146,78 @@ export function useYaxisGauge() {
 	}, [gaugeData])
 }
 
-export function useVaultAPR(name: TVaults) {
+export function useVaultRewards(name: TVaults) {
 	const { contracts } = useContracts()
 
-	// gauge.working_balances * ( gauge.inflation_rate * gauge_controller.gauge_relative_weight * time / gauge.working_supply) / 10**18
+	const rate = useSingleCallResult(contracts?.internal.minterWrapper, 'rate')
 
-	const gauge = useSingleContractMultipleMethods(
-		contracts?.vaults[name].gauge,
-		[['inflation_rate'], ['working_supply']],
-	)
+	const { prices } = usePrices()
 
-	const controller = useSingleCallResult(
+	const relativeWeight = useSingleCallResult(
 		contracts?.internal.gaugeController,
 		'gauge_relative_weight(address)',
 		[contracts?.vaults[name].gauge.address],
 	)
 
+	const virtualPriceCall = useSingleCallResult(
+		contracts?.vaults[name].token.name && // YAXIS config has none
+			contracts?.externalLP[contracts?.vaults[name].token.name].pool,
+		'get_virtual_price()',
+	)
+
+	const balance = useSingleCallResult(
+		contracts?.vaults[name].gauge,
+		'working_supply',
+	)
+
 	return useMemo(() => {
-		const [inflation_rate, working_supply] = gauge.map(
-			({ result, loading }, i) => {
-				if (loading) return ethers.BigNumber.from(0)
-				if (!result) return ethers.BigNumber.from(0)
-				return result
-			},
-		)
-
-		const { result: relative_weight } = controller
-
-		const year_time = new BigNumber(31536000)
-
-		if (new BigNumber(working_supply.toString()).isZero())
-			return new BigNumber(0)
-
-		const rate = new BigNumber(inflation_rate.toString())
-			.multipliedBy(new BigNumber(relative_weight?.toString() || 0))
-			.multipliedBy(year_time)
-			.dividedBy(new BigNumber(working_supply.toString()))
+		const yearlyEmissions = new BigNumber(rate?.result?.toString() || 0)
+			.multipliedBy(relativeWeight?.result?.toString() || 0)
+			.multipliedBy(31_536_000)
 			.dividedBy(10 ** 18)
-		return rate
-	}, [gauge, controller])
+			.multipliedBy(prices?.yaxis || 0)
+
+		const virtualPrice =
+			name === 'yaxis'
+				? prices?.yaxis
+				: new BigNumber(virtualPriceCall?.result?.toString() || 0)
+
+		const totalValue = new BigNumber(balance?.result?.toString() || 0)
+			.multipliedBy(virtualPrice)
+			.dividedBy(10 ** 18)
+
+		const APR = totalValue.isZero()
+			? new BigNumber(0)
+			: yearlyEmissions.dividedBy(totalValue)
+
+		// APY (weekly compounding):
+		// (1+(APR/52))^52-1
+
+		return {
+			yearlyEmissions,
+			APR,
+		}
+	}, [name, prices?.yaxis, relativeWeight, virtualPriceCall, balance, rate])
+}
+
+export function useVaultsAPY() {
+	const v3crv = useVaultRewards('3crv')
+	const wbtc = useVaultRewards('wbtc')
+	const weth = useVaultRewards('weth')
+	const link = useVaultRewards('link')
+	const yaxis = useVaultRewards('yaxis')
+
+	const test = useCurvePoolRewards('mim3crv')
+
+	return useMemo(() => {
+		return {
+			'3crv': v3crv,
+			wbtc,
+			weth,
+			link,
+			yaxis,
+		}
+	}, [v3crv, wbtc, weth, link, yaxis])
 }
 
 export function useVaults() {
@@ -461,8 +498,8 @@ export function useAPY(
 	rewardsContract: TRewardsContracts,
 	strategyPercentage: number = 1,
 ) {
-	const curveRewardsAPRs = useCurveRewardsAPR()
-	const curveBaseAPR = useCurvePoolAPR('3pool')
+	const curveRewardsAPRs = useCurvePoolRewards('3pool')
+	const curveBaseAPR = useFetchCurvePoolBaseAPR()
 	const { rewardsPerBlock, apr: rewardsAPR } = useRewardAPR(rewardsContract)
 
 	return useMemo(() => {
@@ -475,7 +512,9 @@ export function useAPY(
 			.minus(1)
 			.multipliedBy(100)
 
-		let lpAprPercent = new BigNumber(curveBaseAPR).times(100)
+		let lpAprPercent = new BigNumber(
+			curveBaseAPR.apy.day['3pool'] || 0,
+		).times(100)
 		let lpApyPercent = lpAprPercent
 			.div(100)
 			.div(12)
@@ -519,24 +558,6 @@ export function useAPY(
 		strategyPercentage,
 		rewardsPerBlock,
 	])
-}
-
-export function useNewAPY() {
-	const v3crv = useVaultAPR('3crv')
-	const wbtc = useVaultAPR('wbtc')
-	const weth = useVaultAPR('weth')
-	const link = useVaultAPR('link')
-	const yaxis = useVaultAPR('yaxis')
-
-	return useMemo(() => {
-		return {
-			'3crv': v3crv,
-			wbtc,
-			weth,
-			link,
-			yaxis,
-		}
-	}, [v3crv, wbtc, weth, link, yaxis])
 }
 
 export function useYaxisManager() {

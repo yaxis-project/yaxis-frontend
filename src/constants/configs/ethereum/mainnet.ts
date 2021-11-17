@@ -1,12 +1,17 @@
-import { Config } from '../../type'
+import {
+	Config,
+	CurrenciesConfig,
+	ExternalConfig,
+	ExternalPoolsConfig,
+} from '../../type'
 
-const currencies = {
+const currencies: CurrenciesConfig = {
 	ERC20: {
 		crv: '0xd533a949740bb3306d119cc777fa900ba034cd52',
 		wbtc: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
 		link: '0x514910771af9ca656af840dff83e8264ecf986ca',
 		mim: '0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3',
-		cvx: '0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3',
+		cvx: '0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B',
 		yax: '0xb1dc9124c395c1e97773ab855d66e879f053a289',
 		usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
 		dai: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
@@ -20,7 +25,7 @@ const currencies = {
 	},
 }
 
-const external = {
+const external: ExternalConfig = {
 	multicall: '0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441',
 	pickleChef: '0xbD17B1ce622d73bD438b9E658acA5996dc394b0d',
 	pickleJar: '0x1BB74b5DdC1f4fC91D6f9E7906cf68bc93538e33',
@@ -28,32 +33,37 @@ const external = {
 	gaugeController: '0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB',
 }
 
-const externalPools = {
+const externalPools: ExternalPoolsConfig = {
 	curve: {
 		mim3crv: {
 			pool: '0x5a6A4D54456819380173272A5E8E9B9904BdF41B',
 			token: '0x5a6A4D54456819380173272A5E8E9B9904BdF41B',
 			gauge: '0xd8b712d29381748dB89c36BCa0138d7c75866ddF',
+			convexRewards: '0x8E299C62EeD737a5d5a53539dF37b5356a27b07D',
 		},
 		rencrv: {
 			pool: '0x93054188d876f558f4a66B2EF1d97d16eDf0895B',
 			token: '0x49849C98ae39Fff122806C06791Fa73784FB3675',
 			gauge: '0xB1F2cdeC61db658F091671F5f199635aEF202CAC',
+			convexRewards: '0x8E299C62EeD737a5d5a53539dF37b5356a27b07D',
 		},
 		alethcrv: {
 			pool: '0xC4C319E2D4d66CcA4464C0c2B32c9Bd23ebe784e',
 			token: '0xC4C319E2D4d66CcA4464C0c2B32c9Bd23ebe784e',
 			gauge: '',
+			convexRewards: '',
 		},
 		linkcrv: {
 			pool: '0xF178C0b5Bb7e7aBF4e12A4838C7b7c5bA2C623c0',
 			token: '0xcee60cfa923170e4f8204ae08b4fa6a3f5656f3a',
 			gauge: '0xFD4D8a17df4C27c1dD245d153ccf4499e806C87D',
+			convexRewards: '0x9700152175dc22E7d1f3245fE3c1D2cfa3602548',
 		},
 		'3pool': {
 			pool: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
 			token: '0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490',
 			gauge: '0xbFcF63294aD7105dEa65aA58F8AE5BE2D9d0952A',
+			convexRewards: '0x689440f2Ff927E1f24c72F1087E1FAF471eCe1c8',
 		},
 	},
 }
