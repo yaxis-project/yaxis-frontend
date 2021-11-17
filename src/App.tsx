@@ -1,5 +1,5 @@
 import React, { Suspense, useMemo } from 'react'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import Home from './views/Home'
 import Vault from './views/Vault'
 import VaultDetails from './views/VaultDetails'
@@ -46,46 +46,45 @@ const App: React.FC = () => {
 	return (
 		<Suspense fallback={null}>
 			<SwapBanner />
-			<Switch>
-				<Route path="/" exact>
-					<Home />
-				</Route>
+			<Routes>
+				<Route path="/" element={<Home />} />
+
 				{vaults.map((vault) => {
 					const key = `/vault/${vault}`
 					return (
-						<Route key={key} path={key} exact>
-							<VaultDetails vault={vault} />
-						</Route>
+						<Route
+							key={key}
+							path={key}
+							element={<VaultDetails vault={vault} />}
+						/>
 					)
 				})}
-				<Route path="/vault">
-					<Vault />
-				</Route>
-				<Route path="/liquidity" exact>
-					<Liquidity />
-				</Route>
+
+				<Route path="/vault" element={<Vault />} />
+
+				<Route path="/liquidity" element={<Liquidity />} />
+
 				{activePools.map((pool) => {
 					const key = `/liquidity/${pool.lpAddress}`
 					return (
-						<Route key={key} path={key} exact>
-							<LiquidityPool pool={pool} />
-						</Route>
+						<Route
+							key={key}
+							path={key}
+							element={<LiquidityPool pool={pool} />}
+						/>
 					)
 				})}
-				<Route path="/governance" exact>
-					<Governance />
-				</Route>
-				<Route path="/swap" exact>
-					<Swap />
-				</Route>
-				<Route path="/v3" exact>
-					<V3 />
-				</Route>
-				<Route path="/faucet" exact>
-					<Faucet />
-				</Route>
-				<Redirect to="/" />
-			</Switch>
+
+				<Route path="/governance" element={<Governance />} />
+
+				<Route path="/swap" element={<Swap />} />
+
+				<Route path="/v3" element={<V3 />} />
+
+				<Route path="/faucet" element={<Faucet />} />
+
+				<Route path="*" element={<Navigate to="/" replace={true} />} />
+			</Routes>
 			<Modals />
 		</Suspense>
 	)

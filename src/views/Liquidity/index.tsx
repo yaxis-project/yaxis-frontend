@@ -29,7 +29,9 @@ const Liquidity: React.FC = () => {
 	const { contracts } = useContracts()
 	const activePools = useMemo(
 		() =>
-			Object.values(contracts?.pools || {}).filter((pool) => pool.active),
+			Object.values(contracts?.pools || {}).filter(
+				(pool) => !pool.legacy,
+			),
 		[contracts],
 	)
 	const legacyPools = useMemo(
@@ -41,22 +43,29 @@ const Liquidity: React.FC = () => {
 	return (
 		<Page>
 			<>
-				{/* <Card
-						title={
-							<Col
-								style={{
-									fontSize: '18px',
-									fontWeight: 700,
-								}}
-							>
-								<Text>
-									{translate('What is a Liquidity Pool?')}
-								</Text>
-							</Col>
-						}
-						bodyStyle={{ padding: 0 }}
-					>
-					</Card> */}
+				<Card
+					title={
+						<Col
+							style={{
+								fontSize: '18px',
+								fontWeight: 700,
+							}}
+						>
+							<Text>
+								{translate('What is a Liquidity Pool?')}
+							</Text>
+						</Col>
+					}
+					bodyStyle={{ padding: '20px' }}
+				>
+					<Text style={{ fontSize: '16px' }}>
+						A liquidity pool is a crowdsourced pool of
+						cryptocurrencies or tokens locked in a smart contract
+						that is used to facilitate trades between the assets on
+						a decentralized exchange. Help fund the LP to recieve a
+						percentage of trading fees along with YAXIS rewards.
+					</Text>
+				</Card>
 
 				<Card
 					title={
@@ -72,9 +81,9 @@ const Liquidity: React.FC = () => {
 						pagination={false}
 						rowKey={'name'}
 						rowClassName="LP-Table-Row"
-						onRow={(record, rowIndex) => {
+						onRow={(record) => {
 							return {
-								onClick: (event) =>
+								onClick: () =>
 									navigate(`/liquidity/${record.lpAddress}`),
 							}
 						}}
@@ -114,9 +123,9 @@ const Liquidity: React.FC = () => {
 							pagination={false}
 							rowKey={'name'}
 							rowClassName="LP-Table-Row"
-							onRow={(record, rowIndex) => {
+							onRow={(record) => {
 								return {
-									onClick: (event) =>
+									onClick: () =>
 										navigate(
 											`/liquidity/${record.lpAddress}`,
 										),

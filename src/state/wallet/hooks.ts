@@ -333,7 +333,7 @@ export function useApprovals() {
 	const [converter3PoolCurrencies, loadingConverter3Pool] =
 		useApprovedAmounts(
 			account,
-			contracts?.external.curve3pool.address,
+			contracts?.externalLP['3pool'].pool.address,
 			CurrenciesIn3Pool.map((c) => contracts?.currencies.ERC20[c]).filter(
 				(c) => c,
 			),

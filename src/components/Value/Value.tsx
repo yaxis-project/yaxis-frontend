@@ -68,7 +68,7 @@ const Value: React.FC<ValueProps> = ({
 						}
 						duration={1}
 						separator=","
-						suffix={suffix}
+						suffix={suffix || ''}
 					/>
 				</>
 			)}

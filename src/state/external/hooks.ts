@@ -23,10 +23,10 @@ export function useFetchCurvePoolBaseAPR() {
 	useEffect(() => {
 		const fetchCurveApy = async () => {
 			try {
-				const { apy = {} } = await (
+				const response = await (
 					await fetch('https://stats.curve.fi/raw-stats/apys.json')
 				).json()
-				setCurveApy(apy)
+				setCurveApy(response)
 			} catch (e) {
 				console.error('Unable to get curve.fi stats: ', e)
 			}
@@ -110,18 +110,18 @@ export function useCurvePoolRewards(name: TCurveLPContracts) {
 	const { prices } = usePrices()
 
 	const relativeWeight = useSingleCallResult(
-		contracts?.external.gaugeController,
+		contracts?.external?.gaugeController,
 		'gauge_relative_weight(address)',
-		[contracts?.externalLP[name].gauge.address],
+		[contracts?.externalLP[name]?.gauge?.address],
 	)
 
 	const virtualPrice = useSingleCallResult(
-		contracts?.externalLP[name].pool,
+		contracts?.externalLP[name]?.pool,
 		'get_virtual_price()',
 	)
 
 	const balance = useSingleCallResult(
-		contracts?.externalLP[name].gauge,
+		contracts?.externalLP[name]?.gauge,
 		'working_supply',
 	)
 

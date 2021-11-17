@@ -86,7 +86,7 @@ function Stake({ pool }) {
 		setWithdraw(stakedBalance?.amount.toString() || '0')
 
 	return (
-		<>
+		<div style={{ padding: '20px' }}>
 			<Row gutter={24}>
 				<TableHeader value={translate('Available Balance')} span={12} />
 				<TableHeader value={translate('Staked Balance')} span={12} />
@@ -94,20 +94,24 @@ function Stake({ pool }) {
 
 			<Row gutter={24}>
 				<Col span={12} className={'balance'}>
-					<img src={currency.icon} height="24" alt="logo" />
-					<Value
-						value={getBalanceNumber(walletBalance?.value)}
-						decimals={2}
-						numberSuffix={` ${pool.symbol}`}
-					/>
+					<Row justify="space-around" style={{ padding: '6px 0' }}>
+						<img src={currency.icon} height="24" alt="logo" />
+						<Value
+							value={getBalanceNumber(walletBalance?.value)}
+							decimals={2}
+							numberSuffix={` ${pool.symbol}`}
+						/>
+					</Row>
 				</Col>
 				<Col span={12} className={'balance'}>
-					<img src={currency.icon} height="24" alt="logo" />
-					<Value
-						value={getBalanceNumber(stakedBalance?.value)}
-						decimals={2}
-						numberSuffix={` ${pool.symbol}`}
-					/>
+					<Row justify="space-around" style={{ padding: '6px 0' }}>
+						<img src={currency.icon} height="24" alt="logo" />
+						<Value
+							value={getBalanceNumber(stakedBalance?.value)}
+							decimals={2}
+							numberSuffix={` ${pool.symbol}`}
+						/>
+					</Row>
 				</Col>
 			</Row>
 
@@ -138,6 +142,7 @@ function Stake({ pool }) {
 							})
 						}
 						loading={loadingStake}
+						style={{ width: '100%' }}
 					>
 						{translate('Stake')}
 					</Button>
@@ -168,12 +173,13 @@ function Stake({ pool }) {
 							})
 						}
 						loading={loadingUnstake}
+						style={{ width: '100%' }}
 					>
 						{translate('Unstake')}
 					</Button>
 				</Col>
 			</Row>
-		</>
+		</div>
 	)
 }
 

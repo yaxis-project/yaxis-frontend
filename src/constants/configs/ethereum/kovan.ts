@@ -30,7 +30,7 @@ const external: ExternalConfig = {
 	pickleChef: '0x76f4A0CE3753F745e97e588F8423230B83f4a2F4',
 	pickleJar: '0x13F4cc6C239aBaD03EbD2deAA6A7107E9c6c9BEB',
 	uniswapRouter: '0xff363bdCfbc52C0d0fA93F23416Ae9A5e015d10f',
-	gaugeController: '',
+	gaugeController: '0xff363bdCfbc52C0d0fA93F23416Ae9A5e015d10f', // needs mock
 }
 
 const externalPools: ExternalPoolsConfig = {
@@ -117,7 +117,7 @@ const kovan: Config = {
 			tokenContract: '',
 			vault: '',
 			vaultToken: 'YAXIS',
-			vaultTokenContract: '0xDE78295b8a50413f5a6faBd1f4921E8449d2433C', // YAXIS token
+			vaultTokenContract: currencies.ERC677.yaxis,
 			gauge: '0x9a6Bf749a57fDCDFf8cbD69B39202aAd5a73E4E1',
 		},
 	},

@@ -10,7 +10,6 @@ import {
 import BigNumber from 'bignumber.js'
 import { usePrices } from '../prices/hooks'
 import {
-	useCurveRewardsAPR,
 	useFetchCurvePoolBaseAPR,
 	useCurvePoolRewards,
 } from '../external/hooks'
@@ -161,7 +160,9 @@ export function useVaultRewards(name: TVaults) {
 
 	const virtualPriceCall = useSingleCallResult(
 		contracts?.vaults[name].token.name && // YAXIS config has none
-			contracts?.externalLP[contracts?.vaults[name].token.name].pool,
+			contracts?.externalLP[
+				contracts?.vaults[name].token.name.toLowerCase()
+			]?.pool,
 		'get_virtual_price()',
 	)
 
@@ -460,7 +461,7 @@ export function useTVL() {
 
 		const vaultTvl = Object.fromEntries(
 			Object.entries(vaults).map(([vault, data]) => {
-				const token = contracts?.vaults[vault].token.name.toLowerCase()
+				const token = contracts?.vaults[vault].token.name?.toLowerCase()
 				return [
 					vault,
 					new BigNumber(
@@ -474,7 +475,7 @@ export function useTVL() {
 
 		const vaultsTvl = Object.entries(vaults).reduce(
 			(total, [vault, data]) => {
-				const token = contracts?.vaults[vault].token.name.toLowerCase()
+				const token = contracts?.vaults[vault].token.name?.toLowerCase()
 				return total.plus(
 					data.pricePerFullShare
 						.multipliedBy(data.totalSupply.dividedBy(10 ** 18))

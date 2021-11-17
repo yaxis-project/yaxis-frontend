@@ -52,6 +52,7 @@ const LegacyClaim: React.FC<LegacyClaimProps> = ({ pool }) => {
 							}
 							loading={loading}
 							height={'40px'}
+							style={{ width: '100%' }}
 						>
 							Claim
 						</Button>

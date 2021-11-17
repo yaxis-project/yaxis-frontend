@@ -304,7 +304,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees }) => {
 						: new BigNumber(0),
 					inputValue: currencyValues[vaultToken],
 					key: vault,
-					minApy: apy[vault],
+					minApy: apy[vault].APR,
 					maxApy: 0,
 				}
 			}),

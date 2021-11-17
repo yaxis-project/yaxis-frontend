@@ -275,7 +275,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 						: new BigNumber(0),
 					inputValue: currencyValues[lpToken],
 					key: vault,
-					minApy: apy[vault],
+					minApy: apy[vault].APR,
 					maxApy: 0,
 				}
 			}),

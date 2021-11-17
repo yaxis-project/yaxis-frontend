@@ -31,6 +31,10 @@ const ClaimAll: React.FC = () => {
 	const { loading: loadingClaimableMetaVault, result: claimableMetaVault } =
 		useSingleCallResultByName(`rewards.MetaVault`, 'earned', [account])
 
+	const legacyClaimable = useMemo(
+		() => new BigNumber(claimableMetaVault?.[0]?.toString() || 0),
+		[claimableMetaVault],
+	)
 	/***************************************************/
 
 	const [loadingUserGauges, gauges] = useUserGauges()
@@ -56,9 +60,7 @@ const ClaimAll: React.FC = () => {
 			main={translate('Rewards')}
 			secondary={
 				<Value
-					value={getBalanceNumber(
-						new BigNumber(claimable?.toString() || 0),
-					)}
+					value={getBalanceNumber(legacyClaimable.plus(claimable))}
 					numberSuffix=" YAXIS"
 					decimals={2}
 				/>
