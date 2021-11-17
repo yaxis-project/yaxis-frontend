@@ -2,7 +2,7 @@ import React from 'react'
 import { Row, Col, Typography, Carousel } from 'antd'
 import Button from '../../../../Button'
 import useTranslation from '../../../../../hooks/useTranslation'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { setLastSeenUpdate } from '../util'
 
 const { Title: AntTitle } = Typography
@@ -12,7 +12,7 @@ export const Title = 'Welcome to yAxis 3.0'
 export const Body: React.FC = () => {
 	const translate = useTranslation()
 
-	const history = useHistory()
+	const navigate = useNavigate()
 
 	return (
 		<>
@@ -89,7 +89,7 @@ export const Body: React.FC = () => {
 						style={{ width: '100%' }}
 						onClick={() => {
 							setLastSeenUpdate('V3_0_0')
-							history.push(`/V3`)
+							navigate('/V3')
 						}}
 					>
 						{translate('Migrate over')}

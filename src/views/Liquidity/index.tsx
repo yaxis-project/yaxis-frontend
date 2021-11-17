@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Page from '../../components/Page/Page'
 import Tooltip from '../../components/Tooltip'
 import Table from '../../components/Table'
@@ -23,6 +23,7 @@ const columns = [
 ]
 
 const Liquidity: React.FC = () => {
+	const navigate = useNavigate()
 	const translate = useTranslation()
 
 	const { contracts } = useContracts()
@@ -36,7 +37,7 @@ const Liquidity: React.FC = () => {
 			Object.values(contracts?.pools || {}).filter((pool) => pool.legacy),
 		[contracts],
 	)
-	const history = useHistory()
+
 	return (
 		<Page>
 			<>
@@ -74,9 +75,7 @@ const Liquidity: React.FC = () => {
 						onRow={(record, rowIndex) => {
 							return {
 								onClick: (event) =>
-									history.push(
-										`/liquidity/${record.lpAddress}`,
-									),
+									navigate(`/liquidity/${record.lpAddress}`),
 							}
 						}}
 					/>
@@ -118,7 +117,7 @@ const Liquidity: React.FC = () => {
 							onRow={(record, rowIndex) => {
 								return {
 									onClick: (event) =>
-										history.push(
+										navigate(
 											`/liquidity/${record.lpAddress}`,
 										),
 								}

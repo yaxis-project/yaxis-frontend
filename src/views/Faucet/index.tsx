@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import Page from '../../components/Page/Page'
 import { Row, Col } from 'antd'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { DetailOverviewCard } from '../../components/DetailOverviewCard'
 import Button from '../../components/Button'
 import Typography from '../../components/Typography'
@@ -20,7 +20,7 @@ const Faucet: React.FC = () => {
 	const body = useMemo(() => {
 		if (!chainId) return <Row gutter={16}>Connect to a wallet</Row>
 
-		if (chainId !== 42) return <Redirect to="/" />
+		if (chainId !== 42) return <Navigate to="/" />
 
 		if (!contracts) return null
 

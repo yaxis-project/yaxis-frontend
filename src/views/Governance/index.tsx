@@ -15,7 +15,7 @@ import {
 	DAOResources,
 	FutureRewards,
 } from './components'
-import { useLocation, useHistory, Redirect } from 'react-router-dom'
+import { useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { useVotingPower } from '../../state/wallet/hooks'
 
 const { TabPane } = Tabs
@@ -31,7 +31,7 @@ const TABS = {
 const Governance: React.FC = () => {
 	const translate = useTranslation()
 
-	const history = useHistory()
+	const navigate = useNavigate()
 	const location = useLocation()
 
 	const votingPower = useVotingPower()
@@ -41,7 +41,7 @@ const Governance: React.FC = () => {
 		[location.hash],
 	)
 
-	if (location.hash && !TABS[location.hash]) return <Redirect to="/vault" />
+	if (location.hash && !TABS[location.hash]) return <Navigate to="/vault" />
 
 	return (
 		<Page
@@ -64,7 +64,7 @@ const Governance: React.FC = () => {
 						<Tabs
 							activeKey={activeKey}
 							onTabClick={(key) =>
-								history.push(`${location.pathname}${key}`)
+								navigate(`${location.pathname}${key}`)
 							}
 							centered
 							destroyInactiveTabPane

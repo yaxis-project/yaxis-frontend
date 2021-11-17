@@ -36,15 +36,13 @@ const Nav: React.FC = () => {
 			defaultSelectedKeys={[window.location.pathname]}
 		>
 			<MenuItem key={'/'}>
-				<StyledLink exact activeClassName="active" to="/">
-					{translate('Overview')}
-				</StyledLink>
+				<StyledLink to="/">{translate('Overview')}</StyledLink>
 			</MenuItem>
 
 			<StyledSubMenu
 				key={'/vault'}
 				title={
-					<StyledLink activeClassName="active" to="/vault">
+					<StyledLink to="/vault">
 						{translate('Vault')}{' '}
 						<CaretDownFilled style={{ margin: 0 }} />
 					</StyledLink>
@@ -52,10 +50,7 @@ const Nav: React.FC = () => {
 			>
 				{vaults.map((vault) => (
 					<Menu.Item key={`/vault/${vault}`}>
-						<StyledLink
-							activeClassName="active"
-							to={`/vault/${vault}`}
-						>
+						<StyledLink to={`/vault/${vault}`}>
 							<Row gutter={10} align="middle">
 								<Col>
 									<Row align="middle">
@@ -82,7 +77,7 @@ const Nav: React.FC = () => {
 			<StyledSubMenu
 				key={'/liquidity'}
 				title={
-					<StyledLink activeClassName="active" to="/liquidity">
+					<StyledLink to="/liquidity">
 						{translate('Liquidity')}{' '}
 						<CaretDownFilled style={{ margin: 0 }} />
 					</StyledLink>
@@ -91,10 +86,7 @@ const Nav: React.FC = () => {
 				<ItemGroup title="Provide Liquidity" />
 				{currentPools.map((pool) => (
 					<Menu.Item key={`/liquidity/${pool.lpAddress}`}>
-						<StyledLink
-							activeClassName="active"
-							to={`/liquidity/${pool.lpAddress}`}
-						>
+						<StyledLink to={`/liquidity/${pool.lpAddress}`}>
 							<MenuText>{pool.name}</MenuText>
 						</StyledLink>
 					</Menu.Item>
@@ -102,7 +94,7 @@ const Nav: React.FC = () => {
 			</StyledSubMenu>
 
 			<MenuItem key={'/governance'}>
-				<StyledLink activeClassName="active" to="/governance">
+				<StyledLink to="/governance">
 					{translate('Governance')}
 				</StyledLink>
 			</MenuItem>

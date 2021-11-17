@@ -80,25 +80,20 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 					/>
 				)}
 				<MenuItem key={'/'}>
-					<StyledLink exact activeClassName="active" to="/">
-						{translate('Overview')}
-					</StyledLink>
+					<StyledLink to="/">{translate('Overview')}</StyledLink>
 				</MenuItem>
 
 				<StyledSubMenu
 					key={'/vault'}
 					title={
-						<StyledLink activeClassName="active" to="/vault">
+						<StyledLink to="/vault">
 							{translate('Vault')}
 						</StyledLink>
 					}
 				>
 					{vaults.map((vault) => (
 						<MenuItem key={`/vault/${vault}`}>
-							<StyledLink
-								activeClassName="active"
-								to={`/vault/${vault}`}
-							>
+							<StyledLink to={`/vault/${vault}`}>
 								<MenuText>{vault.toUpperCase()}</MenuText>
 							</StyledLink>
 						</MenuItem>
@@ -112,10 +107,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 					<ItemGroup title={translate('Provide Liquidity')} />
 					{currentPools.map((farm) => (
 						<MenuItem key={`/liquidity/${farm.lpAddress}`}>
-							<StyledLink
-								activeClassName="active"
-								to={`/liquidity/${farm.lpAddress}`}
-							>
+							<StyledLink to={`/liquidity/${farm.lpAddress}`}>
 								<MenuText>{farm.name}</MenuText>
 							</StyledLink>
 						</MenuItem>
@@ -123,14 +115,14 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 				</StyledSubMenu>
 
 				<MenuItem key={'/governance'}>
-					<StyledLink activeClassName="active" to="/governance">
+					<StyledLink to="/governance">
 						{translate('Governance')}
 					</StyledLink>
 				</MenuItem>
 
 				<Menu.Divider />
 
-				<MenuItem>
+				<MenuItem key={'help-center'}>
 					<a
 						href="https://resources.yaxis.io/"
 						rel="noopener noreferrer"

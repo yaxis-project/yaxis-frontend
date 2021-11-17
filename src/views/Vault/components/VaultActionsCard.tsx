@@ -9,7 +9,7 @@ import WithdrawHelperTable from './WithdrawHelperTable'
 import Card from '../../../components/Card'
 import Tooltip from '../../../components/Tooltip'
 import { Dropdown, Menu, Button, Checkbox, Row, Col } from 'antd'
-import { useLocation, useHistory, Redirect } from 'react-router-dom'
+import { useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { SettingOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import {
 	useVaultAutoStake,
@@ -101,7 +101,7 @@ interface VaultActionsCardProps {
 const VaultActionsCard: React.FC<VaultActionsCardProps> = ({ fees }) => {
 	const translate = useTranslation()
 
-	const history = useHistory()
+	const navigate = useNavigate()
 	const location = useLocation()
 
 	const autoStake = useVaultAutoStake()
@@ -110,13 +110,13 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({ fees }) => {
 		location.hash &&
 		(autoStake ? !TABS_AUTOSTAKE[location.hash] : !TABS[location.hash])
 	)
-		return <Redirect to="/vault" />
+		return <Navigate to="/vault" />
 
 	return (
 		<StyledCard>
 			<Tabs
 				activeKey={location.hash || DEFAULT_TAB}
-				onTabClick={(key) => history.push(`${location.pathname}${key}`)}
+				onTabClick={(key) => navigate(`${location.pathname}${key}`)}
 				tabBarExtraContent={<Operations />}
 			>
 				<TabPane tab={translate('Deposit')} key="#deposit">
