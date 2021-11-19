@@ -19,6 +19,7 @@ const currencies: CurrenciesConfig = {
 		'3crv': '0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490',
 		weth: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
 		mvlt: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
+		spell: '0x090185f2135308bad17527004364ebcc2d37e5f6',
 	},
 	ERC677: {
 		yaxis: '0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73',
@@ -36,36 +37,41 @@ const external: ExternalConfig = {
 const externalPools: ExternalPoolsConfig = {
 	curve: {
 		mim3crv: {
+			currency: 'usd',
 			pool: '0x5a6A4D54456819380173272A5E8E9B9904BdF41B',
 			token: '0x5a6A4D54456819380173272A5E8E9B9904BdF41B',
 			gauge: '0xd8b712d29381748dB89c36BCa0138d7c75866ddF',
-			convexRewards: '0x8E299C62EeD737a5d5a53539dF37b5356a27b07D',
-			// extraRewards: {
-			// 	spell: {
-			// 		contract: '0x69a92f1656cd2e193797546cFe2EaF32EACcf6f7',
-			// 		token: '0x090185f2135308bad17527004364ebcc2d37e5f6',
-			// 	},
-			// },
+			convexRewards: '0xFd5AbF66b003881b88567EB9Ed9c651F14Dc4771',
+			extraRewards: {
+				spell: {
+					contract: '0x69a92f1656cd2e193797546cFe2EaF32EACcf6f7',
+					token: '0x090185f2135308bad17527004364ebcc2d37e5f6',
+				},
+			},
 		},
 		rencrv: {
+			currency: 'btc',
 			pool: '0x93054188d876f558f4a66B2EF1d97d16eDf0895B',
 			token: '0x49849C98ae39Fff122806C06791Fa73784FB3675',
 			gauge: '0xB1F2cdeC61db658F091671F5f199635aEF202CAC',
 			convexRewards: '0x8E299C62EeD737a5d5a53539dF37b5356a27b07D',
 		},
 		alethcrv: {
+			currency: 'eth',
 			pool: '0xC4C319E2D4d66CcA4464C0c2B32c9Bd23ebe784e',
 			token: '0xC4C319E2D4d66CcA4464C0c2B32c9Bd23ebe784e',
 			gauge: '0x12dCD9E8D1577b5E4F066d8e7D404404Ef045342',
 			convexRewards: '0x48Bc302d8295FeA1f8c3e7F57D4dDC9981FEE410',
 		},
 		linkcrv: {
+			currency: 'link',
 			pool: '0xF178C0b5Bb7e7aBF4e12A4838C7b7c5bA2C623c0',
 			token: '0xcee60cfa923170e4f8204ae08b4fa6a3f5656f3a',
 			gauge: '0xFD4D8a17df4C27c1dD245d153ccf4499e806C87D',
 			convexRewards: '0x9700152175dc22E7d1f3245fE3c1D2cfa3602548',
 		},
 		'3pool': {
+			currency: 'usd',
 			pool: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
 			token: '0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490',
 			gauge: '0xbFcF63294aD7105dEa65aA58F8AE5BE2D9d0952A',

@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react'
 import { LPVaults } from '../../../constants/type'
 import { Currencies, Currency } from '../../../constants/currencies'
-import { useVaultsAPY } from '../../../state/internal/hooks'
+import { useVaultsAPR } from '../../../state/internal/hooks'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import useTranslation from '../../../hooks/useTranslation'
@@ -115,7 +115,12 @@ const makeColumns = (
 				<>
 					<Row style={{ fontWeight: 'bolder' }}>
 						<Text type="secondary">
-							{record.minApy?.toFixed(2)}%
+							{record.apr.totalAPR.isNaN()
+								? 0
+								: record.apr.totalAPR
+										.multipliedBy(100)
+										.toFormat(2)}
+							%
 							<Tooltip
 								style={{ minWidth: '350px' }}
 								placement="topLeft"
@@ -123,11 +128,15 @@ const makeColumns = (
 									<>
 										<TooltipRow
 											main={'Strategy APR'}
-											value={0}
+											value={record.apr.strategy.totalAPR
+												.multipliedBy(100)
+												.toNumber()}
 										/>
 										<TooltipRow
 											main={'Rewards APR'}
-											value={0}
+											value={record.apr.yaxisAPR
+												.multipliedBy(100)
+												.toNumber()}
 										/>
 									</>
 								}
@@ -144,9 +153,9 @@ const makeColumns = (
 
 const { useBreakpoint } = Grid
 
-const SUPPORTED_CURRENCIES: Currency[] = LPVaults.map(
-	([lpToken]) => Currencies[lpToken.toUpperCase()],
-)
+const SUPPORTED_CURRENCIES: Currency[] = LPVaults.filter(
+	([name]) => name !== 'yaxis',
+).map(([lpToken]) => Currencies[lpToken.toUpperCase()])
 
 const initialCurrencyValues: CurrencyValues = reduce(
 	SUPPORTED_CURRENCIES,
@@ -176,7 +185,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 
 	const [balances, loading] = useAllTokenBalances()
 
-	const apy = useVaultsAPY()
+	const apr = useVaultsAPR()
 
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
@@ -215,24 +224,23 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = LPVaults.reduce<[string, [string, string]][]>(
-			(previous, [lpToken, vault]) => {
-				const _v = currencyValues[lpToken]
-				if (_v)
-					previous.push([
-						vault,
-						[
-							contracts.vaults[vault].vault.address,
-							numberToDecimal(
-								_v,
-								Currencies[lpToken.toUpperCase()].decimals,
-							),
-						],
-					])
-				return previous
-			},
-			[],
-		)
+		const transactions = LPVaults.filter(
+			([name]) => name !== 'yaxis',
+		).reduce<[string, [string, string]][]>((previous, [lpToken, vault]) => {
+			const _v = currencyValues[lpToken]
+			if (_v)
+				previous.push([
+					vault,
+					[
+						contracts.vaults[vault].vault.address,
+						numberToDecimal(
+							_v,
+							Currencies[lpToken.toUpperCase()].decimals,
+						),
+					],
+				])
+			return previous
+		}, [])
 
 		if (transactions.length > 0) {
 			await Promise.allSettled(
@@ -260,26 +268,28 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 
 	const data = useMemo(
 		() =>
-			LPVaults.map<TableDataEntry>(([lpToken, vault]) => {
-				const currency = Currencies[lpToken.toUpperCase()]
-				const balance = balances[lpToken]?.amount || new BigNumber(0)
-				return {
-					...currency,
-					vault,
-					balance,
-					balanceUSD: new BigNumber(prices[lpToken])
-						.times(balance)
-						.toFixed(2),
-					value: currencyValues
-						? new BigNumber(currencyValues[lpToken] || 0)
-						: new BigNumber(0),
-					inputValue: currencyValues[lpToken],
-					key: vault,
-					minApy: apy[vault].APR,
-					maxApy: 0,
-				}
-			}),
-		[prices, balances, currencyValues, apy],
+			LPVaults.filter(([name]) => name !== 'yaxis').map<TableDataEntry>(
+				([lpToken, vault]) => {
+					const currency = Currencies[lpToken.toUpperCase()]
+					const balance =
+						balances[lpToken]?.amount || new BigNumber(0)
+					return {
+						...currency,
+						vault,
+						balance,
+						balanceUSD: new BigNumber(prices[lpToken])
+							.times(balance)
+							.toFixed(2),
+						value: currencyValues
+							? new BigNumber(currencyValues[lpToken] || 0)
+							: new BigNumber(0),
+						inputValue: currencyValues[lpToken],
+						key: vault,
+						apr: apr[vault],
+					}
+				},
+			),
+		[prices, balances, currencyValues, apr],
 	)
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])

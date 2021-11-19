@@ -12,6 +12,7 @@ import { usePrices } from '../prices/hooks'
 import {
 	useFetchCurvePoolBaseAPR,
 	useCurvePoolRewards,
+	useConvexAPY,
 } from '../external/hooks'
 import { numberToFloat } from '../../utils/number'
 import {
@@ -152,6 +153,9 @@ export function useVaultRewards(name: TVaults) {
 
 	const { prices } = usePrices()
 
+	// TODO adjusted APR based on to deposit amount
+	// TODO might need to get from previous checkpoint
+
 	const relativeWeight = useSingleCallResult(
 		contracts?.internal.gaugeController,
 		'gauge_relative_weight(address)',
@@ -172,53 +176,82 @@ export function useVaultRewards(name: TVaults) {
 	)
 
 	return useMemo(() => {
-		const yearlyEmissions = new BigNumber(rate?.result?.toString() || 0)
-			.multipliedBy(relativeWeight?.result?.toString() || 0)
-			.multipliedBy(31_536_000)
-			.dividedBy(10 ** 18)
-			.multipliedBy(prices?.yaxis || 0)
+		const supply = new BigNumber(
+			balance?.result?.toString() || 0,
+		).dividedBy(10 ** 18)
 
 		const virtualPrice =
 			name === 'yaxis'
-				? prices?.yaxis
-				: new BigNumber(virtualPriceCall?.result?.toString() || 0)
+				? new BigNumber(prices?.yaxis)
+				: new BigNumber(
+						virtualPriceCall?.result?.toString() || 0,
+				  ).dividedBy(10 ** 18)
 
-		const totalValue = new BigNumber(balance?.result?.toString() || 0)
-			.multipliedBy(virtualPrice)
+		const virtualSupply = virtualPrice.multipliedBy(
+			// If supply is 0 mock to 1 to show a value
+			supply.gt(0) ? supply : 1,
+		)
+
+		const yaxisPerSecond = new BigNumber(rate?.result?.toString() || 0)
 			.dividedBy(10 ** 18)
+			.multipliedBy(relativeWeight?.result?.toString() || 0)
+			.dividedBy(10 ** 18)
+			.dividedBy(virtualSupply)
 
-		const APR = totalValue.isZero()
-			? new BigNumber(0)
-			: yearlyEmissions.dividedBy(totalValue)
+		const yaxisPerYear = yaxisPerSecond
+			.multipliedBy(86400)
+			.multipliedBy(365)
 
-		// APY (weekly compounding):
-		// (1+(APR/52))^52-1
+		const APR = yaxisPerYear.multipliedBy(prices?.yaxis || 0)
 
 		return {
-			yearlyEmissions,
+			amountPerYear: yaxisPerYear,
 			APR,
 		}
 	}, [name, prices?.yaxis, relativeWeight, virtualPriceCall, balance, rate])
 }
 
-export function useVaultsAPY() {
-	const v3crv = useVaultRewards('3crv')
+export function useVaultsAPR() {
+	const threecrv = useVaultRewards('3crv')
 	const wbtc = useVaultRewards('wbtc')
 	const weth = useVaultRewards('weth')
 	const link = useVaultRewards('link')
 	const yaxis = useVaultRewards('yaxis')
 
-	const test = useCurvePoolRewards('mim3crv')
+	const mim3crv = useConvexAPY('mim3crv')
+	const rencrv = useConvexAPY('rencrv')
+	const alethcrv = useConvexAPY('alethcrv')
+	const linkcrv = useConvexAPY('linkcrv')
 
 	return useMemo(() => {
 		return {
-			'3crv': v3crv,
-			wbtc,
-			weth,
-			link,
-			yaxis,
+			'3crv': {
+				yaxisAPR: threecrv.APR,
+				strategy: mim3crv,
+				totalAPR: threecrv.APR.plus(mim3crv.totalAPR),
+			},
+			wbtc: {
+				yaxisAPR: wbtc.APR,
+				strategy: rencrv,
+				totalAPR: wbtc.APR.plus(rencrv.totalAPR),
+			},
+			weth: {
+				yaxisAPR: weth.APR,
+				strategy: alethcrv,
+				totalAPR: weth.APR.plus(alethcrv.totalAPR),
+			},
+			link: {
+				yaxisAPR: link.APR,
+				strategy: linkcrv,
+				totalAPR: link.APR.plus(linkcrv.totalAPR),
+			},
+			yaxis: {
+				yaxisAPR: yaxis.APR,
+				strategy: {},
+				totalAPR: yaxis.APR,
+			},
 		}
-	}, [v3crv, wbtc, weth, link, yaxis])
+	}, [threecrv, wbtc, weth, link, yaxis, mim3crv, rencrv, alethcrv, linkcrv])
 }
 
 export function useVaults() {

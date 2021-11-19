@@ -3,7 +3,7 @@ import { Vaults, LPVaults } from '../../../constants/type'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-import { useVaultsAPY } from '../../../state/internal/hooks'
+import { useVaultsAPR } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { reduce } from 'lodash'
 import { Row, Grid, Form, Tooltip } from 'antd'
@@ -103,29 +103,40 @@ const makeColumns = (
 			key: 'apy',
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
-				<Row style={{ fontWeight: 'bolder' }}>
-					<Text type="secondary">
-						{record.minApy?.toFixed(2)}%
-						<Tooltip
-							style={{ minWidth: '350px' }}
-							placement="topLeft"
-							title={
-								<>
-									<TooltipRow
-										main={'Strategy APR'}
-										value={0}
-									/>
-									<TooltipRow
-										main={'Rewards APR'}
-										value={0}
-									/>
-								</>
-							}
-						>
-							<StyledInfoIcon />
-						</Tooltip>
-					</Text>
-				</Row>
+				<>
+					<Row style={{ fontWeight: 'bolder' }}>
+						<Text type="secondary">
+							{record.apr.totalAPR.isNaN()
+								? 0
+								: record.apr.totalAPR
+										.multipliedBy(100)
+										.toFormat(2)}
+							%
+							<Tooltip
+								style={{ minWidth: '350px' }}
+								placement="topLeft"
+								title={
+									<>
+										<TooltipRow
+											main={'Strategy APR'}
+											value={record.apr.strategy.totalAPR
+												.multipliedBy(100)
+												.toNumber()}
+										/>
+										<TooltipRow
+											main={'Rewards APR'}
+											value={record.apr.yaxisAPR
+												.multipliedBy(100)
+												.toNumber()}
+										/>
+									</>
+								}
+							>
+								<StyledInfoIcon />
+							</Tooltip>
+						</Text>
+					</Row>
+				</>
 			),
 		},
 	]
@@ -133,7 +144,9 @@ const makeColumns = (
 
 const { useBreakpoint } = Grid
 
-const SUPPORTED_CURRENCIES: Currency[] = Vaults.map((vault) => {
+const SUPPORTED_CURRENCIES: Currency[] = Vaults.filter(
+	(name) => name !== 'yaxis',
+).map((vault) => {
 	const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
 	return Currencies[vaultToken.toUpperCase()]
 })
@@ -169,7 +182,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees }) => {
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
 
-	const apy = useVaultsAPY()
+	const apr = useVaultsAPR()
 
 	const { call: handleStakeWETH, loading: isSubmittingWETH } =
 		useContractWrite({
@@ -252,23 +265,22 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees }) => {
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = Vaults.reduce<[string, string][]>(
-			(previous, vault) => {
-				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
-				const _v = currencyValues[vaultToken]
-				if (_v)
-					previous.push([
-						vault.toUpperCase(),
-						numberToDecimal(
-							_v,
-							Currencies[vaultToken.toUpperCase()].decimals,
-						),
-					])
+		const transactions = Vaults.filter((name) => name !== 'yaxis').reduce<
+			[string, string][]
+		>((previous, vault) => {
+			const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+			const _v = currencyValues[vaultToken]
+			if (_v)
+				previous.push([
+					vault.toUpperCase(),
+					numberToDecimal(
+						_v,
+						Currencies[vaultToken.toUpperCase()].decimals,
+					),
+				])
 
-				return previous
-			},
-			[],
-		)
+			return previous
+		}, [])
 
 		if (transactions.length > 0) {
 			await Promise.allSettled(
@@ -285,30 +297,33 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees }) => {
 
 	const data = useMemo(
 		() =>
-			Vaults.map<TableDataEntry>((vault) => {
-				const [lpToken] = LPVaults.find(
-					([, vaultName]) => vault === vaultName,
-				)
-				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
-				const currency = Currencies[vaultToken.toUpperCase()]
-				const balance = balances[vaultToken]?.amount || new BigNumber(0)
-				return {
-					...currency,
-					vault,
-					balance,
-					balanceUSD: new BigNumber(prices[lpToken])
-						.times(balance)
-						.toFixed(2),
-					value: currencyValues
-						? new BigNumber(currencyValues[vaultToken] || 0)
-						: new BigNumber(0),
-					inputValue: currencyValues[vaultToken],
-					key: vault,
-					minApy: apy[vault].APR,
-					maxApy: 0,
-				}
-			}),
-		[prices, balances, currencyValues, apy],
+			Vaults.filter((name) => name !== 'yaxis').map<TableDataEntry>(
+				(vault) => {
+					const [lpToken] = LPVaults.find(
+						([, vaultName]) => vault === vaultName,
+					)
+					const vaultToken =
+						vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+					const currency = Currencies[vaultToken.toUpperCase()]
+					const balance =
+						balances[vaultToken]?.amount || new BigNumber(0)
+					return {
+						...currency,
+						vault,
+						balance,
+						balanceUSD: new BigNumber(prices[lpToken])
+							.times(balance)
+							.toFixed(2),
+						value: currencyValues
+							? new BigNumber(currencyValues[vaultToken] || 0)
+							: new BigNumber(0),
+						inputValue: currencyValues[vaultToken],
+						key: vault,
+						apr: apr[vault],
+					}
+				},
+			),
+		[prices, balances, currencyValues, apr],
 	)
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])

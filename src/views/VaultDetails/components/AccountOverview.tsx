@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
-import { useAPY } from '../../../state/internal/hooks'
+import { useVaultsAPR } from '../../../state/internal/hooks'
+import { useUserBoost } from '../../../state/wallet/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { Tooltip, Row } from 'antd'
 import APYCalculator from '../../../components/APYCalculator'
@@ -53,101 +54,73 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 }) => {
 	const t = useTranslation()
 
-	const {
-		threeCrvApyPercent,
-		yaxisApyPercent,
-		yaxisAprPercent,
-		lpApyPercent,
-		totalAPY,
-		totalAPR,
-	} = useAPY('MetaVault')
+	const apr = useVaultsAPR()
+
+	const [loading, boost] = useUserBoost(vault)
 
 	return (
 		<DetailOverviewCard title={t('Account Overview')}>
-			<Claim vault={vault} />
-			{/* <CardRow
+			<CardRow
 				main={
-					<Tooltip
-						title={
-							<>
-								<Row style={{ marginBottom: '5px' }}>
-									Annual Percentage Rate
-								</Row>
-								<TooltipRow
-									main={'Curve LP APY:'}
-									value={lpApyPercent.toNumber()}
-								/>
-								<TooltipRow
-									main={'CRV APY:'}
-									value={threeCrvApyPercent.toNumber()}
-								/>
-								<TooltipRow
-									main={'YAXIS rewards APR:'}
-									value={yaxisAprPercent.toNumber()}
-								/>
-							</>
-						}
-					>
-						<Text type="secondary">Average APR </Text>
-						<StyledInfoIcon alt="YAXIS Supply Rewards" />
-					</Tooltip>
+					// <Tooltip
+					// 	title={
+					// 		<>
+					// 			<Row style={{ marginBottom: '5px' }}>
+					// 				Annual Percentage Rate
+					// 			</Row>
+					// 			TODO: description
+					// 		</>
+					// 	}
+					// >
+					// 	<StyledInfoIcon alt="Boost more information icon" />
+					// </Tooltip>
+					<Text type="secondary">Boost</Text>
 				}
 				secondary={
 					<Value
-						value={lpApyPercent
-							.plus(threeCrvApyPercent)
-							.plus(yaxisAprPercent)
-							.toNumber()}
-						numberSuffix={'%'}
+						value={boost?.toFixed(2)}
+						numberSuffix={'x'}
 						decimals={2}
 					/>
 				}
 				rightContent={
 					<>
 						<Row>
-							<Tooltip
+							{/* <Tooltip
 								title={
 									<>
 										<Row style={{ marginBottom: '5px' }}>
-											Annual Percentage Yield
+											Annual Percentage Rate
 										</Row>
-										<TooltipRow
-											main={'Curve LP APY:'}
-											value={lpApyPercent.toNumber()}
-										/>
-										<TooltipRow
-											main={'CRV APY:'}
-											value={threeCrvApyPercent.toNumber()}
-										/>
-										<TooltipRow
-											main={'YAXIS rewards APY:'}
-											value={yaxisApyPercent.toNumber()}
-											suffix={'* daily compound'}
-										/>
+										TODO: description
 									</>
 								}
 							>
-								<Text type="secondary">Average APY </Text>
-								<StyledInfoIcon alt="YAXIS Supply Rewards" />
-							</Tooltip>
+								<StyledInfoIcon alt="YAXIS Rewards more information icon" />
+							</Tooltip> */}
+							<Text type="secondary">Rewards APR </Text>
 						</Row>
 						<Row>
 							<Value
-								value={totalAPY.toNumber()}
+								value={apr[vault]?.yaxisAPR
+									.multipliedBy(100)
+									.toNumber()}
 								numberSuffix={'%'}
 								decimals={2}
 							/>
 						</Row>
 					</>
 				}
-			/> */}
-			<APYCalculator
-				APR={totalAPR.toNumber()}
+			/>
+			<Claim vault={vault} last />
+
+			{/* <APYCalculator
+				APR={0}
 				balance={new BigNumber(totalUSDBalance)}
 				loading={balanceLoading}
 				page={'metavault'}
 				last
-			/>
+			/> */}
 		</DetailOverviewCard>
 	)
 }

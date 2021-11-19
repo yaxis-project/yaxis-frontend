@@ -11,9 +11,13 @@ import { TVaults, TRewardsContracts } from '../../constants/type'
 import useTranslation from '../../hooks/useTranslation'
 import { useContracts } from '../../contexts/Contracts'
 
-type Props = { vault?: TVaults; rewardsContract?: TRewardsContracts }
+type Props = {
+	vault?: TVaults
+	rewardsContract?: TRewardsContracts
+	last?: boolean
+}
 
-const Claim: React.FC<Props> = ({ vault, rewardsContract }) => {
+const Claim: React.FC<Props> = ({ vault, rewardsContract, last }) => {
 	const translate = useTranslation()
 
 	const { account } = useWeb3Provider()
@@ -48,7 +52,7 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract }) => {
 
 	return (
 		<CardRow
-			main={translate('Rewards')}
+			main={'Pending Rewards'}
 			secondary={
 				<Value
 					value={getBalanceNumber(
@@ -86,6 +90,7 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract }) => {
 					</Col>
 				</Row>
 			}
+			last={last}
 		/>
 	)
 }

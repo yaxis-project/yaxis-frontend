@@ -33,6 +33,10 @@ type ExternalLpC = {
 		pool: Contract
 		token: Contract
 		convexRewards: Contract
+		extraRewards?: {
+			[token: string]: { contract: Contract; token: Contract }
+		}
+		currency: string
 	}
 }
 type ExternalC = {
@@ -125,6 +129,27 @@ export class Contracts {
 					abis.ConvexRewardPoolABI,
 					provider,
 				),
+				currency: this.config.externalPools.curve[title].currency,
+			}
+			if (this.config.externalPools.curve[title].extraRewards) {
+				this.externalLP[title].extraRewards = {}
+
+				for (const [name, config] of Object.entries(
+					this.config.externalPools.curve[title].extraRewards,
+				)) {
+					this.externalLP[title].extraRewards[name] = {
+						contract: new Contract(
+							config.contract,
+							abis.RewardsABI,
+							provider,
+						),
+						token: new Contract(
+							config.token,
+							abis.ERC20Abi,
+							provider,
+						),
+					}
+				}
 			}
 		}
 

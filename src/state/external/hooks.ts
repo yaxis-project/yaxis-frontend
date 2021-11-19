@@ -6,8 +6,12 @@ import { usePrices } from '../prices/hooks'
 import {
 	useSingleCallResult,
 	useSingleContractMultipleMethods,
+	useMultipleContractSingleData,
 } from '../onchain/hooks'
 import BigNumber from 'bignumber.js'
+import { abis } from '../../constants/abis/mainnet'
+
+const REWARD_INTERFACE = new ethers.utils.Interface(abis.RewardsABI)
 
 export function useFetchCurvePoolBaseAPR() {
 	const [curveApy, setCurveApy] = useState({
@@ -176,6 +180,11 @@ function getCVXMintAmount(crvEarned: BigNumber, cvxSupply: BigNumber) {
 export function useConvexAPY(name: TCurveLPContracts) {
 	const { contracts } = useContracts()
 
+	const currency = useMemo(
+		() => contracts?.externalLP[name].currency,
+		[contracts, name],
+	)
+
 	const rate = useSingleCallResult(
 		contracts?.externalLP[name].convexRewards,
 		'rewardRate()',
@@ -198,6 +207,30 @@ export function useConvexAPY(name: TCurveLPContracts) {
 		'totalSupply()',
 	)
 
+	const extras = useMemo(
+		() => Object.entries(contracts?.externalLP[name].extraRewards || {}),
+		[contracts, name],
+	)
+
+	const extrasData = useMultipleContractSingleData(
+		extras.map(([, config]) => config.contract.address),
+		REWARD_INTERFACE,
+		'rewardRate()',
+	)
+
+	const extrasRates = useMemo(() => {
+		if (!extras.length) return null
+
+		return Object.fromEntries(
+			extrasData.map(({ loading, result }, i) => {
+				const [name] = extras[i]
+				if (loading) return [name, new BigNumber(0)]
+				if (!result) return [name, new BigNumber(0)]
+				return [name, new BigNumber(result.toString())]
+			}),
+		)
+	}, [extras, extrasData])
+
 	return useMemo(() => {
 		const supply = new BigNumber(
 			rewardsTotalSupply?.result?.toString() || 0,
@@ -209,15 +242,18 @@ export function useConvexAPY(name: TCurveLPContracts) {
 			),
 		)
 
-		//crv per second
-		const crvPerUnderlying = new BigNumber(rate?.result?.toString() || 0)
+		const crvPerSecond = new BigNumber(rate?.result?.toString() || 0)
 			.dividedBy(10 ** 18)
 			.dividedBy(virtualSupply)
 
-		const crvPerYear = crvPerUnderlying
-			.multipliedBy(86400)
-			.multipliedBy(365)
-		const crvAPR = crvPerYear.multipliedBy(prices?.crv)
+		const crvPerYear = crvPerSecond.multipliedBy(86400).multipliedBy(365)
+		const crvPriceConversion =
+			currency !== 'usd'
+				? new BigNumber(prices?.crv)
+						.dividedBy(prices?.[currency])
+						.toString()
+				: prices?.crv
+		const crvAPR = crvPerYear.multipliedBy(crvPriceConversion || 0)
 
 		const cvxPerYear = getCVXMintAmount(
 			crvPerYear,
@@ -225,21 +261,52 @@ export function useConvexAPY(name: TCurveLPContracts) {
 				10 ** 18,
 			),
 		)
-		const cvxAPR = cvxPerYear.multipliedBy(prices?.cvx)
+		const cvxPriceConversion =
+			currency !== 'usd'
+				? new BigNumber(prices?.cvx)
+						.dividedBy(prices?.[currency])
+						.toString()
+				: prices?.cvx
+		const cvxAPR = cvxPerYear.multipliedBy(cvxPriceConversion)
 
-		const totalAPR = crvAPR.plus(cvxAPR)
+		let totalAPR = crvAPR.plus(cvxAPR)
+
+		let extraAPR = null
+
+		if (extrasRates) {
+			const nextExtraAPR = {}
+
+			for (const extra in extrasRates) {
+				const extraPerSecond = extrasRates[extra]
+					.dividedBy(10 ** 18)
+					.dividedBy(virtualSupply)
+
+				const extraPerYear = extraPerSecond
+					.multipliedBy(86400)
+					.multipliedBy(365)
+
+				const extraAPR = extraPerYear.multipliedBy(prices[extra])
+
+				nextExtraAPR[extra] = extraAPR
+
+				totalAPR = totalAPR.plus(extraAPR)
+			}
+			extraAPR = nextExtraAPR
+		}
 
 		return {
+			extraAPR,
 			crvAPR,
 			cvxAPR,
 			totalAPR,
 		}
 	}, [
-		prices?.cvx,
-		prices?.crv,
+		currency,
+		prices,
 		cvxTotalSupply,
 		rewardsTotalSupply,
 		virtualPrice,
 		rate,
+		extrasRates,
 	])
 }

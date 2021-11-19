@@ -56,6 +56,7 @@ export const CurrenciesERC20 = <const>[
 	'3crv',
 	'weth',
 	'mvlt',
+	'spell',
 ]
 export type TCurrenciesERC20 = typeof CurrenciesERC20[number]
 
@@ -76,8 +77,8 @@ export type TCrvLPCurrencies = typeof crvLPCurrencies[number]
 export type Ticker =
 	| TCurrenciesERC20
 	| TCurrenciesERC677
-	| TAdditionalCurrencies
 	| TCrvLPCurrencies
+	| TAdditionalCurrencies
 
 export const InternalContracts = <const>[
 	'vaultHelper',
@@ -110,6 +111,13 @@ export interface ExternalLP {
 	gauge: string
 	token: string
 	convexRewards: string
+	extraRewards?: {
+		[token: string]: {
+			contract: string
+			token: string
+		}
+	}
+	currency: string
 }
 
 export const ExternalLPContracts = <const>[...CurveLPContracts]

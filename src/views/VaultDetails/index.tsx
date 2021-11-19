@@ -49,7 +49,7 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 				<Col xs={24} sm={24} md={24} lg={16}>
 					<CurvePool vault={vault} />
 					<UsersVaultDetails vault={vault} />
-					<Converter vault={vault} />
+					{/* <Converter vault={vault} /> */}
 				</Col>
 				<StyledCol xs={24} sm={24} md={24} lg={8}>
 					<AccountOverview

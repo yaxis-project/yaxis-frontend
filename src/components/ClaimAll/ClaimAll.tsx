@@ -57,7 +57,7 @@ const ClaimAll: React.FC = () => {
 
 	return (
 		<CardRow
-			main={translate('Rewards')}
+			main={'Pending Rewards'}
 			secondary={
 				<Value
 					value={getBalanceNumber(legacyClaimable.plus(claimable))}

@@ -60,9 +60,9 @@ const Liquidity: React.FC = () => {
 				>
 					<Text style={{ fontSize: '16px' }}>
 						A liquidity pool is a crowdsourced pool of
-						cryptocurrencies or tokens locked in a smart contract
-						that is used to facilitate trades between the assets on
-						a decentralized exchange. Help fund the LP to recieve a
+						cryptocurrencies locked in a smart contract that is used
+						to facilitate trades between the assets on a
+						decentralized exchange. Help fund the LP to recieve a
 						percentage of trading fees along with YAXIS rewards.
 					</Text>
 				</Card>

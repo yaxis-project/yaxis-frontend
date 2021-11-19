@@ -153,6 +153,14 @@ export const ETH: Currency = {
 	priceMapKey: 'eth',
 }
 
+export const SPELL: Currency = {
+	name: 'SPELL',
+	tokenId: 'spell',
+	icon: eth,
+	decimals: 18,
+	priceMapKey: 'spell',
+}
+
 export const WBTC: Currency = {
 	name: 'wBTC',
 	tokenId: 'wbtc',
@@ -290,6 +298,7 @@ export const Currencies = {
 	'CV:LINK': CVLINK,
 	'CV:LINK-GAUGE': CVLINKgauge,
 	MIM,
+	SPELL,
 	CVX,
 	CRV,
 	WBTC,

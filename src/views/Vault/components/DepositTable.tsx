@@ -3,7 +3,7 @@ import { LPVaults } from '../../../constants/type'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-import { useVaultsAPY } from '../../../state/internal/hooks'
+import { useVaultsAPR } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { reduce } from 'lodash'
 import { Row, Grid, Form, Tooltip } from 'antd'
@@ -103,29 +103,40 @@ const makeColumns = (
 			key: 'apy',
 			sorter: (a, b) => a.name.length - b.name.length,
 			render: (text, record) => (
-				<Row style={{ fontWeight: 'bolder' }}>
-					<Text type="secondary">
-						{record.minApy?.toFixed(2)}%
-						<Tooltip
-							style={{ minWidth: '350px' }}
-							placement="topLeft"
-							title={
-								<>
-									<TooltipRow
-										main={'Strategy APR'}
-										value={0}
-									/>
-									<TooltipRow
-										main={'Rewards APR'}
-										value={0}
-									/>
-								</>
-							}
-						>
-							<StyledInfoIcon />
-						</Tooltip>
-					</Text>
-				</Row>
+				<>
+					<Row style={{ fontWeight: 'bolder' }}>
+						<Text type="secondary">
+							{record.apr.totalAPR.isNaN()
+								? 0
+								: record.apr.totalAPR
+										.multipliedBy(100)
+										.toFormat(2)}
+							%
+							<Tooltip
+								style={{ minWidth: '350px' }}
+								placement="topLeft"
+								title={
+									<>
+										<TooltipRow
+											main={'Strategy APR'}
+											value={record.apr.strategy.totalAPR
+												.multipliedBy(100)
+												.toNumber()}
+										/>
+										<TooltipRow
+											main={'Rewards APR'}
+											value={record.apr.yaxisAPR
+												.multipliedBy(100)
+												.toNumber()}
+										/>
+									</>
+								}
+							>
+								<StyledInfoIcon />
+							</Tooltip>
+						</Text>
+					</Row>
+				</>
 			),
 		},
 	]
@@ -171,7 +182,7 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees }) => {
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
 
-	const apy = useVaultsAPY()
+	const apr = useVaultsAPR()
 
 	const { call: handleDepositWETH, loading: isSubmittingWETH } =
 		useContractWrite({
@@ -291,11 +302,10 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees }) => {
 						: new BigNumber(0),
 					inputValue: currencyValues[lpToken],
 					key: vault,
-					minApy: apy[vault].APR,
-					maxApy: 0,
+					apr: apr[vault],
 				}
 			}),
-		[prices, balances, currencyValues, apy],
+		[prices, balances, currencyValues, apr],
 	)
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])

@@ -1,5 +1,5 @@
 import { CardRow } from '../../../components/ExpandableSidePanel'
-import { useVaultsAPY } from '../../../state/internal/hooks'
+import { useVaultsAPR } from '../../../state/internal/hooks'
 import { useUserBoost } from '../../../state/wallet/hooks'
 import Value from '../../../components/Value'
 import useTranslation from '../../../hooks/useTranslation'
@@ -16,7 +16,7 @@ const UserVaultDetails: React.FC<UserVaultDetailsProps> = ({ vault }) => {
 
 	const [loading, boost] = useUserBoost(vault)
 
-	const apy = useVaultsAPY()
+	const apr = useVaultsAPR()
 
 	return (
 		<DetailOverviewCard title={t('Vault Overview')}>
@@ -39,10 +39,9 @@ const UserVaultDetails: React.FC<UserVaultDetailsProps> = ({ vault }) => {
 						main={t('APR')}
 						secondary={
 							<Value
-								value={
-									0
-									// TODO
-								}
+								value={apr[vault]?.totalAPR
+									.multipliedBy(100)
+									.toNumber()}
 								numberSuffix="%"
 								decimals={2}
 							/>
@@ -55,10 +54,9 @@ const UserVaultDetails: React.FC<UserVaultDetailsProps> = ({ vault }) => {
 						main={t('APY')}
 						secondary={
 							<Value
-								value={
-									0
-									// TODO
-								}
+								value={apr[vault]?.totalAPR
+									.multipliedBy(100)
+									.toNumber()}
 								numberSuffix="%"
 								decimals={2}
 							/>
