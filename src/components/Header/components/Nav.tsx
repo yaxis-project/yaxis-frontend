@@ -51,11 +51,20 @@ const Nav: React.FC = () => {
 					</StyledLink>
 				}
 			>
+				<Menu.Item key={`/vault`}>
+					<StyledLink to={`/vault`}>
+						<Row gutter={10} align="middle">
+							<Col>
+								<Text>{translate('Overview')}</Text>
+							</Col>
+						</Row>
+					</StyledLink>
+				</Menu.Item>
 				{vaults.map((vault) => (
 					<Menu.Item key={`/vault/${vault}`}>
 						<StyledLink to={`/vault/${vault}`}>
-							<Row gutter={10} align="middle">
-								<Col>
+							<Row gutter={20} align="middle">
+								<Col push={2}>
 									<Row align="middle">
 										<img
 											src={
@@ -86,9 +95,15 @@ const Nav: React.FC = () => {
 					</StyledLink>
 				}
 			>
-				<ItemGroup
-					title={<Text>{translate('Provide Liquidity')}</Text>}
-				/>
+				<Menu.Item key={`/liquidity`}>
+					<StyledLink to={`/liquidity`}>
+						<Row gutter={10} align="middle">
+							<Col>
+								<Text>{translate('Overview')}</Text>
+							</Col>
+						</Row>
+					</StyledLink>
+				</Menu.Item>
 				{currentPools.map((pool) => (
 					<Menu.Item key={`/liquidity/${pool.lpAddress}`}>
 						<StyledLink to={`/liquidity/${pool.lpAddress}`}>
@@ -118,10 +133,6 @@ const StyledSubMenu = styled(Menu.SubMenu)`
 
 const MenuItem = styled(Menu.Item)`
 	height: 38px;
-`
-
-const ItemGroup = styled(Menu.ItemGroup)`
-	height: 30px;
 `
 
 const StyledLink = styled(NavLink)`

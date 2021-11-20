@@ -15,6 +15,7 @@ const Button: React.FC<Props> = () => {
 	const language = useLanguage()
 	const setLanguage = useSetLanguage()
 	const translate = useTranslation()
+
 	return (
 		<Row>
 			<StyledMenu mode="horizontal">
@@ -22,7 +23,10 @@ const Button: React.FC<Props> = () => {
 					key="language-select"
 					title={
 						<LanguageSelector align="middle">
-							<Col>{language}</Col>
+							<Col>
+								{language.slice(0, 1)}
+								{language.slice(1, 2).toLowerCase()}
+							</Col>
 							<Col>
 								<CaretDownOutlined
 									style={{ paddingLeft: '1px' }}

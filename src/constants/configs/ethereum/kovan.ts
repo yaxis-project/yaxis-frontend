@@ -19,7 +19,7 @@ const currencies: CurrenciesConfig = {
 		'3crv': '0xc968d40Abc8a0c365769309982D783825510641F',
 		weth: '0xdC2f70dEd078e3f5F3dC6111978E38a4E38f2370',
 		mvlt: '0x5cDf227131880CFd6947A47cC903b40207834846',
-		spell: '',
+		spell: '0xc968d40Abc8a0c365769309982D783825510641F', // needs mock
 	},
 	ERC677: {
 		yaxis: '0xDE78295b8a50413f5a6faBd1f4921E8449d2433C',
@@ -37,39 +37,39 @@ const external: ExternalConfig = {
 const externalPools: ExternalPoolsConfig = {
 	curve: {
 		mim3crv: {
-			currency: '',
+			currency: 'usd',
 			pool: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
 			token: '',
 			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
-			convexRewards: '',
+			convexRewards: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8', // needs mock
 		},
 		rencrv: {
-			currency: '',
+			currency: 'btc',
 			pool: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
 			token: '',
 			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
-			convexRewards: '',
+			convexRewards: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8', // needs mock
 		},
 		alethcrv: {
-			currency: '',
+			currency: 'eth',
 			pool: '0x459416729cDC9345c20dd6D9eFC047e0CbB3842e',
 			token: '0x59C9B21eDdBFC04Cb453f49b7f3dA18d0F573838',
 			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
-			convexRewards: '',
+			convexRewards: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8', // needs mock
 		},
 		linkcrv: {
-			currency: '',
+			currency: 'link',
 			pool: '0xF0cCAbb34899652eFea9751616fd94A73E4bD501',
 			token: '',
 			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
-			convexRewards: '',
+			convexRewards: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8', // needs mock
 		},
 		'3pool': {
-			currency: '',
+			currency: 'usd',
 			pool: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
 			token: '',
 			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
-			convexRewards: '',
+			convexRewards: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8', // needs mock
 		},
 	},
 }

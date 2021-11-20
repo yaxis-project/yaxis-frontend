@@ -4,7 +4,7 @@ import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { NavLink } from 'react-router-dom'
 import { currentConfig } from '../../../constants/configs'
 import AccountInfo from './AccountInfo'
-import { Row, Dropdown, Button } from 'antd'
+import { Row, Col, Dropdown, Button } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
 import { useOpenModal } from '../../../state/application/hooks'
 import { ApplicationModal } from '../../../state/application/actions'
@@ -90,6 +90,15 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 					key={'/vault'}
 					title={<StyledSpan>{translate('Vault')}</StyledSpan>}
 				>
+					<Menu.Item>
+						<StyledLink to={`/vault`}>
+							<Row gutter={10} align="middle">
+								<Col>
+									<Text>{translate('Overview')}</Text>
+								</Col>
+							</Row>
+						</StyledLink>
+					</Menu.Item>
 					{vaults.map((vault) => (
 						<MenuItem key={`/vault/${vault}`}>
 							<StyledLink to={`/vault/${vault}`}>
@@ -103,9 +112,15 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 					key={'/liquidity'}
 					title={<StyledSpan>{translate('Liquidity')}</StyledSpan>}
 				>
-					<ItemGroup
-						title={<Text>{translate('Provide Liquidity')}</Text>}
-					/>
+					<Menu.Item>
+						<StyledLink to={`/liquidity`}>
+							<Row gutter={10} align="middle">
+								<Col>
+									<Text>{translate('Overview')}</Text>
+								</Col>
+							</Row>
+						</StyledLink>
+					</Menu.Item>
 					{currentPools.map((farm) => (
 						<MenuItem key={`/liquidity/${farm.lpAddress}`}>
 							<StyledLink to={`/liquidity/${farm.lpAddress}`}>

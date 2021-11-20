@@ -15,21 +15,7 @@ export interface MenuProps extends BaseMenuProps {}
 
 const Menu: React.FC<MenuProps> = (props) => <StyledMenu {...props} />
 
-// TODO: background color
-
-const StyledSubMenu = styled(BaseMenu.SubMenu)`
-	.ant-dropdown-menu-submenu-title:hover {
-		// background: red;
-	}
-
-	// .ant-dropdown-menu-item:hover {
-	// 	background: red;
-	// }
-
-	// .ant-dropdown-menu-item-active {
-	// 	background: red;
-	// }
-`
+const StyledSubMenu = styled(BaseMenu.SubMenu)``
 
 const StyledMenus = {
 	Menu,

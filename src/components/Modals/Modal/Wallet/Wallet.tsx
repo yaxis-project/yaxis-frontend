@@ -43,25 +43,23 @@ export const Wallet: React.FC<any> = () => {
 		>
 			{error && <ErrorText>{getErrorMessage(error)}</ErrorText>}
 			<ModalContent>
-				<StyledWalletsWrapper
-					gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
-				>
+				<Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
 					{wallets
 						.slice((page - 1) * 3, (page - 1) * 3 + 3)
 						.map((config, i) => {
 							return (
-								<StyledWalletCard
+								<Col
 									key={`${i}-${config.name}`}
 									className="gutter-row"
 									span={wallets.length ? 8 : 24}
 								>
 									<WalletCard config={config} />
-								</StyledWalletCard>
+								</Col>
 							)
 						})}
-				</StyledWalletsWrapper>
+				</Row>
 				<Row justify="center" style={{ marginTop: '40px' }}>
-					<Pagination
+					<StyledPagination
 						current={page}
 						onChange={(page) => setPage(page)}
 						total={wallets.length}
@@ -73,9 +71,13 @@ export const Wallet: React.FC<any> = () => {
 	)
 }
 
-const StyledWalletsWrapper = styled(Row)``
-
-const StyledWalletCard = styled(Col)``
+const StyledPagination = styled(Pagination)`
+	&&& {
+		svg {
+			fill: black;
+		}
+	}
+`
 
 const ErrorText = styled.div`
 	color: red;

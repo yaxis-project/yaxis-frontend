@@ -19,6 +19,7 @@ const columns = [
 		title: 'Name',
 		dataIndex: 'name',
 		key: 'name',
+		render: (text) => <Row style={{ fontSize: '17px' }}>{text}</Row>,
 	},
 ]
 

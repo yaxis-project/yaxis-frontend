@@ -41,7 +41,4 @@ const Background = styled.div`
 	border-radius: 100%;
 	height: 34px;
 	width: 34px;
-
-	.shadow {
-	}
 `

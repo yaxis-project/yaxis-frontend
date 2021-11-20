@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Modal, Row, Col, Typography } from 'antd'
+import { Modal, Row, Col } from 'antd'
 import { ApplicationModal } from '../../../../state/application/actions'
 import {
 	useOpenModal,
@@ -10,8 +10,10 @@ import { useUserUnclaimedAmount } from '../../../../state/internal/merkleDrop'
 import useWeb3Provider from '../../../../hooks/useWeb3Provider'
 import useContractWrite from '../../../../hooks/useContractWrite'
 import Button from '../../../Button'
+import Typography from '../../../Typography'
 import vault from '../../../../assets/img/merkle_drop_vault.gif'
 import useTranslation from '../../../../hooks/useTranslation'
+
 const { Title } = Typography
 
 export const MerkleDrop: React.FC = () => {

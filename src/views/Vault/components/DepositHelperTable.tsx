@@ -278,7 +278,9 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 				const balance = balances[lpToken]?.amount || new BigNumber(0)
 				return {
 					...currency,
+					key: vault,
 					vault,
+					inputValue: currencyValues[lpToken],
 					balance,
 					balanceUSD: new BigNumber(prices[lpToken])
 						.times(balance)
@@ -286,8 +288,6 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 					value: currencyValues
 						? new BigNumber(currencyValues[lpToken] || 0)
 						: new BigNumber(0),
-					inputValue: currencyValues[lpToken],
-					key: vault,
 					apr: apr[vault],
 				}
 			}),
