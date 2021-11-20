@@ -3,7 +3,6 @@ import { Currencies, Currency } from '../../../constants/currencies'
 import { useVaultsBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import { LPVaults } from '../../../constants/type'
-import { reduce } from 'lodash'
 import { Row, Grid, Form } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
@@ -106,19 +105,6 @@ const makeColumns = (
 
 const { useBreakpoint } = Grid
 
-const SUPPORTED_CURRENCIES: Currency[] = LPVaults.map(
-	([lpToken]) => Currencies[lpToken.toUpperCase()],
-)
-
-const initialCurrencyValues: CurrencyValues = reduce(
-	SUPPORTED_CURRENCIES,
-	(prev, curr) => ({
-		...prev,
-		[curr.tokenId]: '',
-	}),
-	{},
-)
-
 interface TableDataEntry extends Currency {
 	balance: BigNumber
 	balanceUSD: string
@@ -128,12 +114,16 @@ interface TableDataEntry extends Currency {
 
 interface WithdrawHelperTableProps {
 	fees: TYaxisManagerData
+	currencies: Currency[]
 }
 
 /**
  * Creates a deposit table for the savings account.
  */
-const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({ fees }) => {
+const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
+	fees,
+	currencies,
+}) => {
 	const translate = useTranslation()
 
 	const { loading: loadingBalances, ...balances } = useVaultsBalances()
@@ -156,17 +146,18 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({ fees }) => {
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
-		initialCurrencyValues,
+		currencies.reduce(
+			(prev, curr) => ({
+				...prev,
+				[curr.tokenId]: '',
+			}),
+			{},
+		),
 	)
 
 	const totalWithdrawing = useMemo(
-		() =>
-			computeTotalDepositing(
-				SUPPORTED_CURRENCIES,
-				currencyValues,
-				prices,
-			),
-		[currencyValues, prices],
+		() => computeTotalDepositing(currencies, currencyValues, prices),
+		[currencies, currencyValues, prices],
 	)
 
 	const disabled = useMemo(() => {
@@ -222,9 +213,18 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({ fees }) => {
 					})
 				}),
 			)
-			setCurrencyValues(initialCurrencyValues)
+			setCurrencyValues(
+				currencies.reduce(
+					(prev, curr) => ({
+						...prev,
+						[curr.tokenId]: '',
+					}),
+					{},
+				),
+			)
 		}
 	}, [
+		currencies,
 		contracts,
 		currencyValues,
 		handleWithdraw,
@@ -234,7 +234,10 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({ fees }) => {
 
 	const data = useMemo(
 		() =>
-			LPVaults.map<TableDataEntry>(([lpToken, vault]) => {
+			currencies.map<TableDataEntry>((c) => {
+				const [lpToken, vault] = LPVaults.find(
+					([lpToken]) => lpToken === c.tokenId,
+				)
 				const currency = Currencies[lpToken.toUpperCase()]
 				const balance = balances.balances[vault]
 				return {
@@ -253,7 +256,7 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({ fees }) => {
 					key: vault,
 				}
 			}),
-		[balances, currencyValues],
+		[currencies, balances, currencyValues],
 	)
 
 	const columns = useMemo(
@@ -326,20 +329,6 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({ fees }) => {
 				columns={columns}
 				dataSource={data}
 				pagination={false}
-				onRow={(record, rowIndex) => {
-					return {
-						// onClick: (event) => {
-						// 	history.push(
-						// 		`/vault/${(record as TableDataEntry).vault}`,
-						// 	)
-						// },
-						// click row
-						onDoubleClick: (event) => {}, // double click row
-						onContextMenu: (event) => {}, // right button click row
-						onMouseEnter: (event) => {}, // mouse enter row
-						onMouseLeave: (event) => {}, // mouse leave row
-					}
-				}}
 				components={components}
 			/>
 			<div

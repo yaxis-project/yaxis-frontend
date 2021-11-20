@@ -21,7 +21,7 @@ import {
 	TVaults,
 } from '../../constants/type'
 import { abis } from '../../constants/abis/mainnet'
-import { uniq } from 'lodash'
+import { uniq, isEmpty } from 'lodash'
 
 const ERC20_INTERFACE = new ethers.utils.Interface(abis.ERC20Abi)
 const STRATEGY_INTERFACE = new ethers.utils.Interface(abis.StrategyABI)
@@ -675,7 +675,7 @@ export function useVaultStrategies() {
 		return Object.fromEntries(
 			uniqueStrategies.map((address, i) => {
 				const { loading, result } = strategyNames[i]
-				const name = !loading && result ? result : ''
+				const name = !loading && !isEmpty(result) ? result : ''
 				return [address, name]
 			}),
 		)
@@ -695,7 +695,8 @@ export function useVaultStrategies() {
 				const strategies = strategiesWithDefaults[i] || ''
 				const names = strategies
 					.split(',')
-					.map((strategy) => strategyLookUp[strategy] || '')
+					.map((strategy) => strategyLookUp[strategy])
+					.filter((strategy) => !!strategy)
 				return [vault, names]
 			}),
 		)

@@ -6,7 +6,6 @@ import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { NavLink } from 'react-router-dom'
-import { reduce } from 'lodash'
 import { Row, Grid, Form, Tooltip } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
@@ -126,12 +125,14 @@ const makeColumns = (
 								placement="topLeft"
 								title={
 									<>
-										<TooltipRow
-											main={'Strategy APR'}
-											value={record.apr.strategy.totalAPR
-												.multipliedBy(100)
-												.toNumber()}
-										/>
+										{record.apr.strategy.totalAPR && (
+											<TooltipRow
+												main={'Strategy APR'}
+												value={record.apr.strategy.totalAPR
+													.multipliedBy(100)
+													.toNumber()}
+											/>
+										)}
 										<TooltipRow
 											main={'Rewards APR'}
 											value={record.apr.yaxisAPR
@@ -153,19 +154,6 @@ const makeColumns = (
 
 const { useBreakpoint } = Grid
 
-const SUPPORTED_CURRENCIES: Currency[] = LPVaults.filter(
-	([name]) => name !== 'yaxis',
-).map(([lpToken]) => Currencies[lpToken.toUpperCase()])
-
-const initialCurrencyValues: CurrencyValues = reduce(
-	SUPPORTED_CURRENCIES,
-	(prev, curr) => ({
-		...prev,
-		[curr.tokenId]: '',
-	}),
-	{},
-)
-
 interface TableDataEntry extends Currency {
 	balance: BigNumber
 	balanceUSD: string
@@ -175,12 +163,16 @@ interface TableDataEntry extends Currency {
 
 interface DepositHelperTableProps {
 	fees: TYaxisManagerData
+	currencies: Currency[]
 }
 
 /**
  * Creates a deposit and stake table for the Vault account.
  */
-const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
+const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
+	fees,
+	currencies,
+}) => {
 	const translate = useTranslation()
 
 	const [balances, loading] = useAllTokenBalances()
@@ -205,7 +197,13 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
-		initialCurrencyValues,
+		currencies.reduce(
+			(prev, curr) => ({
+				...prev,
+				[curr.tokenId]: '',
+			}),
+			{},
+		),
 	)
 
 	const disabled = useMemo(
@@ -214,13 +212,8 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 	)
 
 	const totalDepositing = useMemo(
-		() =>
-			computeTotalDepositing(
-				SUPPORTED_CURRENCIES,
-				currencyValues,
-				prices,
-			),
-		[currencyValues, prices],
+		() => computeTotalDepositing(currencies, currencyValues, prices),
+		[currencies, currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
@@ -256,9 +249,18 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 					})
 				}),
 			)
-			setCurrencyValues(initialCurrencyValues)
+			setCurrencyValues(
+				currencies.reduce(
+					(prev, curr) => ({
+						...prev,
+						[curr.tokenId]: '',
+					}),
+					{},
+				),
+			)
 		}
 	}, [
+		currencies,
 		currencyValues,
 		handleDeposit,
 		totalDepositing,
@@ -268,28 +270,28 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({ fees }) => {
 
 	const data = useMemo(
 		() =>
-			LPVaults.filter(([name]) => name !== 'yaxis').map<TableDataEntry>(
-				([lpToken, vault]) => {
-					const currency = Currencies[lpToken.toUpperCase()]
-					const balance =
-						balances[lpToken]?.amount || new BigNumber(0)
-					return {
-						...currency,
-						vault,
-						balance,
-						balanceUSD: new BigNumber(prices[lpToken])
-							.times(balance)
-							.toFixed(2),
-						value: currencyValues
-							? new BigNumber(currencyValues[lpToken] || 0)
-							: new BigNumber(0),
-						inputValue: currencyValues[lpToken],
-						key: vault,
-						apr: apr[vault],
-					}
-				},
-			),
-		[prices, balances, currencyValues, apr],
+			currencies.map<TableDataEntry>((c) => {
+				const [lpToken, vault] = LPVaults.find(
+					([lpToken]) => lpToken === c.tokenId,
+				)
+				const currency = Currencies[lpToken.toUpperCase()]
+				const balance = balances[lpToken]?.amount || new BigNumber(0)
+				return {
+					...currency,
+					vault,
+					balance,
+					balanceUSD: new BigNumber(prices[lpToken])
+						.times(balance)
+						.toFixed(2),
+					value: currencyValues
+						? new BigNumber(currencyValues[lpToken] || 0)
+						: new BigNumber(0),
+					inputValue: currencyValues[lpToken],
+					key: vault,
+					apr: apr[vault],
+				}
+			}),
+		[currencies, prices, balances, currencyValues, apr],
 	)
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])

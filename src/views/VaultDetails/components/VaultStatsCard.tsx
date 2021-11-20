@@ -20,7 +20,7 @@ const VaultStatsCard: React.FC<UserVaultDetailsProps> = ({ vault }) => {
 
 	const strategy = useMemo(() => {
 		const names = strategies[vault]
-		if (!names) return t('None')
+		if (!names || !names.length) return t('None')
 		return names.map((strategy) => <div>{strategy}</div>)
 	}, [strategies, t, vault])
 

@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import logo from '../../assets/img/logo-ui.svg'
 import { LeftOutlined } from '@ant-design/icons'
 import { NavLink } from 'react-router-dom'
-import { baseTheme } from '../../theme'
+import { defaultBaseTheme } from '../../theme'
 import { Row, Col, Typography, Divider, Grid } from 'antd'
 import { LinkOutlined } from '@ant-design/icons'
 const { Title, Text } = Typography
@@ -117,7 +117,7 @@ const PageLeadBar = (props: PageLeadBarProps) => {
 		<StyledMain background={background}>
 			<Row
 				style={{
-					maxWidth: baseTheme.siteWidth,
+					maxWidth: defaultBaseTheme.siteWidth,
 					margin: 'auto',
 					alignItems: 'center',
 				}}

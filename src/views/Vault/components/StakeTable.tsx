@@ -5,7 +5,6 @@ import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import { useVaultsAPR } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
-import { reduce } from 'lodash'
 import { Row, Grid, Form, Tooltip } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
@@ -117,12 +116,14 @@ const makeColumns = (
 								placement="topLeft"
 								title={
 									<>
-										<TooltipRow
-											main={'Strategy APR'}
-											value={record.apr.strategy.totalAPR
-												.multipliedBy(100)
-												.toNumber()}
-										/>
+										{record.apr.strategy.totalAPR && (
+											<TooltipRow
+												main={'Strategy APR'}
+												value={record.apr.strategy.totalAPR
+													.multipliedBy(100)
+													.toNumber()}
+											/>
+										)}
 										<TooltipRow
 											main={'Rewards APR'}
 											value={record.apr.yaxisAPR
@@ -144,22 +145,6 @@ const makeColumns = (
 
 const { useBreakpoint } = Grid
 
-const SUPPORTED_CURRENCIES: Currency[] = Vaults.filter(
-	(name) => name !== 'yaxis',
-).map((vault) => {
-	const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
-	return Currencies[vaultToken.toUpperCase()]
-})
-
-const initialCurrencyValues: CurrencyValues = reduce(
-	SUPPORTED_CURRENCIES,
-	(prev, curr) => ({
-		...prev,
-		[curr.tokenId]: '',
-	}),
-	{},
-)
-
 interface TableDataEntry extends Currency {
 	balance: BigNumber
 	balanceUSD: string
@@ -169,12 +154,13 @@ interface TableDataEntry extends Currency {
 
 interface StakeTableProps {
 	fees: TYaxisManagerData
+	currencies: Currency[]
 }
 
 /**
  * Creates a stake table for the Vault account.
  */
-const StakeTable: React.FC<StakeTableProps> = ({ fees }) => {
+const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 	const translate = useTranslation()
 
 	const [balances, loading] = useAllTokenBalances()
@@ -247,7 +233,13 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees }) => {
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
-		initialCurrencyValues,
+		currencies.reduce(
+			(prev, curr) => ({
+				...prev,
+				[curr.tokenId]: '',
+			}),
+			{},
+		),
 	)
 
 	const disabled = useMemo(() => {
@@ -255,13 +247,8 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees }) => {
 	}, [currencyValues, balances])
 
 	const totalDepositing = useMemo(
-		() =>
-			computeTotalDepositing(
-				SUPPORTED_CURRENCIES,
-				currencyValues,
-				prices,
-			),
-		[currencyValues, prices],
+		() => computeTotalDepositing(currencies, currencyValues, prices),
+		[currencies, currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
@@ -291,39 +278,43 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees }) => {
 					}),
 				),
 			)
-			setCurrencyValues(initialCurrencyValues)
+			setCurrencyValues(
+				currencies.reduce(
+					(prev, curr) => ({
+						...prev,
+						[curr.tokenId]: '',
+					}),
+					{},
+				),
+			)
 		}
-	}, [currencyValues, callsLookup, totalDepositing])
+	}, [currencies, currencyValues, callsLookup, totalDepositing])
 
 	const data = useMemo(
 		() =>
-			Vaults.filter((name) => name !== 'yaxis').map<TableDataEntry>(
-				(vault) => {
-					const [lpToken] = LPVaults.find(
-						([, vaultName]) => vault === vaultName,
-					)
-					const vaultToken =
-						vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
-					const currency = Currencies[vaultToken.toUpperCase()]
-					const balance =
-						balances[vaultToken]?.amount || new BigNumber(0)
-					return {
-						...currency,
-						vault,
-						balance,
-						balanceUSD: new BigNumber(prices[lpToken])
-							.times(balance)
-							.toFixed(2),
-						value: currencyValues
-							? new BigNumber(currencyValues[vaultToken] || 0)
-							: new BigNumber(0),
-						inputValue: currencyValues[vaultToken],
-						key: vault,
-						apr: apr[vault],
-					}
-				},
-			),
-		[prices, balances, currencyValues, apr],
+			currencies.map<TableDataEntry>((c) => {
+				const [lpToken, vault] = LPVaults.find(
+					([lpToken]) => c.tokenId === lpToken,
+				)
+				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+				const currency = Currencies[vaultToken.toUpperCase()]
+				const balance = balances[vaultToken]?.amount || new BigNumber(0)
+				return {
+					...currency,
+					vault,
+					balance,
+					balanceUSD: new BigNumber(prices[lpToken])
+						.times(balance)
+						.toFixed(2),
+					value: currencyValues
+						? new BigNumber(currencyValues[vaultToken] || 0)
+						: new BigNumber(0),
+					inputValue: currencyValues[vaultToken],
+					key: vault,
+					apr: apr[vault],
+				}
+			}),
+		[currencies, prices, balances, currencyValues, apr],
 	)
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])

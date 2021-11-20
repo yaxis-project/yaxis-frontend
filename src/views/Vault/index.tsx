@@ -8,6 +8,8 @@ import VaultStatsCard from './components/VaultStatsCard'
 import RecentTransactionsCard from './components/RecentTransactionsCard'
 import './index.less'
 import { currentConfig } from '../../constants/configs'
+import { LPVaults } from '../../constants/type'
+import { Currencies } from '../../constants/currencies'
 import { etherscanUrl } from '../../utils'
 import { formatBN } from '../../utils/number'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
@@ -45,7 +47,14 @@ const Vault: React.FC = () => {
 			>
 				<Row gutter={16}>
 					<Col xs={24} sm={24} md={24} lg={16}>
-						<VaultActionsCard fees={fees} />
+						<VaultActionsCard
+							type="overview"
+							fees={fees}
+							currencies={LPVaults.map(
+								([lpToken]) =>
+									Currencies[lpToken.toUpperCase()],
+							)}
+						/>
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<InvestmentDetailOverview

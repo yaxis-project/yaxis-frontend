@@ -13,7 +13,12 @@ import UsersVaultDetails from './components/UsersVaultDetails'
 import CurvePool from './components/CurvePool'
 import { Converter } from './components/Converter'
 import { useVaultsBalances } from '../../state/wallet/hooks'
+import { useYaxisManager } from '../../state/internal/hooks'
 import { TVaults } from '../../constants/type'
+import { LPVaults } from '../../constants/type'
+
+import { Currencies } from '../../constants/currencies'
+import VaultActionsCard from '../Vault/components/VaultActionsCard'
 
 const StyledCol = styled(Col)`
 	@media only screen and (max-width: 991px) {
@@ -33,6 +38,8 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 	const address = currentConfig(chainId).vaults[vault].vault
 
+	const fees = useYaxisManager()
+
 	return (
 		<Page
 			loading={loading}
@@ -48,7 +55,18 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 			<Row gutter={16}>
 				<Col xs={24} sm={24} md={24} lg={16}>
 					<CurvePool vault={vault} />
-					<UsersVaultDetails vault={vault} />
+					<VaultActionsCard
+						type="details"
+						fees={fees}
+						currencies={[
+							Currencies[
+								LPVaults.find(
+									([, name]) => name === vault,
+								)[0].toUpperCase()
+							],
+						]}
+					/>
+					{/* <UsersVaultDetails vault={vault} /> */}
 					{/* <Converter vault={vault} /> */}
 				</Col>
 				<StyledCol xs={24} sm={24} md={24} lg={8}>

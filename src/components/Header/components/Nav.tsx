@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { NavLink } from 'react-router-dom'
-import { Row, Col, Typography } from 'antd'
+import { Row, Col } from 'antd'
+import Typography from '../../Typography'
 import Menu from '../../Menu'
 import styled from 'styled-components'
 import { currentConfig } from '../../../constants/configs'
@@ -8,6 +9,8 @@ import { Currencies } from '../../../constants/currencies'
 import { CaretDownFilled } from '@ant-design/icons'
 import { useWeb3React } from '@web3-react/core'
 import useTranslation from '../../../hooks/useTranslation'
+
+const { Text } = Typography
 
 /**
  * Horizontal top navigation bar for the application.
@@ -59,14 +62,14 @@ const Nav: React.FC = () => {
 												Currencies[vault.toUpperCase()]
 													.icon
 											}
-											height="36"
-											width="36"
-											alt="logo"
+											height="30"
+											width="30"
+											alt={`${vault} logo`}
 										/>
 									</Row>
 								</Col>
 								<Col>
-									<MenuText>{vault.toUpperCase()}</MenuText>
+									<Text>{vault.toUpperCase()}</Text>
 								</Col>
 							</Row>
 						</StyledLink>
@@ -83,11 +86,13 @@ const Nav: React.FC = () => {
 					</StyledLink>
 				}
 			>
-				<ItemGroup title="Provide Liquidity" />
+				<ItemGroup
+					title={<Text>{translate('Provide Liquidity')}</Text>}
+				/>
 				{currentPools.map((pool) => (
 					<Menu.Item key={`/liquidity/${pool.lpAddress}`}>
 						<StyledLink to={`/liquidity/${pool.lpAddress}`}>
-							<MenuText>{pool.name}</MenuText>
+							<Text>{pool.name}</Text>
 						</StyledLink>
 					</Menu.Item>
 				))}
@@ -109,10 +114,6 @@ const StyledMenu = styled(Menu.Menu)`
 `
 const StyledSubMenu = styled(Menu.SubMenu)`
 	height: 38px;
-`
-
-const MenuText = styled(Typography.Text)`
-	display: block;
 `
 
 const MenuItem = styled(Menu.Item)`

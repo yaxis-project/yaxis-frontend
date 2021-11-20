@@ -147,7 +147,7 @@ const mainnet: Config = {
 		yaxis: {
 			url: '',
 			tokenPoolContract: '',
-			token: '',
+			token: 'YAXIS',
 			tokenContract: '',
 			vault: '',
 			vaultToken: 'YAXIS',

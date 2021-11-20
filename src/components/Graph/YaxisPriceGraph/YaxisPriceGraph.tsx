@@ -13,7 +13,7 @@ import useWindowWidth from '../../../hooks/useWindowWidth'
 import styled from 'styled-components'
 import { usePrices } from '../../../state/prices/hooks'
 import moment from 'moment'
-import { baseTheme } from '../../../theme'
+import { defaultBaseTheme } from '../../../theme'
 import BigNumber from 'bignumber.js'
 import useTranslation from '../../../hooks/useTranslation'
 
@@ -104,7 +104,7 @@ const PriceGraph: React.FC = () => {
 	const chartWidth = useMemo(() => {
 		if (windowWidth < 725) return windowWidth
 		if (windowWidth < 992) return Math.round(windowWidth * 0.74)
-		if (windowWidth < baseTheme.siteWidth + 300)
+		if (windowWidth < defaultBaseTheme.siteWidth + 300)
 			return Math.round(windowWidth * 0.53)
 
 		return 733

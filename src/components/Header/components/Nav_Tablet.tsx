@@ -4,7 +4,7 @@ import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { NavLink } from 'react-router-dom'
 import { currentConfig } from '../../../constants/configs'
 import AccountInfo from './AccountInfo'
-import { Row, Dropdown, Button, Typography } from 'antd'
+import { Row, Dropdown, Button } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
 import { useOpenModal } from '../../../state/application/hooks'
 import { ApplicationModal } from '../../../state/application/actions'
@@ -17,6 +17,9 @@ import ThemeToggle from '../../ThemeToggle'
 import { useWeb3React } from '@web3-react/core'
 import useTranslation from '../../../hooks/useTranslation'
 import Menu from '../../Menu'
+import Typography from '../../Typography'
+
+const { Text } = Typography
 
 interface NavTabletProps {}
 
@@ -85,16 +88,12 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 
 				<StyledSubMenu
 					key={'/vault'}
-					title={
-						<StyledLink to="/vault">
-							{translate('Vault')}
-						</StyledLink>
-					}
+					title={<StyledSpan>{translate('Vault')}</StyledSpan>}
 				>
 					{vaults.map((vault) => (
 						<MenuItem key={`/vault/${vault}`}>
 							<StyledLink to={`/vault/${vault}`}>
-								<MenuText>{vault.toUpperCase()}</MenuText>
+								<Text>{vault.toUpperCase()}</Text>
 							</StyledLink>
 						</MenuItem>
 					))}
@@ -104,11 +103,13 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 					key={'/liquidity'}
 					title={<StyledSpan>{translate('Liquidity')}</StyledSpan>}
 				>
-					<ItemGroup title={translate('Provide Liquidity')} />
+					<ItemGroup
+						title={<Text>{translate('Provide Liquidity')}</Text>}
+					/>
 					{currentPools.map((farm) => (
 						<MenuItem key={`/liquidity/${farm.lpAddress}`}>
 							<StyledLink to={`/liquidity/${farm.lpAddress}`}>
-								<MenuText>{farm.name}</MenuText>
+								<Text>{farm.name}</Text>
 							</StyledLink>
 						</MenuItem>
 					))}
@@ -192,10 +193,6 @@ const StyledSpan = styled.span`
 
 const StyledSubMenu = styled(Menu.SubMenu)`
 	height: 38px;
-`
-
-const MenuText = styled(Typography.Text)`
-	display: block;
 `
 
 const ItemGroup = styled(Menu.ItemGroup)`

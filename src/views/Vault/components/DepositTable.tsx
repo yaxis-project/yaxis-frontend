@@ -5,7 +5,6 @@ import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import { useVaultsAPR } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
-import { reduce } from 'lodash'
 import { Row, Grid, Form, Tooltip } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
@@ -117,12 +116,14 @@ const makeColumns = (
 								placement="topLeft"
 								title={
 									<>
-										<TooltipRow
-											main={'Strategy APR'}
-											value={record.apr.strategy.totalAPR
-												.multipliedBy(100)
-												.toNumber()}
-										/>
+										{record.apr.strategy.totalAPR && (
+											<TooltipRow
+												main={'Strategy APR'}
+												value={record.apr.strategy.totalAPR
+													.multipliedBy(100)
+													.toNumber()}
+											/>
+										)}
 										<TooltipRow
 											main={'Rewards APR'}
 											value={record.apr.yaxisAPR
@@ -144,21 +145,7 @@ const makeColumns = (
 
 const { useBreakpoint } = Grid
 
-// YAXIS only has a gauge, so we filter it out
 const LPVaultsNoYAXIS = LPVaults.filter(([LPVault]) => LPVault !== 'yaxis')
-
-const SUPPORTED_CURRENCIES: Currency[] = LPVaultsNoYAXIS.map(
-	([lpToken]) => Currencies[lpToken.toUpperCase()],
-)
-
-const initialCurrencyValues: CurrencyValues = reduce(
-	SUPPORTED_CURRENCIES,
-	(prev, curr) => ({
-		...prev,
-		[curr.tokenId]: '',
-	}),
-	{},
-)
 
 interface TableDataEntry extends Currency {
 	balance: BigNumber
@@ -169,12 +156,13 @@ interface TableDataEntry extends Currency {
 
 interface DepositTableProps {
 	fees: TYaxisManagerData
+	currencies: Currency[]
 }
 
 /**
  * Creates a deposit table for the Vault account.
  */
-const DepositTable: React.FC<DepositTableProps> = ({ fees }) => {
+const DepositTable: React.FC<DepositTableProps> = ({ fees, currencies }) => {
 	const translate = useTranslation()
 
 	const [balances, loading] = useAllTokenBalances()
@@ -236,7 +224,13 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees }) => {
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
-		initialCurrencyValues,
+		currencies.reduce(
+			(prev, curr) => ({
+				...prev,
+				[curr.tokenId]: '',
+			}),
+			{},
+		),
 	)
 
 	const disabled = useMemo(
@@ -245,13 +239,8 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees }) => {
 	)
 
 	const totalDepositing = useMemo(
-		() =>
-			computeTotalDepositing(
-				SUPPORTED_CURRENCIES,
-				currencyValues,
-				prices,
-			),
-		[currencyValues, prices],
+		() => computeTotalDepositing(currencies, currencyValues, prices),
+		[currencies, currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
@@ -281,13 +270,24 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees }) => {
 					}),
 				),
 			)
-			setCurrencyValues(initialCurrencyValues)
+			setCurrencyValues(
+				currencies.reduce(
+					(prev, curr) => ({
+						...prev,
+						[curr.tokenId]: '',
+					}),
+					{},
+				),
+			)
 		}
-	}, [currencyValues, callsLookup, totalDepositing])
+	}, [currencies, currencyValues, callsLookup, totalDepositing])
 
 	const data = useMemo(
 		() =>
-			LPVaultsNoYAXIS.map<TableDataEntry>(([lpToken, vault]) => {
+			currencies.map<TableDataEntry>((c) => {
+				const [lpToken, vault] = LPVaultsNoYAXIS.find(
+					([lpToken]) => lpToken === c.tokenId,
+				)
 				const currency = Currencies[lpToken.toUpperCase()]
 				const balance = balances[lpToken]?.amount || new BigNumber(0)
 				return {
@@ -305,7 +305,7 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees }) => {
 					apr: apr[vault],
 				}
 			}),
-		[prices, balances, currencyValues, apr],
+		[currencies, prices, balances, currencyValues, apr],
 	)
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])

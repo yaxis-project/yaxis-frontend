@@ -1,6 +1,7 @@
+import { ThemeColors } from '.'
 import * as colors from './colors'
 
-export const dark = {
+export const dark: ThemeColors = {
 	type: 'dark',
 	primary: {
 		light: 'brandBlue[200]',
@@ -23,4 +24,3 @@ export const dark = {
 		active: 'rgb(59	200	254)',
 	},
 }
-// #12181f

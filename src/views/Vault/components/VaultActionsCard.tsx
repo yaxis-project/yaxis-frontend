@@ -1,4 +1,6 @@
+import { useMemo } from 'react'
 import styled from 'styled-components'
+import { Currencies, Currency } from '../../../constants/currencies'
 import Tabs from '../../../components/Tabs'
 import DepositTable from './DepositTable'
 import DepositHelperTable from './DepositHelperTable'
@@ -8,6 +10,7 @@ import WithdrawTable from './WithdrawTable'
 import WithdrawHelperTable from './WithdrawHelperTable'
 import Card from '../../../components/Card'
 import Tooltip from '../../../components/Tooltip'
+import { LPVaults } from '../../../constants/type'
 import { Dropdown, Menu, Button, Checkbox, Row, Col } from 'antd'
 import { useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { SettingOutlined, QuestionCircleOutlined } from '@ant-design/icons'
@@ -32,6 +35,11 @@ const TABS = {
 const TABS_AUTOSTAKE = {
 	'#deposit': '#deposit',
 	'#withdraw': '#withdraw',
+}
+
+const TABS_YAXIS_DETAILS = {
+	'#stake': '#stake',
+	'#unstake': '#unstake',
 }
 
 const StyledButton = styled(Button)`
@@ -96,9 +104,15 @@ const Operations = () => (
 
 interface VaultActionsCardProps {
 	fees: TYaxisManagerData
+	currencies: Currency[]
+	type: 'overview' | 'details'
 }
 
-const VaultActionsCard: React.FC<VaultActionsCardProps> = ({ fees }) => {
+const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
+	fees,
+	currencies,
+	type,
+}) => {
 	const translate = useTranslation()
 
 	const navigate = useNavigate()
@@ -106,43 +120,113 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({ fees }) => {
 
 	const autoStake = useVaultAutoStake()
 
-	if (
-		location.hash &&
-		(autoStake ? !TABS_AUTOSTAKE[location.hash] : !TABS[location.hash])
+	const isYaxisDetails = currencies.every(
+		(currency) => currency.tokenId === 'yaxis',
 	)
+
+	const showDepositTab = useMemo(() => !isYaxisDetails, [isYaxisDetails])
+	const showStakeTab = useMemo(
+		() => !autoStake || isYaxisDetails,
+		[autoStake, isYaxisDetails],
+	)
+	const showUnstakeTab = useMemo(
+		() => !autoStake || isYaxisDetails,
+		[autoStake, isYaxisDetails],
+	)
+	const showWithdrawTab = useMemo(() => !isYaxisDetails, [isYaxisDetails])
+
+	const activeKey = useMemo(() => {
+		if (location.hash) return location.hash
+		if (isYaxisDetails) return '#stake'
+		return DEFAULT_TAB
+	}, [location.hash, isYaxisDetails])
+
+	const allowedRoutes = useMemo(() => {
+		if (type === 'details' && isYaxisDetails) return TABS_YAXIS_DETAILS
+		if (autoStake) return TABS_AUTOSTAKE
+		return TABS
+	}, [type, isYaxisDetails, autoStake])
+
+	if (location.hash && !allowedRoutes[location.hash])
 		return <Navigate to="/vault" />
 
 	return (
 		<StyledCard>
 			<Tabs
-				activeKey={location.hash || DEFAULT_TAB}
+				activeKey={activeKey}
 				onTabClick={(key) => navigate(`${location.pathname}${key}`)}
 				tabBarExtraContent={<Operations />}
 			>
-				<TabPane tab={translate('Deposit')} key="#deposit">
-					{autoStake ? (
-						<DepositHelperTable fees={fees} />
-					) : (
-						<DepositTable fees={fees} />
-					)}
-				</TabPane>
-				{!autoStake && (
+				{showDepositTab && (
+					<TabPane tab={translate('Deposit')} key="#deposit">
+						{autoStake ? (
+							<DepositHelperTable
+								fees={fees}
+								currencies={currencies}
+							/>
+						) : (
+							<DepositTable
+								fees={fees}
+								currencies={currencies
+									// YAXIS only has a gauge, so we filter it out
+									.filter(
+										(currency) =>
+											currency.tokenId !== 'yaxis',
+									)}
+							/>
+						)}
+					</TabPane>
+				)}
+				{showStakeTab && (
 					<TabPane tab={translate('Stake')} key="#stake">
-						<StakeTable fees={fees} />
+						<StakeTable fees={fees} currencies={currencies} />
 					</TabPane>
 				)}
-				{!autoStake && (
+				{showUnstakeTab && (
 					<TabPane tab={translate('Unstake')} key="#unstake">
-						<UnstakeTable fees={fees} />
+						<UnstakeTable
+							fees={fees}
+							currencies={currencies.map((currency) => {
+								const [, vault] = LPVaults.find(
+									([lpToken]) => lpToken === currency.tokenId,
+								)
+								const vaultToken =
+									vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+								const gaugeToken = `${vaultToken}-gauge`
+								return Currencies[gaugeToken.toUpperCase()]
+							})}
+						/>
 					</TabPane>
 				)}
-				<TabPane tab={translate('Withdraw')} key="#withdraw">
-					{autoStake ? (
-						<WithdrawHelperTable fees={fees} />
-					) : (
-						<WithdrawTable fees={fees} />
-					)}
-				</TabPane>
+				{showWithdrawTab && (
+					<TabPane tab={translate('Withdraw')} key="#withdraw">
+						{autoStake ? (
+							<WithdrawHelperTable
+								fees={fees}
+								currencies={currencies}
+							/>
+						) : (
+							<WithdrawTable
+								fees={fees}
+								currencies={currencies
+									// YAXIS only has a gauge, so we filter it out
+									.filter(
+										(currency) =>
+											currency.tokenId !== 'yaxis',
+									)
+									.map((currency) => {
+										const [, vault] = LPVaults.find(
+											([lpToken]) =>
+												lpToken === currency.tokenId,
+										)
+										return Currencies[
+											`CV:${vault.toUpperCase()}`
+										]
+									})}
+							/>
+						)}
+					</TabPane>
+				)}
 			</Tabs>
 		</StyledCard>
 	)
