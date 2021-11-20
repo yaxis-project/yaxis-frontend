@@ -1,7 +1,7 @@
 import React from 'react'
-import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
+import Card from '../../../components/Card'
 import Value from '../../../components/Value'
-import { CardRow } from '../../../components/ExpandableSidePanel'
+import CardRow from '../../../components/CardRow'
 import { LiquidityPool } from '../../../constants/type'
 import { useLP } from '../../../state/external/hooks'
 import useTranslation from '../../../hooks/useTranslation'
@@ -19,7 +19,7 @@ const PairStatsCard: React.FC<Props> = ({ pool }) => {
 	const { reserves, tvl, lpTokens } = useLP(pool.name)
 
 	return (
-		<DetailOverviewCard title={translate('Pool Stats')}>
+		<Card title={translate('Pool Stats')} icon="verticalbars">
 			<CardRow
 				main={translate('Total Value Locked')}
 				secondary={
@@ -60,7 +60,7 @@ const PairStatsCard: React.FC<Props> = ({ pool }) => {
 				}
 				last
 			/>
-		</DetailOverviewCard>
+		</Card>
 	)
 }
 

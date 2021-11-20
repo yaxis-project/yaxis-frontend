@@ -48,7 +48,15 @@ export function DetailOverviewCard(props: DetailOverviewCardProps) {
 		<Card
 			className="detail-overview-card"
 			style={{ padding: 0 }}
-			title={<Title level={4}>{title}</Title>}
+			title={
+				<span
+					style={{
+						fontSize: '19px',
+					}}
+				>
+					{title}
+				</span>
+			}
 		>
 			{children}
 		</Card>

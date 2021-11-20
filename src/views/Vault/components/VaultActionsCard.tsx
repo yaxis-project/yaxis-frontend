@@ -9,11 +9,12 @@ import UnstakeTable from './UnstakeTable'
 import WithdrawTable from './WithdrawTable'
 import WithdrawHelperTable from './WithdrawHelperTable'
 import Card from '../../../components/Card'
+import Icon from '../../../components/Icon'
 import Tooltip from '../../../components/Tooltip'
 import { LPVaults } from '../../../constants/type'
 import { Dropdown, Menu, Button, Checkbox, Row, Col } from 'antd'
 import { useLocation, useNavigate, Navigate } from 'react-router-dom'
-import { SettingOutlined, QuestionCircleOutlined } from '@ant-design/icons'
+import { QuestionCircleOutlined } from '@ant-design/icons'
 import {
 	useVaultAutoStake,
 	useSetVaultAutoStake,
@@ -45,6 +46,9 @@ const TABS_YAXIS_DETAILS = {
 const StyledButton = styled(Button)`
 	background: ${(props) => props.theme.secondary.background};
 	border: none;
+	padding: 0;
+	margin-right: 20px;
+
 	&:hover {
 		background: ${(props) => props.theme.secondary.background};
 	}
@@ -54,10 +58,6 @@ const StyledButton = styled(Button)`
 	&:focus {
 		background: ${(props) => props.theme.secondary.background};
 	}
-`
-
-const StyledIcon = styled(SettingOutlined)`
-	color: ${(props) => props.theme.primary.font};
 `
 
 const SettingsMenu = () => {
@@ -91,15 +91,15 @@ const SettingsMenu = () => {
 }
 
 const Operations = () => (
-	<div style={{ padding: '0 10px' }}>
-		<Dropdown
-			overlay={<SettingsMenu />}
-			placement="bottomLeft"
-			trigger={['click']}
-		>
-			<StyledButton icon={<StyledIcon />} />
-		</Dropdown>
-	</div>
+	<Dropdown
+		overlay={<SettingsMenu />}
+		placement="bottomLeft"
+		trigger={['click']}
+	>
+		<StyledButton shape="round">
+			<Icon type="gear" />
+		</StyledButton>
+	</Dropdown>
 )
 
 interface VaultActionsCardProps {

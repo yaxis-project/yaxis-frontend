@@ -1,9 +1,7 @@
 import React, { useMemo } from 'react'
 import useTranslation from '../../../hooks/useTranslation'
-import {
-	ExpandableSidePanel,
-	CardRow,
-} from '../../../components/ExpandableSidePanel'
+import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
+import CardRow from '../../../components/CardRow'
 import { useGauges } from '../../../state/internal/hooks'
 import moment from 'moment'
 

@@ -369,8 +369,7 @@ const Lock: React.FC = () => {
 					Boost your Vault YAXIS rewards by up to 2.5x.
 				</StyledSecondaryText>
 				<StyledSecondaryText>
-					Have voting power toward deciding how emissions get
-					distributed between the different Vaults.
+					Vote for how emissions get distributed between the Vaults.
 				</StyledSecondaryText>
 			</Row>
 

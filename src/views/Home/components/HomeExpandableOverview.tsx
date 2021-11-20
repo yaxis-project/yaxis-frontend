@@ -7,12 +7,10 @@ import { usePrices } from '../../../state/prices/hooks'
 import Value from '../../../components/Value'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import { InfoCircleOutlined } from '@ant-design/icons'
-import {
-	ExpandableSidePanel,
-	CardRow,
-} from '../../../components/ExpandableSidePanel'
+import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
 import { Tooltip } from 'antd'
 import Button from '../../../components/Button'
+import CardRow from '../../../components/CardRow'
 import Divider from '../../../components/Divider'
 import Typography from '../../../components/Typography'
 import useTranslation from '../../../hooks/useTranslation'
@@ -55,112 +53,100 @@ export default function HomeExpandableOverview() {
 	const { circulating, total } = useYaxisSupply()
 
 	return (
-		<>
-			<ExpandableSidePanel header={translate('yAxis Overview')} key="1">
-				<CardRow
-					main={
-						<Tooltip
-							title={
-								<>
-									<TooltipRow
-										main={translate('Total Vaults value')}
-										value={vaultsTvl.toNumber()}
-									/>
-									<TooltipRow
-										main={translate(
-											'Total Liquidity Pool value',
-										)}
-										value={liquidityTvl.toNumber()}
-									/>
-									<TooltipRow
-										main={'Total Governance locked'}
-										value={
-											0
-											// TODO
-										}
-									/>
-									<Divider style={{ margin: '5px 0' }} />
-									<TooltipRow
-										main={
-											'Total YAXIS Staking value (LEGACY)'
-										}
-										value={stakingTvl.toNumber()}
-									/>
-								</>
-							}
+		<ExpandableSidePanel header={translate('yAxis Overview')} icon="lineup">
+			<CardRow
+				main={
+					<Tooltip
+						title={
+							<>
+								<TooltipRow
+									main={translate('Total Vaults value')}
+									value={vaultsTvl.toNumber()}
+								/>
+								<TooltipRow
+									main={translate(
+										'Total Liquidity Pool value',
+									)}
+									value={liquidityTvl.toNumber()}
+								/>
+								<TooltipRow
+									main={'Total Governance locked'}
+									value={
+										0
+										// TODO
+									}
+								/>
+								<Divider style={{ margin: '5px 0' }} />
+								<TooltipRow
+									main={'Total YAXIS Staking value (LEGACY)'}
+									value={stakingTvl.toNumber()}
+								/>
+							</>
+						}
+					>
+						<SecondaryText>
+							{translate('Total Value Locked')}
+						</SecondaryText>
+						<StyledInfoIcon />
+					</Tooltip>
+				}
+				secondary={
+					<Value
+						value={tvl.toNumber()}
+						numberPrefix="$"
+						decimals={2}
+					/>
+				}
+			/>
+			<CardRow
+				main={
+					<SecondaryText>{translate('Price of YAXIS')}</SecondaryText>
+				}
+				secondary={
+					<Value value={prices.yaxis} numberPrefix="$" decimals={2} />
+				}
+				rightContent={
+					<Col lg={18} md={12} sm={12} xs={12}>
+						<a
+							href={`https://app.uniswap.org/#/swap?outputCurrency=${contracts?.currencies.ERC677.yaxis?.contract.address}`}
+							target="_blank"
+							rel="noopener noreferrer"
 						>
-							<SecondaryText>
-								{translate('Total Value Locked')}
-							</SecondaryText>
-							<StyledInfoIcon />
-						</Tooltip>
-					}
-					secondary={
-						<Value
-							value={tvl.toNumber()}
-							numberPrefix="$"
-							decimals={2}
-						/>
-					}
-				/>
-				<CardRow
-					main={
-						<SecondaryText>
-							{translate('Price of YAXIS')}
-						</SecondaryText>
-					}
-					secondary={
-						<Value
-							value={prices.yaxis}
-							numberPrefix="$"
-							decimals={2}
-						/>
-					}
-					rightContent={
-						<Col lg={18} md={12} sm={12} xs={12}>
-							<a
-								href={`https://app.uniswap.org/#/swap?outputCurrency=${contracts?.currencies.ERC677.yaxis?.contract.address}`}
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								<Button height={'40px'}>
-									{translate('Get YAXIS')}
-								</Button>
-							</a>
-						</Col>
-					}
-				/>
+							<Button height={'40px'}>
+								{translate('Get YAXIS')}
+							</Button>
+						</a>
+					</Col>
+				}
+			/>
 
-				<CardRow
-					main={
-						<SecondaryText>
-							{translate('YAXIS Supply')}
-						</SecondaryText>
-					}
-					secondary={
-						<Row gutter={3}>
-							<Col>
-								{/*  TODO */}
-								<Value
-									value={circulating
-										.dividedBy(10 ** 18)
-										.toNumber()}
-									decimals={0}
-								/>
-							</Col>
-							<Col>{' / '}</Col>
-							<Col>
-								<Value
-									value={total.dividedBy(10 ** 18).toNumber()}
-									decimals={0}
-								/>
-							</Col>
-						</Row>
-					}
-					last
-				/>
-			</ExpandableSidePanel>
-		</>
+			<CardRow
+				main={
+					<SecondaryText>{translate('YAXIS Supply')}</SecondaryText>
+				}
+				secondary={
+					<Row gutter={3}>
+						<Col>
+							{/*  TODO */}
+							<Value
+								value={circulating
+									.dividedBy(10 ** 18)
+									.toNumber()}
+								decimals={0}
+							/>
+						</Col>
+						<Col>{' / '}</Col>
+						<Col>
+							<Value
+								value={total.dividedBy(10 ** 18).toNumber()}
+								decimals={0}
+							/>
+						</Col>
+					</Row>
+				}
+				last
+			/>
+		</ExpandableSidePanel>
 	)
 }
 

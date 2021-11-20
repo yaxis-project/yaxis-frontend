@@ -1,5 +1,5 @@
 import { Row, Col } from 'antd'
-import { CardRow } from '../../components/ExpandableSidePanel'
+import CardRow from '../../components/CardRow'
 import Value from '../../components/Value'
 import Button from '../../components/Button'
 import useContractWrite from '../../hooks/useContractWrite'

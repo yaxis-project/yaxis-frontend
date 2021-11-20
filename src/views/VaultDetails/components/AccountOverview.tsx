@@ -6,9 +6,9 @@ import useTranslation from '../../../hooks/useTranslation'
 import { Tooltip, Row } from 'antd'
 import APYCalculator from '../../../components/APYCalculator'
 import Typography from '../../../components/Typography'
-import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
+import Card from '../../../components/Card'
 import Value from '../../../components/Value'
-import { CardRow } from '../../../components/ExpandableSidePanel'
+import CardRow from '../../../components/CardRow'
 import Claim from '../../../components/Claim'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
@@ -59,7 +59,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 	const [loading, boost] = useUserBoost(vault)
 
 	return (
-		<DetailOverviewCard title={t('Account Overview')}>
+		<Card title={t('Account Overview')} icon="yaxis">
 			<CardRow
 				main={
 					// <Tooltip
@@ -121,7 +121,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 				page={'metavault'}
 				last
 			/> */}
-		</DetailOverviewCard>
+		</Card>
 	)
 }
 

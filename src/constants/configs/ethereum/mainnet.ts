@@ -109,7 +109,7 @@ const mainnet: Config = {
 			tokenPoolContract: externalPools.curve.mim3crv.pool,
 			token: 'MIM3CRV',
 			tokenContract: externalPools.curve.mim3crv.token,
-			vault: '0xc531d9847367B8b394D3A35b9B32524517C76F59',
+			vault: '0x9720346Ba80b668E50A5560c200180515fEbb895',
 			vaultToken: 'CV:3CRV',
 			vaultTokenContract: '0x2C1e6D004d4f06F92464e0208b04D260b3eF46A5',
 			gauge: '0x9a4A2a2E8f755b77eb512E8A8fE635B803950D51',

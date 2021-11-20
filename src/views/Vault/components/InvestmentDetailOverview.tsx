@@ -5,10 +5,10 @@ import { useAPY } from '../../../state/internal/hooks'
 import { Tooltip, Row } from 'antd'
 import APYCalculator from '../../../components/APYCalculator'
 import Typography from '../../../components/Typography'
-import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import Value from '../../../components/Value'
-import { CardRow } from '../../../components/ExpandableSidePanel'
+import CardRow from '../../../components/CardRow'
 import ClaimAll from '../../../components/ClaimAll'
+import Card from '../../../components/Card'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
 import useTranslation from '../../../hooks/useTranslation'
@@ -58,7 +58,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 	} = useAPY('MetaVault')
 
 	return (
-		<DetailOverviewCard title={translate('Account Overview')}>
+		<Card title={translate('Account Overview')} icon="yaxis">
 			<ClaimAll />
 			{/* <CardRow
 				main={
@@ -143,7 +143,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 				page={'metavault'}
 				last
 			/>
-		</DetailOverviewCard>
+		</Card>
 	)
 }
 

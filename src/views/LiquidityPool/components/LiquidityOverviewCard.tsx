@@ -1,6 +1,6 @@
-import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
+import Card from '../../../components/Card'
 import styled from 'styled-components'
-import { CardRow } from '../../../components/ExpandableSidePanel'
+import CardRow from '../../../components/CardRow'
 import { Tooltip, Row } from 'antd'
 import Value from '../../../components/Value'
 import Typography from '../../../components/Typography'
@@ -60,7 +60,7 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 	const { poolShare } = useAccountLP(pool)
 
 	return (
-		<DetailOverviewCard title={translate('Overview')}>
+		<Card title={translate('Overview')} icon="yaxis">
 			{pool?.legacy ? (
 				<LegacyClaim pool={pool} />
 			) : (
@@ -170,7 +170,7 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 				page={'lp'}
 				last
 			/>
-		</DetailOverviewCard>
+		</Card>
 	)
 }
 

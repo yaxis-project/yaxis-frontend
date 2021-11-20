@@ -1,4 +1,4 @@
-import { CardRow } from '../../../components/ExpandableSidePanel'
+import CardRow from '../../../components/CardRow'
 import { useVaultsAPR } from '../../../state/internal/hooks'
 import { useUserBoost } from '../../../state/wallet/hooks'
 import Value from '../../../components/Value'

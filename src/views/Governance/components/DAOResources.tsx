@@ -2,17 +2,15 @@ import React from 'react'
 import styled from 'styled-components'
 import { Row } from 'antd'
 import useTranslation from '../../../hooks/useTranslation'
-import {
-	ExpandableSidePanel,
-	CardRow,
-} from '../../../components/ExpandableSidePanel'
+import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
 import Button from '../../../components/Button'
+import CardRow from '../../../components/CardRow'
 
 const DAOResources: React.FC = () => {
 	const translate = useTranslation()
 
 	return (
-		<ExpandableSidePanel header={translate('DAO Resources')}>
+		<ExpandableSidePanel header={translate('DAO Resources')} icon="text">
 			<CardRow
 				main={<div>Participate in the discussion</div>}
 				secondary={null}

@@ -1,10 +1,8 @@
 import { useMemo } from 'react'
-import {
-	ExpandableSidePanel,
-	CardRow,
-} from '../../../components/ExpandableSidePanel'
+import Card from '../../../components/Card'
 import { useTVL, useVaultStrategies } from '../../../state/internal/hooks'
 import Value from '../../../components/Value'
+import CardRow from '../../../components/CardRow'
 import useTranslation from '../../../hooks/useTranslation'
 import { TVaults } from '../../../constants/type'
 
@@ -25,21 +23,20 @@ const VaultStatsCard: React.FC<UserVaultDetailsProps> = ({ vault }) => {
 	}, [strategies, t, vault])
 
 	return (
-		<>
-			<ExpandableSidePanel header={t('Vault Stats')} key="1">
-				<CardRow main={t('Current Strategies')} secondary={strategy} />
-				<CardRow
-					main={t('Total Value Locked')}
-					secondary={
-						<Value
-							value={vaultTvl[vault]?.toNumber()}
-							numberPrefix="$"
-							decimals={2}
-						/>
-					}
-					last
-				/>
-				{/* <CardRow
+		<Card title={t('Vault Stats')} icon="vault">
+			<CardRow main={t('Current Strategies')} secondary={strategy} />
+			<CardRow
+				main={t('Total Value Locked')}
+				secondary={
+					<Value
+						value={vaultTvl[vault]?.toNumber()}
+						numberPrefix="$"
+						decimals={2}
+					/>
+				}
+				last
+			/>
+			{/* <CardRow
 					main="Rewards Per Block"
 					secondary={
 						<Value
@@ -49,8 +46,7 @@ const VaultStatsCard: React.FC<UserVaultDetailsProps> = ({ vault }) => {
 						/>
 					}
 				/> */}
-			</ExpandableSidePanel>
-		</>
+		</Card>
 	)
 }
 

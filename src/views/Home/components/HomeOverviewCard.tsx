@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 import { Col, Tooltip } from 'antd'
 import Typography from '../../../components/Typography'
-import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
-import { CardRow } from '../../../components/ExpandableSidePanel'
+import Card from '../../../components/Card'
+import CardRow from '../../../components/CardRow'
 import useTranslation from '../../../hooks/useTranslation'
 import Value from '../../../components/Value'
 import { useReturns } from '../../../state/wallet/hooks'
@@ -46,7 +46,7 @@ export default function HomeOverviewCard() {
 	} = useReturns()
 
 	return (
-		<DetailOverviewCard title={translate('Your Lifetime Earnings')}>
+		<Card title={translate('Your Lifetime Earnings')} icon="coins">
 			<CardRow
 				main={
 					<StyledText>
@@ -150,7 +150,7 @@ export default function HomeOverviewCard() {
 				}
 				last
 			/>
-		</DetailOverviewCard>
+		</Card>
 	)
 }
 

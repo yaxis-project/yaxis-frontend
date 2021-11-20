@@ -48,7 +48,10 @@ const BoostCalculator: React.FC = () => {
 	const [duration, setDuration] = useState(1)
 
 	return (
-		<ExpandableSidePanel header={translate('Boost Calculator')}>
+		<ExpandableSidePanel
+			header={translate('Boost Calculator')}
+			icon="calculator"
+		>
 			<Background>
 				<Select
 					size={'large'}
@@ -72,7 +75,9 @@ const BoostCalculator: React.FC = () => {
 					))}
 				</Select>
 				<Row style={{ marginTop: '15px' }}>
-					<Title level={5}>Voting Power % for 2.5x boost:</Title>
+					<Title level={5}>
+						VP% needed for maximum boost (2.5x):
+					</Title>
 				</Row>
 				<Row justify="center">
 					{/* TODO */}

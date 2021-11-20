@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Row, Col } from 'antd'
-import { CardRow } from '../ExpandableSidePanel'
+import CardRow from '../CardRow'
 import Value from '../Value'
 import Button from '../Button'
 import { useContracts } from '../../contexts/Contracts'

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { Row, Col, Tooltip, Radio } from 'antd'
-import { CardRow } from '../../components/ExpandableSidePanel'
+import CardRow from '../../components/CardRow'
 import Slider from '../../components/Slider'
 import Typography from '../Typography'
 import Value from '../../components/Value'

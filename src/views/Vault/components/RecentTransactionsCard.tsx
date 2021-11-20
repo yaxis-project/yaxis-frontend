@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Button, Row, Col, Pagination } from 'antd'
-import Card from '../../../components/Card'
+import Card, { Grid } from '../../../components/Card'
 import Typography from '../../../components/Typography'
 import { CloseOutlined } from '@ant-design/icons'
 import transactionIn from '../../../assets/img/icons/transaction-in.svg'
@@ -76,7 +76,7 @@ const RecentTransactionRow = ({
 			target="_blank"
 			rel="noopener noreferrer"
 		>
-			<Card.Grid
+			<Grid
 				hoverable={true}
 				style={{
 					width: '100%',
@@ -108,7 +108,7 @@ const RecentTransactionRow = ({
 						</Text>
 					</Col>
 				</Row>
-			</Card.Grid>
+			</Grid>
 		</a>
 	)
 }
