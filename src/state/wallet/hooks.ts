@@ -1076,94 +1076,35 @@ export function useUserBoost(vault: TVaults) {
 
 	const { contracts } = useContracts()
 
-	const [balances] = useAllTokenBalances()
-
 	const results = useSingleContractMultipleMethods(
 		contracts?.vaults[vault]?.gauge,
 		[
-			['integrate_checkpoint_of', [account]],
+			['balanceOf', [account]],
 			['working_balances', [account]],
 		],
 	)
-	const workingBalanceWithDefault = useMemo(() => {
-		const timestamp = results[1]
-		if (timestamp.loading || !timestamp.result) return null
-		const result = new BigNumber(timestamp.result.toString())
-		if (result.isZero()) return null
-		return result
-	}, [results])
 
 	return useMemo<[boolean, BigNumber]>(() => {
-		const defaultBoost = new BigNumber(1)
+		let loading = true
 
-		const userLPToken =
-			balances[contracts?.vaults[vault]?.gaugeToken.name.toLowerCase()]
-				?.value
+		const [balance, workingBalance] = results.map(({ result, loading }) => {
+			if (loading) return new BigNumber(0)
+			if (!result) return new BigNumber(0)
+			loading = false
+			return new BigNumber(result.toString())
+		})
 
-		if (workingBalanceWithDefault?.isEqualTo(userLPToken))
-			return [false, defaultBoost]
+		if (balance.isZero()) return [loading, new BigNumber(1)]
 
-		const limit = userLPToken
-			?.multipliedBy(TOKENLESS_PRODUCTION)
+		const unboostedMinimum = balance
+			.multipliedBy(TOKENLESS_PRODUCTION)
 			.dividedBy(100)
 
-		if (!limit || limit.isZero()) return [false, defaultBoost]
+		const unboostedBalance = unboostedMinimum.lt(balance)
+			? unboostedMinimum
+			: balance
 
-		const loading = false
-		// TODO: loading
-
-		return [loading, workingBalanceWithDefault?.dividedBy(limit.toFixed(0))]
-	}, [vault, balances, contracts?.vaults, workingBalanceWithDefault])
+		const boost = workingBalance.dividedBy(unboostedBalance)
+		return [loading, boost]
+	}, [results])
 }
-
-export function useUserBoosts() {
-	const { account } = useWeb3Provider()
-
-	const { contracts } = useContracts()
-
-	const [balances, loading] = useAllTokenBalances()
-
-	return useMemo<[boolean, 0]>(() => {
-		const loading = true
-		return [loading, 0]
-	}, [contracts?.vaults])
-}
-
-// const timestampWithDefault = useMemo(() => {
-// 	const timestamp = results[0]
-// 	if (timestamp.loading || !timestamp.result) return null
-// 	const result = new BigNumber(timestamp.result.toString())
-// 	if (result.isZero()) return null
-// 	return result
-// }, [results])
-
-// const votingBalance = useSingleCallResult(
-// 	contracts?.internal.votingEscrow,
-// 	'balanceOf(address,uint256)',
-// 	timestampWithDefault
-// 		? [account, timestampWithDefault.toString()]
-// 		: null,
-// )
-
-// const votingTotal = useSingleCallResult(
-// 	contracts?.internal.votingEscrow,
-// 	'totalSupply(uint256)',
-// 	timestampWithDefault ? [timestampWithDefault.toString()] : null,
-// )
-
-// const voting_balance = new BigNumber(votingBalance?.result?.toString())
-// const voting_total = new BigNumber(votingTotal?.result?.toString())
-
-// const totalLPToken = workingBalanceWithDefault
-// 	.minus(limit)
-// 	.dividedBy(voting_balance)
-// 	.multipliedBy(
-// 		voting_total
-// 			.dividedBy(100 - TOKENLESS_PRODUCTION)
-// 			.multipliedBy(100),
-// 	)
-
-// const workingBalanceNoBoost = totalLPToken.
-//  = (L * voting_balance / voting_total * (100 - TOKENLESS_PRODUCTION) / 100)
-
-// lim = min(l, lim)
