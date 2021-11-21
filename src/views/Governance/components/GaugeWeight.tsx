@@ -9,10 +9,15 @@ import { Vaults } from '../../../constants/type'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { useContracts } from '../../../contexts/Contracts'
 import useTranslation from '../../../hooks/useTranslation'
-import { useLock, useUserGaugeWeights } from '../../../state/wallet/hooks'
+import {
+	useLock,
+	useUserGaugeWeights,
+	useBoosts,
+} from '../../../state/wallet/hooks'
 import { useRewardRate } from '../../../state/internal/hooks'
 import moment from 'moment'
 import { Currencies } from '../../../constants/currencies'
+import BigNumber from 'bignumber.js'
 
 const WEIGHT_VOTE_DELAY = 10 * 86400
 
@@ -22,6 +27,9 @@ const defaultWeights = Vaults.map(() => 0)
 
 const GaugeWeight: React.FC = () => {
 	const translate = useTranslation()
+	const lock = useLock()
+	const rate = useRewardRate()
+	const boost = useBoosts()
 
 	const [weights, setWeights] = useState(defaultWeights)
 	const totalWeight = useMemo(
@@ -30,10 +38,6 @@ const GaugeWeight: React.FC = () => {
 	)
 	const [initialWeights, setInitialWeights] = useState(-1)
 	const { contracts } = useContracts()
-
-	const lock = useLock()
-
-	const rate = useRewardRate()
 
 	const [loadingVotedWeights, votedWeights] = useUserGaugeWeights()
 
@@ -61,14 +65,20 @@ const GaugeWeight: React.FC = () => {
 
 	const data = useMemo(() => {
 		return Vaults.map((name, i) => {
+			const userShare = boost[name].workingSupply.isZero()
+				? new BigNumber(0)
+				: boost[name].workingBalance.dividedBy(
+						boost[name].workingSupply,
+				  )
 			return {
 				key: i,
 				name: name.toUpperCase(),
 				vaultWeight: weights[i],
+				userShare,
 				...votedWeights[name],
 			}
 		})
-	}, [weights, votedWeights])
+	}, [weights, votedWeights, boost])
 
 	const disabled = useMemo(
 		() =>
@@ -123,9 +133,9 @@ const GaugeWeight: React.FC = () => {
 							<Slider
 								value={weights[record.key]}
 								tipFormatter={(value) => `${value}%`}
-								// disabled={
-								// 	disabled || moment().isBefore(cooldown)
-								// }
+								disabled={
+									disabled || moment().isBefore(cooldown)
+								}
 								onChange={(value) => {
 									const nextWeights = [...weights]
 									nextWeights.splice(record.key, 1, value)
@@ -164,6 +174,7 @@ const GaugeWeight: React.FC = () => {
 							.multipliedBy(60 * 60 * 24)
 							.multipliedBy(weights[record.key])
 							.dividedBy(100)
+							.multipliedBy(record.userShare)
 							.toFormat(3)}
 					</Text>
 				),
@@ -200,12 +211,12 @@ const GaugeWeight: React.FC = () => {
 
 			<Row style={{ padding: '5%' }}>
 				<Tooltip
-					// visible={
-					// 	!lock.loading &&
-					// 	moment(lock.end.toNumber() * 1000).isBefore(
-					// 		moment().add(7, 'days'),
-					// 	)
-					// }
+					visible={
+						!lock.loading &&
+						moment(lock.end.toNumber() * 1000).isBefore(
+							moment().add(7, 'days'),
+						)
+					}
 					placement="top"
 					title={translate(
 						'Must be locked for more than 7 days to vote!',
@@ -215,7 +226,7 @@ const GaugeWeight: React.FC = () => {
 					<Button
 						style={{ width: '100%' }}
 						loading={loading}
-						// disabled={disabled || initialWeights === totalWeight}
+						disabled={disabled || initialWeights === totalWeight}
 						onClick={() => {
 							weights.forEach((weight, i) => {
 								if (weight > 0)

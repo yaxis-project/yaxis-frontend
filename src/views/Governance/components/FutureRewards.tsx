@@ -10,7 +10,7 @@ const FutureRewards: React.FC = () => {
 	const translate = useTranslation()
 
 	const { loading, nextWeekStart } = useGauges()
-	console.log(nextWeekStart)
+
 	return (
 		<ExpandableSidePanel header={translate('Future Distribution')}>
 			<CardRow
