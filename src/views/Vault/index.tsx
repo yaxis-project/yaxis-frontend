@@ -62,7 +62,8 @@ const Vault: React.FC = () => {
 							balanceLoading={false}
 						/>
 						<VaultStatsCard />
-						<RecentTransactionsCard />
+						{/* TODO: Rework and re-enable */}
+						{/* <RecentTransactionsCard /> */}
 					</StyledCol>
 				</Row>
 			</Page>

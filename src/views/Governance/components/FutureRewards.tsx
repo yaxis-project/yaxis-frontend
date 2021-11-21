@@ -1,36 +1,32 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import useTranslation from '../../../hooks/useTranslation'
 import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
 import CardRow from '../../../components/CardRow'
+import { DistributionPieChart } from '../../../components/Charts/DistributionPieChart'
 import { useGauges } from '../../../state/internal/hooks'
 import moment from 'moment'
 
 const FutureRewards: React.FC = () => {
 	const translate = useTranslation()
 
-	const [loading, gauges] = useGauges()
-
-	const nextDate = useMemo(() => {
-		if (loading) return null
-		return Object.values(gauges).reduce((soonestDate, { time }) => {
-			if (moment(time * 1000).isBefore(soonestDate))
-				return moment(time * 1000)
-			return soonestDate
-		}, moment(8640000000000000))
-	}, [loading, gauges])
-
+	const { loading, nextWeekStart } = useGauges()
+	console.log(nextWeekStart)
 	return (
 		<ExpandableSidePanel header={translate('Future Distribution')}>
 			<CardRow
 				main={
 					<div>
-						Starts on {nextDate && nextDate.format('MMM Do, HH:mm')}
+						Starts on{' '}
+						{loading
+							? '-'
+							: moment(nextWeekStart).format('MMM Do, HH:mm')}
 						.
 					</div>
 				}
 				secondary={null}
 				last
 			/>
+			<DistributionPieChart type="nextRelativeWeight" />
 		</ExpandableSidePanel>
 	)
 }

@@ -1,27 +1,28 @@
 import { useMemo } from 'react'
 import { ethers } from 'ethers'
+import { uniq, isEmpty } from 'lodash'
+import BigNumber from 'bignumber.js'
 import { useContracts } from '../../contexts/Contracts'
+import { abis } from '../../constants/abis/mainnet'
+import {
+	TLiquidityPools,
+	TRewardsContracts,
+	TVaults,
+} from '../../constants/type'
+import { numberToFloat } from '../../utils/number'
 import {
 	useSingleContractMultipleMethods,
 	useSingleCallResult,
 	useSingleContractMultipleData,
 	useMultipleContractSingleData,
 } from '../onchain/hooks'
-import BigNumber from 'bignumber.js'
-import { usePrices } from '../prices/hooks'
 import {
 	useFetchCurvePoolBaseAPR,
 	useCurvePoolRewards,
 	useConvexAPY,
 } from '../external/hooks'
-import { numberToFloat } from '../../utils/number'
-import {
-	TLiquidityPools,
-	TRewardsContracts,
-	TVaults,
-} from '../../constants/type'
-import { abis } from '../../constants/abis/mainnet'
-import { uniq, isEmpty } from 'lodash'
+import { usePrices } from '../prices/hooks'
+import { useBlockNumber } from '../application/hooks'
 
 const ERC20_INTERFACE = new ethers.utils.Interface(abis.ERC20Abi)
 const STRATEGY_INTERFACE = new ethers.utils.Interface(abis.StrategyABI)
@@ -705,6 +706,7 @@ export function useVaultStrategies() {
 
 export function useGauges() {
 	const { contracts } = useContracts()
+	const block = useBlockNumber()
 
 	const callInputs = useMemo(() => {
 		if (!contracts?.vaults) return []
@@ -731,6 +733,37 @@ export function useGauges() {
 			ethers.BigNumber.from(0),
 		)
 	}, [relativeWeights, contracts?.vaults])
+
+	const nextWeekStart = useMemo(() => {
+		if (!block) return 0
+		return (
+			(Math.floor(Date.now() / (60 * 60 * 24 * 7 * 1000)) + 1) *
+			(60 * 60 * 24 * 7 * 1000)
+		)
+	}, [block])
+
+	const nextRelativeWeightsCalls = useMemo(
+		() => callInputs.map((input) => [...input, nextWeekStart]),
+		[callInputs, nextWeekStart],
+	)
+
+	const nextRelativeWeights = useSingleContractMultipleData(
+		contracts?.internal.gaugeController,
+		'gauge_relative_weight(address,uint256)',
+		nextRelativeWeightsCalls,
+	)
+
+	const nextRelativeWeightsWithDefaults = useMemo(() => {
+		if (nextRelativeWeights.length)
+			return nextRelativeWeights.map(({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			})
+		return Object.keys(contracts?.vaults || {}).map(() =>
+			ethers.BigNumber.from(0),
+		)
+	}, [nextRelativeWeights, contracts?.vaults])
 
 	const times = useSingleContractMultipleData(
 		contracts?.internal.gaugeController,
@@ -762,29 +795,48 @@ export function useGauges() {
 	}, [relativeWeights, times])
 
 	return useMemo(() => {
-		return [
+		const unchangedNextRelativeWeights = nextRelativeWeightsWithDefaults
+			.reduce(
+				(total, current) => total.plus(current.toString()),
+				new BigNumber(0),
+			)
+			.isZero()
+
+		const gauges = Object.fromEntries(
+			Object.keys(contracts?.vaults || {}).map((vault, i) => {
+				const relativeWeight = new BigNumber(
+					relativeWeightsWithDefaults[i][0]?.toString(),
+				).dividedBy(10 ** 18)
+				const nextRelativeWeight = new BigNumber(
+					nextRelativeWeightsWithDefaults[i][0]?.toString(),
+				).dividedBy(10 ** 18)
+
+				return [
+					vault,
+					{
+						relativeWeight,
+						nextRelativeWeight: unchangedNextRelativeWeights
+							? relativeWeight
+							: nextRelativeWeight,
+						time: new BigNumber(
+							timesWithDefaults[i][0]?.toString(),
+						),
+					},
+				]
+			}),
+		)
+		return {
+			gauges,
+			nextWeekStart,
 			loading,
-			Object.fromEntries(
-				Object.keys(contracts?.vaults || {}).map((vault, i) => {
-					return [
-						vault,
-						{
-							relativeWeight: new BigNumber(
-								relativeWeightsWithDefaults[i][0]?.toString(),
-							).dividedBy(10 ** 18),
-							time: new BigNumber(
-								timesWithDefaults[i][0]?.toString(),
-							),
-						},
-					]
-				}),
-			),
-		]
+		}
 	}, [
 		loading,
 		contracts?.vaults,
 		relativeWeightsWithDefaults,
+		nextRelativeWeightsWithDefaults,
 		timesWithDefaults,
+		nextWeekStart,
 	])
 }
 
