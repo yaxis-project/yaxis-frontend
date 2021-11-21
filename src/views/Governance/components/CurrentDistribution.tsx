@@ -1,9 +1,24 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
+import { Row, Col } from 'antd'
 import useTranslation from '../../../hooks/useTranslation'
 import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
-import { Pie } from '@ant-design/charts'
+import { Chart, Pie } from 'react-chartjs-2'
+import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { useGauges, useRewardRate } from '../../../state/internal/hooks'
+import { LoadingOutlined } from '@ant-design/icons'
+
+Chart.register(ChartDataLabels)
+
+// TODO: fixed colors
+
+// const colors = {
+// 	'3crv': '',
+// 	wbtc: '',
+// 	weth: '',
+// 	link: '',
+// 	yaxis: '',
+// }
 
 const CurrentDistribution: React.FC = () => {
 	const translate = useTranslation()
@@ -13,52 +28,147 @@ const CurrentDistribution: React.FC = () => {
 	const rate = useRewardRate()
 
 	const data = useMemo(() => {
-		if (loading) return []
-		return Object.entries(gauges).map(([gauge, { relativeWeight }]) => {
+		if (loading)
 			return {
-				type: gauge.toUpperCase(),
-				value: relativeWeight.toNumber(),
+				labels: [],
+				datasets: [
+					{
+						data: [],
+						backgroundColor: [],
+						borderColor: [],
+						borderWidth: 2,
+					},
+				],
 			}
-		})
+
+		const gaugeData = Object.entries(gauges)
+
+		return {
+			labels: [],
+			datasets: [
+				{
+					id: 'current',
+					labels: gaugeData.map(([gauge]) => gauge),
+					data: gaugeData.map(([, { relativeWeight }]) =>
+						relativeWeight.toNumber(),
+					),
+					datalabels: {
+						anchor: 'end' as const,
+					},
+					backgroundColor: [
+						'rgba(255, 99, 132, 0.2)',
+						'rgba(54, 162, 235, 0.2)',
+						'rgba(255, 206, 86, 0.2)',
+						'rgba(75, 192, 192, 0.2)',
+						'rgba(153, 102, 255, 0.2)',
+						'rgba(255, 159, 64, 0.2)',
+					],
+					borderColor: [
+						'rgba(255, 99, 132, 1)',
+						'rgba(54, 162, 235, 1)',
+						'rgba(255, 206, 86, 1)',
+						'rgba(75, 192, 192, 1)',
+						'rgba(153, 102, 255, 1)',
+						'rgba(255, 159, 64, 1)',
+					],
+					borderWidth: 2,
+				},
+				// TODO: second dataset for upcoming
+
+				// {
+				// 	id: 'upcoming',
+				// 	labels: gaugeData.map(([gauge]) => gauge + '1'),
+				// 	data: gaugeData.map(([, { relativeWeight }]) =>
+				// 		relativeWeight.toNumber(),
+				// 	),
+				// 	datalabels: {
+				// 		anchor: 'end' as const,
+				// 	},
+				// 	backgroundColor: [
+				// 		'rgba(255, 99, 132, 0.2)',
+				// 		'rgba(54, 162, 235, 0.2)',
+				// 		'rgba(255, 206, 86, 0.2)',
+				// 		'rgba(75, 192, 192, 0.2)',
+				// 		'rgba(153, 102, 255, 0.2)',
+				// 		'rgba(255, 159, 64, 0.2)',
+				// 	],
+				// 	borderColor: [
+				// 		'rgba(255, 99, 132, 1)',
+				// 		'rgba(54, 162, 235, 1)',
+				// 		'rgba(255, 206, 86, 1)',
+				// 		'rgba(75, 192, 192, 1)',
+				// 		'rgba(153, 102, 255, 1)',
+				// 		'rgba(255, 159, 64, 1)',
+				// 	],
+				// 	borderWidth: 2,
+				// },
+			],
+		}
 	}, [loading, gauges])
 
 	return (
 		<ExpandableSidePanel header={translate('Current Distribution')}>
 			<StyledRow>
-				<Pie
-					data={data}
-					angleField={'value'}
-					colorField={'type'}
-					radius={1}
-					legend={false}
-					padding={10}
-					label={{
-						type: 'inner',
-						offset: '-30%',
-						content: function content(_ref) {
-							var percent = _ref.percent
-							return ''.concat((percent * 100).toFixed(0), '%')
-						},
-						style: {
-							fontSize: 26,
-							textAlign: 'center',
-						},
-					}}
-					tooltip={{
-						formatter: ({ type, value }) => {
-							return {
-								name: type,
-								value:
-									rate
-										.multipliedBy(60 * 60 * 24)
-										.multipliedBy(value)
-										.dividedBy(100)
-										.toFixed(3) + ' YAXIS / day',
-							}
-						},
-					}}
-					interactions={[{ type: 'element-active' }]}
-				/>
+				{loading ? (
+					<Row justify="center" align="middle">
+						<Col>
+							<LoadingOutlined style={{ fontSize: 270 }} spin />
+						</Col>
+					</Row>
+				) : (
+					<Pie
+						data={data}
+						options={{
+							layout: {
+								padding: {
+									bottom: 28,
+								},
+							},
+							plugins: {
+								tooltip: {
+									callbacks: {
+										label: function (context) {
+											return (
+												' ' +
+												rate
+													.multipliedBy(60 * 60 * 24)
+													.multipliedBy(
+														context.formattedValue,
+													)
+													.dividedBy(100)
+													.toFixed(3) +
+												' YAXIS / day'
+											)
+										},
+									},
+								},
+								datalabels: {
+									display: (context) =>
+										context.datasetIndex === 0,
+									padding: {
+										left: 10,
+										right: 10,
+										top: 6,
+										bottom: 6,
+									},
+									backgroundColor: (context) =>
+										context.dataset.borderColor as string,
+									borderColor: 'white',
+									borderRadius: 25,
+									borderWidth: 2,
+									color: 'white',
+									font: {
+										weight: 'bold',
+									},
+									formatter: (value, context) =>
+										(context.dataset as any).labels[
+											context.dataIndex
+										],
+								},
+							},
+						}}
+					/>
+				)}
 			</StyledRow>
 		</ExpandableSidePanel>
 	)
@@ -67,6 +177,7 @@ const CurrentDistribution: React.FC = () => {
 export { CurrentDistribution }
 
 const StyledRow = styled.div`
+	padding: 10px;
 	&&& {
 		background: ${(props) => props.theme.secondary.background};
 		border-color: ${(props) => props.theme.secondary.border};
