@@ -81,6 +81,12 @@ export default function HomeExpandableOverview() {
 									main={'Total YAXIS Staking value (LEGACY)'}
 									value={stakingTvl.toNumber()}
 								/>
+								<TooltipRow
+									main={
+										'Total MetaVault Staking value (LEGACY)'
+									}
+									value={stakingTvl.toNumber()}
+								/>
 							</>
 						}
 					>

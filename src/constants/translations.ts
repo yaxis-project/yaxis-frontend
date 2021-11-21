@@ -105,6 +105,7 @@ export type Phrases =
 	| "We're Hiring"
 	| 'Secured by'
 	| 'Annual Percentage Rate'
+	| 'Annual Percentage Yield'
 	| 'Compounding Frequency'
 	| 'See Your Balance In'
 	| 'Future Balance'
@@ -314,6 +315,7 @@ const EN: Translations = {
 	"We're Hiring": "We're Hiring",
 	'Secured by': 'Secured by',
 	'Annual Percentage Rate': 'Annual Percentage Rate',
+	'Annual Percentage Yield': 'Annual Percentage Yield',
 	'Compounding Frequency': 'Compounding Frequency',
 	'See Your Balance In': 'See Your Balance In',
 	'Future Balance': 'Future Balance',
@@ -526,6 +528,7 @@ const ES: Translations = {
 	"We're Hiring": '',
 	'Secured by': '',
 	'Annual Percentage Rate': '',
+	'Annual Percentage Yield': '',
 	'Compounding Frequency': '',
 	'See Your Balance In': '',
 	'Future Balance': '',
@@ -725,6 +728,7 @@ const KO: Translations = {
 	"We're Hiring": '',
 	'Secured by': '',
 	'Annual Percentage Rate': '',
+	'Annual Percentage Yield': '',
 	'Compounding Frequency': '',
 	'See Your Balance In': '',
 	'Future Balance': '',
@@ -924,6 +928,7 @@ const ZH: Translations = {
 	"We're Hiring": '',
 	'Secured by': '',
 	'Annual Percentage Rate': '',
+	'Annual Percentage Yield': '',
 	'Compounding Frequency': '',
 	'See Your Balance In': '',
 	'Future Balance': '',
@@ -1125,6 +1130,7 @@ const RU: Translations = {
 	"We're Hiring": '',
 	'Secured by': '',
 	'Annual Percentage Rate': '',
+	'Annual Percentage Yield': '',
 	'Compounding Frequency': '',
 	'See Your Balance In': '',
 	'Future Balance': '',
@@ -1325,6 +1331,7 @@ const JA: Translations = {
 	"We're Hiring": '',
 	'Secured by': '',
 	'Annual Percentage Rate': '',
+	'Annual Percentage Yield': '',
 	'Compounding Frequency': '',
 	'See Your Balance In': '',
 	'Future Balance': '',

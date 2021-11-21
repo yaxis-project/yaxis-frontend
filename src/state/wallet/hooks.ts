@@ -907,10 +907,10 @@ export function useVotingPower() {
 	const { contracts } = useContracts()
 	const results = useSingleContractMultipleMethods(
 		contracts?.internal.votingEscrow,
-		[['balanceOf(address)', [account]], ['totalSupply()']],
+		[['balanceOf(address)', [account]], ['totalSupply()'], ['supply']],
 	)
 
-	const [balanceOf, totalSupply] = useMemo(() => {
+	const [balanceOf, totalSupply, supply] = useMemo(() => {
 		return results.map(({ result, loading }, i) => {
 			if (loading) return new BigNumber(0)
 			if (!result) return new BigNumber(0)
@@ -922,8 +922,9 @@ export function useVotingPower() {
 		return {
 			balance: balanceOf,
 			totalSupply,
+			supply,
 		}
-	}, [totalSupply, balanceOf])
+	}, [totalSupply, balanceOf, supply])
 }
 
 export function useLock() {

@@ -4,11 +4,17 @@ import Value from '../../../components/Value'
 import CardRow from '../../../components/CardRow'
 import useTranslation from '../../../hooks/useTranslation'
 import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
+import { useYaxisSupply } from '../../../state/internal/hooks'
+import { useVotingPower } from '../../../state/wallet/hooks'
 
 const { SecondaryText } = Typography
 
 const GovernanceOverview: React.FC = () => {
 	const translate = useTranslation()
+
+	const { circulating } = useYaxisSupply()
+
+	const { supply } = useVotingPower()
 
 	return (
 		<ExpandableSidePanel
@@ -16,19 +22,17 @@ const GovernanceOverview: React.FC = () => {
 			icon="book"
 		>
 			<CardRow
-				main={<SecondaryText>Percentage of YAXIS locked</SecondaryText>}
+				main={<SecondaryText>YAXIS locked in Governance</SecondaryText>}
 				secondary={
 					<Value
 						numberSuffix="%"
-						value={
-							0
-							// rewardsUSD.toNumber()
-							// TODO
-						}
+						value={supply
+							?.dividedBy(circulating)
+							.multipliedBy(100)
+							.toNumber()}
 						decimals={2}
 					/>
 				}
-				// TODO: circulating supply / totalSupply of VE
 				last
 			/>
 			{/* <CardRow main={<div></div>} secondary={null} />
