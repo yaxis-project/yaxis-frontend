@@ -170,7 +170,10 @@ const BoostCalculator: React.FC = () => {
 					}
 					suffix={selectedVault ? vaults[selectedVault].token : '-'}
 					disabled={!selectedVault || useVaultBalance}
-					onChange={(e) => setInputVaultBalance(e.target.value)}
+					onChange={(e) =>
+						!isNaN(Number(e.target.value)) &&
+						setInputVaultBalance(e.target.value)
+					}
 				/>
 				<Checkbox
 					disabled={!selectedVault}
@@ -187,7 +190,10 @@ const BoostCalculator: React.FC = () => {
 					value={useVaultTotal ? selectedVaultTotal : inputVaultTotal}
 					suffix={selectedVault ? vaults[selectedVault].token : '-'}
 					disabled={!selectedVault || useVaultTotal}
-					onChange={(e) => setInputVaultTotal(e.target.value)}
+					onChange={(e) =>
+						!isNaN(Number(e.target.value)) &&
+						setInputVaultTotal(e.target.value)
+					}
 				/>
 				<Checkbox
 					disabled={!selectedVault}
@@ -204,7 +210,8 @@ const BoostCalculator: React.FC = () => {
 					value={yaxisLocked}
 					suffix={'YAXIS'}
 					onChange={(e) => {
-						setYaxisLocked(e.target.value)
+						!isNaN(Number(e.target.value)) &&
+							setYaxisLocked(e.target.value)
 					}}
 				/>
 				<Row style={{ marginTop: '15px' }}>

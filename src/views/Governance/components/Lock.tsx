@@ -82,7 +82,8 @@ const CreateLock: React.FC = () => {
 					<Row>
 						<Input
 							onChange={(e) => {
-								setAmount(e.target.value)
+								!isNaN(Number(e.target.value)) &&
+									setAmount(e.target.value)
 							}}
 							value={amount}
 							min={'0'}
@@ -309,7 +310,8 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 						<Row>
 							<Input
 								onChange={(e) => {
-									setAmount(e.target.value)
+									!isNaN(Number(e.target.value)) &&
+										setAmount(e.target.value)
 								}}
 								value={amount}
 								min={'0'}
