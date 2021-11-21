@@ -1,9 +1,11 @@
 import { useState, useMemo, useCallback } from 'react'
 import { Vaults, LPVaults } from '../../../constants/type'
 import { Currencies, Currency } from '../../../constants/currencies'
-import { useAllTokenBalances } from '../../../state/wallet/hooks'
+import {
+	useAllTokenBalances,
+	useVaultsAPRWithBoost,
+} from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-import { useVaultsAPR } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { Row, Grid, Form, Tooltip } from 'antd'
 import styled from 'styled-components'
@@ -168,7 +170,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
 
-	const apr = useVaultsAPR()
+	const apr = useVaultsAPRWithBoost()
 
 	const { call: handleStakeWETH, loading: isSubmittingWETH } =
 		useContractWrite({

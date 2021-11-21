@@ -413,15 +413,22 @@ const Lock: React.FC = () => {
 
 	return (
 		<>
-			<Row style={{ margin: '20px' }}>
-				<StyledText>Lock up your YAXIS governance token to:</StyledText>
-				<StyledSecondaryText>
-					Boost your Vault YAXIS rewards by up to 2.5x.
-				</StyledSecondaryText>
-				<StyledSecondaryText>
-					Vote for how emissions get distributed between the Vaults.
-				</StyledSecondaryText>
-			</Row>
+			<div style={{ margin: '20px' }}>
+				<Row>
+					<StyledText>Lock up your YAXIS token to:</StyledText>
+				</Row>
+				<Row>
+					<StyledSecondaryText>
+						Boost your Vault YAXIS rewards by up to 2.5x.
+					</StyledSecondaryText>
+				</Row>
+				<Row>
+					<StyledSecondaryText>
+						Vote for how emissions get distributed between the
+						Vaults.
+					</StyledSecondaryText>
+				</Row>
+			</div>
 
 			<Divider style={{ margin: 0, padding: 0 }} />
 
@@ -460,7 +467,7 @@ const StyledText = styled(Text)`
 const StyledSecondaryText = styled(Text)`
 	padding-top: 10px;
 	font-size: 18px;
-	margin-left: 10%;
+	margin-left: 6%;
 `
 
 const StyledSmallText = styled(Text)`

@@ -1,8 +1,10 @@
 import { useState, useMemo, useCallback } from 'react'
 import { LPVaults } from '../../../constants/type'
 import { Currencies, Currency } from '../../../constants/currencies'
-import { useVaultsAPR } from '../../../state/internal/hooks'
-import { useAllTokenBalances } from '../../../state/wallet/hooks'
+import {
+	useAllTokenBalances,
+	useVaultsAPRWithBoost,
+} from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { NavLink } from 'react-router-dom'
@@ -177,7 +179,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 
 	const [balances, loading] = useAllTokenBalances()
 
-	const apr = useVaultsAPR()
+	const apr = useVaultsAPRWithBoost()
 
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()

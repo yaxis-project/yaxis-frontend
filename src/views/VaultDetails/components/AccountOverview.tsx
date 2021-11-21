@@ -1,7 +1,9 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
-import { useVaultsAPR } from '../../../state/internal/hooks'
-import { useUserBoost } from '../../../state/wallet/hooks'
+import {
+	useUserBoost,
+	useVaultsAPRWithBoost,
+} from '../../../state/wallet/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { Tooltip, Row } from 'antd'
 import APYCalculator from '../../../components/APYCalculator'
@@ -54,9 +56,9 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 }) => {
 	const t = useTranslation()
 
-	const apr = useVaultsAPR()
+	const apr = useVaultsAPRWithBoost()
 
-	const [loading, boost] = useUserBoost(vault)
+	const { loading, boost } = useUserBoost(vault)
 
 	return (
 		<Card title={t('Account Overview')} icon="yaxis">

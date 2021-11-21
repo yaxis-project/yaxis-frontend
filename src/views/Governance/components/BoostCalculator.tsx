@@ -235,28 +235,46 @@ const BoostCalculator: React.FC = () => {
 					</Row>
 					<Row gutter={4} style={{ marginTop: '5px' }}>
 						<Col>
-							<Title level={5} style={{ padding: 0, margin: 0 }}>
-								Rewards to this Vault{' '}
-								{new BigNumber(boost).gt(1)
-									? `boosted by x${new BigNumber(
-											boost,
-									  ).toFormat(2)}.`
-									: ' at the base rate.'}
-							</Title>
-						</Col>
-						<Col>
-							<Title
-								level={5}
-								style={{ padding: 0, margin: 0 }}
-							></Title>
+							<Text
+								style={{
+									fontSize: '16px',
+									padding: 0,
+									margin: 0,
+								}}
+							>
+								Rewards to this Vault boosted by{' '}
+								<span
+									style={{
+										fontSize: '17px',
+										fontWeight: 900,
+									}}
+								>
+									x{new BigNumber(boost).toFormat(2)}
+								</span>
+								.
+							</Text>
 						</Col>
 					</Row>
 					<Row style={{ marginTop: '10px' }}>
-						<Title level={5}>
+						<Text
+							style={{
+								fontSize: '16px',
+								padding: 0,
+								margin: 0,
+							}}
+						>
 							Controlling{' '}
-							{vpPercentage.multipliedBy(100).toFormat(2) + '%'}{' '}
+							<span
+								style={{
+									fontSize: '17px',
+									fontWeight: 900,
+								}}
+							>
+								{vpPercentage.multipliedBy(100).toFormat(2) +
+									'%'}
+							</span>{' '}
 							of total Voting Power.
-						</Title>
+						</Text>
 					</Row>
 				</>
 			</Background>

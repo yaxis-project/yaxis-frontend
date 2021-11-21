@@ -549,7 +549,6 @@ const PriceGraph: React.FC = () => {
 					))}
 				</RadioGroup>
 			}
-			className={`price-graph`}
 		>
 			<WithTooltip
 				renderTooltip={({ index }) => {

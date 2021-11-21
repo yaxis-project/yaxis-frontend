@@ -6,7 +6,7 @@ import Button from '../Button'
 import { useContracts } from '../../contexts/Contracts'
 import useContractWrite from '../../hooks/useContractWrite'
 import { useSingleCallResultByName } from '../../state/onchain/hooks'
-import { useUserGauges } from '../../state/wallet/hooks'
+import { useUserGaugeClaimable } from '../../state/wallet/hooks'
 import { getBalanceNumber } from '../../utils/formatBalance'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import BigNumber from 'bignumber.js'
@@ -37,7 +37,7 @@ const ClaimAll: React.FC = () => {
 	)
 	/***************************************************/
 
-	const [loadingUserGauges, gauges] = useUserGauges()
+	const [loadingUserGauges, gauges] = useUserGaugeClaimable()
 
 	const { call: handleClaimMany, loading: loadingClaimMany } =
 		useContractWrite({

@@ -24,60 +24,7 @@ import {
 import { usePrices } from '../prices/hooks'
 import { useBlockNumber } from '../application/hooks'
 
-const ERC20_INTERFACE = new ethers.utils.Interface(abis.ERC20Abi)
 const STRATEGY_INTERFACE = new ethers.utils.Interface(abis.StrategyABI)
-
-export function useMetaVaultData() {
-	const { contracts } = useContracts()
-
-	const { prices } = usePrices()
-	const metaVaultData = useSingleContractMultipleMethods(
-		contracts?.internal.yAxisMetaVault,
-		[['balance'], ['totalSupply'], ['getPricePerFullShare'], ['token']],
-	)
-
-	const token = useMemo(() => {
-		const { result, loading } = metaVaultData[3]
-		if (loading) return undefined
-		if (!result) return undefined
-		return result.toString()
-	}, [metaVaultData])
-
-	const strategy = useSingleCallResult(
-		token && new ethers.Contract(token, ERC20_INTERFACE),
-		'name',
-	)
-
-	return useMemo(() => {
-		const [balance, totalSupply, pricePerFullShare] = metaVaultData.map(
-			({ result, loading }, i) => {
-				if (loading) return ethers.BigNumber.from(0)
-				if (!result) return ethers.BigNumber.from(0)
-				return result
-			},
-		)
-		const { result: strategyResult } = strategy
-		const totalStakedBN = new BigNumber(balance?.toString() || 0)
-		const totalSupplyBN = new BigNumber(totalSupply?.toString() || 0)
-		const tvl = totalStakedBN
-			.dividedBy(10 ** 18)
-			.multipliedBy(prices?.['3crv'] || 0)
-			.toNumber()
-		const threeCrvBalance =
-			!totalStakedBN.isZero() && !totalSupplyBN.isZero()
-				? totalStakedBN.div(totalSupplyBN)
-				: new BigNumber(0)
-		const mvltPrice = threeCrvBalance.multipliedBy(prices?.['3crv'] || 0)
-		return {
-			totalStaked: totalStakedBN,
-			totalSupply: totalSupplyBN,
-			strategy: strategyResult,
-			tvl,
-			mvltPrice,
-			pricePerFullShare: new BigNumber(pricePerFullShare.toString()),
-		}
-	}, [metaVaultData, strategy, prices])
-}
 
 export function useVault(name: TVaults) {
 	const { contracts } = useContracts()
@@ -203,6 +150,7 @@ export function useVaultRewards(name: TVaults) {
 		const APR = yaxisPerYear.multipliedBy(prices?.yaxis || 0)
 
 		return {
+			workingSupply: new BigNumber(balance?.result?.toString() || 0),
 			amountPerYear: yaxisPerYear,
 			APR,
 		}

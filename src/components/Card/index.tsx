@@ -29,15 +29,15 @@ const Card: React.FC<CardProps> = ({ title, icon, children, ...rest }) => {
 		<StyledCard
 			{...rest}
 			title={
-				title && (
-					<Row gutter={12} align="middle">
-						{icon && (
-							<Col>
-								<Icon type={icon} />
-							</Col>
-						)}
+				icon ? (
+					<Row gutter={12} align="middle" style={{ width: '100%' }}>
+						<Col>
+							<Icon type={icon} />
+						</Col>
 						<Col>{title}</Col>
 					</Row>
+				) : (
+					title
 				)
 			}
 		>

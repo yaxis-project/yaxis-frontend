@@ -123,9 +123,9 @@ const GaugeWeight: React.FC = () => {
 							<Slider
 								value={weights[record.key]}
 								tipFormatter={(value) => `${value}%`}
-								disabled={
-									disabled || moment().isBefore(cooldown)
-								}
+								// disabled={
+								// 	disabled || moment().isBefore(cooldown)
+								// }
 								onChange={(value) => {
 									const nextWeights = [...weights]
 									nextWeights.splice(record.key, 1, value)
@@ -150,7 +150,21 @@ const GaugeWeight: React.FC = () => {
 							.multipliedBy(60 * 60 * 24)
 							.multipliedBy(weights[record.key])
 							.dividedBy(100)
-							.toFixed(3)}
+							.toFormat(3)}
+					</Text>
+				),
+			},
+			{
+				title: 'Your rewards per day',
+				key: 'rate',
+				width: '20%',
+				render: (record) => (
+					<Text>
+						{rate
+							.multipliedBy(60 * 60 * 24)
+							.multipliedBy(weights[record.key])
+							.dividedBy(100)
+							.toFormat(3)}
 					</Text>
 				),
 			},
@@ -186,12 +200,12 @@ const GaugeWeight: React.FC = () => {
 
 			<Row style={{ padding: '5%' }}>
 				<Tooltip
-					visible={
-						!lock.loading &&
-						moment(lock.end.toNumber() * 1000).isBefore(
-							moment().add(7, 'days'),
-						)
-					}
+					// visible={
+					// 	!lock.loading &&
+					// 	moment(lock.end.toNumber() * 1000).isBefore(
+					// 		moment().add(7, 'days'),
+					// 	)
+					// }
 					placement="top"
 					title={translate(
 						'Must be locked for more than 7 days to vote!',
@@ -201,7 +215,7 @@ const GaugeWeight: React.FC = () => {
 					<Button
 						style={{ width: '100%' }}
 						loading={loading}
-						disabled={disabled || initialWeights === totalWeight}
+						// disabled={disabled || initialWeights === totalWeight}
 						onClick={() => {
 							weights.forEach((weight, i) => {
 								if (weight > 0)

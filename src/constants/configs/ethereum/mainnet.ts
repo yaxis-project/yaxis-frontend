@@ -139,7 +139,7 @@ const mainnet: Config = {
 			tokenPoolContract: externalPools.curve.linkcrv.pool,
 			token: 'LINKCRV',
 			tokenContract: externalPools.curve.linkcrv.token,
-			vault: '0x666F78524dc82c13e13A7A9c22f35940011f8d61',
+			vault: '0x27d9A1dc3725Fa5E4e7128b1db7e9Da75eb3aeE5',
 			vaultToken: 'CV:LINK',
 			vaultTokenContract: '0x5f6e4DeA25086C973C31857A04a73c66Ef41e43C',
 			gauge: '0x60fd915B2251dEc19C57eDD75B0a688EA0A3bfe5',

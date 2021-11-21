@@ -4,7 +4,6 @@ import { Row, Col, Grid } from 'antd'
 import { ReactComponent as discord } from '../../../assets/img/icons/discord.svg'
 import { ReactComponent as github } from '../../../assets/img/icons/github.svg'
 import { ReactComponent as twitter } from '../../../assets/img/icons/twitter.svg'
-import quantstamp from '../../../assets/img/icons/quantstamp.svg'
 import Icon, { MediumOutlined } from '@ant-design/icons'
 import useTranslation from '../../../hooks/useTranslation'
 const { useBreakpoint } = Grid

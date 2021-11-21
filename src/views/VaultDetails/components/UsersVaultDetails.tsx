@@ -1,6 +1,8 @@
 import CardRow from '../../../components/CardRow'
-import { useVaultsAPR } from '../../../state/internal/hooks'
-import { useUserBoost } from '../../../state/wallet/hooks'
+import {
+	useUserBoost,
+	useVaultsAPRWithBoost,
+} from '../../../state/wallet/hooks'
 import Value from '../../../components/Value'
 import useTranslation from '../../../hooks/useTranslation'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
@@ -14,9 +16,9 @@ interface UserVaultDetailsProps {
 const UserVaultDetails: React.FC<UserVaultDetailsProps> = ({ vault }) => {
 	const t = useTranslation()
 
-	const [loading, boost] = useUserBoost(vault)
+	const { loading, boost } = useUserBoost(vault)
 
-	const apr = useVaultsAPR()
+	const apr = useVaultsAPRWithBoost()
 
 	return (
 		<DetailOverviewCard title={t('Vault Overview')}>
