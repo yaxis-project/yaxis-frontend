@@ -104,7 +104,7 @@ const mainnet: Config = {
 		'Uniswap YAXIS/ETH': '0xEDaFe410e2f07ab9D7F1B04316D29C2F49dCb104',
 	},
 	vaults: {
-		'3crv': {
+		usd: {
 			url: 'https://curve.fi/mim/deposit',
 			tokenPoolContract: externalPools.curve.mim3crv.pool,
 			token: 'MIM3CRV',
@@ -114,7 +114,7 @@ const mainnet: Config = {
 			vaultTokenContract: '0x2C1e6D004d4f06F92464e0208b04D260b3eF46A5',
 			gauge: '0x9a4A2a2E8f755b77eb512E8A8fE635B803950D51',
 		},
-		wbtc: {
+		btc: {
 			url: 'https://curve.fi/ren/deposit',
 			tokenPoolContract: externalPools.curve.rencrv.pool,
 			token: 'RENCRV',
@@ -124,7 +124,7 @@ const mainnet: Config = {
 			vaultTokenContract: '0x0C44393DA03216E934b3A5503DECF7f78174b2f3',
 			gauge: '0x9AA02011a90736176f9CdC38FF4d1Ed7C90309b6',
 		},
-		weth: {
+		eth: {
 			url: 'https://curve.fi/factory/38/deposit',
 			tokenPoolContract: externalPools.curve.alethcrv.pool,
 			token: 'ALETHCRV',

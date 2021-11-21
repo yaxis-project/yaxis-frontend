@@ -163,7 +163,7 @@ const GaugeWeight: React.FC = () => {
 			<Row style={{ marginTop: '10px' }} justify="center">
 				<Text style={{ fontSize: '18px', padding: '10px' }}>
 					There is a total of{' '}
-					{rate.multipliedBy(60 * 60 * 24).toFixed(3)} YAXIS reward
+					{rate.multipliedBy(60 * 60 * 24).toFormat(3)} YAXIS reward
 					emissions every day.
 				</Text>
 				<Text style={{ fontSize: '18px', padding: '0 10px 10px 10px' }}>

@@ -76,7 +76,7 @@ const externalPools: ExternalPoolsConfig = {
 
 const kovan: Config = {
 	vaults: {
-		'3crv': {
+		usd: {
 			url: 'https://curve.fi/mim/deposit',
 			tokenPoolContract: '0xa2373Ffc62cA0CA01aE9edfFC19762E3fC75F99C',
 			token: 'MIM3CRV',
@@ -86,7 +86,7 @@ const kovan: Config = {
 			vaultTokenContract: '0x3cF8802D91C0560b54A5CeEC6da108B7b2946BdB',
 			gauge: '0xEc8E054A174B38edC5894187A55AE2D47c1f04eD',
 		},
-		wbtc: {
+		btc: {
 			url: 'https://curve.fi/ren/deposit',
 			tokenPoolContract: '0xa2373Ffc62cA0CA01aE9edfFC19762E3fC75F99C',
 			token: 'RENCRV',
@@ -96,7 +96,7 @@ const kovan: Config = {
 			vaultTokenContract: '0xb5b089B18a3EEFEf762484A279B72F666eFD4d31',
 			gauge: '0x2CDD8dd06b6854ABDF1cD050356efEBfde0c9E7E',
 		},
-		weth: {
+		eth: {
 			url: 'https://curve.fi/factory/38/deposit',
 			token: 'alETHCRV',
 			tokenPoolContract: '0xa2373Ffc62cA0CA01aE9edfFC19762E3fC75F99C',

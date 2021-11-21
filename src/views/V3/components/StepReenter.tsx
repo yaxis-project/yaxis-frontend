@@ -134,7 +134,7 @@ const StepReenter: React.FC<StepReenterProps> = ({
 							onClick={async () => {
 								handleApproveVault({
 									args: [
-										contracts?.vaults['3crv'].vault.address,
+										contracts?.vaults['usd'].vault.address,
 										ethers.constants.MaxUint256.toString(),
 									],
 								})
@@ -184,7 +184,7 @@ const StepReenter: React.FC<StepReenterProps> = ({
 							onClick={async () => {
 								handleDeposit({
 									args: [
-										contracts.vaults['3crv'].vault.address,
+										contracts.vaults['usd'].vault.address,
 										balance3crvmim.toString(),
 									],
 								})

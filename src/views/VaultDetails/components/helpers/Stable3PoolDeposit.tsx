@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
-import { Currencies3Pool } from '../../../../constants/currencies'
+import { DAI, USDT, USDC } from '../../../../constants/currencies'
 import DepositAssetRow from '../../../Vault/components/DepositAssetRow'
 import { useAllTokenBalances } from '../../../../state/wallet/hooks'
 import { usePrices } from '../../../../state/prices/hooks'
@@ -20,6 +20,8 @@ import BigNumber from 'bignumber.js'
 
 const { Title, Text } = Typography
 const { useBreakpoint } = Grid
+
+const Currencies3Pool = [DAI, USDT, USDC]
 
 const initialCurrencyValues: CurrencyValues = reduce(
 	Currencies3Pool,

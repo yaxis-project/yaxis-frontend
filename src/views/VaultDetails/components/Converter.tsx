@@ -14,7 +14,7 @@ const Converter: React.FC<Props> = ({ vault }) => {
 	return (
 		<DetailOverviewCard title={'TODO: converter'}>
 			<Row justify="space-around">
-				{vault === '3crv' && <Helpers.Stable3PoolTabs />}
+				{vault === 'usd' && <Helpers.Stable3PoolTabs />}
 			</Row>
 		</DetailOverviewCard>
 	)

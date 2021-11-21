@@ -7,7 +7,7 @@ import HomeOverviewCard from './components/HomeOverviewCard'
 import LPAccountOverview from './components/LPAccountOverview'
 import HomeExpandableOverview from './components/HomeExpandableOverview'
 import { Row, Col, Grid } from 'antd'
-import { useLock, useVaultsBalances } from '../../state/wallet/hooks'
+import { useVotingPower, useVaultsBalances } from '../../state/wallet/hooks'
 import { usePrices } from '../../state/prices/hooks'
 import { formatBN } from '../../utils/number'
 import useTranslation from '../../hooks/useTranslation'
@@ -48,22 +48,21 @@ const Home: React.FC = () => {
 const GovernanceAccountOverview: React.FC = () => {
 	const translate = useTranslation()
 
-	const lock = useLock()
+	const votingPower = useVotingPower()
 
-	const {
-		prices: { yaxis },
-	} = usePrices()
-
-	const balanceUSD = useMemo(
-		() => '$' + formatBN(lock.locked.multipliedBy(yaxis)),
-		[lock, yaxis],
-	)
 	return (
 		<AccountOverviewCard
 			loading={false}
 			mainTitle={translate('Governance Account')}
 			secondaryText={''}
-			value={balanceUSD}
+			value={
+				(votingPower.totalSupply.isZero()
+					? '0.00'
+					: votingPower.balance
+							.dividedBy(votingPower.totalSupply)
+							.multipliedBy(100)
+							.toFormat(2)) + ' VP%'
+			}
 		/>
 	)
 }

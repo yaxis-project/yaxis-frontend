@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import styled from 'styled-components'
-import { Row, Checkbox } from 'antd'
+import { Row, Col, Checkbox } from 'antd'
 import Select from '../../../components/Select'
 import Input from '../../../components/Input'
 import Slider from '../../../components/Slider'
@@ -12,9 +12,11 @@ import { Vaults, TVaults } from '../../../constants/type'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useTranslation from '../../../hooks/useTranslation'
 import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
-import { useUserBoost, useVaultsBalances } from '../../../state/wallet/hooks'
+import { useVaultsBalances, useVotingPower } from '../../../state/wallet/hooks'
+import BigNumber from 'bignumber.js'
 
-const WEEK_TIME = 60 * 60 * 24 * 7
+const MAXTIME = 1 * 365 * 86400
+const TOKENLESS_PRODUCTION = 40
 
 const { Option } = Select
 const { Title, Text } = Typography
@@ -26,16 +28,16 @@ const BoostCalculator: React.FC = () => {
 
 	const translate = useTranslation()
 
-	const { loading: loadingBalances, balances } = useVaultsBalances()
+	const votingEscrow = useVotingPower()
 
-	const boosts = useUserBoost('3crv')
+	const { balances } = useVaultsBalances()
 
 	const [selectedVault, setSelectedVault] = useState<TVaults>(null)
 
 	const selectedVaultBalance = useMemo(() => {
 		if (!selectedVault) return null
 		const amount = balances[selectedVault]?.gaugeToken?.amount
-		if (!amount) return null
+		if (!amount) return 0
 		return amount.toFixed(2)
 	}, [selectedVault, balances])
 
@@ -43,9 +45,92 @@ const BoostCalculator: React.FC = () => {
 
 	const [useVaultBalance, setUseVaultBalance] = useState(true)
 
+	const selectedVaultTotal = useMemo(() => {
+		if (!selectedVault) return null
+		const amount = balances[selectedVault]?.totalSupply.dividedBy(10 ** 18)
+		if (!amount) return 0
+		return amount.toFixed(2)
+	}, [selectedVault, balances])
+
+	const [inputVaultTotal, setInputVaultTotal] = useState('')
+
+	const [useVaultTotal, setUseVaultTotal] = useState(true)
+
 	const [yaxisLocked, setYaxisLocked] = useState('')
 
 	const [duration, setDuration] = useState(1)
+
+	const [vp, setVp] = useState(new BigNumber(0))
+	useEffect(() => {
+		const yaxisLockedBN = new BigNumber(yaxisLocked)
+		setVp(
+			yaxisLockedBN.isNaN()
+				? new BigNumber(0)
+				: yaxisLockedBN
+						.multipliedBy(10 ** 18)
+						.dividedBy(MAXTIME)
+						.multipliedBy(duration * 7 * 86400),
+		)
+	}, [yaxisLocked, duration])
+
+	const vpPercentage = useMemo(
+		() =>
+			vp.dividedBy(
+				votingEscrow.totalSupply.minus(votingEscrow.balance).plus(vp),
+			),
+		[vp, votingEscrow],
+	)
+
+	const [boost, setBoost] = useState('1')
+	useEffect(() => {
+		const vaultBalance = useVaultBalance
+			? balances[selectedVault]?.gaugeToken?.value || new BigNumber(0)
+			: new BigNumber(inputVaultBalance || 0).multipliedBy(10 ** 18)
+
+		const vaultTotal = useVaultTotal
+			? balances[selectedVault]?.totalSupply || new BigNumber(0)
+			: new BigNumber(inputVaultTotal || 0).multipliedBy(10 ** 18)
+
+		const adjustedVaultTotal =
+			!useVaultBalance && useVaultTotal
+				? vaultTotal
+						.minus(balances[selectedVault]?.gaugeToken?.value)
+						.plus(vaultBalance)
+				: vaultTotal
+
+		const unboostedMinimum = vaultBalance
+			.multipliedBy(TOKENLESS_PRODUCTION)
+			.dividedBy(100)
+
+		const unboostedBalance = unboostedMinimum.lt(vaultBalance)
+			? unboostedMinimum
+			: vaultBalance
+
+		const workingBalance = unboostedMinimum.plus(
+			adjustedVaultTotal
+				.multipliedBy(vpPercentage)
+				.multipliedBy(100 - TOKENLESS_PRODUCTION)
+				.dividedBy(100),
+		)
+
+		const boostedBalance = workingBalance.lt(vaultBalance)
+			? workingBalance
+			: vaultBalance
+
+		const boost = unboostedBalance.isZero()
+			? new BigNumber(1)
+			: boostedBalance.dividedBy(unboostedBalance)
+		setBoost(boost.toString())
+	}, [
+		selectedVault,
+		vpPercentage,
+		balances,
+		useVaultBalance,
+		inputVaultBalance,
+		useVaultTotal,
+		selectedVaultTotal,
+		inputVaultTotal,
+	])
 
 	return (
 		<ExpandableSidePanel
@@ -75,16 +160,6 @@ const BoostCalculator: React.FC = () => {
 					))}
 				</Select>
 				<Row style={{ marginTop: '15px' }}>
-					<Title level={5}>
-						VP% needed for maximum boost (2.5x):
-					</Title>
-				</Row>
-				<Row justify="center">
-					{/* TODO */}
-					<Text>{selectedVault ? '0.00%' : '-.--%'}</Text>
-				</Row>
-				<Divider />
-				<Row>
 					<Title level={5}>Amount Deposited:</Title>
 				</Row>
 				<Input
@@ -105,16 +180,33 @@ const BoostCalculator: React.FC = () => {
 				>
 					<Text>Use current balance</Text>
 				</Checkbox>
-
+				<Row style={{ marginTop: '15px' }}>
+					<Title level={5}>Total in Vault:</Title>
+				</Row>
+				<Input
+					value={useVaultTotal ? selectedVaultTotal : inputVaultTotal}
+					suffix={selectedVault ? vaults[selectedVault].token : '-'}
+					disabled={!selectedVault || useVaultTotal}
+					onChange={(e) => setInputVaultTotal(e.target.value)}
+				/>
+				<Checkbox
+					disabled={!selectedVault}
+					style={{ marginTop: '5px' }}
+					checked={useVaultTotal}
+					onChange={() => setUseVaultTotal(!useVaultTotal)}
+				>
+					<Text>Use current total</Text>
+				</Checkbox>
 				<Row style={{ marginTop: '15px' }}>
 					<Title level={5}>YAXIS locked:</Title>
 				</Row>
 				<Input
 					value={yaxisLocked}
 					suffix={'YAXIS'}
-					onChange={(e) => setYaxisLocked(e.target.value)}
+					onChange={(e) => {
+						setYaxisLocked(e.target.value)
+					}}
 				/>
-
 				<Row style={{ marginTop: '15px' }}>
 					<Title level={5}>Lock duration:</Title>
 				</Row>
@@ -135,16 +227,38 @@ const BoostCalculator: React.FC = () => {
 							: `${duration} week`}
 					</Text>
 				</Row>
+				<>
+					<Divider />
 
-				<Divider />
-
-				<Row style={{ marginTop: '15px' }}>
-					<Title level={4}>Results in:</Title>
-				</Row>
-				<Row style={{ marginTop: '15px' }} justify="center">
-					{/* TODO */}
-					<Title level={5}>0.00% of total Voting Power</Title>
-				</Row>
+					<Row style={{ marginTop: '15px' }}>
+						<Title level={4}>Results in:</Title>
+					</Row>
+					<Row gutter={4} style={{ marginTop: '5px' }}>
+						<Col>
+							<Title level={5} style={{ padding: 0, margin: 0 }}>
+								Rewards to this Vault{' '}
+								{new BigNumber(boost).gt(1)
+									? `boosted by x${new BigNumber(
+											boost,
+									  ).toFormat(2)}.`
+									: 'remaining at the base rate.'}
+							</Title>
+						</Col>
+						<Col>
+							<Title
+								level={5}
+								style={{ padding: 0, margin: 0 }}
+							></Title>
+						</Col>
+					</Row>
+					<Row style={{ marginTop: '10px' }}>
+						<Title level={5}>
+							Controlling{' '}
+							{vpPercentage.multipliedBy(100).toFormat(2) + '%'}{' '}
+							of total Voting Power.
+						</Title>
+					</Row>
+				</>
 			</Background>
 		</ExpandableSidePanel>
 	)

@@ -47,7 +47,7 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract, last }) => {
 		useSingleCallResultByName(
 			vault ? `vaults.${vault}.gauge` : `rewards.${rewardsContract}`,
 			vault ? 'claimable_tokens' : 'earned',
-			vault ? [account] : [account],
+			[account],
 		)
 
 	return (

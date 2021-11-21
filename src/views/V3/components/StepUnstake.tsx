@@ -39,7 +39,11 @@ const StepUnstake: React.FC<StepUnstakeProps> = ({ stakedYAXIS }) => {
 						<StyledButton
 							onClick={() =>
 								handleUnstake({
-									args: [stakedYAXIS.multipliedBy(10 ** 18)],
+									args: [
+										stakedYAXIS
+											.multipliedBy(10 ** 18)
+											.toString(),
+									],
 								})
 							}
 							loading={loadingUnstake}

@@ -40,7 +40,7 @@ const makeColumns = (
 ) => {
 	return [
 		{
-			title: translate('Asset'),
+			title: translate('Vault'),
 			key: 'asset',
 			sorter: (a, b) => a.vault.length - b.vault.length,
 			render: (text, record) => (

@@ -37,7 +37,7 @@ const makeColumns = (
 ) => {
 	return [
 		{
-			title: translate('Asset'),
+			title: translate('Vault'),
 			key: 'asset',
 			width: '150px',
 			sorter: (a, b) => a.vault.length - b.vault.length,

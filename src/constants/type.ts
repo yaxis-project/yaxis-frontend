@@ -133,14 +133,14 @@ export const ExternalContracts = <const>[
 export type TExternalContracts = typeof ExternalContracts[number]
 
 export const LPVaults = <const>[
-	['mim3crv', '3crv'],
-	['rencrv', 'wbtc'],
-	['alethcrv', 'weth'],
+	['mim3crv', 'usd'],
+	['rencrv', 'btc'],
+	['alethcrv', 'eth'],
 	['linkcrv', 'link'],
 	['yaxis', 'yaxis'],
 ]
 
-export const Vaults = <const>['3crv', 'wbtc', 'weth', 'link', 'yaxis']
+export const Vaults = <const>['usd', 'btc', 'eth', 'link', 'yaxis']
 export type TVaults = typeof Vaults[number]
 export interface Vault {
 	url: string

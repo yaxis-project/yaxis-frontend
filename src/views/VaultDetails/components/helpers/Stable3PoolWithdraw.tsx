@@ -3,7 +3,9 @@ import styled from 'styled-components'
 import {
 	Currency,
 	threeCRV,
-	Currencies3Pool,
+	DAI,
+	USDT,
+	USDC,
 } from '../../../../constants/currencies'
 import { useAllTokenBalances } from '../../../../state/wallet/hooks'
 import { usePrices } from '../../../../state/prices/hooks'
@@ -22,8 +24,10 @@ import { useSingleCallResult } from '../../../../state/onchain/hooks'
 const { Title, Text } = Typography
 const { useBreakpoint } = Grid
 
+const Currencies3Pool = [DAI, USDT, USDC]
+
 const initialCurrencyValues: CurrencyValues = reduce(
-	Currencies3Pool,
+	[DAI, USDT, USDC],
 	(prev, curr) => ({
 		...prev,
 		[curr.tokenId]: '',

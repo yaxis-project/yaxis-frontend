@@ -7,7 +7,6 @@ import {
 	ETH,
 	YAXIS,
 	MVLT,
-	CurrenciesIn3Pool,
 } from '../../constants/currencies'
 import {
 	TRewardsContracts,
@@ -334,9 +333,9 @@ export function useApprovals() {
 		useApprovedAmounts(
 			account,
 			contracts?.externalLP['3pool'].pool.address,
-			CurrenciesIn3Pool.map((c) => contracts?.currencies.ERC20[c]).filter(
-				(c) => c,
-			),
+			['dai', 'usdc', 'usdt']
+				.map((c) => contracts?.currencies.ERC20[c])
+				.filter((c) => c),
 		)
 
 	const [
@@ -422,14 +421,14 @@ export function useV3Approvals() {
 
 	const { result: allowanceVault, loading: loadingAllowanceVault } =
 		useSingleCallResult(
-			contracts?.vaults['3crv'].token.contract,
+			contracts?.vaults['usd'].token.contract,
 			'allowance',
-			[account, contracts?.vaults['3crv'].vault.address],
+			[account, contracts?.vaults['usd'].vault.address],
 		)
 
 	const { result: allowanceHelper, loading: loadingAllowanceHelper } =
 		useSingleCallResult(
-			contracts?.vaults['3crv'].token.contract,
+			contracts?.vaults['usd'].token.contract,
 			'allowance',
 			[account, contracts?.internal.vaultHelper.address],
 		)
@@ -817,7 +816,7 @@ export function useVaultsBalances() {
 		)
 
 		// Add YAXIS Gauge data
-
+		const yaxisGauge = vaults.yaxis
 		const yaxisVaultToken = balances['yaxis']
 		const yaxisGaugeToken = balances['yaxis-gauge']
 		const yaxisTotalToken = (
@@ -827,13 +826,11 @@ export function useVaultsBalances() {
 			.multipliedBy(1)
 			.multipliedBy(prices['yaxis'])
 		withData.balances.yaxis = {
+			...yaxisGauge,
 			vaultToken: yaxisVaultToken,
 			gaugeToken: yaxisGaugeToken,
 			totalToken: yaxisTotalToken,
 			usd: yaxisUsd,
-			balance: new BigNumber(0),
-			totalSupply: new BigNumber(0),
-			pricePerFullShare: new BigNumber(1),
 		}
 		withData.total.usd = withData.total.usd.plus(yaxisUsd)
 
@@ -913,19 +910,20 @@ export function useVotingPower() {
 		[['balanceOf(address)', [account]], ['totalSupply()']],
 	)
 
-	return useMemo(() => {
-		const [balanceOf, totalSupply] = results.map(
-			({ result, loading }, i) => {
-				if (loading) return ethers.BigNumber.from(0)
-				if (!result) return ethers.BigNumber.from(0)
-				return result
-			},
-		)
-		return {
-			balance: new BigNumber(balanceOf.toString()),
-			totalSupply: new BigNumber(totalSupply.toString()),
-		}
+	const [balanceOf, totalSupply] = useMemo(() => {
+		return results.map(({ result, loading }, i) => {
+			if (loading) return new BigNumber(0)
+			if (!result) return new BigNumber(0)
+			return new BigNumber(result.toString())
+		})
 	}, [results])
+
+	return useMemo(() => {
+		return {
+			balance: balanceOf,
+			totalSupply,
+		}
+	}, [totalSupply, balanceOf])
 }
 
 export function useLock() {

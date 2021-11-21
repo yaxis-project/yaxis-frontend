@@ -212,9 +212,9 @@ export function useVaultRewards(name: TVaults) {
 }
 
 export function useVaultsAPR() {
-	const threecrv = useVaultRewards('3crv')
-	const wbtc = useVaultRewards('wbtc')
-	const weth = useVaultRewards('weth')
+	const usd = useVaultRewards('usd')
+	const btc = useVaultRewards('btc')
+	const eth = useVaultRewards('eth')
 	const link = useVaultRewards('link')
 	const yaxis = useVaultRewards('yaxis')
 
@@ -225,20 +225,20 @@ export function useVaultsAPR() {
 
 	return useMemo(() => {
 		return {
-			'3crv': {
-				yaxisAPR: threecrv.APR,
+			usd: {
+				yaxisAPR: usd.APR,
 				strategy: mim3crv,
-				totalAPR: threecrv.APR.plus(mim3crv.totalAPR),
+				totalAPR: usd.APR.plus(mim3crv.totalAPR),
 			},
-			wbtc: {
-				yaxisAPR: wbtc.APR,
+			btc: {
+				yaxisAPR: btc.APR,
 				strategy: rencrv,
-				totalAPR: wbtc.APR.plus(rencrv.totalAPR),
+				totalAPR: btc.APR.plus(rencrv.totalAPR),
 			},
-			weth: {
-				yaxisAPR: weth.APR,
+			eth: {
+				yaxisAPR: eth.APR,
 				strategy: alethcrv,
-				totalAPR: weth.APR.plus(alethcrv.totalAPR),
+				totalAPR: eth.APR.plus(alethcrv.totalAPR),
 			},
 			link: {
 				yaxisAPR: link.APR,
@@ -251,25 +251,25 @@ export function useVaultsAPR() {
 				totalAPR: yaxis.APR,
 			},
 		}
-	}, [threecrv, wbtc, weth, link, yaxis, mim3crv, rencrv, alethcrv, linkcrv])
+	}, [usd, btc, eth, link, yaxis, mim3crv, rencrv, alethcrv, linkcrv])
 }
 
 export function useVaults() {
-	const v3crv = useVault('3crv')
-	const wbtc = useVault('wbtc')
-	const weth = useVault('weth')
+	const usd = useVault('usd')
+	const btc = useVault('btc')
+	const eth = useVault('eth')
 	const link = useVault('link')
 	const yaxis = useYaxisGauge()
 
 	return useMemo(() => {
 		return {
-			'3crv': v3crv,
-			wbtc,
-			weth,
+			usd,
+			btc,
+			eth,
 			link,
 			yaxis,
 		}
-	}, [v3crv, wbtc, weth, link, yaxis])
+	}, [usd, btc, eth, link, yaxis])
 }
 
 export function useYaxisSupply() {

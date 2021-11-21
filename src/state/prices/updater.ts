@@ -59,7 +59,9 @@ export default function Updater(): void {
 		}
 	}, [dispatch, result, state.prices.eth])
 
-	const mim3crvLP = useMemo(() => contracts?.vaults['3crv'], [contracts])
+	// TODO: switch to reading from curve LP config in case vault decouples from LP token
+	// DO for all
+	const mim3crvLP = useMemo(() => contracts?.vaults['usd'], [contracts])
 
 	const { result: mim3crvResult } = useSingleCallResult(
 		mim3crvLP?.tokenPool,
@@ -79,7 +81,7 @@ export default function Updater(): void {
 			)
 	}, [dispatch, mim3crvResult])
 
-	const rencrvLP = useMemo(() => contracts?.vaults['wbtc'], [contracts])
+	const rencrvLP = useMemo(() => contracts?.vaults['btc'], [contracts])
 
 	const { result: rencrvResult } = useSingleCallResult(
 		rencrvLP?.tokenPool,
@@ -99,7 +101,7 @@ export default function Updater(): void {
 			)
 	}, [dispatch, rencrvResult])
 
-	const alethcrvLP = useMemo(() => contracts?.vaults['weth'], [contracts])
+	const alethcrvLP = useMemo(() => contracts?.vaults['eth'], [contracts])
 
 	const { result: alethcrvResult } = useSingleCallResult(
 		alethcrvLP?.tokenPool,
