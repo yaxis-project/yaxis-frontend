@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
 import Typography from '../../../components/Typography'
@@ -9,7 +9,10 @@ import Slider from '../../../components/Slider'
 import { useLock } from '../../../state/wallet/hooks'
 import { useContracts } from '../../../contexts/Contracts'
 import useContractWrite from '../../../hooks/useContractWrite'
-import { useAllTokenBalances } from '../../../state/wallet/hooks'
+import {
+	useAllTokenBalances,
+	useVotingPower,
+} from '../../../state/wallet/hooks'
 import ApprovalCover from '../../../components/ApprovalCover'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
@@ -34,8 +37,28 @@ const CreateLock: React.FC = () => {
 
 	const [balances, loadingBalances] = useAllTokenBalances()
 
+	const votingEscrow = useVotingPower()
+
 	const [amount, setAmount] = useState('0')
 	const [length, setLength] = useState(WEEK_TIME)
+
+	const [vp, setVp] = useState(new BigNumber(0))
+	useEffect(() => {
+		const yaxisLocked = new BigNumber(amount)
+		setVp(
+			yaxisLocked.isNaN()
+				? new BigNumber(0)
+				: yaxisLocked
+						.multipliedBy(10 ** 18)
+						.dividedBy(MAX_TIME)
+						.multipliedBy(length),
+		)
+	}, [amount, length])
+
+	const vpPercentage = useMemo(
+		() => vp.dividedBy(votingEscrow.totalSupply.plus(vp)),
+		[vp, votingEscrow],
+	)
 
 	return (
 		<StyledDiv>
@@ -115,8 +138,10 @@ const CreateLock: React.FC = () => {
 			</Row>
 
 			<Row style={{ padding: '5px 0' }} justify="center">
-				{/* TODO */}
-				<StyledText>Resulting in {0}% of total Voting Power</StyledText>
+				<StyledText>
+					Resulting in {vpPercentage.multipliedBy(100).toFormat(2)}%
+					of total Voting Power
+				</StyledText>
 			</Row>
 
 			<Button
@@ -174,6 +199,8 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 
 	const [balances, loadingBalances] = useAllTokenBalances()
 
+	const votingEscrow = useVotingPower()
+
 	const [amount, setAmount] = useState('0')
 	const [length, setLength] = useState(0)
 
@@ -183,6 +210,28 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 			Math.floor(end.toNumber() / WEEK_TIME)
 		)
 	}, [end])
+
+	const [vp, setVp] = useState(new BigNumber(0))
+	useEffect(() => {
+		const yaxisLocked = new BigNumber(amount)
+		setVp(
+			yaxisLocked.isNaN()
+				? votingEscrow.balance || new BigNumber(0)
+				: yaxisLocked
+						.multipliedBy(10 ** 18)
+						.dividedBy(MAX_TIME)
+						.multipliedBy(length)
+						.plus(votingEscrow.balance),
+		)
+	}, [votingEscrow.balance, amount, length])
+
+	const vpPercentage = useMemo(
+		() =>
+			vp.dividedBy(
+				votingEscrow.totalSupply.plus(vp).minus(votingEscrow.balance),
+			),
+		[vp, votingEscrow],
+	)
 
 	return (
 		<>
@@ -320,9 +369,10 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 				</Row>
 
 				<Row style={{ padding: '5px 0' }} justify="center">
-					{/* TODO */}
 					<StyledText>
-						Resulting in {0}% of total Voting Power
+						Resulting in{' '}
+						{vpPercentage.multipliedBy(100).toFormat(2)}% of total
+						Voting Power
 					</StyledText>
 				</Row>
 
@@ -373,7 +423,7 @@ const Lock: React.FC = () => {
 				</StyledSecondaryText>
 			</Row>
 
-			<Divider />
+			<Divider style={{ margin: 0, padding: 0 }} />
 
 			<ApprovalCover
 				contractName={`currencies.ERC677.yaxis.contract`}
@@ -399,7 +449,7 @@ const StyledRow2 = styled(Row)`
 `
 
 const StyledDiv = styled.div`
-	padding: 0 30px 30px 30px;
+	padding: 30px;
 	width: 100%;
 `
 

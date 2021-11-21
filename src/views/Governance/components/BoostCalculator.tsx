@@ -15,7 +15,7 @@ import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
 import { useVaultsBalances, useVotingPower } from '../../../state/wallet/hooks'
 import BigNumber from 'bignumber.js'
 
-const MAXTIME = 1 * 365 * 86400
+const MAX_TIME = 1 * 365 * 24 * 60 * 60
 const TOKENLESS_PRODUCTION = 40
 
 const { Option } = Select
@@ -68,7 +68,7 @@ const BoostCalculator: React.FC = () => {
 				? new BigNumber(0)
 				: yaxisLockedBN
 						.multipliedBy(10 ** 18)
-						.dividedBy(MAXTIME)
+						.dividedBy(MAX_TIME)
 						.multipliedBy(duration * 7 * 86400),
 		)
 	}, [yaxisLocked, duration])
@@ -178,7 +178,7 @@ const BoostCalculator: React.FC = () => {
 					checked={useVaultBalance}
 					onChange={() => setUseVaultBalance(!useVaultBalance)}
 				>
-					<Text>Use current balance</Text>
+					<Text>Use your current balance</Text>
 				</Checkbox>
 				<Row style={{ marginTop: '15px' }}>
 					<Title level={5}>Total in Vault:</Title>
@@ -195,7 +195,7 @@ const BoostCalculator: React.FC = () => {
 					checked={useVaultTotal}
 					onChange={() => setUseVaultTotal(!useVaultTotal)}
 				>
-					<Text>Use current total</Text>
+					<Text>Use the current total</Text>
 				</Checkbox>
 				<Row style={{ marginTop: '15px' }}>
 					<Title level={5}>YAXIS locked:</Title>
@@ -241,7 +241,7 @@ const BoostCalculator: React.FC = () => {
 									? `boosted by x${new BigNumber(
 											boost,
 									  ).toFormat(2)}.`
-									: 'remaining at the base rate.'}
+									: ' at the base rate.'}
 							</Title>
 						</Col>
 						<Col>

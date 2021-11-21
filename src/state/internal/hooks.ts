@@ -154,9 +154,6 @@ export function useVaultRewards(name: TVaults) {
 
 	const { prices } = usePrices()
 
-	// TODO adjusted APR based on to deposit amount
-	// TODO might need to get from previous checkpoint
-
 	const relativeWeight = useSingleCallResult(
 		contracts?.internal.gaugeController,
 		'gauge_relative_weight(address)',
@@ -273,6 +270,10 @@ export function useVaults() {
 	}, [usd, btc, eth, link, yaxis])
 }
 
+const DEV_FUND_ADDRESS = '0x5118Df9210e1b97a4de0df15FBbf438499d6b446'
+const TEAM_FUND_ADDRESS = '0xEcD3aD054199ced282F0608C4f0cea4eb0B139bb'
+const TREASURY_ADDRESS = '0xC1d40e197563dF727a4d3134E8BD1DeF4B498C6f'
+
 export function useYaxisSupply() {
 	const { contracts } = useContracts()
 
@@ -281,20 +282,60 @@ export function useYaxisSupply() {
 		'totalSupply',
 	)
 
-	const DEV_FUND_ADDRESS = '0x5118Df9210e1b97a4de0df15FBbf438499d6b446'
-	const TEAM_FUND_ADDRESS = '0xEcD3aD054199ced282F0608C4f0cea4eb0B139bb'
-	const TREASURY_ADDRESS = '0xC1d40e197563dF727a4d3134E8BD1DeF4B498C6f'
-	// unswapped yaxis, check swap contract
-	// rewards contracts
-	// gauges
+	const balances = useSingleContractMultipleData(
+		contracts?.currencies.ERC677.yaxis.contract,
+		'balanceOf',
+		[
+			[contracts?.internal.swap.address],
+			[DEV_FUND_ADDRESS],
+			[TEAM_FUND_ADDRESS],
+			[TREASURY_ADDRESS],
+			[contracts?.rewards['Uniswap YAXIS/ETH'].address],
+			[contracts?.internal.minterWrapper.address],
+		],
+	)
 
 	return useMemo(() => {
 		const { result: stakedSupply } = totalSupply
+
+		const [
+			unswapped,
+			devFund,
+			teamFund,
+			treasury,
+			metavaultRewards,
+			uniswapLPRewards,
+			yaxisRewards,
+			gauges,
+		] = balances.map(({ result, loading }) => {
+			if (loading) return new BigNumber(0)
+			if (!result) return new BigNumber(0)
+			return new BigNumber(result.toString())
+		})
+
+		const notCirculating = (unswapped || new BigNumber(0))
+			.plus(devFund || 0)
+			.plus(teamFund || 0)
+			.plus(treasury || 0)
+			.plus(metavaultRewards || 0)
+			.plus(uniswapLPRewards || 0)
+			.plus(yaxisRewards || 0)
+			.plus(gauges || 0)
+
+		const total = new BigNumber(stakedSupply?.toString() || 0)
+
 		return {
-			total: new BigNumber(stakedSupply?.toString() || 0),
-			circulating: new BigNumber(0),
+			total,
+			circulating: total.minus(notCirculating),
+			devFund: devFund || new BigNumber(0),
+			teamFund: teamFund || new BigNumber(0),
+			treasury: treasury || new BigNumber(0),
+			metavaultRewards: metavaultRewards || new BigNumber(0),
+			uniswapLPRewards: uniswapLPRewards || new BigNumber(0),
+			yaxisRewards: yaxisRewards || new BigNumber(0),
+			gauges: gauges || new BigNumber(0),
 		}
-	}, [totalSupply])
+	}, [totalSupply, balances])
 }
 
 const useRewardAPR = (rewardsContract: TRewardsContracts) => {

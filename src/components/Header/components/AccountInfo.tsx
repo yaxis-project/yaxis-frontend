@@ -12,43 +12,6 @@ import useTranslation from '../../../hooks/useTranslation'
 
 const { Text } = Typography
 
-const StyledRow = styled(Row)<any>`
-	display: flex;
-	align-items: center;
-	margin-bottom: ${(props) => (props.mobile ? '10' : '10')}px;
-	margin-right: 10px;
-`
-const StyledText = styled.div<any>`
-	color: ${(props) => props.theme.secondary.font};
-	text-align: center;
-	font-size: ${(props) => (props.mobile ? '1.1' : '1')}em;
-	margin-left: 10px;
-`
-
-const StyledCol = styled(Col)<any>`
-	margin-bottom: 5px;
-	padding-left: 15px;
-	padding-right: 5px;
-`
-
-const AccountText = styled.div`
-	color: ${(props) => props.theme.secondary.font};
-	font-weight: bold;
-	font-size: 1.2em;
-	margin-left: -8px;
-`
-
-const AccountIdText = styled.div<any>`
-	color: ${(props) => props.theme.secondary.font};
-	font-weight: bold;
-	font-size: 1em;
-	color: #016eac;
-	border: 1.5px solid #016eac;
-	border-radius: 20px;
-	padding: 2px 10px;
-	margin-left: 10px;
-`
-
 interface AccountInfoProps {
 	account: string
 	networkName: string
@@ -67,7 +30,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 		<>
 			<Menu.ItemGroup
 				title={
-					<StyledCol mobile={mobile}>
+					<StyledCol>
 						<StyledRow
 							mobile={mobile}
 							style={{
@@ -119,7 +82,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 							/>
 						</StyledRow>
 						<StyledRow>
-							<BlockOutlined />
+							<StyledBlockOutlined />
 							<StyledText mobile={mobile}>
 								<a
 									href={etherscanUrl(
@@ -153,3 +116,44 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 }
 
 export default AccountInfo
+
+const StyledRow = styled(Row)<{ mobile?: boolean }>`
+	display: flex;
+	align-items: center;
+	margin-bottom: ${(props) => (props.mobile ? '10' : '10')}px;
+	margin-right: 10px;
+`
+const StyledText = styled.div<{ mobile?: boolean }>`
+	color: ${(props) => props.theme.secondary.font};
+	text-align: center;
+	font-size: ${(props) => (props.mobile ? '1.1' : '1')}em;
+	margin-left: 10px;
+`
+
+const StyledCol = styled(Col)`
+	margin-bottom: 5px;
+	padding-left: 15px;
+	padding-right: 5px;
+`
+
+const AccountText = styled.div`
+	color: ${(props) => props.theme.secondary.font};
+	font-weight: bold;
+	font-size: 1.2em;
+	margin-left: -8px;
+`
+
+const AccountIdText = styled.div`
+	color: ${(props) => props.theme.secondary.font};
+	font-weight: bold;
+	font-size: 1em;
+	color: #016eac;
+	border: 1.5px solid #016eac;
+	border-radius: 20px;
+	padding: 2px 10px;
+	margin-left: 10px;
+`
+
+const StyledBlockOutlined = styled(BlockOutlined)`
+	${(props) => (props.theme.type === 'dark' ? 'color: white;' : '')}
+`
