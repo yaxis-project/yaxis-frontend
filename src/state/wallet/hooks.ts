@@ -686,7 +686,13 @@ export function useAccountLPs() {
 	const uniswapYaxEth = useAccountLP(contracts?.pools['Uniswap YAX/ETH'])
 	const uniswapYaxisEth = useAccountLP(contracts?.pools['Uniswap YAXIS/ETH'])
 
-	return { pools: { linkswapYaxEth, uniswapYaxEth, uniswapYaxisEth } }
+	return {
+		pools: {
+			'Uniswap YAX/ETH': uniswapYaxEth,
+			'Uniswap YAXIS/ETH': uniswapYaxisEth,
+			'Linkswap YAX/ETH': linkswapYaxEth,
+		},
+	}
 }
 
 /**
@@ -826,9 +832,12 @@ export function useLPsBalance() {
 				)
 					return previous
 
-				const share = new BigNumber(stakedBalance?.value || 0)
-					.plus(new BigNumber(walletBalance?.value || 0))
-					.div(totalSupply.toString())
+				const share = new BigNumber(totalSupply).isZero()
+					? new BigNumber(0)
+					: new BigNumber(stakedBalance?.value || 0)
+							.plus(new BigNumber(walletBalance?.value || 0))
+							.div(totalSupply.toString())
+							.dividedBy(10 ** 18)
 				const shareT0 = new BigNumber(
 					reserves?.['_reserve0']?.toString() || 0,
 				)
@@ -839,6 +848,7 @@ export function useLPsBalance() {
 				)
 					.multipliedBy(share)
 					.dividedBy(10 ** 18)
+
 				const balanceUSD = shareT0
 					.multipliedBy(yaxis)
 					.plus(shareT1.multipliedBy(eth))

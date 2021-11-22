@@ -107,14 +107,6 @@ export function useVaultRewards(name: TVaults) {
 		[contracts?.vaults[name].gauge.address],
 	)
 
-	const virtualPriceCall = useSingleCallResult(
-		contracts?.vaults[name].token.name && // YAXIS config has none
-			contracts?.externalLP[
-				contracts?.vaults[name].token.name.toLowerCase()
-			]?.pool,
-		'get_virtual_price()',
-	)
-
 	const balance = useSingleCallResult(
 		contracts?.vaults[name].gauge,
 		'working_supply',
@@ -125,12 +117,9 @@ export function useVaultRewards(name: TVaults) {
 			balance?.result?.toString() || 0,
 		).dividedBy(10 ** 18)
 
-		const virtualPrice =
-			name === 'yaxis'
-				? new BigNumber(prices?.yaxis)
-				: new BigNumber(
-						virtualPriceCall?.result?.toString() || 0,
-				  ).dividedBy(10 ** 18)
+		const virtualPrice = new BigNumber(
+			prices[contracts?.vaults[name].token.name.toLowerCase()],
+		)
 
 		const virtualSupply = virtualPrice.multipliedBy(
 			// If supply is 0 mock to 1 to show a value
@@ -154,7 +143,7 @@ export function useVaultRewards(name: TVaults) {
 			amountPerYear: yaxisPerYear,
 			APR,
 		}
-	}, [name, prices?.yaxis, relativeWeight, virtualPriceCall, balance, rate])
+	}, [name, contracts?.vaults, prices, relativeWeight, balance, rate])
 }
 
 export function useVaultsAPR() {
@@ -442,6 +431,7 @@ export function useLiquidityPool(name: TLiquidityPools) {
 			...contracts?.pools[name],
 			totalSupply: totalSupplyBN,
 			reserve,
+			reserves,
 			lpPrice,
 			tvl,
 		}
@@ -453,7 +443,13 @@ export function useLiquidityPools() {
 	const uniswapYaxEth = useLiquidityPool('Uniswap YAX/ETH')
 	const uniswapYaxisEth = useLiquidityPool('Uniswap YAXIS/ETH')
 
-	return { pools: { linkswapYaxEth, uniswapYaxEth, uniswapYaxisEth } }
+	return {
+		pools: {
+			'Uniswap YAX/ETH': uniswapYaxEth,
+			'Uniswap YAXIS/ETH': uniswapYaxisEth,
+			'Linkswap YAX/ETH': linkswapYaxEth,
+		},
+	}
 }
 
 export function useTVL() {
