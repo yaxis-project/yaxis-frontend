@@ -1,9 +1,14 @@
 import React from 'react'
-import { Row, Col, Typography, Carousel } from 'antd'
+import { Row, Col, Carousel } from 'antd'
 import Button from '../../../../Button'
+import Typography from '../../../../Typography'
 import useTranslation from '../../../../../hooks/useTranslation'
 import { useNavigate } from 'react-router-dom'
 import { setLastSeenUpdate } from '../util'
+import distribute from '../../../../../assets/img/distribute.gif'
+import lightdark from '../../../../../assets/img/light-dark.gif'
+import lock from '../../../../../assets/img/lock.gif'
+import vaults from '../../../../../assets/img/vaults.png'
 
 const { Title: AntTitle } = Typography
 
@@ -30,11 +35,30 @@ export const Body: React.FC = () => {
 							<Row
 								justify="center"
 								align="middle"
-								style={contentStyle}
+								style={{
+									...contentStyle,
+									position: 'relative',
+								}}
 							>
+								<img
+									src={vaults}
+									width={500}
+									style={{
+										position: 'absolute',
+										top: '0',
+									}}
+									alt="Canonical Vaults"
+								/>
 								<Col>
-									{/* TODO: Add image */}
-									<h3>Multi token canonical vaults</h3>
+									<h3
+										style={{
+											marginTop: '50px',
+											fontSize: '20px',
+											fontWeight: 900,
+										}}
+									>
+										Multi token canonical vaults
+									</h3>
 								</Col>
 							</Row>
 						</div>
@@ -43,11 +67,31 @@ export const Body: React.FC = () => {
 							<Row
 								justify="center"
 								align="middle"
-								style={contentStyle}
+								style={{
+									...contentStyle,
+									position: 'relative',
+								}}
 							>
+								<img
+									src={lock}
+									width={240}
+									style={{
+										position: 'absolute',
+										top: '0',
+									}}
+									alt="Lock YAXIS"
+								/>
 								<Col>
-									{/* TODO: Add image */}
-									<h3>Boost rewards by locking YAXIS</h3>
+									<h3
+										style={{
+											fontSize: '15px',
+											marginTop: '20px',
+											fontWeight: 900,
+											color: 'black',
+										}}
+									>
+										Boost rewards by locking YAXIS
+									</h3>
 								</Col>
 							</Row>
 						</div>
@@ -56,11 +100,20 @@ export const Body: React.FC = () => {
 							<Row
 								justify="center"
 								align="middle"
-								style={contentStyle}
+								style={{
+									...contentStyle,
+									backgroundImage: `url(${distribute})`,
+								}}
 							>
 								<Col>
-									{/* TODO: Add image */}
-									<h3>
+									<h3
+										style={{
+											marginTop: '40px',
+											fontSize: '16px',
+											fontWeight: 900,
+										}}
+									>
+										{' '}
 										Vote to get more rewards for your
 										favorite token
 									</h3>
@@ -72,11 +125,21 @@ export const Body: React.FC = () => {
 							<Row
 								justify="center"
 								align="middle"
-								style={contentStyle}
+								style={{
+									...contentStyle,
+									backgroundImage: `url(${lightdark})`,
+								}}
 							>
 								<Col>
-									{/* TODO: Add image */}
-									<h3>Dark mode and language support</h3>
+									<h3
+										style={{
+											marginTop: '40px',
+											fontSize: '20px',
+											fontWeight: 900,
+										}}
+									>
+										Dark mode and language support
+									</h3>
 								</Col>
 							</Row>
 						</div>
@@ -104,6 +167,5 @@ const contentStyle = {
 	width: '500px',
 	height: '240px',
 	color: '#fff',
-	lineHeight: '160px',
-	background: '#364d79',
+	background: 'black',
 }

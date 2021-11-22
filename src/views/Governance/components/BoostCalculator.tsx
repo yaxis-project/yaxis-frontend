@@ -91,13 +91,6 @@ const BoostCalculator: React.FC = () => {
 			? balances[selectedVault]?.totalSupply || new BigNumber(0)
 			: new BigNumber(inputVaultTotal || 0).multipliedBy(10 ** 18)
 
-		const adjustedVaultTotal =
-			!useVaultBalance && useVaultTotal
-				? vaultTotal
-						.minus(balances[selectedVault]?.gaugeToken?.value)
-						.plus(vaultBalance)
-				: vaultTotal
-
 		const unboostedMinimum = vaultBalance
 			.multipliedBy(TOKENLESS_PRODUCTION)
 			.dividedBy(100)
@@ -107,7 +100,7 @@ const BoostCalculator: React.FC = () => {
 			: vaultBalance
 
 		const workingBalance = unboostedMinimum.plus(
-			adjustedVaultTotal
+			vaultTotal
 				.multipliedBy(vpPercentage)
 				.multipliedBy(100 - TOKENLESS_PRODUCTION)
 				.dividedBy(100),
@@ -146,7 +139,7 @@ const BoostCalculator: React.FC = () => {
 					onChange={(value) => setSelectedVault(value)}
 				>
 					{Vaults.map((vault) => (
-						<Option value={vault}>
+						<Option value={vault} key={vault}>
 							<img
 								src={Currencies[vault.toUpperCase()].icon}
 								height="30"

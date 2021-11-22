@@ -4,7 +4,7 @@ import { Row, Col, Grid } from 'antd'
 import Page from '../../components/Page'
 import YaxisPriceGraph from '../../components/Graph/YaxisPriceGraph'
 import AccountOverviewCard from './components/AccountOverviewCard'
-import HomeOverviewCard from './components/HomeOverviewCard'
+// import HomeOverviewCard from './components/HomeOverviewCard'
 import LPAccountOverview from './components/LPAccountOverview'
 import HomeExpandableOverview from './components/HomeExpandableOverview'
 import { useVotingPower, useVaultsBalances } from '../../state/wallet/hooks'
@@ -32,7 +32,8 @@ const Home: React.FC = () => {
 						<GovernanceAccountOverview />
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
-						<HomeOverviewCard />
+						{/* TODO */}
+						{/* <HomeOverviewCard /> */}
 						<HomeExpandableOverview />
 					</StyledCol>
 				</Row>

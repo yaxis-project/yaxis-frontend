@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react'
-import { Modal, Typography } from 'antd'
+import { Modal } from 'antd'
+import Typography from '../../../Typography'
 import { ApplicationModal } from '../../../../state/application/actions'
 import {
 	useOpenModal,
@@ -35,7 +36,7 @@ export const Update: React.FC = () => {
 					{translate(title)}
 				</Title>
 			}
-			visible={visible}
+			visible={true}
 			onCancel={() => {
 				setLastSeenUpdate(LATEST_VERSION)
 				closeModal()

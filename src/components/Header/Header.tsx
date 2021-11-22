@@ -30,9 +30,9 @@ const Header = () => {
 					<Col flex="auto" style={{ color: 'white' }}>
 						<Nav />
 					</Col>
-					<Col>
+					{/* <Col>
 						<LanguageSelect />
-					</Col>
+					</Col> */}
 					<Col>
 						<ThemeToggle />
 					</Col>
