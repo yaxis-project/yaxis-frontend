@@ -126,25 +126,25 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, currencies }) => {
 
 	const { md } = useBreakpoint()
 
-	const { call: handleUnstakeWETH, loading: isSubmittingWETH } =
+	const { call: handleUnstakeETH, loading: isSubmittingETH } =
 		useContractWrite({
-			contractName: 'vaults.weth.gauge',
+			contractName: 'vaults.eth.gauge',
 			method: 'withdraw(uint256)',
-			description: `unstaked from WETH Gauge`,
+			description: `unstaked from ETH Gauge`,
 		})
 
-	const { call: handleUnstakeWBTC, loading: isSubmittingWBTC } =
+	const { call: handleUnstakeBTC, loading: isSubmittingBTC } =
 		useContractWrite({
-			contractName: 'vaults.wbtc.gauge',
+			contractName: 'vaults.btc.gauge',
 			method: 'withdraw(uint256)',
-			description: `unstaked from WBTC Gauge`,
+			description: `unstaked from BTC Gauge`,
 		})
 
-	const { call: handleUnstake3CRV, loading: isSubmitting3CRV } =
+	const { call: handleUnstakeUSD, loading: isSubmittingUSD } =
 		useContractWrite({
-			contractName: 'vaults.3crv.gauge',
+			contractName: 'vaults.usd.gauge',
 			method: 'withdraw(uint256)',
-			description: `unstaked from 3CRV Gauge`,
+			description: `unstaked from USD Gauge`,
 		})
 
 	const { call: handleUnstakeLINK, loading: isSubmittingLINK } =
@@ -163,24 +163,24 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, currencies }) => {
 
 	const callsLookup = useMemo(() => {
 		return {
-			handleUnstakeWETH,
-			isSubmittingWETH,
-			handleUnstakeWBTC,
-			isSubmittingWBTC,
-			handleUnstake3CRV,
-			isSubmitting3CRV,
+			handleUnstakeETH,
+			isSubmittingETH,
+			handleUnstakeBTC,
+			isSubmittingBTC,
+			handleUnstakeUSD,
+			isSubmittingUSD,
 			handleUnstakeLINK,
 			isSubmittingLINK,
 			handleUnstakeYAXIS,
 			isSubmittingYAXIS,
 		}
 	}, [
-		handleUnstakeWETH,
-		isSubmittingWETH,
-		handleUnstakeWBTC,
-		isSubmittingWBTC,
-		handleUnstake3CRV,
-		isSubmitting3CRV,
+		handleUnstakeETH,
+		isSubmittingETH,
+		handleUnstakeBTC,
+		isSubmittingBTC,
+		handleUnstakeUSD,
+		isSubmittingUSD,
 		handleUnstakeLINK,
 		isSubmittingLINK,
 		handleUnstakeYAXIS,
@@ -316,10 +316,10 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, currencies }) => {
 				<Button
 					disabled={disabled}
 					loading={
-						callsLookup.isSubmittingWETH ||
-						callsLookup.isSubmittingWBTC ||
+						callsLookup.isSubmittingETH ||
+						callsLookup.isSubmittingBTC ||
 						callsLookup.isSubmittingLINK ||
-						callsLookup.isSubmitting3CRV
+						callsLookup.isSubmittingUSD
 					}
 					onClick={handleSubmit}
 					style={{ fontSize: '18px', width: '100%' }}

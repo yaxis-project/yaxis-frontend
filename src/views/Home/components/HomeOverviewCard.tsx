@@ -63,8 +63,8 @@ export default function HomeOverviewCard() {
 										Your Vault returns:
 									</div>
 									<TooltipRow main={'3CRV'} value={0} />
-									<TooltipRow main={'wETH'} value={0} />
-									<TooltipRow main={'wBTC'} value={0} />
+									<TooltipRow main={'ETH'} value={0} />
+									<TooltipRow main={'BTC'} value={0} />
 									<TooltipRow main={'LINK'} value={0} />
 								</>
 							}

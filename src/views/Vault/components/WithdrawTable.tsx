@@ -128,25 +128,25 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, currencies }) => {
 
 	const { md } = useBreakpoint()
 
-	const { call: handleWithdrawWETH, loading: isSubmittingWETH } =
+	const { call: handleWithdrawETH, loading: isSubmittingETH } =
 		useContractWrite({
-			contractName: 'vaults.weth.vault',
+			contractName: 'vaults.eth.vault',
 			method: 'withdraw',
-			description: `withdrew from WETH Vault`,
+			description: `withdrew from ETH Vault`,
 		})
 
-	const { call: handleWithdrawWBTC, loading: isSubmittingWBTC } =
+	const { call: handleWithdrawBTC, loading: isSubmittingBTC } =
 		useContractWrite({
-			contractName: 'vaults.wbtc.vault',
+			contractName: 'vaults.btc.vault',
 			method: 'withdraw',
-			description: `withdrew from WBTC Vault`,
+			description: `withdrew from BTC Vault`,
 		})
 
-	const { call: handleWithdraw3CRV, loading: isSubmitting3CRV } =
+	const { call: handleWithdrawUSD, loading: isSubmittingUSD } =
 		useContractWrite({
-			contractName: 'vaults.3crv.vault',
+			contractName: 'vaults.usd.vault',
 			method: 'withdraw',
-			description: `withdrew from 3CRV Vault`,
+			description: `withdrew from USD Vault`,
 		})
 
 	const { call: handleWithdrawLINK, loading: isSubmittingLINK } =
@@ -158,22 +158,22 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, currencies }) => {
 
 	const callsLookup = useMemo(() => {
 		return {
-			handleWithdrawWETH,
-			isSubmittingWETH,
-			handleWithdrawWBTC,
-			isSubmittingWBTC,
-			handleWithdraw3CRV,
-			isSubmitting3CRV,
+			handleWithdrawETH,
+			isSubmittingETH,
+			handleWithdrawBTC,
+			isSubmittingBTC,
+			handleWithdrawUSD,
+			isSubmittingUSD,
 			handleWithdrawLINK,
 			isSubmittingLINK,
 		}
 	}, [
-		handleWithdrawWETH,
-		isSubmittingWETH,
-		handleWithdrawWBTC,
-		isSubmittingWBTC,
-		handleWithdraw3CRV,
-		isSubmitting3CRV,
+		handleWithdrawETH,
+		isSubmittingETH,
+		handleWithdrawBTC,
+		isSubmittingBTC,
+		handleWithdrawUSD,
+		isSubmittingUSD,
 		handleWithdrawLINK,
 		isSubmittingLINK,
 	])
@@ -292,10 +292,10 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, currencies }) => {
 				<Button
 					disabled={disabled}
 					loading={
-						callsLookup.isSubmittingWETH ||
-						callsLookup.isSubmittingWBTC ||
+						callsLookup.isSubmittingETH ||
+						callsLookup.isSubmittingBTC ||
 						callsLookup.isSubmittingLINK ||
-						callsLookup.isSubmitting3CRV
+						callsLookup.isSubmittingUSD
 					}
 					onClick={handleSubmit}
 					style={{ fontSize: '18px', width: '100%' }}

@@ -219,23 +219,24 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = LPVaults.filter(
-			([name]) => name !== 'yaxis',
-		).reduce<[string, [string, string]][]>((previous, [lpToken, vault]) => {
-			const _v = currencyValues[lpToken]
-			if (_v)
-				previous.push([
-					vault,
-					[
-						contracts.vaults[vault].vault.address,
-						numberToDecimal(
-							_v,
-							Currencies[lpToken.toUpperCase()].decimals,
-						),
-					],
-				])
-			return previous
-		}, [])
+		const transactions = LPVaults.reduce<[string, [string, string]][]>(
+			(previous, [lpToken, vault]) => {
+				const _v = currencyValues[lpToken]
+				if (_v)
+					previous.push([
+						vault,
+						[
+							contracts.vaults[vault].vault.address,
+							numberToDecimal(
+								_v,
+								Currencies[lpToken.toUpperCase()].decimals,
+							),
+						],
+					])
+				return previous
+			},
+			[],
+		)
 
 		if (transactions.length > 0) {
 			await Promise.allSettled(
@@ -362,7 +363,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 	return (
 		<>
 			<Table
-				components={components}
+				// components={components}
 				columns={columns}
 				dataSource={data}
 				pagination={false}

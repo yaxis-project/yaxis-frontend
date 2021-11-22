@@ -172,26 +172,29 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 
 	const apr = useVaultsAPRWithBoost()
 
-	const { call: handleStakeWETH, loading: isSubmittingWETH } =
-		useContractWrite({
-			contractName: 'vaults.weth.gauge',
+	const { call: handleStakeETH, loading: isSubmittingETH } = useContractWrite(
+		{
+			contractName: 'vaults.eth.gauge',
 			method: 'deposit(uint256)',
-			description: `staked in WETH Gauge`,
-		})
+			description: `staked in ETH Gauge`,
+		},
+	)
 
-	const { call: handleStakeWBTC, loading: isSubmittingWBTC } =
-		useContractWrite({
-			contractName: 'vaults.wbtc.gauge',
+	const { call: handleStakeBTC, loading: isSubmittingBTC } = useContractWrite(
+		{
+			contractName: 'vaults.btc.gauge',
 			method: 'deposit(uint256)',
-			description: `staked in WBTC Gauge`,
-		})
+			description: `staked in BTC Gauge`,
+		},
+	)
 
-	const { call: handleStake3CRV, loading: isSubmitting3CRV } =
-		useContractWrite({
-			contractName: 'vaults.3crv.gauge',
+	const { call: handleStakeUSD, loading: isSubmittingUSD } = useContractWrite(
+		{
+			contractName: 'vaults.usd.gauge',
 			method: 'deposit(uint256)',
-			description: `staked in 3CRV Gauge`,
-		})
+			description: `staked in USD Gauge`,
+		},
+	)
 
 	const { call: handleStakeLINK, loading: isSubmittingLINK } =
 		useContractWrite({
@@ -209,24 +212,24 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 
 	const callsLookup = useMemo(() => {
 		return {
-			handleStakeWETH,
-			isSubmittingWETH,
-			handleStakeWBTC,
-			isSubmittingWBTC,
-			handleStake3CRV,
-			isSubmitting3CRV,
+			handleStakeETH,
+			isSubmittingETH,
+			handleStakeBTC,
+			isSubmittingBTC,
+			handleStakeUSD,
+			isSubmittingUSD,
 			handleStakeLINK,
 			isSubmittingLINK,
 			handleStakeYAXIS,
 			isSubmittingYAXIS,
 		}
 	}, [
-		handleStakeWETH,
-		isSubmittingWETH,
-		handleStakeWBTC,
-		isSubmittingWBTC,
-		handleStake3CRV,
-		isSubmitting3CRV,
+		handleStakeETH,
+		isSubmittingETH,
+		handleStakeBTC,
+		isSubmittingBTC,
+		handleStakeUSD,
+		isSubmittingUSD,
 		handleStakeLINK,
 		isSubmittingLINK,
 		handleStakeYAXIS,
@@ -254,31 +257,33 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = Vaults.filter((name) => name !== 'yaxis').reduce<
-			[string, string][]
-		>((previous, vault) => {
-			const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
-			const _v = currencyValues[vaultToken]
-			if (_v)
-				previous.push([
-					vault.toUpperCase(),
-					numberToDecimal(
-						_v,
-						Currencies[vaultToken.toUpperCase()].decimals,
-					),
-				])
+		const transactions = Vaults.reduce<[string, string][]>(
+			(previous, vault) => {
+				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+				const _v = currencyValues[vaultToken]
 
-			return previous
-		}, [])
+				if (_v)
+					previous.push([
+						vault.toUpperCase(),
+						numberToDecimal(
+							_v,
+							Currencies[vaultToken.toUpperCase()].decimals,
+						),
+					])
+
+				return previous
+			},
+			[],
+		)
 
 		if (transactions.length > 0) {
 			await Promise.allSettled(
-				transactions.map(([token, amount]) =>
+				transactions.map(([token, amount]) => {
 					callsLookup[`handleStake${token}`]({
 						args: [amount],
 						descriptionExtra: totalDepositing,
-					}),
-				),
+					})
+				}),
 			)
 			setCurrencyValues(
 				currencies.reduce(
@@ -357,7 +362,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 	return (
 		<>
 			<Table
-				components={components}
+				// components={components}
 				columns={columns}
 				dataSource={data}
 				pagination={false}
@@ -376,10 +381,10 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 				<Button
 					disabled={disabled}
 					loading={
-						callsLookup.isSubmittingWETH ||
-						callsLookup.isSubmittingWBTC ||
+						callsLookup.isSubmittingETH ||
+						callsLookup.isSubmittingBTC ||
 						callsLookup.isSubmittingLINK ||
-						callsLookup.isSubmitting3CRV
+						callsLookup.isSubmittingUSD
 					}
 					onClick={handleSubmit}
 					style={{ fontSize: '18px', width: '100%' }}

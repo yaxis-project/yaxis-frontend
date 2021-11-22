@@ -21,7 +21,7 @@ export default function SwapCard() {
 	const translate = useTranslation()
 
 	const { account } = useWeb3Provider()
-	const [current, setCurrent] = useState(3)
+	const [current, setCurrent] = useState(0)
 	const [initialized, setInitialized] = useState(false)
 	const [toDo, setToDo] = useState([false, false, false, false])
 
@@ -55,8 +55,8 @@ export default function SwapCard() {
 			if (!initialized) {
 				setInitialized(true)
 				if (step1) setCurrent(0)
-				if (step2) setCurrent(1)
-				if (step3) setCurrent(2)
+				else if (step2) setCurrent(1)
+				else if (step3) setCurrent(2)
 			}
 		}
 	}, [initialized, loading, step1, step2, step3, step4])

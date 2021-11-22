@@ -8,6 +8,7 @@ import BigNumber from 'bignumber.js'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import useTranslation from '../../../hooks/useTranslation'
+import { useContracts } from '../../../contexts/Contracts'
 
 const { Step } = Steps
 
@@ -25,6 +26,7 @@ interface StepExitProps extends StepProps {
 
 const StepExit: React.FC<StepExitProps> = ({ stakedMVLT, walletMVLT }) => {
 	const translate = useTranslation()
+	const { contracts } = useContracts()
 
 	const { call: handleUnstake, loading: loadingUnstake } = useContractWrite({
 		contractName: `rewards.MetaVault`,
@@ -35,7 +37,7 @@ const StepExit: React.FC<StepExitProps> = ({ stakedMVLT, walletMVLT }) => {
 	const { call: handleWithdrawAll, loading: loadingWithdrawAll } =
 		useContractWrite({
 			contractName: 'internal.yAxisMetaVault',
-			method: 'withdrawAll',
+			method: 'withdrawAll(address)',
 			description: `MetaVault withdraw`,
 		})
 
@@ -65,12 +67,20 @@ const StepExit: React.FC<StepExitProps> = ({ stakedMVLT, walletMVLT }) => {
 				/>
 			)
 
-		if (walletMVLT.gt(0))
+		if (walletMVLT?.gt(0))
 			return (
 				<Step
+					disabled={!contracts?.currencies.ERC20['3crv']}
 					title={
 						<StyledButton
-							onClick={async () => handleWithdrawAll()}
+							onClick={async () =>
+								handleWithdrawAll({
+									args: [
+										contracts?.currencies.ERC20['3crv']
+											.contract.address,
+									],
+								})
+							}
 							loading={loadingWithdrawAll}
 							height={'40px'}
 						>
@@ -100,7 +110,7 @@ const StepExit: React.FC<StepExitProps> = ({ stakedMVLT, walletMVLT }) => {
 	])
 
 	const message = useMemo(() => {
-		if (stakedMVLT.gt(0) || walletMVLT.gt(0))
+		if (stakedMVLT.gt(0) || walletMVLT?.gt(0))
 			return translate('First, exit the previous contracts')
 
 		return translate('Step complete.')

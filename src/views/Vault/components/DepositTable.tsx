@@ -174,25 +174,25 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, currencies }) => {
 
 	const apr = useVaultsAPRWithBoost()
 
-	const { call: handleDepositWETH, loading: isSubmittingWETH } =
+	const { call: handleDepositETH, loading: isSubmittingETH } =
 		useContractWrite({
-			contractName: 'vaults.weth.vault',
+			contractName: 'vaults.eth.vault',
 			method: 'deposit',
-			description: `deposit WETH Vault`,
+			description: `deposit ETH Vault`,
 		})
 
-	const { call: handleDepositWBTC, loading: isSubmittingWBTC } =
+	const { call: handleDepositBTC, loading: isSubmittingBTC } =
 		useContractWrite({
-			contractName: 'vaults.wbtc.vault',
+			contractName: 'vaults.btc.vault',
 			method: 'deposit',
-			description: `deposit WBTC Vault`,
+			description: `deposit BTC Vault`,
 		})
 
-	const { call: handleDeposit3CRV, loading: isSubmitting3CRV } =
+	const { call: handleDepositUSD, loading: isSubmittingUSD } =
 		useContractWrite({
-			contractName: 'vaults.3crv.vault',
+			contractName: 'vaults.usd.vault',
 			method: 'deposit',
-			description: `deposit 3CRV Vault`,
+			description: `deposit USD Vault`,
 		})
 
 	const { call: handleDepositLINK, loading: isSubmittingLINK } =
@@ -204,22 +204,22 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, currencies }) => {
 
 	const callsLookup = useMemo(() => {
 		return {
-			handleDepositWETH,
-			isSubmittingWETH,
-			handleDepositWBTC,
-			isSubmittingWBTC,
-			handleDeposit3CRV,
-			isSubmitting3CRV,
+			handleDepositETH,
+			isSubmittingETH,
+			handleDepositBTC,
+			isSubmittingBTC,
+			handleDepositUSD,
+			isSubmittingUSD,
 			handleDepositLINK,
 			isSubmittingLINK,
 		}
 	}, [
-		handleDepositWETH,
-		isSubmittingWETH,
-		handleDepositWBTC,
-		isSubmittingWBTC,
-		handleDeposit3CRV,
-		isSubmitting3CRV,
+		handleDepositETH,
+		isSubmittingETH,
+		handleDepositBTC,
+		isSubmittingBTC,
+		handleDepositUSD,
+		isSubmittingUSD,
 		handleDepositLINK,
 		isSubmittingLINK,
 	])
@@ -367,10 +367,10 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, currencies }) => {
 				<Button
 					disabled={disabled}
 					loading={
-						callsLookup.isSubmittingWETH ||
-						callsLookup.isSubmittingWBTC ||
+						callsLookup.isSubmittingETH ||
+						callsLookup.isSubmittingBTC ||
 						callsLookup.isSubmittingLINK ||
-						callsLookup.isSubmitting3CRV
+						callsLookup.isSubmittingUSD
 					}
 					onClick={handleSubmit}
 					style={{ fontSize: '18px', width: '100%' }}

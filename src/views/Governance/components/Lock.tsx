@@ -212,23 +212,24 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 		)
 	}, [end])
 
-	const [vp, setVp] = useState(new BigNumber(0))
+	const [vp, setVp] = useState(0)
 	useEffect(() => {
 		const yaxisLocked = new BigNumber(amount)
 		setVp(
 			yaxisLocked.isNaN()
-				? votingEscrow.balance || new BigNumber(0)
+				? votingEscrow.balance.toNumber() || 0
 				: yaxisLocked
 						.multipliedBy(10 ** 18)
 						.dividedBy(MAX_TIME)
 						.multipliedBy(length)
-						.plus(votingEscrow.balance),
+						.plus(votingEscrow.balance)
+						.toNumber(),
 		)
 	}, [votingEscrow.balance, amount, length])
 
 	const vpPercentage = useMemo(
 		() =>
-			vp.dividedBy(
+			new BigNumber(vp).dividedBy(
 				votingEscrow.totalSupply.plus(vp).minus(votingEscrow.balance),
 			),
 		[vp, votingEscrow],
