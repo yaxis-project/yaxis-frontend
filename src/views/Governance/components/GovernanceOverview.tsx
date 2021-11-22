@@ -35,8 +35,6 @@ const GovernanceOverview: React.FC = () => {
 				}
 				last
 			/>
-			{/* <CardRow main={<div></div>} secondary={null} />
-			<CardRow main={<div></div>} secondary={null} last /> */}
 		</ExpandableSidePanel>
 	)
 }

@@ -49,7 +49,14 @@ export default function HomeExpandableOverview() {
 	const { contracts } = useContracts()
 	const { prices } = usePrices()
 
-	const { tvl, stakingTvl, vaultsTvl, liquidityTvl } = useTVL()
+	const {
+		tvl,
+		stakingTvl,
+		vaultsTvl,
+		liquidityTvl,
+		governanceTvl,
+		metavaultTvl,
+	} = useTVL()
 	const { circulating, total } = useYaxisSupply()
 
 	return (
@@ -71,21 +78,20 @@ export default function HomeExpandableOverview() {
 								/>
 								<TooltipRow
 									main={'Total Governance locked'}
-									value={
-										0
-										// TODO
-									}
+									value={governanceTvl.toNumber()}
 								/>
+
 								<Divider style={{ margin: '5px 0' }} />
+
 								<TooltipRow
-									main={'Total YAXIS Staking value (LEGACY)'}
-									value={stakingTvl.toNumber()}
+									main={'Total MetaVault value(LEGACY)'}
+									value={metavaultTvl.toNumber()}
 								/>
 								<TooltipRow
 									main={
 										'Total MetaVault Staking value (LEGACY)'
 									}
-									value={stakingTvl.toNumber()}
+									value={metavaultTvl.toNumber()}
 								/>
 							</>
 						}

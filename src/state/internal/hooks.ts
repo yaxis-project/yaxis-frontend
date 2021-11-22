@@ -465,13 +465,28 @@ export function useTVL() {
 
 	const { pools } = useLiquidityPools()
 
+	const veSupply = useSingleCallResult(
+		contracts?.internal.votingEscrow,
+		'supply',
+	)
+
 	const totalSupply = useSingleCallResult(
 		contracts?.rewards.Yaxis,
 		'totalSupply',
 	)
 
+	const metavaultTotalSupply = useSingleCallResult(
+		contracts?.internal.yAxisMetaVault,
+		'totalSupply',
+	)
+
 	return useMemo(() => {
 		const { result } = totalSupply
+
+		const governanceTvl = new BigNumber(veSupply?.result?.toString() || 0)
+			.dividedBy(10 ** 18)
+			.multipliedBy(prices.yaxis)
+
 		const stakingTvl = new BigNumber(result?.toString() || 0)
 			.div(1e18)
 			.times(prices.yaxis)
@@ -508,14 +523,34 @@ export function useTVL() {
 			new BigNumber(0),
 		)
 
+		const metavaultTvl = new BigNumber(
+			metavaultTotalSupply?.result?.toString() || 0,
+		)
+			.dividedBy(10 ** 18)
+			.multipliedBy(prices['3crv'])
+
 		return {
 			vaultTvl,
 			vaultsTvl,
 			stakingTvl,
 			liquidityTvl,
-			tvl: stakingTvl.plus(liquidityTvl).plus(vaultsTvl),
+			governanceTvl,
+			metavaultTvl,
+			tvl: stakingTvl
+				.plus(liquidityTvl)
+				.plus(vaultsTvl)
+				.plus(governanceTvl)
+				.plus(metavaultTvl),
 		}
-	}, [contracts, pools, totalSupply, vaults, prices])
+	}, [
+		contracts,
+		pools,
+		totalSupply,
+		veSupply,
+		metavaultTotalSupply,
+		vaults,
+		prices,
+	])
 }
 
 export function useAPY(
