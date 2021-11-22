@@ -95,11 +95,14 @@ export default function Updater(): void {
 			dispatch(
 				updatePrices({
 					prices: {
-						rencrv: rencrvPrice.dividedBy(10 ** 18).toNumber(),
+						rencrv: rencrvPrice
+							.dividedBy(10 ** 18)
+							.multipliedBy(state.prices.wbtc)
+							.toNumber(),
 					},
 				}),
 			)
-	}, [dispatch, rencrvResult])
+	}, [dispatch, rencrvResult, state.prices.wbtc])
 
 	const alethcrvLP = useMemo(() => contracts?.vaults['eth'], [contracts])
 
@@ -115,11 +118,14 @@ export default function Updater(): void {
 			dispatch(
 				updatePrices({
 					prices: {
-						alethcrv: alethcrvPrice.dividedBy(10 ** 18).toNumber(),
+						alethcrv: alethcrvPrice
+							.dividedBy(10 ** 18)
+							.multipliedBy(state.prices.weth)
+							.toNumber(),
 					},
 				}),
 			)
-	}, [dispatch, alethcrvResult])
+	}, [dispatch, alethcrvResult, state.prices.weth])
 
 	const linkcrvLP = useMemo(() => contracts?.vaults['link'], [contracts])
 
@@ -135,9 +141,12 @@ export default function Updater(): void {
 			dispatch(
 				updatePrices({
 					prices: {
-						linkcrv: linkcrvPrice.dividedBy(10 ** 18).toNumber(),
+						linkcrv: linkcrvPrice
+							.dividedBy(10 ** 18)
+							.multipliedBy(state.prices.link)
+							.toNumber(),
 					},
 				}),
 			)
-	}, [dispatch, linkcrvResult])
+	}, [dispatch, linkcrvResult, state.prices.link])
 }
