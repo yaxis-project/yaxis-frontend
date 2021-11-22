@@ -46,14 +46,14 @@ const StepReenter: React.FC<StepReenterProps> = ({
 
 	const { call: handleApproveVault, loading: loadingApproveVault } =
 		useContractWrite({
-			contractName: 'vaults.3crv.token.contract',
+			contractName: 'vaults.usd.token.contract',
 			method: 'approve',
 			description: `approve token usage`,
 		})
 
 	const { call: handleApproveHelper, loading: loadingApproveHelper } =
 		useContractWrite({
-			contractName: 'vaults.3crv.token.contract',
+			contractName: 'vaults.usd.token.contract',
 			method: 'approve',
 			description: `approve token usage`,
 		})

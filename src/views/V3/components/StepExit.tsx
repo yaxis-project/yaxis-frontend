@@ -107,6 +107,7 @@ const StepExit: React.FC<StepExitProps> = ({ stakedMVLT, walletMVLT }) => {
 		loadingUnstake,
 		handleWithdrawAll,
 		loadingWithdrawAll,
+		contracts?.currencies.ERC20,
 	])
 
 	const message = useMemo(() => {
