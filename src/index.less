@@ -3,7 +3,6 @@
 @primary-color: rgb(67, 210, 255);
 @body-background: #e5e5e5;
 @popover-background: #ffffff;
-@border-radius-base: 10px;
 @menu-highlight-color: #ffffff;
 @table-row-hover-bg: unset;
 
@@ -70,20 +69,11 @@ body {
 			padding: 13px 22px;
 			font-size: 18px;
 			font-weight: 700;
-
-			.ant-collapse-arrow {
-				top: auto;
-			}
 		}
 
 		.ant-collapse-content {
-			border-top: 1px solid #eceff1;
 			> .ant-collapse-content-box {
 				padding: 0;
-			}
-
-			.ant-divider {
-				border-top: 1px solid #eceff1;
 			}
 		}
 	}
@@ -123,7 +113,6 @@ body {
 			}
 
 			&.ant-tabs-tab-active {
-				background: white;
 				.ant-tabs-tab-btn {
 					font-weight: 700;
 					color: #016eac;
@@ -183,9 +172,4 @@ body {
 
 .ant-layout-header .ant-menu {
 	line-height: 38px;
-}
-
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu:hover {
-	border-bottom: 2px solid #c7c7c7;
 }

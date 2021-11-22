@@ -1,13 +1,13 @@
 import { Contract } from '@ethersproject/contracts'
 import { useEffect, useMemo, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, AppState } from '../index'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { useContracts } from '../../contexts/Contracts'
 import useDebounce from '../../hooks/useDebounce'
 import { chunkArray } from '../../utils'
 import { CancelledError, retry, RetryableError } from '../../utils/retry'
 import { useBlockNumber } from '../application/hooks'
-import { AppDispatch, AppState } from '../index'
 import {
 	Call,
 	errorFetchingMulticallResults,
@@ -131,9 +131,10 @@ export default function Updater(): null {
 	const latestBlockNumber = useBlockNumber()
 	const { chainId } = useWeb3Provider()
 	const { contracts } = useContracts()
-	const multicallContract = useMemo(() => contracts?.external.multicall, [
-		contracts,
-	])
+	const multicallContract = useMemo(
+		() => contracts?.external.multicall,
+		[contracts],
+	)
 	const cancellations = useRef<{
 		blockNumber: number
 		cancellations: (() => void)[]

@@ -1,7 +1,8 @@
-import React, { useContext, useMemo } from 'react'
-import { LanguageContext } from '../../../contexts/Language'
-import phrases from './translations'
-import { Row, Col, Typography, Card, Divider } from 'antd'
+import React, { useMemo } from 'react'
+import Card from '../../../components/Card'
+import Typography from '../../../components/Typography'
+import Divider from '../../../components/Divider'
+import { Row, Col } from 'antd'
 import Button from '../../../components/Button'
 import Value from '../../../components/Value'
 import { LiquidityPool } from '../../../constants/type'
@@ -10,6 +11,7 @@ import { Currencies } from '../../../constants/currencies'
 import { getFullDisplayBalance } from '../../../utils/formatBalance'
 import { useAccountLP } from '../../../state/wallet/hooks'
 import { useLP } from '../../../state/external/hooks'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { Text } = Typography
 
@@ -40,7 +42,7 @@ const LiquidityRow = (props: LiquidityRowProps) => {
 			}}
 		>
 			<Col span={9}>
-				<img src={icon} height="36" alt="logo" />
+				<img src={icon} height="36" width="36" alt="logo" />
 				<Text>{name}</Text>
 			</Col>
 			<Col span={15}>
@@ -66,8 +68,7 @@ type Props = {
 }
 
 const LiquidityCard: React.FC<Props> = ({ pool }) => {
-	const languages = useContext(LanguageContext)
-	const language = languages.state.selected
+	const translate = useTranslation()
 
 	const { lpUrl, reserves } = useLP(pool.name)
 	const { walletBalance, poolShare, stakedBalance } = useAccountLP(pool)
@@ -85,23 +86,29 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 	return (
 		<Card
 			className="liquidity-card"
-			title={<strong>Your Liquidity</strong>}
+			title={
+				<Text>
+					<strong>{translate('Your Liquidity')}</strong>
+				</Text>
+			}
 		>
 			<Row>
-				<TableHeader value={phrases['Asset'][language]} span={9} />
-				<TableHeader value={phrases['Balance'][language]} span={15} />
+				<TableHeader value={translate('Asset')} span={9} />
+				<TableHeader value={translate('Balance')} span={15} />
 			</Row>
 			<Divider style={{ margin: '0' }} />
 
 			<LiquidityRow
 				icon={currency?.icon}
-				name={'Pool Tokens'}
+				name={translate('Pool Tokens')}
 				balance={getFullDisplayBalance(
 					walletBalance?.value.plus(stakedBalance?.value),
 				)}
 				symbol={pool.symbol}
 			/>
-			<Divider style={{ margin: '0' }}>REPRESENTING:</Divider>
+			<Divider style={{ margin: '0' }}>
+				<Text>{translate('REPRESENTING')}:</Text>
+			</Divider>
 			{pool.lpTokens.map(({ tokenId }, i) => (
 				<>
 					<LiquidityRow
@@ -119,6 +126,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 			<Row gutter={18} justify="center" style={{ padding: '20px' }}>
 				<Col span={12}>
 					<Button
+						style={{ width: '100%' }}
 						disabled={!lpUrl || !walletBalance?.amount.toNumber()}
 						icon={<MinusOutlined />}
 						onClick={() =>
@@ -128,17 +136,18 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 							)
 						}
 					>
-						Remove
+						{translate('Remove')}
 					</Button>
 				</Col>
 				{!pool?.legacy && (
 					<Col span={12}>
 						<Button
+							style={{ width: '100%' }}
 							disabled={!lpUrl}
 							icon={<PlusOutlined />}
 							onClick={() => window.open(lpUrl, '_blank')}
 						>
-							Add
+							{translate('Add')}
 						</Button>
 					</Col>
 				)}

@@ -1,50 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Layout } from 'antd'
-import TopBar from '../TopBar'
+import Header from '../Header'
 import Footer from '../Footer'
 import PageLeadBar from './PageLeadBar'
 
 const { Content } = Layout
-
-export const HomePage: React.FC = ({ children }) => (
-	<StyledLayout>
-		<BGHomeUnderlay />
-		<TopBar home />
-		<StyledContent>
-			<StyledMain>{children}</StyledMain>
-		</StyledContent>
-		<Footer />
-	</StyledLayout>
-)
-
-const StyledMain = styled.div`
-	max-width: ${(props) => props.theme.siteWidth}px;
-	margin: auto;
-`
-
-const StyledLayout = styled(Layout)`
-	background: #fafbfd;
-`
-
-const StyledContent = styled(Content)`
-	padding: 0 100px;
-	@media only screen and (max-width: 725px) {
-		padding: 0;
-	}
-`
-
-const BGUnderlay = styled.div`
-	width: 100%;
-	height: 80px;
-	background: linear-gradient(180deg, #016eac 50.17%, #328ec1 100%);
-	position: absolute;
-`
-
-const BGHomeUnderlay = styled(BGUnderlay)`
-	height: 400px;
-	background: linear-gradient(180deg, #016eac 20.17%, #52b2dc 100%);
-`
 
 interface PageProps {
 	loading?: boolean
@@ -55,12 +16,12 @@ interface PageProps {
 	valueInfo?: string
 	children: React.ReactElement
 	background?: string
+	backNavigate?: string
 }
 
-const Page = ({ children, ...props }: PageProps) => (
+const Page: React.FC<PageProps> = ({ children, ...props }) => (
 	<StyledLayout>
-		<BGUnderlay />
-		<TopBar />
+		<Header />
 		<PageLeadBar {...props} />
 		<StyledContent>
 			<StyledMain>{children}</StyledMain>
@@ -70,3 +31,20 @@ const Page = ({ children, ...props }: PageProps) => (
 )
 
 export default Page
+
+const StyledLayout = styled(Layout)`
+	min-height: 100vh;
+	background: ${(props) => props.theme.primary.background};
+`
+
+const StyledContent = styled(Content)`
+	padding: 40px 100px 0 100px;
+	@media only screen and (max-width: 725px) {
+		padding: 0;
+	}
+`
+
+const StyledMain = styled.div`
+	max-width: ${(props) => props.theme.siteWidth}px;
+	margin: auto;
+`

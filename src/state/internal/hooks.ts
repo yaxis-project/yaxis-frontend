@@ -1,70 +1,226 @@
 import { useMemo } from 'react'
 import { ethers } from 'ethers'
+import { uniq, isEmpty } from 'lodash'
+import BigNumber from 'bignumber.js'
 import { useContracts } from '../../contexts/Contracts'
+import { abis } from '../../constants/abis/mainnet'
+import {
+	TLiquidityPools,
+	TRewardsContracts,
+	TVaults,
+} from '../../constants/type'
+import { numberToFloat } from '../../utils/number'
 import {
 	useSingleContractMultipleMethods,
 	useSingleCallResult,
+	useSingleContractMultipleData,
+	useMultipleContractSingleData,
 } from '../onchain/hooks'
-import BigNumber from 'bignumber.js'
+import {
+	useFetchCurvePoolBaseAPR,
+	useCurvePoolRewards,
+	useConvexAPY,
+} from '../external/hooks'
 import { usePrices } from '../prices/hooks'
-import { useCurveRewardsAPR, useCurvePoolAPR } from '../external/hooks'
-import { numberToFloat } from '../../utils/number'
-import { TLiquidityPools, TRewardsContracts } from '../../constants/type'
-import ERC20Abi from '../../constants/abis/mainnet/erc20.json'
+import { useBlockNumber } from '../application/hooks'
 
-const ERC20_INTERFACE = new ethers.utils.Interface(ERC20Abi)
+const STRATEGY_INTERFACE = new ethers.utils.Interface(abis.StrategyABI)
 
-export function useMetaVaultData() {
+export function useVault(name: TVaults) {
 	const { contracts } = useContracts()
 
-	const { prices } = usePrices()
-	const metaVaultData = useSingleContractMultipleMethods(
-		contracts?.internal.yAxisMetaVault,
-		[['balance'], ['totalSupply'], ['getPricePerFullShare'], ['token']],
+	const vaultContracts = useMemo(
+		() => contracts?.vaults[name],
+		[contracts, name],
 	)
 
-	const token = useMemo(() => {
-		const { result, loading } = metaVaultData[3]
-		if (loading) return undefined
-		if (!result) return undefined
-		return result.toString()
-	}, [metaVaultData])
+	const vaultData = useSingleContractMultipleMethods(vaultContracts?.vault, [
+		['balance'],
+		['getPricePerFullShare'],
+	])
 
-	const strategy = useSingleCallResult(
-		token && new ethers.Contract(token, ERC20_INTERFACE),
-		'name',
+	const tokenData = useSingleContractMultipleMethods(
+		vaultContracts?.vaultToken.contract,
+		[['totalSupply']],
 	)
 
 	return useMemo(() => {
-		const [balance, totalSupply, pricePerFullShare] = metaVaultData.map(
+		const [balance, pricePerFullShare] = vaultData.map(
 			({ result, loading }, i) => {
 				if (loading) return ethers.BigNumber.from(0)
 				if (!result) return ethers.BigNumber.from(0)
 				return result
 			},
 		)
-		const { result: strategyResult } = strategy
-		const totalStakedBN = new BigNumber(balance?.toString() || 0)
-		const totalSupplyBN = new BigNumber(totalSupply?.toString() || 0)
-		const tvl = totalStakedBN
-			.dividedBy(10 ** 18)
-			.multipliedBy(prices?.['3crv'] || 0)
-			.toNumber()
-		const threeCrvBalance =
-			!totalStakedBN.isZero() && !totalSupplyBN.isZero()
-				? totalStakedBN.div(totalSupplyBN)
-				: new BigNumber(0)
-		const mvltPrice = threeCrvBalance.multipliedBy(prices?.['3crv'] || 0)
+
+		const [totalSupply] = tokenData.map(({ result, loading }, i) => {
+			if (loading) return ethers.BigNumber.from(0)
+			if (!result) return ethers.BigNumber.from(0)
+			return result
+		})
+
 		return {
-			totalStaked: totalStakedBN,
-			totalSupply: totalSupplyBN,
-			strategy: strategyResult,
-			tvl,
-			mvltPrice,
-			pricePerFullShare: new BigNumber(pricePerFullShare.toString()),
+			balance: new BigNumber(balance?.toString()),
+			totalSupply: new BigNumber(totalSupply?.toString()),
+			pricePerFullShare: new BigNumber(
+				pricePerFullShare?.toString(),
+			).dividedBy(10 ** 18),
 		}
-	}, [metaVaultData, strategy, prices])
+	}, [vaultData, tokenData])
 }
+
+export function useYaxisGauge() {
+	const { contracts } = useContracts()
+
+	const gaugeData = useSingleContractMultipleMethods(
+		contracts?.vaults.yaxis.gauge,
+		[['working_supply'], ['totalSupply']],
+	)
+
+	return useMemo(() => {
+		const [working_supply, totalSupply] = gaugeData.map(
+			({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			},
+		)
+
+		return {
+			balance: new BigNumber(working_supply?.toString()),
+			totalSupply: new BigNumber(totalSupply?.toString()),
+			pricePerFullShare: new BigNumber(1),
+		}
+	}, [gaugeData])
+}
+
+export function useVaultRewards(name: TVaults) {
+	const { contracts } = useContracts()
+
+	const rate = useSingleCallResult(contracts?.internal.minterWrapper, 'rate')
+
+	const { prices } = usePrices()
+
+	const relativeWeight = useSingleCallResult(
+		contracts?.internal.gaugeController,
+		'gauge_relative_weight(address)',
+		[contracts?.vaults[name].gauge.address],
+	)
+
+	const virtualPriceCall = useSingleCallResult(
+		contracts?.vaults[name].token.name && // YAXIS config has none
+			contracts?.externalLP[
+				contracts?.vaults[name].token.name.toLowerCase()
+			]?.pool,
+		'get_virtual_price()',
+	)
+
+	const balance = useSingleCallResult(
+		contracts?.vaults[name].gauge,
+		'working_supply',
+	)
+
+	return useMemo(() => {
+		const supply = new BigNumber(
+			balance?.result?.toString() || 0,
+		).dividedBy(10 ** 18)
+
+		const virtualPrice =
+			name === 'yaxis'
+				? new BigNumber(prices?.yaxis)
+				: new BigNumber(
+						virtualPriceCall?.result?.toString() || 0,
+				  ).dividedBy(10 ** 18)
+
+		const virtualSupply = virtualPrice.multipliedBy(
+			// If supply is 0 mock to 1 to show a value
+			supply.gt(0) ? supply : 1,
+		)
+
+		const yaxisPerSecond = new BigNumber(rate?.result?.toString() || 0)
+			.dividedBy(10 ** 18)
+			.multipliedBy(relativeWeight?.result?.toString() || 0)
+			.dividedBy(10 ** 18)
+			.dividedBy(virtualSupply)
+
+		const yaxisPerYear = yaxisPerSecond
+			.multipliedBy(86400)
+			.multipliedBy(365)
+
+		const APR = yaxisPerYear.multipliedBy(prices?.yaxis || 0)
+
+		return {
+			workingSupply: new BigNumber(balance?.result?.toString() || 0),
+			amountPerYear: yaxisPerYear,
+			APR,
+		}
+	}, [name, prices?.yaxis, relativeWeight, virtualPriceCall, balance, rate])
+}
+
+export function useVaultsAPR() {
+	const usd = useVaultRewards('usd')
+	const btc = useVaultRewards('btc')
+	const eth = useVaultRewards('eth')
+	const link = useVaultRewards('link')
+	const yaxis = useVaultRewards('yaxis')
+
+	const mim3crv = useConvexAPY('mim3crv')
+	const rencrv = useConvexAPY('rencrv')
+	const alethcrv = useConvexAPY('alethcrv')
+	const linkcrv = useConvexAPY('linkcrv')
+
+	return useMemo(() => {
+		return {
+			usd: {
+				yaxisAPR: usd.APR,
+				strategy: mim3crv,
+				totalAPR: usd.APR.plus(mim3crv.totalAPR),
+			},
+			btc: {
+				yaxisAPR: btc.APR,
+				strategy: rencrv,
+				totalAPR: btc.APR.plus(rencrv.totalAPR),
+			},
+			eth: {
+				yaxisAPR: eth.APR,
+				strategy: alethcrv,
+				totalAPR: eth.APR.plus(alethcrv.totalAPR),
+			},
+			link: {
+				yaxisAPR: link.APR,
+				strategy: linkcrv,
+				totalAPR: link.APR.plus(linkcrv.totalAPR),
+			},
+			yaxis: {
+				yaxisAPR: yaxis.APR,
+				strategy: {},
+				totalAPR: yaxis.APR,
+			},
+		}
+	}, [usd, btc, eth, link, yaxis, mim3crv, rencrv, alethcrv, linkcrv])
+}
+
+export function useVaults() {
+	const usd = useVault('usd')
+	const btc = useVault('btc')
+	const eth = useVault('eth')
+	const link = useVault('link')
+	const yaxis = useYaxisGauge()
+
+	return useMemo(() => {
+		return {
+			usd,
+			btc,
+			eth,
+			link,
+			yaxis,
+		}
+	}, [usd, btc, eth, link, yaxis])
+}
+
+const DEV_FUND_ADDRESS = '0x5118Df9210e1b97a4de0df15FBbf438499d6b446'
+const TEAM_FUND_ADDRESS = '0xEcD3aD054199ced282F0608C4f0cea4eb0B139bb'
+const TREASURY_ADDRESS = '0xC1d40e197563dF727a4d3134E8BD1DeF4B498C6f'
 
 export function useYaxisSupply() {
 	const { contracts } = useContracts()
@@ -74,12 +230,60 @@ export function useYaxisSupply() {
 		'totalSupply',
 	)
 
+	const balances = useSingleContractMultipleData(
+		contracts?.currencies.ERC677.yaxis.contract,
+		'balanceOf',
+		[
+			[contracts?.internal.swap.address],
+			[DEV_FUND_ADDRESS],
+			[TEAM_FUND_ADDRESS],
+			[TREASURY_ADDRESS],
+			[contracts?.rewards['Uniswap YAXIS/ETH'].address],
+			[contracts?.internal.minterWrapper.address],
+		],
+	)
+
 	return useMemo(() => {
 		const { result: stakedSupply } = totalSupply
+
+		const [
+			unswapped,
+			devFund,
+			teamFund,
+			treasury,
+			metavaultRewards,
+			uniswapLPRewards,
+			yaxisRewards,
+			gauges,
+		] = balances.map(({ result, loading }) => {
+			if (loading) return new BigNumber(0)
+			if (!result) return new BigNumber(0)
+			return new BigNumber(result.toString())
+		})
+
+		const notCirculating = (unswapped || new BigNumber(0))
+			.plus(devFund || 0)
+			.plus(teamFund || 0)
+			.plus(treasury || 0)
+			.plus(metavaultRewards || 0)
+			.plus(uniswapLPRewards || 0)
+			.plus(yaxisRewards || 0)
+			.plus(gauges || 0)
+
+		const total = new BigNumber(stakedSupply?.toString() || 0)
+
 		return {
-			totalSupply: new BigNumber(stakedSupply?.toString() || 0),
+			total,
+			circulating: total.minus(notCirculating),
+			devFund: devFund || new BigNumber(0),
+			teamFund: teamFund || new BigNumber(0),
+			treasury: treasury || new BigNumber(0),
+			metavaultRewards: metavaultRewards || new BigNumber(0),
+			uniswapLPRewards: uniswapLPRewards || new BigNumber(0),
+			yaxisRewards: yaxisRewards || new BigNumber(0),
+			gauges: gauges || new BigNumber(0),
 		}
-	}, [totalSupply])
+	}, [totalSupply, balances])
 }
 
 const useRewardAPR = (rewardsContract: TRewardsContracts) => {
@@ -99,7 +303,8 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 		prices: { yaxis },
 	} = usePrices()
 
-	const { tvl: metaVaultTVL } = useMetaVaultData()
+	// TODO
+	const { tvl: metaVaultTVL } = { tvl: 0 }
 
 	const pool = useMemo(
 		() =>
@@ -137,7 +342,7 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 					),
 				),
 			)
-		else if (rewardsContract === 'Yaxis')
+		else if (rewardsContract === 'Yaxis' || rewardsContract === 'MetaVault')
 			tvl = new BigNumber(totalSupply.toString() || 0)
 		else if (metaVaultTVL && yaxis)
 			tvl = new BigNumber(metaVaultTVL)
@@ -146,22 +351,17 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 
 		const balanceBN = new BigNumber(balance?.result?.toString() || 0)
 		let funding = new BigNumber(0)
-		if (rewardsContract === 'Yaxis')
-			funding =
-				new BigNumber(0)
-		else if (rewardsContract === 'MetaVault')
-			funding =
-				new BigNumber(0)
+		if (rewardsContract === 'Yaxis') funding = new BigNumber(0)
+		else if (rewardsContract === 'MetaVault') funding = new BigNumber(0)
 		else funding = balanceBN
-
 		const period = new BigNumber(duration.toString() || 0).dividedBy(86400)
 		const AVERAGE_BLOCKS_PER_DAY = 6450
 		const rewardsPerBlock = funding.isZero()
 			? new BigNumber(0)
 			: funding
-				.dividedBy(period)
-				.dividedBy(AVERAGE_BLOCKS_PER_DAY)
-				.dividedBy(10 ** 18)
+					.dividedBy(period)
+					.dividedBy(AVERAGE_BLOCKS_PER_DAY)
+					.dividedBy(10 ** 18)
 
 		const rewardPerToken = tvl.isZero()
 			? new BigNumber(0)
@@ -258,7 +458,8 @@ export function useLiquidityPools() {
 
 export function useTVL() {
 	const { contracts } = useContracts()
-	const metaVaultData = useMetaVaultData()
+
+	const vaults = useVaults()
 
 	const { prices } = usePrices()
 
@@ -276,28 +477,53 @@ export function useTVL() {
 			.times(prices.yaxis)
 
 		const liquidityTvl = Object.values(pools)?.reduce(
-			(c, { active, tvl }, i) => {
-				return c.plus(active && !tvl.isZero() ? tvl : 0)
+			(total, { active, tvl }) =>
+				total.plus(active && !tvl.isNaN() ? tvl : 0),
+			new BigNumber(0),
+		)
+
+		const vaultTvl = Object.fromEntries(
+			Object.entries(vaults).map(([vault, data]) => {
+				const token = contracts?.vaults[vault].token.name?.toLowerCase()
+				return [
+					vault,
+					new BigNumber(
+						data.pricePerFullShare
+							.multipliedBy(data.totalSupply.dividedBy(10 ** 18))
+							.multipliedBy(prices[token] || 0),
+					),
+				]
+			}),
+		)
+
+		const vaultsTvl = Object.entries(vaults).reduce(
+			(total, [vault, data]) => {
+				const token = contracts?.vaults[vault].token.name?.toLowerCase()
+				return total.plus(
+					data.pricePerFullShare
+						.multipliedBy(data.totalSupply.dividedBy(10 ** 18))
+						.multipliedBy(prices[token] || 0),
+				)
 			},
 			new BigNumber(0),
 		)
 
-		const metavaultTvl = new BigNumber(metaVaultData?.tvl || 0)
 		return {
+			vaultTvl,
+			vaultsTvl,
 			stakingTvl,
 			liquidityTvl,
-			metavaultTvl,
-			tvl: stakingTvl.plus(liquidityTvl).plus(metavaultTvl),
+			tvl: stakingTvl.plus(liquidityTvl).plus(vaultsTvl),
 		}
-	}, [pools, metaVaultData?.tvl, totalSupply, prices])
+	}, [contracts, pools, totalSupply, vaults, prices])
 }
 
 export function useAPY(
 	rewardsContract: TRewardsContracts,
 	strategyPercentage: number = 1,
 ) {
-	const curveRewardsAPRs = useCurveRewardsAPR()
-	const curveBaseAPR = useCurvePoolAPR('3pool')
+	const curveRewardsAPRs = useCurvePoolRewards('3pool')
+	const curveBaseAPR = useFetchCurvePoolBaseAPR()
 	const { rewardsPerBlock, apr: rewardsAPR } = useRewardAPR(rewardsContract)
 
 	return useMemo(() => {
@@ -310,7 +536,9 @@ export function useAPY(
 			.minus(1)
 			.multipliedBy(100)
 
-		let lpAprPercent = new BigNumber(curveBaseAPR).times(100)
+		let lpAprPercent = new BigNumber(
+			curveBaseAPR.apy.day['3pool'] || 0,
+		).times(100)
 		let lpApyPercent = lpAprPercent
 			.div(100)
 			.div(12)
@@ -330,14 +558,12 @@ export function useAPY(
 			.minus(1)
 			.times(100)
 			.decimalPlaces(18)
-		threeCrvApyPercent =
-			threeCrvApyPercent.multipliedBy(strategyPercentage)
+		threeCrvApyPercent = threeCrvApyPercent.multipliedBy(strategyPercentage)
 
 		const totalAPR = rewardsAPR.plus(lpApyPercent).plus(threeCrvApyPercent)
 		const totalAPY = yaxisApyPercent
 			.plus(lpApyPercent)
 			.plus(threeCrvApyPercent)
-		console.log(totalAPR.toNumber(), totalAPY.toNumber(), strategyPercentage)
 		return {
 			lpAprPercent,
 			lpApyPercent,
@@ -358,29 +584,258 @@ export function useAPY(
 	])
 }
 
-/**
- * Computes the current annual profits for the MetaVault.
- */
-export function useAnnualProfits(): BigNumber {
-	// TODO: by strategy
-	const curveRewardsAPRs = useCurveRewardsAPR()
-	const curveBaseAPR = useCurvePoolAPR('3pool')
-	const { metavaultTvl } = useTVL()
+export function useYaxisManager() {
+	const { contracts } = useContracts()
+
+	const data = useSingleContractMultipleMethods(contracts?.internal.manager, [
+		['treasuryFee'],
+		['withdrawalProtectionFee'],
+		['stakingPoolShareFee'],
+		['insuranceFee'],
+		['insurancePoolFee'],
+	])
 
 	return useMemo(() => {
-		const strategyAPR = new BigNumber(curveBaseAPR).plus(
-			curveRewardsAPRs['3pool'] || 0,
+		const [
+			treasuryFee,
+			withdrawalProtectionFee,
+			stakingPoolShareFee,
+			insuranceFee,
+			insurancePoolFee,
+		] = data.map(({ result, loading }) => {
+			if (loading) return new BigNumber(0)
+			if (!result) return new BigNumber(0)
+			return new BigNumber(result.toString())
+		})
+		return {
+			treasuryFee,
+			withdrawalProtectionFee,
+			stakingPoolShareFee,
+			insuranceFee,
+			insurancePoolFee,
+		}
+	}, [data])
+}
+export type TYaxisManagerData = ReturnType<typeof useYaxisManager>
+
+export function useVaultStrategies() {
+	const { contracts } = useContracts()
+
+	const vaults = useMemo(
+		() =>
+			Object.entries(contracts?.vaults || {}).filter(
+				([, data]) => data.vaultToken.name !== 'YAXIS',
+			),
+		[contracts?.vaults],
+	)
+
+	const strategies = useSingleContractMultipleMethods(
+		contracts?.internal.controller,
+		vaults.map(([, data]) => ['strategies(address)', [data.vault.address]]),
+	)
+
+	const uniqueStrategies = useMemo(() => {
+		const output = []
+		if (!strategies.length) return output
+
+		strategies.forEach(({ loading, result }) => {
+			if (!loading && result) {
+				if (Array.isArray(result)) {
+					for (const address of result) {
+						if (Array.isArray(result)) {
+							for (const addr of address) {
+								output.push(addr)
+							}
+						} else output.push(address)
+					}
+				} else output.push(result)
+			}
+		})
+
+		return uniq(output)
+	}, [strategies])
+
+	const strategyNames = useMultipleContractSingleData(
+		uniqueStrategies,
+		STRATEGY_INTERFACE,
+		'name',
+	)
+
+	const strategyLookUp = useMemo(() => {
+		return Object.fromEntries(
+			uniqueStrategies.map((address, i) => {
+				const { loading, result } = strategyNames[i]
+				const name = !loading && !isEmpty(result) ? result : ''
+				return [address, name]
+			}),
 		)
+	}, [strategyNames, uniqueStrategies])
 
-		const strategyAPY = strategyAPR
-			.div(100)
-			.div(100)
-			.div(12)
-			.plus(1)
-			.pow(12)
-			.minus(1)
-			.times(100)
+	// TODO: add getCap(vault, strategy) to get caps
 
-		return strategyAPY.times(metavaultTvl)
-	}, [curveRewardsAPRs, curveBaseAPR, metavaultTvl])
+	return useMemo(() => {
+		const strategiesWithDefaults = strategies.map(({ result, loading }) => {
+			if (loading) return ''
+			if (!result) return ''
+			return result.toString()
+		})
+
+		return Object.fromEntries(
+			vaults.map(([vault], i) => {
+				const strategies = strategiesWithDefaults[i] || ''
+				const names = strategies
+					.split(',')
+					.map((strategy) => strategyLookUp[strategy])
+					.filter((strategy) => !!strategy)
+				return [vault, names]
+			}),
+		)
+	}, [vaults, strategies, strategyLookUp])
+}
+
+export function useGauges() {
+	const { contracts } = useContracts()
+	const block = useBlockNumber()
+
+	const callInputs = useMemo(() => {
+		if (!contracts?.vaults) return []
+		return Object.keys(contracts?.vaults).map((vault) => [
+			contracts?.vaults[vault].gauge.address,
+		])
+	}, [contracts?.vaults])
+
+	const relativeWeights = useSingleContractMultipleData(
+		contracts?.internal.gaugeController,
+		'gauge_relative_weight(address)',
+		callInputs,
+	)
+
+	const relativeWeightsWithDefaults = useMemo(() => {
+		if (relativeWeights.length)
+			return relativeWeights.map(({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			})
+
+		return Object.keys(contracts?.vaults || {}).map(() =>
+			ethers.BigNumber.from(0),
+		)
+	}, [relativeWeights, contracts?.vaults])
+
+	const nextWeekStart = useMemo(() => {
+		if (!block) return 0
+		return (
+			(Math.floor(Date.now() / (60 * 60 * 24 * 7 * 1000)) + 1) *
+			(60 * 60 * 24 * 7 * 1000)
+		)
+	}, [block])
+
+	const nextRelativeWeightsCalls = useMemo(
+		() => callInputs.map((input) => [...input, nextWeekStart]),
+		[callInputs, nextWeekStart],
+	)
+
+	const nextRelativeWeights = useSingleContractMultipleData(
+		contracts?.internal.gaugeController,
+		'gauge_relative_weight(address,uint256)',
+		nextRelativeWeightsCalls,
+	)
+
+	const nextRelativeWeightsWithDefaults = useMemo(() => {
+		if (nextRelativeWeights.length)
+			return nextRelativeWeights.map(({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			})
+		return Object.keys(contracts?.vaults || {}).map(() =>
+			ethers.BigNumber.from(0),
+		)
+	}, [nextRelativeWeights, contracts?.vaults])
+
+	const times = useSingleContractMultipleData(
+		contracts?.internal.gaugeController,
+		'time_weight',
+		callInputs,
+	)
+
+	const timesWithDefaults = useMemo(() => {
+		if (times.length)
+			return times.map(({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			})
+
+		return Object.keys(contracts?.vaults || {}).map(() =>
+			ethers.BigNumber.from(0),
+		)
+	}, [times, contracts?.vaults])
+
+	const loading = useMemo(() => {
+		const weightsLoading =
+			relativeWeights.length > 0
+				? relativeWeights.some(({ loading }) => loading)
+				: true
+		const timesLoading =
+			times.length > 0 ? times.some(({ loading }) => loading) : true
+		return weightsLoading || timesLoading
+	}, [relativeWeights, times])
+
+	return useMemo(() => {
+		const unchangedNextRelativeWeights = nextRelativeWeightsWithDefaults
+			.reduce(
+				(total, current) => total.plus(current.toString()),
+				new BigNumber(0),
+			)
+			.isZero()
+
+		const gauges = Object.fromEntries(
+			Object.keys(contracts?.vaults || {}).map((vault, i) => {
+				const relativeWeight = new BigNumber(
+					relativeWeightsWithDefaults[i][0]?.toString(),
+				).dividedBy(10 ** 18)
+				const nextRelativeWeight = new BigNumber(
+					nextRelativeWeightsWithDefaults[i][0]?.toString(),
+				).dividedBy(10 ** 18)
+
+				return [
+					vault,
+					{
+						relativeWeight,
+						nextRelativeWeight: unchangedNextRelativeWeights
+							? relativeWeight
+							: nextRelativeWeight,
+						time: new BigNumber(
+							timesWithDefaults[i][0]?.toString(),
+						),
+					},
+				]
+			}),
+		)
+		return {
+			gauges,
+			nextWeekStart,
+			loading,
+		}
+	}, [
+		loading,
+		contracts?.vaults,
+		relativeWeightsWithDefaults,
+		nextRelativeWeightsWithDefaults,
+		timesWithDefaults,
+		nextWeekStart,
+	])
+}
+
+export function useRewardRate() {
+	const { contracts } = useContracts()
+
+	const rate = useSingleCallResult(contracts?.internal.minterWrapper, 'rate')
+
+	return useMemo(() => {
+		const { result } = rate
+		return new BigNumber(result?.toString() || 0).dividedBy(10 ** 18)
+	}, [rate])
 }

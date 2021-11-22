@@ -15,6 +15,7 @@ import { red } from '../../theme/colors'
 import BigNumber from 'bignumber.js'
 import { useLP } from '../../state/external/hooks'
 import { formatBN } from '../../utils/number'
+import useTranslation from '../../hooks/useTranslation'
 
 type Props = {
 	pool: LiquidityPool
@@ -27,6 +28,8 @@ const StyledCol = styled(Col)`
 `
 
 const Liquidity: React.FC<Props> = ({ pool }) => {
+	const translate = useTranslation()
+
 	const { stakedBalance, walletBalance } = useAccountLP(pool)
 	const { reserves, totalSupply } = useLP(pool.name)
 
@@ -37,9 +40,11 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 	const balanceUSD = useMemo(() => {
 		if (!reserves || !eth || !yaxis || !totalSupply || !stakedBalance)
 			return new BigNumber(0)
-		const share = new BigNumber(stakedBalance?.value || 0)
-			.plus(new BigNumber(walletBalance?.value || 0))
-			.div(totalSupply.toString())
+		const share = totalSupply.isZero()
+			? new BigNumber(0)
+			: new BigNumber(stakedBalance?.value || 0)
+					.plus(new BigNumber(walletBalance?.value || 0))
+					.div(totalSupply.toString())
 		const shareT0 = new BigNumber(reserves?.['_reserve0']?.toString() || 0)
 			.multipliedBy(share)
 			.dividedBy(10 ** 18)
@@ -54,20 +59,21 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 			<Page
 				loading={false}
 				mainTitle={pool.name}
-				secondaryText={
-					pool?.legacy ? 'Legacy Liquidity Pool' : 'Liquidity Pool'
-				}
+				secondaryText={translate(
+					pool?.legacy ? 'Legacy Liquidity Pool' : 'Liquidity Pool',
+				)}
 				value={
 					pool?.legacy
-						? 'No longer supported.'
+						? translate('No longer supported.')
 						: '$' + formatBN(balanceUSD)
 				}
-				valueInfo={
+				valueInfo={translate(
 					pool?.legacy
 						? 'Please unstake, remove funds, and move to a new LP.'
-						: 'Your Position'
-				}
+						: 'Your Position',
+				)}
 				background={pool?.legacy ? red[100] : undefined}
+				backNavigate="/liquidity"
 			>
 				<Row gutter={16}>
 					<Col xs={24} sm={24} md={24} lg={16}>

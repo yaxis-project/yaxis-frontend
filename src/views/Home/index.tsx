@@ -1,20 +1,15 @@
-import './index.less'
-import React, { useMemo } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { HomePage } from '../../components/Page'
-import YaxisPriceGraph from '../../components/YaxisPriceGraph'
-import AccountOverviewCard from './components/AccountOverviewCard'
-import HomeOverviewCard from './components/HomeOverviewCard'
-import AdvancedNavigation from './components/AdvancedNavigation'
-import HomeExpandableOverview from './components/HomeExpandableOverview'
 import { Row, Col, Grid } from 'antd'
-import {
-	useStakedBalances,
-	useAccountMetaVaultData,
-} from '../../state/wallet/hooks'
-import { useMetaVaultData } from '../../state/internal/hooks'
-import { usePrices } from '../../state/prices/hooks'
+import Page from '../../components/Page'
+import YaxisPriceGraph from '../../components/Graph/YaxisPriceGraph'
+import AccountOverviewCard from './components/AccountOverviewCard'
+// import HomeOverviewCard from './components/HomeOverviewCard'
+import LPAccountOverview from './components/LPAccountOverview'
+import HomeExpandableOverview from './components/HomeExpandableOverview'
+import { useVotingPower, useVaultsBalances } from '../../state/wallet/hooks'
 import { formatBN } from '../../utils/number'
+import useTranslation from '../../hooks/useTranslation'
 
 const { useBreakpoint } = Grid
 
@@ -27,21 +22,22 @@ const StyledCol = styled(Col)`
 const Home: React.FC = () => {
 	const { lg } = useBreakpoint()
 	return (
-		<div className="home-view">
-			<HomePage>
+		<div className={'home-view'}>
+			<Page>
 				<Row gutter={lg ? 16 : 0}>
 					<Col md={24} lg={16} className={'home-left'}>
 						<YaxisPriceGraph />
-						<InvestmentAccountOverview />
-						<SavingsAccountOverview />
-						<AdvancedNavigation />
+						<VaultAccountOverview />
+						<LPAccountOverview />
+						<GovernanceAccountOverview />
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
-						<HomeOverviewCard />
+						{/* TODO */}
+						{/* <HomeOverviewCard /> */}
 						<HomeExpandableOverview />
 					</StyledCol>
 				</Row>
-			</HomePage>
+			</Page>
 		</div>
 	)
 }
@@ -49,21 +45,24 @@ const Home: React.FC = () => {
 /**
  * Lead data for the user's account overview.
  */
-const SavingsAccountOverview: React.FC = () => {
-	const { Yaxis } = useStakedBalances()
-	const {
-		prices: { yaxis },
-	} = usePrices()
-	const balanceUSD = useMemo(
-		() => '$' + formatBN(Yaxis.amount.multipliedBy(yaxis)),
-		[Yaxis, yaxis],
-	)
+const GovernanceAccountOverview: React.FC = () => {
+	const translate = useTranslation()
+
+	const votingPower = useVotingPower()
+
 	return (
 		<AccountOverviewCard
 			loading={false}
-			mainTitle={'Staking Account'}
-			secondaryText={'YAXIS Staking'}
-			value={balanceUSD}
+			mainTitle={translate('Governance Account')}
+			secondaryText={''}
+			value={
+				(votingPower.totalSupply.isZero()
+					? '0.00'
+					: votingPower.balance
+							.dividedBy(votingPower.totalSupply)
+							.multipliedBy(100)
+							.toFormat(2)) + ' VP%'
+			}
 		/>
 	)
 }
@@ -71,22 +70,19 @@ const SavingsAccountOverview: React.FC = () => {
 /**
  * Lead data for the user's account overview.
  */
-const InvestmentAccountOverview: React.FC = () => {
-	const { MetaVault } = useStakedBalances()
-	const { deposited } = useAccountMetaVaultData()
-	const { mvltPrice } = useMetaVaultData()
+const VaultAccountOverview: React.FC = () => {
+	const translate = useTranslation()
 
-	const balanceUSD = useMemo(() => {
-		const totalMVLT = MetaVault.amount.plus(deposited)
-		return '$' + formatBN(totalMVLT.multipliedBy(mvltPrice))
-	}, [MetaVault, deposited, mvltPrice])
+	const {
+		total: { usd: balanceUSD },
+	} = useVaultsBalances()
 
 	return (
 		<AccountOverviewCard
 			loading={false}
-			mainTitle={'MetaVault Account'}
-			secondaryText={'Metavault 2.0'}
-			value={balanceUSD}
+			mainTitle={translate('Vault Account')}
+			secondaryText={''}
+			value={'$' + formatBN(balanceUSD)}
 		/>
 	)
 }

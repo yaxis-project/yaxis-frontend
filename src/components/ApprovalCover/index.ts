@@ -1,1 +1,1 @@
-export { default } from './ApprovalCover'
+export { ApprovalCover as default } from './ApprovalCover'

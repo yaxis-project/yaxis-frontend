@@ -1,13 +1,14 @@
 import React, { Suspense, useMemo } from 'react'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import Home from './views/Home'
-import MetaVault from './views/MetaVault'
-import Staking from './views/Staking'
+import Vault from './views/Vault'
+import VaultDetails from './views/VaultDetails'
 import Liquidity from './views/Liquidity'
 import LiquidityPool from './views/LiquidityPool'
 import Swap from './views/Swap'
+import V3 from './views/V3'
 import Faucet from './views/Faucet'
-// import Governance from './views/Governance'
+import Governance from './views/Governance'
 import { notification } from 'antd'
 import { currentConfig } from './constants/configs'
 import { useWeb3React } from '@web3-react/core'
@@ -16,6 +17,7 @@ import { useInactiveListener } from './hooks/useInactiveListener'
 
 import SwapBanner from './components/Banner/Banners/SwapBanner'
 import Modals from './components/Modals'
+import { TVaults } from './constants/type'
 
 notification.config({
 	placement: 'topRight',
@@ -28,6 +30,11 @@ const App: React.FC = () => {
 
 	const { chainId } = useWeb3React()
 
+	const vaults = useMemo(
+		() => Object.keys(currentConfig(chainId).vaults) as TVaults[],
+		[chainId],
+	)
+
 	const activePools = useMemo(
 		() =>
 			Object.values(currentConfig(chainId).pools).filter(
@@ -39,35 +46,45 @@ const App: React.FC = () => {
 	return (
 		<Suspense fallback={null}>
 			<SwapBanner />
-			<Switch>
-				<Route path="/" exact>
-					<Home />
-				</Route>
-				<Route path="/vault" exact>
-					<MetaVault />
-				</Route>
-				<Route path="/staking" exact>
-					<Staking />
-				</Route>
-				<Route path="/liquidity" exact>
-					<Liquidity />
-				</Route>
+			<Routes>
+				<Route path="/" element={<Home />} />
+
+				{vaults.map((vault) => {
+					const key = `/vault/${vault}`
+					return (
+						<Route
+							key={key}
+							path={key}
+							element={<VaultDetails vault={vault} />}
+						/>
+					)
+				})}
+
+				<Route path="/vault" element={<Vault />} />
+
+				<Route path="/liquidity" element={<Liquidity />} />
+
 				{activePools.map((pool) => {
 					const key = `/liquidity/${pool.lpAddress}`
 					return (
-						<Route key={key} path={key} exact>
-							<LiquidityPool pool={pool} />
-						</Route>
+						<Route
+							key={key}
+							path={key}
+							element={<LiquidityPool pool={pool} />}
+						/>
 					)
 				})}
-				<Route path="/swap" exact>
-					<Swap />
-				</Route>
-				<Route path="/faucet" exact>
-					<Faucet />
-				</Route>
-				<Redirect to="/" />
-			</Switch>
+
+				<Route path="/governance" element={<Governance />} />
+
+				<Route path="/swap" element={<Swap />} />
+
+				<Route path="/v3" element={<V3 />} />
+
+				<Route path="/faucet" element={<Faucet />} />
+
+				<Route path="*" element={<Navigate to="/" replace={true} />} />
+			</Routes>
 			<Modals />
 		</Suspense>
 	)

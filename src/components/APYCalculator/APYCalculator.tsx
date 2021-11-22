@@ -1,8 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Row, Col, Slider, Tooltip, Typography, Radio } from 'antd'
-import { CardRow } from '../../components/ExpandableSidePanel'
+import { Row, Col, Tooltip, Radio } from 'antd'
+import CardRow from '../../components/CardRow'
+import Slider from '../../components/Slider'
+import Typography from '../Typography'
 import Value from '../../components/Value'
-import info from '../../assets/img/info.svg'
+import { InfoCircleOutlined } from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 import { CalcPages } from '../../state/user/reducer'
@@ -10,6 +12,7 @@ import {
 	useFutureBalanceCalc,
 	useFutureBalanceCalcUpdate,
 } from '../../state/user/hooks'
+import useTranslation from '../../hooks/useTranslation'
 
 const { Text } = Typography
 type Props = {
@@ -17,6 +20,7 @@ type Props = {
 	APR: number
 	page: CalcPages
 	loading?: boolean
+	last?: boolean
 }
 
 const StyledRadio = styled(Radio.Group)`
@@ -29,6 +33,12 @@ const StyledRadio = styled(Radio.Group)`
 const StyledRow = styled(Row)`
 	font-weight: 700;
 	margin-top: 10px;
+`
+
+const StyledInfoIcon = styled(InfoCircleOutlined)`
+	margin-left: 5px;
+	color: ${(props) => props.theme.secondary.font};
+	font-size: 15px;
 `
 
 const options = [
@@ -64,7 +74,10 @@ const APYCalculator: React.FC<Props> = ({
 	balance: walletBalance,
 	APR,
 	page,
+	last,
 }) => {
+	const translate = useTranslation()
+
 	const { duration, yearlyCompounds } = useFutureBalanceCalc(page)
 	const update = useFutureBalanceCalcUpdate(page)
 
@@ -109,81 +122,74 @@ const APYCalculator: React.FC<Props> = ({
 	}, [handleOnDurationChange, duration])
 
 	return (
-		<>
-			<CardRow
-				main={
-					<Tooltip
-						style={{ minWidth: '350px' }}
-						placement="topLeft"
-						title={
-							<Col style={{ margin: '10px 20px' }}>
-								<StyledRow
-									style={{
-										marginBottom: '10px',
-									}}
-								>
-									Annual Percentage Rate: {APR.toFixed(2)}%
-								</StyledRow>
-								<StyledRow
-									style={{
-										marginBottom: '8px',
-									}}
-								>
-									Compounding Frequency:
-								</StyledRow>
-								<StyledRadio
-									options={options}
-									defaultValue={`${yearlyCompounds}`}
-									onChange={({ target: { value } }) => {
-										update({
-											field: 'yearlyCompounds',
-											value: Number(value),
-										})
-									}}
-									size="small"
-									style={{ color: 'white' }}
-								/>
-								<StyledRow>See Your Balance In:</StyledRow>
+		<CardRow
+			main={
+				<Tooltip
+					style={{ minWidth: '350px' }}
+					placement="topLeft"
+					title={
+						<Col style={{ margin: '10px 20px' }}>
+							<StyledRow
+								style={{
+									marginBottom: '10px',
+								}}
+							>
+								{translate('Annual Percentage Rate')}:{' '}
+								{APR.toFixed(2)}%
+							</StyledRow>
+							<StyledRow
+								style={{
+									marginBottom: '8px',
+								}}
+							>
+								{translate('Compounding Frequency')}:
+							</StyledRow>
+							<StyledRadio
+								options={options}
+								defaultValue={`${yearlyCompounds}`}
+								onChange={({ target: { value } }) => {
+									update({
+										field: 'yearlyCompounds',
+										value: Number(value),
+									})
+								}}
+								size="small"
+								style={{ color: 'white' }}
+							/>
+							<StyledRow>
+								{translate('See Your Balance In')}:
+							</StyledRow>
 
-								<Slider
-									style={{ width: '90%' }}
-									value={duration}
-									marks={sliderMarks}
-									defaultValue={12}
-									min={1}
-									max={12}
-									tipFormatter={(value) =>
-										value > 1
-											? `${value} months`
-											: `${value} month`
-									}
-									onChange={handleOnDurationChange}
-								/>
-							</Col>
-						}
-					>
-						<Text type="secondary">Future Balance</Text>
-						<img
-							style={{
-								position: 'relative',
-								top: -1,
-								marginLeft: '3px',
-							}}
-							src={info}
-							height="15"
-							alt="YAXIS Supply Rewards"
-						/>
-					</Tooltip>
-				}
-				secondary={
-					<Value
-						value={balance.toNumber()}
-						numberPrefix="$"
-						decimals={2}
-					/>
-				}
-			/>
-		</>
+							<Slider
+								style={{ width: '90%' }}
+								value={duration}
+								marks={sliderMarks}
+								defaultValue={12}
+								min={1}
+								max={12}
+								tipFormatter={(value) =>
+									value > 1
+										? `${value} months`
+										: `${value} month`
+								}
+								onChange={handleOnDurationChange}
+							/>
+						</Col>
+					}
+				>
+					<Text type="secondary">{translate('Future Balance')}</Text>
+					<StyledInfoIcon alt={translate('YAXIS Rewards')} />
+				</Tooltip>
+			}
+			secondary={
+				<Value
+					value={balance.toNumber()}
+					numberPrefix="$"
+					decimals={2}
+				/>
+			}
+			last={last}
+		/>
 	)
 }
 

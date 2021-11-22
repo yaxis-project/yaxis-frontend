@@ -13,18 +13,16 @@ const StyledCol = styled(Col)`
 
 const Staking: React.FC = () => {
 	return (
-		<div className="savings-view">
-			<Page>
-				<Row gutter={16}>
-					<Col md={24} lg={24} xl={16}>
-						<SwapInfo />
-					</Col>
-					<StyledCol xs={24} sm={24} md={24} lg={24} xl={8}>
-						<SwapCard />
-					</StyledCol>
-				</Row>
-			</Page>
-		</div>
+		<Page>
+			<Row gutter={16}>
+				<Col md={24} lg={24} xl={16}>
+					<SwapInfo />
+				</Col>
+				<StyledCol xs={24} sm={24} md={24} lg={24} xl={8}>
+					<SwapCard />
+				</StyledCol>
+			</Row>
+		</Page>
 	)
 }
 

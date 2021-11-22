@@ -94,12 +94,13 @@ const Icon = styled(InfoCircleOutlined)`
 interface BannerProps {
 	text?: string
 	visible?: boolean
+	to: string
 }
 
-const Banner: React.FC<BannerProps> = ({ text, visible = true }) => (
+const Banner: React.FC<BannerProps> = ({ text, to, visible = true }) => (
 	<Anchor style={{ padding: 0 }}>
 		<Shadow>
-			<NavLink to="/swap">
+			<NavLink to={to}>
 				{visible && (
 					<StyledAlert
 						icon={<Icon />}

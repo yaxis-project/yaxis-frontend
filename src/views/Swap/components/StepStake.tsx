@@ -1,9 +1,10 @@
 import { useMemo, Dispatch, SetStateAction } from 'react'
 import BigNumber from 'bignumber.js'
-import { Steps, Grid, Row } from 'antd'
+import { Grid, Row } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
+import Steps from '../../../components/Steps'
 import Button from '../../../components/Button'
 import {
 	useETHBalances,

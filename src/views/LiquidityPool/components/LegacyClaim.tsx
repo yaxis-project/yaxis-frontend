@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Col } from 'antd'
-import { CardRow } from '../../../components/ExpandableSidePanel'
+import CardRow from '../../../components/CardRow'
 import Value from '../../../components/Value'
 import Button from '../../../components/Button'
 import RewardAPYTooltip from '../../../components/Tooltip/Tooltips/RewardAPYTooltip'
@@ -9,12 +9,15 @@ import { useLegacyReturns } from '../../../state/wallet/hooks'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import { LiquidityPool } from '../../../constants/type'
+import useTranslation from '../../../hooks/useTranslation'
 
 interface LegacyClaimProps {
 	pool: LiquidityPool
 }
 
 const LegacyClaim: React.FC<LegacyClaimProps> = ({ pool }) => {
+	const translate = useTranslation()
+
 	const [claimVisible, setClaimVisible] = useState(false)
 	const {
 		lp: { pendingYax: earnings },
@@ -27,7 +30,7 @@ const LegacyClaim: React.FC<LegacyClaimProps> = ({ pool }) => {
 
 	return (
 		<CardRow
-			main="Return"
+			main={translate('Returns')}
 			secondary={
 				<Value
 					value={getBalanceNumber(earnings)}
@@ -49,6 +52,7 @@ const LegacyClaim: React.FC<LegacyClaimProps> = ({ pool }) => {
 							}
 							loading={loading}
 							height={'40px'}
+							style={{ width: '100%' }}
 						>
 							Claim
 						</Button>

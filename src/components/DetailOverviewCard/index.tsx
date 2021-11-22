@@ -1,5 +1,6 @@
 import React from 'react'
-import { Typography, Card } from 'antd'
+import Typography from '../../components/Typography'
+import Card from '../../components/Card'
 import './index.less'
 
 const { Title } = Typography
@@ -7,7 +8,6 @@ const { Title } = Typography
 const gridStyle = {
 	width: '100%',
 }
-
 
 interface DetailOverviewCardRowProps {
 	children: React.ReactNode
@@ -48,7 +48,15 @@ export function DetailOverviewCard(props: DetailOverviewCardProps) {
 		<Card
 			className="detail-overview-card"
 			style={{ padding: 0 }}
-			title={<Title level={4}>{title}</Title>}
+			title={
+				<span
+					style={{
+						fontSize: '19px',
+					}}
+				>
+					{title}
+				</span>
+			}
 		>
 			{children}
 		</Card>

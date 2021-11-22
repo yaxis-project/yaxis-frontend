@@ -1,13 +1,15 @@
 import { useMemo, useCallback, Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
-import { Row, Steps } from 'antd'
+import { Row } from 'antd'
+import Steps from '../../../components/Steps'
 import Button from '../../../components/Button'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { currentConfig } from '../../../constants/configs'
 import BigNumber from 'bignumber.js'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
+import useTranslation from '../../../hooks/useTranslation'
 const { Step } = Steps
 
 interface StepProps {
@@ -34,6 +36,8 @@ const StepClaim: React.FC<StepClaimProps> = ({
 	linkLPBalance,
 	stakedMvlt,
 }) => {
+	const translate = useTranslation()
+
 	const { chainId } = useWeb3Provider()
 
 	const config = useMemo(() => currentConfig(chainId), [chainId])
@@ -70,7 +74,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 							loading={loadingUnstakeMVLT}
 							height={'40px'}
 						>
-							Unstake MVLT
+							{translate('Unstake')} MVLT
 						</StyledButton>
 					}
 					description="Withdraw your MVLT from the previous rewards contract."
@@ -88,7 +92,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 							disabled={!pendingYax.toNumber()}
 							height={'40px'}
 						>
-							Claim MetaVault rewards
+							{translate('Claim')} MetaVault rewards
 						</StyledButton>
 					}
 					description="Gather pending MetaVault rewards"
@@ -103,6 +107,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 			/>
 		)
 	}, [
+		translate,
 		pendingYax,
 		isClaiming,
 		handleClaimRewards,
@@ -140,7 +145,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 							loading={unstakeLoading}
 							height={'40px'}
 						>
-							Unstake Uniswap YAX / ETH
+							{translate('Unstake')} Uniswap YAX / ETH
 						</StyledButton>
 					}
 					description="Withdraw your LP token from the previous rewards contract."
@@ -191,6 +196,7 @@ const StepClaim: React.FC<StepClaimProps> = ({
 			/>
 		)
 	}, [
+		translate,
 		uniLPBalance,
 		stakedUniLP,
 		uniYaxEthLP,

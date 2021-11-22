@@ -1,160 +1,43 @@
 import { useMemo, useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useContracts } from '../../contexts/Contracts'
-import {
-	decodedGauges,
-	gaugeController_address,
-	gauge_relative_weight,
-	poolInfo,
-	CurvePools,
-} from '../../constants/configs'
-import { TLiquidityPools } from '../../constants/type'
+import { TLiquidityPools, TCurveLPContracts } from '../../constants/type'
 import { usePrices } from '../prices/hooks'
 import {
 	useSingleCallResult,
 	useSingleContractMultipleMethods,
+	useMultipleContractSingleData,
 } from '../onchain/hooks'
 import BigNumber from 'bignumber.js'
+import { abis } from '../../constants/abis/mainnet'
 
-const defaultApys = Object.fromEntries(CurvePools.map((p) => [p, 0]))
+const REWARD_INTERFACE = new ethers.utils.Interface(abis.RewardsABI)
 
-export function useCurveRewardsAPR() {
-	const { contracts } = useContracts()
-	const multicall = useMemo(() => contracts?.external.multicall, [contracts])
+export function useFetchCurvePoolBaseAPR() {
+	const [curveApy, setCurveApy] = useState({
+		apy: {
+			day: {},
+			week: {},
+			month: {},
+			total: {},
+		},
+		volume: {},
+	})
 
-	const AbiCoder = useMemo(() => new ethers.utils.AbiCoder(), [])
-
-	const {
-		prices: { crv, btc },
-	} = usePrices()
-
-	const weights = useMemo(
-		() =>
-			decodedGauges.map((gauge) => [
-				gaugeController_address,
-				gauge_relative_weight + gauge.slice(2),
-			]),
-		[],
-	)
-	const weightCalls = useSingleCallResult(multicall, 'aggregate', [weights])
-
-	const decodedWeights = useMemo(() => {
-		return (
-			weightCalls.result?.[1]?.map((hex, i: number) => {
-				return [
-					weightCalls.result[0],
-					hex === '0x'
-						? 0
-						: (AbiCoder.decode(['uint256'], hex) as any) / 1e18,
-				]
-			}) || []
-		)
-	}, [weightCalls, AbiCoder])
-
-	const rateCalls = useSingleCallResult(multicall, 'aggregate', [
-		decodedGauges
-			.map((gauge) => [
-				[gauge, '0x180692d0'],
-				[gauge, '0x17e28089'],
-			])
-			.flat(),
-	])
-
-	const decodedRates = useMemo(() => {
-		return (
-			rateCalls?.result?.[1]?.map((hex) => {
-				return hex === '0x' ? 0 : AbiCoder.decode(['uint256'], hex)
-			}) || []
-		)
-	}, [rateCalls, AbiCoder])
-
-	const virtualPrices = useMemo(
-		() => Object.values(poolInfo).map((v) => [v.swap, '0xbb7b8b80']),
-		[],
-	)
-	const virtualPriceCalls = useSingleCallResult(multicall, 'aggregate', [
-		virtualPrices,
-	])
-
-	const decodedVirtualPrices = useMemo(() => {
-		return (
-			virtualPriceCalls?.result?.[1]?.map((hex, i: number) => [
-				virtualPrices[i][0],
-				hex === '0x'
-					? 0
-					: (AbiCoder.decode(['uint256'], hex) as any) / 1e18,
-			]) || []
-		)
-	}, [virtualPrices, virtualPriceCalls, AbiCoder])
-
-	return useMemo(() => {
-		const apys = defaultApys
-
-		if (
-			decodedVirtualPrices.length &&
-			decodedWeights.length &&
-			decodedRates.length
-		)
-			try {
-				let gaugeRates = decodedRates
-					.filter((_: any, i: number) => i % 2 === 0)
-					.map((v: number) => v / 1e18)
-				let workingSupplies = decodedRates
-					.filter((_: any, i: number) => i % 2 === 1)
-					.map((v: number) => v / 1e18)
-
-				decodedWeights.forEach((w: any, i: number) => {
-					let pool: string = Object.values(poolInfo).find((v) => {
-						return (
-							v.gauge.toLowerCase() ===
-							'0x' + weights[i][1].slice(34).toLowerCase()
-						)
-					}).name
-					let swap_address = poolInfo[pool].swap
-					let virtual_price = decodedVirtualPrices.find(
-						(v: any) =>
-							v[0].toLowerCase() === swap_address.toLowerCase(),
-					)[1]
-					let _working_supply = workingSupplies[i]
-					if (['ren', 'sbtc'].includes(pool)) _working_supply *= btc
-					let rate =
-						(((gaugeRates[i] * w[1] * 31536000) / _working_supply) *
-							0.4) /
-						virtual_price
-					let apy = rate * crv * 100
-					if (isNaN(apy)) apy = 0
-					Object.values(poolInfo).find(
-						(v: any) => v.name === pool,
-					).gauge_relative_weight = w[1]
-					apys[pool] = apy
-				})
-			} catch (e) {
-				console.error('[getYAxisAPY]', e)
-			}
-		return apys
-	}, [btc, crv, decodedRates, decodedVirtualPrices, weights, decodedWeights])
-}
-
-export function useCurvePoolAPR(name: string) {
-	// TODO: hook up to store to reduce additional calls
-	const [curveApy, setCurveApy] = useState(0)
 	useEffect(() => {
 		const fetchCurveApy = async () => {
 			try {
-				const { apy = {} } = await (
+				const response = await (
 					await fetch('https://stats.curve.fi/raw-stats/apys.json')
 				).json()
-				setCurveApy(
-					apy?.day && apy?.day[name]
-						? parseFloat(apy?.day[name])
-						: 0,
-				)
+				setCurveApy(response)
 			} catch (e) {
 				console.error('Unable to get curve.fi stats: ', e)
 			}
 		}
 		fetchCurveApy()
-	}, [name])
+	}, [])
+
 	return curveApy
 }
 
@@ -218,4 +101,212 @@ export function useLP(name: TLiquidityPools) {
 			tvl,
 		}
 	}, [contract, data, t0p, t1p])
+}
+
+export function useCurvePoolRewards(name: TCurveLPContracts) {
+	const { contracts } = useContracts()
+
+	const rate = useSingleCallResult(
+		contracts?.currencies.ERC20.crv.contract,
+		'rate',
+	)
+
+	const { prices } = usePrices()
+
+	const relativeWeight = useSingleCallResult(
+		contracts?.external?.gaugeController,
+		'gauge_relative_weight(address)',
+		[contracts?.externalLP[name]?.gauge?.address],
+	)
+
+	const virtualPrice = useSingleCallResult(
+		contracts?.externalLP[name]?.pool,
+		'get_virtual_price()',
+	)
+
+	const balance = useSingleCallResult(
+		contracts?.externalLP[name]?.gauge,
+		'working_supply',
+	)
+
+	return useMemo(() => {
+		const yearlyEmissions = new BigNumber(rate?.result?.toString() || 0)
+			.multipliedBy(relativeWeight?.result?.toString() || 0)
+			.multipliedBy(31_536_000)
+			.dividedBy(10 ** 18)
+			.multipliedBy(prices?.crv || 0)
+
+		const totalValue = new BigNumber(balance?.result?.toString() || 0)
+			.multipliedBy(new BigNumber(virtualPrice?.result?.toString() || 0))
+			.dividedBy(10 ** 18)
+
+		const APR = totalValue.isZero()
+			? new BigNumber(0)
+			: yearlyEmissions.dividedBy(totalValue)
+
+		return {
+			yearlyEmissions,
+			APR,
+		}
+	}, [prices?.crv, relativeWeight, virtualPrice, balance, rate])
+}
+
+let cliffSize = new BigNumber(100_000) // * 1e18; //new cliff every 100,000 tokens
+let cliffCount = new BigNumber(1_000) // 1,000 cliffs
+let maxSupply = new BigNumber(100_000_000) // * 1e18; //100 mil max supply
+
+function getCVXMintAmount(crvEarned: BigNumber, cvxSupply: BigNumber) {
+	//get current cliff
+	const currentCliff = cvxSupply.dividedBy(cliffSize)
+
+	//if current cliff is under the max
+	if (currentCliff.lt(cliffCount)) {
+		//get remaining cliffs
+		const remaining = cliffCount.minus(currentCliff)
+
+		//multiply ratio of remaining cliffs to total cliffs against amount CRV received
+		let cvxEarned = crvEarned.multipliedBy(remaining).dividedBy(cliffCount)
+
+		//double check we have not gone over the max supply
+		const amountTillMax = maxSupply.minus(cvxSupply)
+		if (cvxEarned.gt(amountTillMax)) {
+			cvxEarned = amountTillMax
+		}
+		return cvxEarned
+	}
+	return new BigNumber(0)
+}
+
+export function useConvexAPY(name: TCurveLPContracts) {
+	const { contracts } = useContracts()
+
+	const currency = useMemo(
+		() => contracts?.externalLP[name].currency,
+		[contracts, name],
+	)
+
+	const rate = useSingleCallResult(
+		contracts?.externalLP[name].convexRewards,
+		'rewardRate()',
+	)
+
+	const { prices } = usePrices()
+
+	const virtualPrice = useSingleCallResult(
+		contracts?.externalLP[name].pool,
+		'get_virtual_price()',
+	)
+
+	const cvxTotalSupply = useSingleCallResult(
+		contracts?.currencies.ERC20.cvx.contract,
+		'totalSupply()',
+	)
+
+	const rewardsTotalSupply = useSingleCallResult(
+		contracts?.externalLP[name].convexRewards,
+		'totalSupply()',
+	)
+
+	const extras = useMemo(
+		() => Object.entries(contracts?.externalLP[name].extraRewards || {}),
+		[contracts, name],
+	)
+
+	const extrasData = useMultipleContractSingleData(
+		extras.map(([, config]) => config.contract.address),
+		REWARD_INTERFACE,
+		'rewardRate()',
+	)
+
+	const extrasRates = useMemo(() => {
+		if (!extras.length) return null
+
+		return Object.fromEntries(
+			extrasData.map(({ loading, result }, i) => {
+				const [name] = extras[i]
+				if (loading) return [name, new BigNumber(0)]
+				if (!result) return [name, new BigNumber(0)]
+				return [name, new BigNumber(result.toString())]
+			}),
+		)
+	}, [extras, extrasData])
+
+	return useMemo(() => {
+		const supply = new BigNumber(
+			rewardsTotalSupply?.result?.toString() || 0,
+		).dividedBy(10 ** 18)
+
+		const virtualSupply = supply.multipliedBy(
+			new BigNumber(virtualPrice?.result?.toString() || 0).dividedBy(
+				10 ** 18,
+			),
+		)
+
+		const crvPerSecond = new BigNumber(rate?.result?.toString() || 0)
+			.dividedBy(10 ** 18)
+			.dividedBy(virtualSupply)
+
+		const crvPerYear = crvPerSecond.multipliedBy(86400).multipliedBy(365)
+		const crvPriceConversion =
+			currency !== 'usd'
+				? new BigNumber(prices?.crv)
+						.dividedBy(prices?.[currency])
+						.toString()
+				: prices?.crv
+		const crvAPR = crvPerYear.multipliedBy(crvPriceConversion || 0)
+
+		const cvxPerYear = getCVXMintAmount(
+			crvPerYear,
+			new BigNumber(cvxTotalSupply?.result?.toString() || 0).dividedBy(
+				10 ** 18,
+			),
+		)
+		const cvxPriceConversion =
+			currency !== 'usd'
+				? new BigNumber(prices?.cvx)
+						.dividedBy(prices?.[currency])
+						.toString()
+				: prices?.cvx
+		const cvxAPR = cvxPerYear.multipliedBy(cvxPriceConversion)
+
+		let totalAPR = crvAPR.plus(cvxAPR)
+
+		let extraAPR = null
+
+		if (extrasRates) {
+			const nextExtraAPR = {}
+
+			for (const extra in extrasRates) {
+				const extraPerSecond = extrasRates[extra]
+					.dividedBy(10 ** 18)
+					.dividedBy(virtualSupply)
+
+				const extraPerYear = extraPerSecond
+					.multipliedBy(86400)
+					.multipliedBy(365)
+
+				const extraAPR = extraPerYear.multipliedBy(prices[extra])
+
+				nextExtraAPR[extra] = extraAPR
+
+				totalAPR = totalAPR.plus(extraAPR)
+			}
+			extraAPR = nextExtraAPR
+		}
+
+		return {
+			extraAPR,
+			crvAPR,
+			cvxAPR,
+			totalAPR,
+		}
+	}, [
+		currency,
+		prices,
+		cvxTotalSupply,
+		rewardsTotalSupply,
+		virtualPrice,
+		rate,
+		extrasRates,
+	])
 }

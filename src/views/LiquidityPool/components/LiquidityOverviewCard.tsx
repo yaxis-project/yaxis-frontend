@@ -1,7 +1,9 @@
-import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
-import { CardRow } from '../../../components/ExpandableSidePanel'
-import { Typography, Tooltip, Row } from 'antd'
+import Card from '../../../components/Card'
+import styled from 'styled-components'
+import CardRow from '../../../components/CardRow'
+import { Tooltip, Row } from 'antd'
 import Value from '../../../components/Value'
+import Typography from '../../../components/Typography'
 import { useAPY } from '../../../state/internal/hooks'
 import { useAccountLP } from '../../../state/wallet/hooks'
 import { LiquidityPool } from '../../../constants/type'
@@ -9,7 +11,8 @@ import Claim from '../../../components/Claim'
 import LegacyClaim from './LegacyClaim'
 import APYCalculator from '../../../components/APYCalculator'
 import BigNumber from 'bignumber.js'
-import info from '../../../assets/img/info.svg'
+import { InfoCircleOutlined } from '@ant-design/icons'
+import useTranslation from '../../../hooks/useTranslation'
 
 const { Text } = Typography
 
@@ -32,7 +35,12 @@ const TooltipRow = ({ main, value, suffix }: TooltipRowProps) => (
 			{main}
 		</div>
 		<Row>
-			<Value value={value} numberSuffix="%" decimals={2} />
+			<Value
+				value={value}
+				numberSuffix="%"
+				decimals={2}
+				color={'white'}
+			/>
 			<span style={{ fontSize: '10px' }}>{suffix}</span>
 		</Row>
 	</>
@@ -45,19 +53,21 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 	pool,
 	totalUSDBalance,
 }) => {
+	const translate = useTranslation()
+
 	const { yaxisAprPercent } = useAPY(pool?.rewards)
 
 	const { poolShare } = useAccountLP(pool)
 
 	return (
-		<DetailOverviewCard title="Overview">
+		<Card title={translate('Overview')} icon="yaxis">
 			{pool?.legacy ? (
 				<LegacyClaim pool={pool} />
 			) : (
 				<Claim rewardsContract={pool.rewards} />
 			)}
 			<CardRow
-				main="Share of Pool"
+				main={translate('Share of Pool')}
 				secondary={
 					<Value
 						value={poolShare.times(100).toNumber()}
@@ -72,22 +82,17 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 						title={
 							<>
 								<Row style={{ marginBottom: '5px' }}>
-									Annual Percentage Rate
+									{translate('Annual Percentage Rate')}
 								</Row>
 								<TooltipRow
-									main={'YAXIS rewards APR:'}
+									main={translate('YAXIS rewards APR') + ':'}
 									value={yaxisAprPercent.toNumber()}
 								/>
 							</>
 						}
 					>
-						<Text type="secondary">Total APR </Text>
-						<img
-							style={{ position: 'relative', top: -1 }}
-							src={info}
-							height="15"
-							alt="YAXIS Supply Rewards"
-						/>
+						<Text type="secondary">{translate('Total APR')} </Text>
+						<StyledInfoIcon alt={translate('YAXIS Rewards')} />
 					</Tooltip>
 				}
 				secondary={
@@ -104,10 +109,15 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 								title={
 									<>
 										<Row style={{ marginBottom: '5px' }}>
-											Annual Percentage Yield
+											{translate(
+												'Annual Percentage Yield',
+											)}
 										</Row>
 										<TooltipRow
-											main={'YAXIS rewards APY:'}
+											main={
+												translate('YAXIS rewards APY') +
+												':'
+											}
 											value={yaxisAprPercent
 												.div(100)
 												.dividedBy(12)
@@ -116,17 +126,19 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 												.minus(1)
 												.multipliedBy(100)
 												.toNumber()}
-											suffix={'* monthly compound'}
+											suffix={
+												'* ' +
+												translate('monthly compound')
+											}
 										/>
 									</>
 								}
 							>
-								<Text type="secondary">Total APY </Text>
-								<img
-									style={{ position: 'relative', top: -1 }}
-									src={info}
-									height="15"
-									alt="YAXIS Supply Rewards"
+								<Text type="secondary">
+									{translate('Total APY')}{' '}
+								</Text>
+								<StyledInfoIcon
+									alt={translate('YAXIS Rewards')}
 								/>
 							</Tooltip>
 						</Row>
@@ -152,9 +164,16 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 				balance={totalUSDBalance}
 				loading={false}
 				page={'lp'}
+				last
 			/>
-		</DetailOverviewCard>
+		</Card>
 	)
 }
 
 export default LiquidityOverviewCard
+
+const StyledInfoIcon = styled(InfoCircleOutlined)`
+	margin-left: 5px;
+	color: ${(props) => props.theme.secondary.font};
+	font-size: 15px;
+`

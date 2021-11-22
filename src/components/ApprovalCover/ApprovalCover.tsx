@@ -8,11 +8,14 @@ import Button from '../Button'
 import BigNumber from 'bignumber.js'
 import { MAX_UINT } from '../../utils/number'
 import { ethers } from 'ethers'
+import useTranslation from '../../hooks/useTranslation'
 
 type Props = {
 	contractName: string
 	approvee: string
 	hidden?: boolean
+	noWrapper?: boolean
+	buttonText?: string
 }
 
 const ApprovalCover: React.FC<Props> = ({
@@ -20,85 +23,84 @@ const ApprovalCover: React.FC<Props> = ({
 	contractName,
 	approvee,
 	hidden,
+	noWrapper,
+	buttonText,
 }) => {
+	const translate = useTranslation()
+
 	const { account } = useWeb3Provider()
 
-	const {
-		loading: loadingAllowance,
-		result: allowance,
-	} = useSingleCallResultByName(contractName, 'allowance', [
-		account,
-		approvee,
-	])
+	const { loading: loadingAllowance, result: allowance } =
+		useSingleCallResultByName(contractName, 'allowance', [
+			account,
+			approvee,
+		])
+
 	const { call: handleApprove, loading: loadingApprove } = useContractWrite({
 		contractName,
 		method: 'approve',
 		description: `approve token usage`,
 	})
 
-	const cover = useMemo(() => {
-		return (
-			<Cover
-				align="middle"
-				justify="center"
-				visible={String(
-					!hidden &&
-						!loadingAllowance &&
-						new BigNumber(allowance?.toString() || 0).lt(MAX_UINT),
-				)}
-			>
-				<Col span={7}>
-					<Button
-						height={'40px'}
-						style={{ minWidth: '100px' }}
-						loading={loadingApprove}
-						onClick={async () => {
-							await handleApprove({
-								args: [
-									approvee,
-									ethers.constants.MaxUint256.toString(),
-								],
-							})
-						}}
-					>
-						Approve
-					</Button>
-				</Col>
+	const visible = useMemo(
+		() =>
+			!hidden &&
+			approvee &&
+			!loadingAllowance &&
+			new BigNumber(allowance?.toString() || 0).lt(MAX_UINT),
+		[approvee, allowance, hidden, loadingAllowance],
+	)
+
+	const cover = useMemo(
+		() => (
+			<Cover align="middle" justify="center">
+				<Button
+					height={'40px'}
+					style={{ minWidth: '100px' }}
+					loading={loadingApprove}
+					onClick={async () => {
+						await handleApprove({
+							args: [
+								approvee,
+								ethers.constants.MaxUint256.toString(),
+							],
+						})
+					}}
+				>
+					{translate(
+						buttonText ? `Approve ${buttonText}` : 'Approve',
+					)}
+				</Button>
 			</Cover>
+		),
+		[translate, handleApprove, loadingApprove, approvee, buttonText],
+	)
+
+	if (noWrapper)
+		return (
+			<>
+				{children}
+				{visible && cover}
+			</>
 		)
-	}, [
-		allowance,
-		loadingAllowance,
-		handleApprove,
-		loadingApprove,
-		approvee,
-		hidden,
-	])
 
 	return (
-		<CoverWrapper>
-			{cover}
+		<div style={{ position: 'relative', width: '100%' }}>
 			{children}
-		</CoverWrapper>
+			{visible && cover}
+		</div>
 	)
 }
 
-export default ApprovalCover
+export { ApprovalCover }
 
-const CoverWrapper = styled(Col)`
-	position: relative;
-	height: 100%;
-`
 const Cover = styled(Row)<any>`
 	width: 100%;
 	height: 100%;
-	border-radius: 4px;
 	position: absolute;
 	top: 0;
 	left: 0;
-	background-color: rgb(128, 128, 128, 0.3);
+	background-color: rgb(128, 128, 128, 0.7);
 	z-index: 2;
 	text-align: center;
-	visibility: ${(props) =>
-		props.visible === 'true' ? 'visibile' : 'hidden'};
 `

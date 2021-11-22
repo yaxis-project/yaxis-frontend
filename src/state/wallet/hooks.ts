@@ -7,29 +7,34 @@ import {
 	ETH,
 	YAXIS,
 	MVLT,
-	CurrenciesIn3Pool,
 } from '../../constants/currencies'
 import {
 	TRewardsContracts,
 	RewardsContracts,
 	LiquidityPool,
+	Vaults,
+	TVaults,
+	LPVaults,
 } from '../../constants/type'
 import { usePrices } from '../prices/hooks'
 import {
 	useSingleContractMultipleData,
 	useSingleContractMultipleMethods,
 	useSingleCallResult,
+	useMultipleContractSingleData,
 } from '../onchain/hooks'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { BigNumber } from 'bignumber.js'
-import { useMultipleContractSingleData } from '../onchain/hooks'
 import { useLP } from '../external/hooks'
 import { ethers } from 'ethers'
 import { Interface } from '@ethersproject/abi'
 import { useBlockNumber } from '../application/hooks'
 import ERC20Abi from '../../constants/abis/mainnet/erc20.json'
+import GaugeAbi from '../../constants/abis/mainnet/gauge.json'
+import { useVaults, useLiquidityPools, useVaultsAPR } from '../internal/hooks'
 
 const ERC20_INTERFACE = new Interface(ERC20Abi)
+const GAUGE_INTERFACE = new Interface(GaugeAbi)
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -159,17 +164,33 @@ export function useAllTokenBalances(): [
 ] {
 	const { account } = useWeb3Provider()
 	const { contracts } = useContracts()
+
 	const ERC20 = Object.values(contracts?.currencies.ERC20 || {}) || []
 	const ERC677 = Object.values(contracts?.currencies.ERC677 || {}) || []
 	const LP =
 		Object.values(contracts?.pools || {}).map(
 			(pool) => pool.tokenContract,
 		) || []
+	const DEPOSIT_VAULT =
+		Object.entries(contracts?.vaults || {})
+			.filter(([vault]) => vault !== 'yaxis')
+			.map(([, data]) => data.token) || []
+	const VAULT =
+		Object.entries(contracts?.vaults || {})
+			.filter(([vault]) => vault !== 'yaxis')
+			.map(([, data]) => data.vaultToken) || []
+	const GAUGE =
+		Object.values(contracts?.vaults || {}).map(
+			(vault) => vault.gaugeToken,
+		) || []
 
 	return useTokenBalancesWithLoadingIndicator(account, [
 		...ERC20,
 		...ERC677,
 		...LP,
+		...DEPOSIT_VAULT,
+		...VAULT,
+		...GAUGE,
 	])
 }
 
@@ -287,6 +308,8 @@ export function useApprovedAmounts(
 	]
 }
 
+// TODO: collapse approvals into one hook
+// add a way to update state before next block
 export function useApprovals() {
 	const { contracts } = useContracts()
 	const { account } = useWeb3Provider()
@@ -311,10 +334,10 @@ export function useApprovals() {
 	const [converter3PoolCurrencies, loadingConverter3Pool] =
 		useApprovedAmounts(
 			account,
-			contracts?.external.curve3pool.address,
-			CurrenciesIn3Pool.map((c) => contracts?.currencies.ERC20[c]).filter(
-				(c) => c,
-			),
+			contracts?.externalLP['3pool'].pool.address,
+			['dai', 'usdc', 'usdt']
+				.map((c) => contracts?.currencies.ERC20[c])
+				.filter((c) => c),
 		)
 
 	const [
@@ -394,12 +417,49 @@ export function useSwapApprovals() {
 	}, [allowanceSYAX, loadingAllowanceYAX, allowanceYAX, loadingAllowanceSYAX])
 }
 
+export function useV3Approvals() {
+	const { contracts } = useContracts()
+	const { account } = useWeb3Provider()
+
+	const { result: allowanceVault, loading: loadingAllowanceVault } =
+		useSingleCallResult(
+			contracts?.vaults['usd'].token.contract,
+			'allowance',
+			[account, contracts?.vaults['usd'].vault.address],
+		)
+
+	const { result: allowanceHelper, loading: loadingAllowanceHelper } =
+		useSingleCallResult(
+			contracts?.vaults['usd'].token.contract,
+			'allowance',
+			[account, contracts?.internal.vaultHelper.address],
+		)
+
+	return useMemo(() => {
+		return {
+			loading:
+				!allowanceHelper ||
+				!allowanceVault ||
+				loadingAllowanceVault ||
+				loadingAllowanceHelper,
+			helper: new BigNumber(allowanceHelper?.toString() || 0),
+			vault: new BigNumber(allowanceVault?.toString() || 0),
+		}
+	}, [
+		allowanceVault,
+		allowanceHelper,
+		loadingAllowanceVault,
+		loadingAllowanceHelper,
+	])
+}
+
 const defaultUseClaimedState = {
 	claimedMetaVault: ethers.BigNumber.from(0),
 	claimedLp: ethers.BigNumber.from(0),
 	claimedGovernance: ethers.BigNumber.from(0),
 }
 
+// TODO
 export const useClaimed = () => {
 	const [state, setState] = useState(defaultUseClaimedState)
 	const [loading, setLoading] = useState(true)
@@ -444,6 +504,7 @@ const defaultUseReturnsState = {
 	// totalUSD: new BigNumber(0),
 }
 
+// TODO
 export const useReturns = () => {
 	const { account } = useWeb3Provider()
 	const { contracts } = useContracts()
@@ -596,63 +657,36 @@ export function useLegacyReturns(pid: number) {
 
 /**
  * Returns details about the logged in user's liquidity pool stats.
- * @param name The name of the LiquidityPool.
+ * @param lp The name of the LiquidityPool.
  */
 export function useAccountLP(lp: LiquidityPool) {
-	const { totalSupply } = useLP(lp.name)
+	const { totalSupply } = useLP(lp?.name)
 
-	const [{ [lp.tokenSymbol]: walletBalance }] = useAllTokenBalances()
+	const [{ [lp?.tokenSymbol]: walletBalance }] = useAllTokenBalances()
 
-	const { [lp.rewards]: stakedBalance } = useStakedBalances()
+	const { [lp?.rewards]: stakedBalance } = useStakedBalances()
 
 	return useMemo(() => {
 		const userBalance = new BigNumber(
 			walletBalance?.amount.toString() || 0,
 		).plus(stakedBalance?.amount.toString() || 0)
-		const poolShare = userBalance.dividedBy(totalSupply)
+
+		const poolShare = totalSupply.isZero()
+			? new BigNumber(0)
+			: userBalance.dividedBy(totalSupply)
+
 		return { poolShare, walletBalance, stakedBalance }
 	}, [walletBalance, stakedBalance, totalSupply])
 }
 
-export function useAccountMetaVaultData() {
-	const { account } = useWeb3Provider()
+export function useAccountLPs() {
 	const { contracts } = useContracts()
 
-	const metaVaultData = useSingleContractMultipleMethods(
-		contracts?.internal.yAxisMetaVault,
-		[
-			['balanceOf', [account]],
-			// ['pendingYax', [account]], // Legacy method
-			// ['userInfo', [account]], // Legacy method
-			/*
-			{
-				accEarned: '0',
-				amount: '0',
-				yaxRewardDebt: '0',
-			},
-			*/
-		],
-	)
+	const linkswapYaxEth = useAccountLP(contracts?.pools['Linkswap YAX/ETH'])
+	const uniswapYaxEth = useAccountLP(contracts?.pools['Uniswap YAX/ETH'])
+	const uniswapYaxisEth = useAccountLP(contracts?.pools['Uniswap YAXIS/ETH'])
 
-	return useMemo(() => {
-		const [
-			balance,
-			// userInfo,
-			// pendingYax
-		] = metaVaultData.map(({ result, loading }, i) => {
-			if (loading) return ethers.BigNumber.from(0)
-			if (!result) return ethers.BigNumber.from(0)
-			return result
-		})
-		const deposited = new BigNumber(balance.toString()).dividedBy(
-			10 ** MVLT.decimals,
-		)
-		return {
-			deposited,
-			// userInfo: ,
-			// pendingYax: ,
-		}
-	}, [metaVaultData])
+	return { pools: { linkswapYaxEth, uniswapYaxEth, uniswapYaxisEth } }
 }
 
 /**
@@ -660,15 +694,435 @@ export function useAccountMetaVaultData() {
  */
 export function useRewardsBalances(token: string, name: TRewardsContracts) {
 	const { [name]: staked } = useStakedBalances()
-	// const token = useMemo(()=>contracts?.rewards[name],[name])
 	const [{ [token]: wallet }] = useAllTokenBalances()
-
 	return useMemo(() => {
 		return {
-			rawWalletBalance: wallet.value,
-			walletBalance: wallet.amount,
+			rawWalletBalance: wallet?.value,
+			walletBalance: wallet?.amount,
 			rawStakedBalance: staked.value,
 			stakedBalance: staked.amount,
 		}
 	}, [staked, wallet])
+}
+
+type VaultBalance = {
+	[key in TVaults]: {
+		vaultToken: CurrencyValue
+		gaugeToken: CurrencyValue
+		totalToken: BigNumber
+		usd: BigNumber
+		balance: BigNumber
+		totalSupply: BigNumber
+		pricePerFullShare: BigNumber
+	}
+}
+
+interface TVaultsBalances {
+	loading: boolean
+	balances: VaultBalance
+	total: {
+		usd: BigNumber
+	}
+}
+
+export function useVaultsBalances() {
+	const vaults = useVaults()
+	const [balances, loading] = useAllTokenBalances()
+	const { prices } = usePrices()
+	return useMemo(() => {
+		const defaultState = {
+			loading,
+			total: { usd: new BigNumber(0) },
+			balances: Object.fromEntries(
+				(Object.keys(vaults) as TVaults[]).map((vault) => [
+					vault,
+					{
+						vaultToken: {
+							amount: new BigNumber(0),
+							value: new BigNumber(0),
+						},
+						gaugeToken: {
+							amount: new BigNumber(0),
+							value: new BigNumber(0),
+						},
+						totalToken: new BigNumber(0),
+						usd: new BigNumber(0),
+						balance: new BigNumber(0),
+						totalSupply: new BigNumber(0),
+						pricePerFullShare: new BigNumber(0),
+					},
+				]),
+			) as VaultBalance,
+		}
+		const withData = Object.entries(vaults).reduce<TVaultsBalances>(
+			(accumulator, [vault, data]) => {
+				const [lpToken] = LPVaults.find(
+					([, vaultName]) => vault === vaultName,
+				)
+				const vaultToken = balances[`cv:${vault}`]
+				const gaugeToken = balances[`cv:${vault}-gauge`]
+				const totalToken = (
+					vaultToken?.amount || new BigNumber(0)
+				).plus(gaugeToken?.amount || new BigNumber(0))
+				const usd = totalToken
+					.multipliedBy(data.pricePerFullShare)
+					.multipliedBy(prices[lpToken])
+				accumulator.balances[vault] = {
+					...data,
+					vaultToken,
+					gaugeToken,
+					totalToken,
+					usd,
+				}
+				accumulator.total.usd = accumulator.total.usd.plus(usd)
+				return accumulator
+			},
+			defaultState,
+		)
+
+		// Add YAXIS Gauge data
+		const yaxisGauge = vaults.yaxis
+		const yaxisVaultToken = balances['yaxis']
+		const yaxisGaugeToken = balances['yaxis-gauge']
+		const yaxisTotalToken = (
+			yaxisVaultToken?.amount || new BigNumber(0)
+		).plus(yaxisGaugeToken?.amount || new BigNumber(0))
+		const yaxisUsd = (yaxisGaugeToken?.amount || new BigNumber(0))
+			.multipliedBy(1)
+			.multipliedBy(prices['yaxis'])
+		withData.balances.yaxis = {
+			...yaxisGauge,
+			vaultToken: yaxisVaultToken,
+			gaugeToken: yaxisGaugeToken,
+			totalToken: yaxisTotalToken,
+			usd: yaxisUsd,
+		}
+		withData.total.usd = withData.total.usd.plus(yaxisUsd)
+
+		return withData
+	}, [vaults, balances, prices, loading])
+}
+
+export function useLPsBalance() {
+	const { pools } = useLiquidityPools()
+	const { pools: poolAccounts } = useAccountLPs()
+
+	const {
+		prices: { yaxis, eth },
+	} = usePrices()
+
+	return useMemo(() => {
+		return Object.keys(pools).reduce(
+			(previous, current) => {
+				const { walletBalance, stakedBalance } = poolAccounts[current]
+				const { reserves, totalSupply } = pools[current]
+
+				if (
+					!reserves ||
+					!eth ||
+					!yaxis ||
+					!totalSupply ||
+					!stakedBalance
+				)
+					return previous
+
+				const share = new BigNumber(stakedBalance?.value || 0)
+					.plus(new BigNumber(walletBalance?.value || 0))
+					.div(totalSupply.toString())
+				const shareT0 = new BigNumber(
+					reserves?.['_reserve0']?.toString() || 0,
+				)
+					.multipliedBy(share)
+					.dividedBy(10 ** 18)
+				const shareT1 = new BigNumber(
+					reserves?.['_reserve1']?.toString() || 0,
+				)
+					.multipliedBy(share)
+					.dividedBy(10 ** 18)
+				const balanceUSD = shareT0
+					.multipliedBy(yaxis)
+					.plus(shareT1.multipliedBy(eth))
+
+				previous[current].usd = balanceUSD
+				previous[current].token = balanceUSD
+				previous.total.usd = previous.total.usd.plus(balanceUSD)
+
+				return previous
+			},
+			{
+				'Uniswap YAX/ETH': {
+					usd: new BigNumber(0),
+				},
+				'Uniswap YAXIS/ETH': {
+					usd: new BigNumber(0),
+				},
+				'Linkswap YAX/ETH': {
+					usd: new BigNumber(0),
+				},
+				total: {
+					usd: new BigNumber(0),
+				},
+			},
+		)
+	}, [eth, poolAccounts, pools, yaxis])
+}
+
+export function useVotingPower() {
+	const { account } = useWeb3Provider()
+	const { contracts } = useContracts()
+	const results = useSingleContractMultipleMethods(
+		contracts?.internal.votingEscrow,
+		[['balanceOf(address)', [account]], ['totalSupply()'], ['supply']],
+	)
+
+	const [balanceOf, totalSupply, supply] = useMemo(() => {
+		return results.map(({ result, loading }, i) => {
+			if (loading) return new BigNumber(0)
+			if (!result) return new BigNumber(0)
+			return new BigNumber(result.toString())
+		})
+	}, [results])
+
+	return useMemo(() => {
+		return {
+			balance: balanceOf,
+			totalSupply,
+			supply,
+		}
+	}, [totalSupply, balanceOf, supply])
+}
+
+export function useLock() {
+	const { account } = useWeb3Provider()
+	const { contracts } = useContracts()
+
+	const [loading, setLoading] = useState(true)
+
+	const results = useSingleContractMultipleMethods(
+		contracts?.internal.votingEscrow,
+		[
+			['locked__end', [account]],
+			['locked(address)', [account]],
+		],
+	)
+
+	useEffect(() => {
+		if (results.every(({ valid, loading }) => valid && !loading))
+			setLoading(false)
+	}, [results])
+
+	return useMemo(() => {
+		const [locked_end, locked] = results.map(({ result, loading }, i) => {
+			if (loading) return ethers.BigNumber.from(0)
+			if (!result) return ethers.BigNumber.from(0)
+			return result
+		})
+
+		return {
+			loading,
+			hasLock: !new BigNumber(locked_end.toString()).isZero(),
+			end: new BigNumber(locked_end.toString()),
+			locked: new BigNumber(locked.toString().split(',')[0]).div(
+				10 ** 18,
+			),
+		}
+	}, [results, loading])
+}
+
+export function useUserGaugeWeights() {
+	const { account } = useWeb3Provider()
+	const { contracts, loading: loadingContracts } = useContracts()
+
+	const [loading, setLoading] = useState(true)
+
+	const callInputs = useMemo(() => {
+		if (!account || !contracts?.vaults) return []
+		return Object.values(Vaults).map((vault) => [
+			account,
+			contracts?.vaults[vault].gauge.address,
+		])
+	}, [account, contracts?.vaults])
+
+	const results = useSingleContractMultipleData(
+		contracts?.internal.gaugeController,
+		'vote_user_slopes',
+		callInputs,
+	)
+
+	const resultsWithDefaults = useMemo(() => {
+		if (results.length)
+			return results.map(({ result, loading }, i) => {
+				if (loading)
+					return [
+						ethers.BigNumber.from(0),
+						ethers.BigNumber.from(0),
+						ethers.BigNumber.from(0),
+					]
+				if (!result)
+					return [
+						ethers.BigNumber.from(0),
+						ethers.BigNumber.from(0),
+						ethers.BigNumber.from(0),
+					]
+				return result
+			})
+
+		return Object.values(Vaults).map(() => [
+			ethers.BigNumber.from(0),
+			ethers.BigNumber.from(0),
+			ethers.BigNumber.from(0),
+		])
+	}, [results])
+
+	useEffect(() => {
+		if (
+			!loadingContracts &&
+			results.every(({ valid, loading }) => valid && !loading) &&
+			loading
+		)
+			setLoading(false)
+	}, [results, loadingContracts, loading])
+
+	return useMemo(() => {
+		return [
+			loading,
+			Object.fromEntries(
+				Object.values(Vaults).map((vault, i) => {
+					return [
+						vault,
+						{
+							slope: resultsWithDefaults[i][0],
+							power: resultsWithDefaults[i][1],
+							end: resultsWithDefaults[i][2],
+						},
+					]
+				}),
+			),
+		]
+	}, [loading, resultsWithDefaults])
+}
+
+export function useUserGaugeClaimable() {
+	const { account } = useWeb3Provider()
+	const { contracts } = useContracts()
+
+	const results = useMultipleContractSingleData(
+		Object.values(contracts?.vaults || {}).map(
+			(vault) => vault.gauge.address,
+		),
+		GAUGE_INTERFACE,
+		'claimable_tokens',
+		[account],
+	)
+
+	return useMemo<[boolean, { [vault in TVaults]: BigNumber }]>(() => {
+		const names = Object.keys(contracts?.vaults || {})
+		const loading =
+			results.length > 0 ? results.some(({ loading }) => loading) : true
+		return [
+			loading,
+			Object.fromEntries(
+				results.map(({ result }, i) => {
+					return [
+						names[i] as TVaults,
+						new BigNumber(
+							(result || ethers.BigNumber.from(0)).toString(),
+						),
+					]
+				}),
+			) as { [vault in TVaults]: BigNumber },
+		]
+	}, [contracts?.vaults, results])
+}
+
+const TOKENLESS_PRODUCTION = 40
+export function useUserBoost(vault: TVaults) {
+	const { account } = useWeb3Provider()
+
+	const { contracts } = useContracts()
+
+	const results = useSingleContractMultipleMethods(
+		contracts?.vaults[vault]?.gauge,
+		[
+			['balanceOf', [account]],
+			['working_balances', [account]],
+			['working_supply'],
+		],
+	)
+
+	return useMemo(() => {
+		let loading = true
+
+		const [balance, workingBalance, workingSupply] = results.map(
+			({ result, loading }) => {
+				if (loading) return new BigNumber(0)
+				if (!result) return new BigNumber(0)
+				loading = false
+				return new BigNumber(result.toString())
+			},
+		)
+
+		if (balance.isZero())
+			return {
+				loading,
+				workingBalance,
+				workingSupply,
+				boost: new BigNumber(1),
+			}
+
+		const unboostedMinimum = balance
+			.multipliedBy(TOKENLESS_PRODUCTION)
+			.dividedBy(100)
+
+		const unboostedBalance = unboostedMinimum.lt(balance)
+			? unboostedMinimum
+			: balance
+
+		const boost = workingBalance.dividedBy(unboostedBalance)
+		return { loading, workingBalance, workingSupply, boost }
+	}, [results])
+}
+
+export function useBoosts() {
+	const usd = useUserBoost('usd')
+	const btc = useUserBoost('btc')
+	const eth = useUserBoost('eth')
+	const link = useUserBoost('link')
+	const yaxis = useUserBoost('yaxis')
+
+	return useMemo(() => {
+		return {
+			usd,
+			btc,
+			eth,
+			link,
+			yaxis,
+		}
+	}, [usd, btc, eth, link, yaxis])
+}
+
+export function useVaultsAPRWithBoost() {
+	const apr = useVaultsAPR()
+	const boosts = useBoosts()
+
+	return useMemo(
+		() =>
+			Object.fromEntries(
+				Object.entries(apr).map(([vault, data]) => {
+					const boost = boosts[vault].boost
+					const yaxisAPRWithBoost = data.yaxisAPR.multipliedBy(boost)
+					const totalAPRWithBoost = data.totalAPR
+						.minus(data.yaxisAPR)
+						.plus(yaxisAPRWithBoost)
+					const dataWithBoost = {
+						...data,
+						boost,
+						yaxisAPR: yaxisAPRWithBoost,
+						totalAPR: totalAPRWithBoost,
+					}
+					return [vault, dataWithBoost]
+				}),
+			),
+		[apr, boosts],
+	)
 }
