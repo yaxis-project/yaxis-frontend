@@ -363,7 +363,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 	return (
 		<>
 			<Table
-				// components={components}
+				components={components}
 				columns={columns}
 				dataSource={data}
 				pagination={false}

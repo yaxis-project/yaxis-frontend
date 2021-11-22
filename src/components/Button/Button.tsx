@@ -27,11 +27,6 @@ const StyledButton = styled<any>(BaseButton)`
 		background-color: #f0f0f0;
 		border: none;
 	}
-
-	// .ant-btn-loading-icon {
-	// 	position: absolute;
-	// 	top: 12px;
-	// }
 `
 
 const Button: React.FC<Props> = ({ children, ...rest }) => (

@@ -362,7 +362,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 	return (
 		<>
 			<Table
-				// components={components}
+				components={components}
 				columns={columns}
 				dataSource={data}
 				pagination={false}
