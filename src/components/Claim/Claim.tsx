@@ -39,7 +39,7 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract, last }) => {
 	const { call: handleGaugeClaim, loading: loadingGaugeClaim } =
 		useContractWrite({
 			contractName: `internal.minter`,
-			method: 'mint(address)',
+			method: 'mint_many',
 			description: translate(`claim YAXIS`),
 		})
 
@@ -79,6 +79,13 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract, last }) => {
 										args: [
 											contracts?.vaults[vault].gauge
 												.address,
+											'0x0000000000000000000000000000000000000000',
+											'0x0000000000000000000000000000000000000000',
+											'0x0000000000000000000000000000000000000000',
+											'0x0000000000000000000000000000000000000000',
+											'0x0000000000000000000000000000000000000000',
+											'0x0000000000000000000000000000000000000000',
+											'0x0000000000000000000000000000000000000000',
 										],
 									})
 							}}
