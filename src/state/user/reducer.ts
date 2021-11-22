@@ -26,14 +26,15 @@ export interface UserState {
 	timestamp: number
 }
 
-const browserLanguage = navigator.language?.split('-')?.[0]?.toUpperCase()
+// const browserLanguage = navigator.language?.split('-')?.[0]?.toUpperCase()
 
 export const initialState: UserState = {
 	vaultAutoStake: true,
-	language:
-		Languages.find(
-			(supportedLanguage) => supportedLanguage === browserLanguage,
-		) || 'EN',
+	language: 'EN',
+	// TODO: enable language support
+	// Languages.find(
+	// 	(supportedLanguage) => supportedLanguage === browserLanguage,
+	// ) || 'EN',
 	userDarkMode: null,
 	matchesDarkMode: false,
 	futureBalancesCalcs: {
