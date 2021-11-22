@@ -13,7 +13,6 @@ import { updater as TransactionUpdater } from './state/transactions'
 import { updater as UserUpdater } from './state/user'
 import { updater as OnChainUpdater } from './state/onchain'
 import { updater as PricesUpdater } from './state/prices'
-import LanguageProvider from './contexts/Language'
 import ContractsProvider from './contexts/Contracts'
 
 if (!!(window as any).ethereum) {
@@ -38,13 +37,11 @@ ReactDOM.render(
 				<Provider store={store}>
 					<ContractsProvider>
 						<Updaters>
-							<LanguageProvider>
-								<StatefulThemeProvider>
-									<Router>
-										<App />
-									</Router>
-								</StatefulThemeProvider>
-							</LanguageProvider>
+							<StatefulThemeProvider>
+								<Router>
+									<App />
+								</Router>
+							</StatefulThemeProvider>
 						</Updaters>
 					</ContractsProvider>
 				</Provider>

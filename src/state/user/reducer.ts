@@ -4,8 +4,9 @@ import {
 	updateUserDarkMode,
 	updateFutureBalanceCalc,
 	updateLanguage,
-	updateVaultAutoStake
+	updateVaultAutoStake,
 } from './actions'
+import { Languages, TLanguages } from '../../constants/translations'
 
 const currentTimestamp = () => new Date().getTime()
 
@@ -16,7 +17,7 @@ export interface FutureBalanceCalculator {
 }
 export interface UserState {
 	vaultAutoStake: boolean
-	language: string
+	language: TLanguages
 	userDarkMode: boolean | null // the user's choice for dark mode or light mode
 	matchesDarkMode: boolean // whether the dark mode media query matches
 	futureBalancesCalcs: {
@@ -25,9 +26,14 @@ export interface UserState {
 	timestamp: number
 }
 
+const browserLanguage = navigator.language?.split('-')?.[0]?.toUpperCase()
+
 export const initialState: UserState = {
 	vaultAutoStake: true,
-	language: navigator.language?.split('-')?.[0]?.toUpperCase() || 'ENG',
+	language:
+		Languages.find(
+			(supportedLanguage) => supportedLanguage === browserLanguage,
+		) || 'EN',
 	userDarkMode: null,
 	matchesDarkMode: false,
 	futureBalancesCalcs: {

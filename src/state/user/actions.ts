@@ -1,7 +1,8 @@
 import { createAction } from '@reduxjs/toolkit'
 import { CalcPages, FutureBalanceCalculator } from './reducer'
+import { TLanguages } from '../../constants/translations'
 
-export const updateLanguage = createAction<{ language: string }>(
+export const updateLanguage = createAction<{ language: TLanguages }>(
 	'user/updateLanguage',
 )
 export const updateVaultAutoStake = createAction<{ vaultAutoStake: boolean }>(
