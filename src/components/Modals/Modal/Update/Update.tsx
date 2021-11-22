@@ -36,7 +36,7 @@ export const Update: React.FC = () => {
 					{translate(title)}
 				</Title>
 			}
-			visible={true}
+			visible={visible}
 			onCancel={() => {
 				setLastSeenUpdate(LATEST_VERSION)
 				closeModal()
