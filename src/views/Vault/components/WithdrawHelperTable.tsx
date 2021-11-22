@@ -42,6 +42,7 @@ const makeColumns = (
 		{
 			title: translate('Vault'),
 			key: 'asset',
+			width: '150px',
 			sorter: (a, b) => a.vault.length - b.vault.length,
 			render: (text, record) => (
 				<Row align="middle">
@@ -235,10 +236,12 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 	const data = useMemo(
 		() =>
 			currencies.map<TableDataEntry>((c) => {
-				const [lpToken, vault] = LPVaults.find(
+				const [, vault] = LPVaults.find(
 					([lpToken]) => lpToken === c.tokenId,
 				)
-				const currency = Currencies[lpToken.toUpperCase()]
+				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+				const gaugeToken = `${vaultToken}-gauge`
+				const currency = Currencies[gaugeToken.toUpperCase()]
 				const balance = balances.balances[vault]
 				return {
 					...currency,

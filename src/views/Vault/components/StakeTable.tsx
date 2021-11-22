@@ -336,6 +336,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 			body: {
 				row: ({ children, className, ...props }) => {
 					const key = props['data-row-key']
+
 					return (
 						<tr
 							key={key}

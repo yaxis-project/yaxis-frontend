@@ -97,56 +97,56 @@ export const MVLT: Currency = {
 export const CVUSD: Currency = {
 	name: 'CV:USD',
 	tokenId: 'cv:usd',
-	icon: yax,
+	icon: usd,
 	decimals: 18,
 }
 
 export const CVUSDgauge: Currency = {
 	name: 'CV:USD-GAUGE',
 	tokenId: 'cv:usd-gauge',
-	icon: yax,
+	icon: usd,
 	decimals: 18,
 }
 
 export const CVBTC: Currency = {
 	name: 'CV:BTC',
 	tokenId: 'cv:btc',
-	icon: yax,
+	icon: wbtc,
 	decimals: 18,
 }
 
 export const CVBTCgauge: Currency = {
 	name: 'CV:BTC-GAUGE',
 	tokenId: 'cv:btc-gauge',
-	icon: yax,
+	icon: wbtc,
 	decimals: 18,
 }
 
 export const CVETH: Currency = {
 	name: 'CV:ETH',
 	tokenId: 'cv:eth',
-	icon: yax,
+	icon: eth,
 	decimals: 18,
 }
 
 export const CVETHgauge: Currency = {
 	name: 'CV:ETH-GAUGE',
 	tokenId: 'cv:eth-gauge',
-	icon: yax,
+	icon: eth,
 	decimals: 18,
 }
 
 export const CVLINK: Currency = {
 	name: 'CV:LINK',
 	tokenId: 'cv:link',
-	icon: yax,
+	icon: link,
 	decimals: 18,
 }
 
 export const CVLINKgauge: Currency = {
 	name: 'CV:LINK-GAUGE',
 	tokenId: 'cv:link-gauge',
-	icon: yax,
+	icon: link,
 	decimals: 18,
 }
 
