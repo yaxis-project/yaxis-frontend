@@ -4,7 +4,7 @@ import Typography from '../../../Typography'
 import { ApplicationModal } from '../../../../state/application/actions'
 import {
 	useOpenModal,
-	useCloseModals,
+	useCloseModal,
 	useIsModalOpen,
 } from '../../../../state/application/hooks'
 import { setLastSeenUpdate, getLastSeenUpdate } from './util'
@@ -20,7 +20,7 @@ export const Update: React.FC = () => {
 
 	const visible = useIsModalOpen(ApplicationModal['UPDATE'])
 	const openModal = useOpenModal(ApplicationModal['UPDATE'])
-	const closeModal = useCloseModals()
+	const closeModal = useCloseModal()
 
 	useEffect(() => {
 		const lastSeenUpdate = getLastSeenUpdate()

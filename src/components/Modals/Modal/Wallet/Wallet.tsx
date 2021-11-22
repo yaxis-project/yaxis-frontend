@@ -10,7 +10,7 @@ import { handleInjected, filterByDevice } from './utils'
 import { ApplicationModal } from '../../../../state/application/actions'
 import {
 	useIsModalOpen,
-	useCloseModals,
+	useCloseModal,
 } from '../../../../state/application/hooks'
 import useTranslation from '../../../../hooks/useTranslation'
 
@@ -18,7 +18,7 @@ export const Wallet: React.FC<any> = () => {
 	const translate = useTranslation()
 
 	const visible = useIsModalOpen(ApplicationModal['WALLET'])
-	const closeModal = useCloseModals()
+	const closeModal = useCloseModal()
 
 	const [page, setPage] = useState(1)
 

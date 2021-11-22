@@ -101,7 +101,7 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 				// },
 			],
 		}
-	}, [loading, gauges])
+	}, [loading, gauges, type])
 
 	return (
 		<>
@@ -131,7 +131,6 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 												.multipliedBy(
 													context.formattedValue,
 												)
-												.dividedBy(100)
 												.toFixed(3) +
 											' YAXIS / day'
 										)

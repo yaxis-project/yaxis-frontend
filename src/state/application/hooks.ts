@@ -28,11 +28,10 @@ export function useIsModalOpen(modal: ApplicationModal): boolean {
 export function useToggleModal(modal: ApplicationModal): () => void {
 	const open = useIsModalOpen(modal)
 	const dispatch = useDispatch<AppDispatch>()
-	return useCallback(() => dispatch(setOpenModal(open ? null : modal)), [
-		dispatch,
-		modal,
-		open,
-	])
+	return useCallback(
+		() => dispatch(setOpenModal(open ? null : modal)),
+		[dispatch, modal, open],
+	)
 }
 
 export function useOpenModal(modal: ApplicationModal): () => void {
@@ -40,7 +39,13 @@ export function useOpenModal(modal: ApplicationModal): () => void {
 	return useCallback(() => dispatch(setOpenModal(modal)), [dispatch, modal])
 }
 
-export function useCloseModals(): () => void {
+export function useCloseModal(): () => void {
+	const dispatch = useDispatch<AppDispatch>()
+	return useCallback(() => dispatch(setOpenModal(null)), [dispatch])
+}
+
+// TODO
+export function useAllCloseModals(): () => void {
 	const dispatch = useDispatch<AppDispatch>()
 	return useCallback(() => dispatch(setOpenModal(null)), [dispatch])
 }

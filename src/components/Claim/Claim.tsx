@@ -39,7 +39,7 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract, last }) => {
 	const { call: handleGaugeClaim, loading: loadingGaugeClaim } =
 		useContractWrite({
 			contractName: `internal.minter`,
-			method: 'mint',
+			method: 'mint(address)',
 			description: translate(`claim YAXIS`),
 		})
 

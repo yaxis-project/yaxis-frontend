@@ -5,6 +5,7 @@ import Typography from '../../../../Typography'
 import useTranslation from '../../../../../hooks/useTranslation'
 import { useNavigate } from 'react-router-dom'
 import { setLastSeenUpdate } from '../util'
+import { useCloseModal } from '../../../../../state/application/hooks'
 import distribute from '../../../../../assets/img/distribute.gif'
 import lightdark from '../../../../../assets/img/light-dark.gif'
 import lock from '../../../../../assets/img/lock.gif'
@@ -18,6 +19,8 @@ export const Body: React.FC = () => {
 	const translate = useTranslation()
 
 	const navigate = useNavigate()
+
+	const closeModal = useCloseModal()
 
 	return (
 		<>
@@ -34,7 +37,7 @@ export const Body: React.FC = () => {
 						<div>
 							<Row
 								justify="center"
-								align="middle"
+								align="top"
 								style={{
 									...contentStyle,
 									position: 'relative',
@@ -45,14 +48,14 @@ export const Body: React.FC = () => {
 									width={500}
 									style={{
 										position: 'absolute',
-										top: '0',
+										top: '40px',
 									}}
 									alt="Canonical Vaults"
 								/>
 								<Col>
 									<h3
 										style={{
-											marginTop: '50px',
+											marginTop: '5px',
 											fontSize: '20px',
 											fontWeight: 900,
 										}}
@@ -65,8 +68,8 @@ export const Body: React.FC = () => {
 
 						<div>
 							<Row
+								align="top"
 								justify="center"
-								align="middle"
 								style={{
 									...contentStyle,
 									position: 'relative',
@@ -74,20 +77,19 @@ export const Body: React.FC = () => {
 							>
 								<img
 									src={lock}
-									width={240}
+									width={220}
 									style={{
 										position: 'absolute',
-										top: '0',
+										top: '40px',
 									}}
 									alt="Lock YAXIS"
 								/>
 								<Col>
 									<h3
 										style={{
-											fontSize: '15px',
-											marginTop: '20px',
+											fontSize: '20px',
+											marginTop: '5px',
 											fontWeight: 900,
-											color: 'black',
 										}}
 									>
 										Boost rewards by locking YAXIS
@@ -99,17 +101,24 @@ export const Body: React.FC = () => {
 						<div>
 							<Row
 								justify="center"
-								align="middle"
-								style={{
-									...contentStyle,
-									backgroundImage: `url(${distribute})`,
-								}}
+								align="top"
+								style={contentStyle}
 							>
+								<img
+									src={distribute}
+									width={400}
+									style={{
+										position: 'absolute',
+										top: '40px',
+										marginRight: '26px',
+									}}
+									alt="Distribute emissions"
+								/>
 								<Col>
 									<h3
 										style={{
-											marginTop: '40px',
-											fontSize: '16px',
+											marginTop: '5px',
+											fontSize: '18px',
 											fontWeight: 900,
 										}}
 									>
@@ -124,7 +133,7 @@ export const Body: React.FC = () => {
 						<div>
 							<Row
 								justify="center"
-								align="middle"
+								align="top"
 								style={{
 									...contentStyle,
 									backgroundImage: `url(${lightdark})`,
@@ -133,7 +142,7 @@ export const Body: React.FC = () => {
 								<Col>
 									<h3
 										style={{
-											marginTop: '40px',
+											marginTop: '5px',
 											fontSize: '20px',
 											fontWeight: 900,
 										}}
@@ -153,6 +162,7 @@ export const Body: React.FC = () => {
 						onClick={() => {
 							setLastSeenUpdate('V3_0_0')
 							navigate('/V3')
+							closeModal()
 						}}
 					>
 						{translate('Migrate over')}

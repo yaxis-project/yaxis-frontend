@@ -119,7 +119,6 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 	const location = useLocation()
 
 	const autoStake = useVaultAutoStake()
-
 	const isYaxisDetails = currencies.every(
 		(currency) => currency.tokenId === 'yaxis',
 	)

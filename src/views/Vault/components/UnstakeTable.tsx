@@ -39,6 +39,8 @@ const makeColumns = (
 		{
 			title: translate('Vault'),
 			key: 'asset',
+			width: '135px',
+
 			sorter: (a, b) => a.vault.length - b.vault.length,
 			render: (text, record) => (
 				<Row align="middle">

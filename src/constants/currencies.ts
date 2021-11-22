@@ -44,7 +44,7 @@ export interface CurrencyApproved extends CurrencyContract {
 
 export const USD: Currency = {
 	name: 'USD',
-	tokenId: '',
+	tokenId: 'usd',
 	icon: usd,
 	decimals: 0,
 }
@@ -94,44 +94,44 @@ export const MVLT: Currency = {
 	decimals: 18,
 }
 
-export const CV3CRV: Currency = {
-	name: 'CV:3CRV',
-	tokenId: 'cv:3crv',
+export const CVUSD: Currency = {
+	name: 'CV:USD',
+	tokenId: 'cv:usd',
 	icon: yax,
 	decimals: 18,
 }
 
-export const CV3CRVgauge: Currency = {
-	name: 'CV:3CRV-GAUGE',
-	tokenId: 'cv:3crv-gauge',
+export const CVUSDgauge: Currency = {
+	name: 'CV:USD-GAUGE',
+	tokenId: 'cv:usd-gauge',
 	icon: yax,
 	decimals: 18,
 }
 
-export const CVWBTC: Currency = {
-	name: 'CV:WBTC',
-	tokenId: 'cv:wbtc',
+export const CVBTC: Currency = {
+	name: 'CV:BTC',
+	tokenId: 'cv:btc',
 	icon: yax,
 	decimals: 18,
 }
 
-export const CVWBTCgauge: Currency = {
-	name: 'CV:WBTC-GAUGE',
-	tokenId: 'cv:wbtc-gauge',
+export const CVBTCgauge: Currency = {
+	name: 'CV:BTC-GAUGE',
+	tokenId: 'cv:btc-gauge',
 	icon: yax,
 	decimals: 18,
 }
 
-export const CVWETH: Currency = {
-	name: 'CV:WETH',
-	tokenId: 'cv:weth',
+export const CVETH: Currency = {
+	name: 'CV:ETH',
+	tokenId: 'cv:eth',
 	icon: yax,
 	decimals: 18,
 }
 
-export const CVWETHgauge: Currency = {
-	name: 'CV:WETH-GAUGE',
-	tokenId: 'cv:weth-gauge',
+export const CVETHgauge: Currency = {
+	name: 'CV:ETH-GAUGE',
+	tokenId: 'cv:eth-gauge',
 	icon: yax,
 	decimals: 18,
 }
@@ -327,12 +327,12 @@ export const Currencies = {
 	YAXIS,
 	'YAXIS-GAUGE': YAXISgauge,
 	MVLT,
-	'CV:3CRV': CV3CRV,
-	'CV:3CRV-GAUGE': CV3CRVgauge,
-	'CV:WBTC': CVWBTC,
-	'CV:WBTC-GAUGE': CVWBTCgauge,
-	'CV:WETH': CVWETH,
-	'CV:WETH-GAUGE': CVWETHgauge,
+	'CV:USD': CVUSD,
+	'CV:USD-GAUGE': CVUSDgauge,
+	'CV:BTC': CVBTC,
+	'CV:BTC-GAUGE': CVBTCgauge,
+	'CV:ETH': CVETH,
+	'CV:ETH-GAUGE': CVETHgauge,
 	'CV:LINK': CVLINK,
 	'CV:LINK-GAUGE': CVLINKgauge,
 	MIM,

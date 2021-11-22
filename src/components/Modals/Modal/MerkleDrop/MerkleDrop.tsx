@@ -3,7 +3,7 @@ import { Modal, Row, Col } from 'antd'
 import { ApplicationModal } from '../../../../state/application/actions'
 import {
 	useOpenModal,
-	useCloseModals,
+	useCloseModal,
 	useIsModalOpen,
 } from '../../../../state/application/hooks'
 import { useUserUnclaimedAmount } from '../../../../state/internal/merkleDrop'
@@ -29,7 +29,7 @@ export const MerkleDrop: React.FC = () => {
 
 	const visible = useIsModalOpen(ApplicationModal['MERKLE_DROP'])
 	const openModal = useOpenModal(ApplicationModal['MERKLE_DROP'])
-	const closeModal = useCloseModals()
+	const closeModal = useCloseModal()
 
 	const userUnclaimedAmount = useUserUnclaimedAmount(account)
 
