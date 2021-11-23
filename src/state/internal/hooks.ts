@@ -726,7 +726,6 @@ export function useVaultStrategies() {
 
 export function useGauges() {
 	const { contracts } = useContracts()
-	const block = useBlockNumber()
 
 	const callInputs = useMemo(() => {
 		if (!contracts?.vaults) return []
@@ -754,16 +753,18 @@ export function useGauges() {
 		)
 	}, [relativeWeights, contracts?.vaults])
 
-	const nextWeekStart = useMemo(() => {
-		if (!block) return 0
-		return (
-			(Math.floor(Date.now() / (60 * 60 * 24 * 7 * 1000)) + 1) *
-			(60 * 60 * 24 * 7 * 1000)
-		)
-	}, [block])
+	const nextWeekStart = useSingleContractMultipleData(
+		contracts?.internal.gaugeController,
+		'time_weight(address)',
+		callInputs,
+	)
 
 	const nextRelativeWeightsCalls = useMemo(
-		() => callInputs.map((input) => [...input, nextWeekStart]),
+		() =>
+			callInputs.map((input, i) => [
+				...input,
+				nextWeekStart[i]?.result?.toString() || 0,
+			]),
 		[callInputs, nextWeekStart],
 	)
 
@@ -847,7 +848,7 @@ export function useGauges() {
 		)
 		return {
 			gauges,
-			nextWeekStart,
+			nextWeekStart: nextWeekStart[0]?.result?.toString() || '0',
 			loading,
 		}
 	}, [

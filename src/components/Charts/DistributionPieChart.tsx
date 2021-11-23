@@ -117,7 +117,8 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 					options={{
 						layout: {
 							padding: {
-								bottom: 28,
+								top: 10,
+								bottom: 20,
 							},
 						},
 						plugins: {

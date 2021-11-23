@@ -19,7 +19,9 @@ const FutureRewards: React.FC = () => {
 						Starts on{' '}
 						{loading
 							? '-'
-							: moment(nextWeekStart).format('MMM Do, HH:mm')}
+							: moment(Number(nextWeekStart) * 1000).format(
+									'MMM Do, HH:mm',
+							  )}
 						.
 					</div>
 				}
