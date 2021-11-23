@@ -22,7 +22,6 @@ import {
 	useConvexAPY,
 } from '../external/hooks'
 import { usePrices } from '../prices/hooks'
-import { useBlockNumber } from '../application/hooks'
 
 const STRATEGY_INTERFACE = new ethers.utils.Interface(abis.StrategyABI)
 
@@ -141,7 +140,8 @@ export function useVaultRewards(name: TVaults) {
 		return {
 			workingSupply: new BigNumber(balance?.result?.toString() || 0),
 			amountPerYear: yaxisPerYear,
-			APR,
+			maxAPR: APR,
+			minAPR: APR.dividedBy(2.5),
 		}
 	}, [name, contracts?.vaults, prices, relativeWeight, balance, rate])
 }
@@ -161,29 +161,41 @@ export function useVaultsAPR() {
 	return useMemo(() => {
 		return {
 			usd: {
-				yaxisAPR: usd.APR,
+				yaxisAPR: {
+					min: usd.minAPR,
+					max: usd.maxAPR,
+				},
 				strategy: mim3crv,
-				totalAPR: usd.APR.plus(mim3crv.totalAPR),
 			},
 			btc: {
-				yaxisAPR: btc.APR,
+				yaxisAPR: {
+					min: btc.minAPR,
+					max: btc.maxAPR,
+				},
 				strategy: rencrv,
-				totalAPR: btc.APR.plus(rencrv.totalAPR),
 			},
 			eth: {
-				yaxisAPR: eth.APR,
+				yaxisAPR: {
+					min: eth.minAPR,
+					max: eth.maxAPR,
+				},
 				strategy: alethcrv,
-				totalAPR: eth.APR.plus(alethcrv.totalAPR),
 			},
 			link: {
-				yaxisAPR: link.APR,
+				yaxisAPR: {
+					min: link.minAPR,
+					max: link.maxAPR,
+				},
 				strategy: linkcrv,
-				totalAPR: link.APR.plus(linkcrv.totalAPR),
 			},
 			yaxis: {
-				yaxisAPR: yaxis.APR,
-				strategy: {},
-				totalAPR: yaxis.APR,
+				yaxisAPR: {
+					min: yaxis.minAPR,
+					max: yaxis.maxAPR,
+				},
+				strategy: {
+					totalAPR: null,
+				},
 			},
 		}
 	}, [usd, btc, eth, link, yaxis, mim3crv, rencrv, alethcrv, linkcrv])

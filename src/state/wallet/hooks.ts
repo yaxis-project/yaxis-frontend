@@ -1120,15 +1120,17 @@ export function useVaultsAPRWithBoost() {
 			Object.fromEntries(
 				Object.entries(apr).map(([vault, data]) => {
 					const boost = boosts[vault].boost
-					const yaxisAPRWithBoost = data.yaxisAPR.multipliedBy(boost)
-					const totalAPRWithBoost = data.totalAPR
-						.minus(data.yaxisAPR)
-						.plus(yaxisAPRWithBoost)
+					const yaxisAPRWithBoost =
+						data.yaxisAPR.min.multipliedBy(boost)
+					const totalAPRWithBoost = yaxisAPRWithBoost.plus(
+						data.strategy.totalAPR || 0,
+					)
 					const dataWithBoost = {
 						...data,
 						boost,
 						yaxisAPR: yaxisAPRWithBoost,
 						totalAPR: totalAPRWithBoost,
+						maxYaxisAPR: data.yaxisAPR.max,
 					}
 					return [vault, dataWithBoost]
 				}),

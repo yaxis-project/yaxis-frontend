@@ -38,10 +38,9 @@ const makeColumns = (
 	return [
 		{
 			title: translate('Vault'),
-			key: 'asset',
+			key: 'vault',
 			width: '135px',
-
-			sorter: (a, b) => a.vault.length - b.vault.length,
+			sorter: (a, b) => a.vault.localeCompare(b.vault),
 			render: (text, record) => (
 				<Row align="middle">
 					<img src={record.icon} height="36" width="36" alt="logo" />

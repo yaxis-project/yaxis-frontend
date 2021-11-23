@@ -7,14 +7,16 @@ import {
 } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import useTranslation from '../../../hooks/useTranslation'
-import { Row, Grid, Form, Tooltip } from 'antd'
+import { Row, Col, Grid, Form, Tooltip } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { useContracts } from '../../../contexts/Contracts'
+import { NavLink } from 'react-router-dom'
 import Button from '../../../components/Button'
 import Table from '../../../components/Table'
 import Typography from '../../../components/Typography'
+import Divider from '../../../components/Divider'
 import {
 	CurrencyValues,
 	handleFormInputChange,
@@ -40,9 +42,9 @@ const makeColumns = (
 	return [
 		{
 			title: translate('Vault'),
-			key: 'asset',
+			key: 'vault',
 			width: '150px',
-			sorter: (a, b) => a.vault.length - b.vault.length,
+			sorter: (a, b) => a.vault.localeCompare(b.vault),
 			render: (text, record) => (
 				<Row align="middle">
 					<img src={record.icon} height="36" width="36" alt="logo" />
@@ -102,7 +104,7 @@ const makeColumns = (
 		{
 			title: translate('Current APR'),
 			key: 'apy',
-			sorter: (a, b) => a.name.length - b.name.length,
+			sorter: (a, b) => a.apr.totalAPR.minus(b.apr.totalAPR).toNumber(),
 			render: (text, record) => (
 				<>
 					<Row style={{ fontWeight: 'bolder' }}>
@@ -117,7 +119,7 @@ const makeColumns = (
 								style={{ minWidth: '350px' }}
 								placement="topLeft"
 								title={
-									<>
+									<div style={{ padding: '5px' }}>
 										{record.apr.strategy.totalAPR && (
 											<TooltipRow
 												main={'Strategy APR'}
@@ -131,8 +133,41 @@ const makeColumns = (
 											value={record.apr.yaxisAPR
 												.multipliedBy(100)
 												.toNumber()}
+											boost={record.apr.boost}
 										/>
-									</>
+										<Divider
+											style={{
+												borderColor: 'white',
+												margin: '10px 0',
+											}}
+										/>
+										{record.apr.boost.lt(2.5) && (
+											<>
+												<Row justify="center">
+													<Button height="30px">
+														<NavLink to="/governance">
+															Lock & Boost
+														</NavLink>
+													</Button>
+												</Row>
+												<Row
+													style={{
+														fontWeight: 800,
+														marginTop: '5px',
+													}}
+												>
+													Get{' '}
+													{record.apr.maxYaxisAPR
+														.minus(
+															record.apr.yaxisAPR,
+														)
+														.multipliedBy(100)
+														.toFormat(2)}
+													% extra APR!
+												</Row>
+											</>
+										)}
+									</div>
 								}
 							>
 								<StyledInfoIcon />
@@ -421,23 +456,30 @@ const StyledInfoIcon = styled(InfoCircleOutlined)`
 interface TooltipRowProps {
 	main: string
 	value: any
-	prefix?: string
+	boost?: BigNumber
 }
 
-const TooltipRow = ({ main, value, prefix }: TooltipRowProps) => (
+const TooltipRow = ({
+	main,
+	value,
+	boost = new BigNumber(0),
+}: TooltipRowProps) => (
 	<>
-		<div
+		<Row
 			style={{ textDecoration: 'underline', textUnderlineOffset: '4px' }}
 		>
 			{main}
-		</div>
-		<div>
-			<Value
-				value={value}
-				numberSuffix={'%'}
-				decimals={2}
-				color={'white'}
-			/>
-		</div>
+		</Row>
+		<Row gutter={8}>
+			<Col>
+				<Value
+					value={value}
+					numberSuffix={'%'}
+					decimals={2}
+					color={'white'}
+				/>
+			</Col>
+			{boost.gt(1) && <Col>[{boost.toFormat(2)} Boost]</Col>}
+		</Row>
 	</>
 )

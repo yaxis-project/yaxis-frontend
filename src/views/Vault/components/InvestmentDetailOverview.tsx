@@ -136,13 +136,13 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 					</>
 				}
 			/> */}
-			<APYCalculator
+			{/* <APYCalculator
 				APR={totalAPR.toNumber()}
 				balance={new BigNumber(totalUSDBalance)}
 				loading={balanceLoading}
 				page={'metavault'}
 				last
-			/>
+			/> */}
 		</Card>
 	)
 }
