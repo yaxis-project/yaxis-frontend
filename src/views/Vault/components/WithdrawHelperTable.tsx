@@ -108,7 +108,7 @@ const { useBreakpoint } = Grid
 
 interface TableDataEntry extends Currency {
 	balance: BigNumber
-	balanceUSD: string
+	balanceUSD: BigNumber
 	value: BigNumber
 	vault: string
 }
@@ -239,23 +239,19 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 				const [, vault] = LPVaults.find(
 					([lpToken]) => lpToken === c.tokenId,
 				)
-				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
-				const gaugeToken = `${vaultToken}-gauge`
-				const currency = Currencies[gaugeToken.toUpperCase()]
 				const balance = balances.balances[vault]
 				return {
-					...currency,
+					...c,
 					vault,
-					vaultCurrency: currency.name,
+					vaultCurrency: c.name,
 					balance: balance?.gaugeToken?.amount || new BigNumber(0),
 					balanceUSD: balance?.usd || new BigNumber(0),
 					value: currencyValues
 						? new BigNumber(
-								currencyValues[currency.name.toLowerCase()] ||
-									0,
+								currencyValues[c.name.toLowerCase()] || 0,
 						  )
 						: new BigNumber(0),
-					inputValue: currencyValues[currency.name.toLowerCase()],
+					inputValue: currencyValues[c.name.toLowerCase()],
 					key: vault,
 				}
 			}),

@@ -6,7 +6,7 @@ import {
 	updateLanguage,
 	updateVaultAutoStake,
 } from './actions'
-import { Languages, TLanguages } from '../../constants/translations'
+import { TLanguages } from '../../constants/translations'
 
 const currentTimestamp = () => new Date().getTime()
 
