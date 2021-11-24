@@ -64,16 +64,15 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 					library.getSigner(account).connectUnchecked(),
 				)
 
-				const config: any = {}
-
-				// NOTE: mint_many and mint are having problems with gas estimation
-				if (method !== 'mint_many' && method !== 'mint(address)') {
-					const gasCost = await c.estimateGas[method](
-						...(args || []),
-						{},
-					)
-					config.gasLimit = calculateGasMargin(gasCost)
+				const config: any = {
+					gasLimit: 1_000_000,
 				}
+
+				const gasCost = await c.estimateGas[method](
+					...(args || []),
+					config,
+				)
+				config.gasLimit = calculateGasMargin(gasCost)
 
 				if (amount) config.value = amount
 				const m = c[method]
