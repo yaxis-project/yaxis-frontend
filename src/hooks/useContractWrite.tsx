@@ -74,6 +74,8 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				)
 				config.gasLimit = calculateGasMargin(gasCost)
 
+				c.callStatic[method](...(args || []), config)
+
 				if (amount) config.value = amount
 				const m = c[method]
 				if (!m)

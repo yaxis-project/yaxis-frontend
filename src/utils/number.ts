@@ -44,9 +44,9 @@ export function getApy(
 	return 0
 }
 
-// add 10%
+// add 20%
 export function calculateGasMargin(value: BN): BN {
-	return value.mul(BN.from(10000).add(BN.from(1000))).div(BN.from(10000))
+	return value.mul(BN.from(10000).add(BN.from(2000))).div(BN.from(10000))
 }
 
 type FormatBNOptions = {

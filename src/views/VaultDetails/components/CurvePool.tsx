@@ -34,7 +34,7 @@ const CurvePool: React.FC<Props> = ({ vault }) => {
 			<Row justify="center">
 				<Text>
 					This Vault accepts {vaultData.token.toUpperCase()} deposits,
-					a Curve.fi Liqidity Pool token.
+					a Curve.fi Liquidity Pool token.
 				</Text>
 			</Row>
 			<Row justify="center">
