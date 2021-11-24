@@ -84,14 +84,12 @@ export default function HomeExpandableOverview() {
 								<Divider style={{ margin: '5px 0' }} />
 
 								<TooltipRow
-									main={'Total MetaVault value(LEGACY)'}
+									main={'Total MetaVault value (LEGACY)'}
 									value={metavaultTvl.toNumber()}
 								/>
 								<TooltipRow
-									main={
-										'Total MetaVault Staking value (LEGACY)'
-									}
-									value={metavaultTvl.toNumber()}
+									main={'Total YAXIS Staking value (LEGACY)'}
+									value={stakingTvl.toNumber()}
 								/>
 							</>
 						}
