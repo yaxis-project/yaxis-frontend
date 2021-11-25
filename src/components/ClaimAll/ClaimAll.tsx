@@ -25,15 +25,30 @@ const ClaimAll: React.FC = () => {
 		useContractWrite({
 			contractName: `rewards.MetaVault`,
 			method: 'getReward',
-			description: `claim YAXIS`,
+			description: `claim YAXIS MetaVault staking rewards`,
 		})
 
 	const { loading: loadingClaimableMetaVault, result: claimableMetaVault } =
 		useSingleCallResultByName(`rewards.MetaVault`, 'earned', [account])
 
+	const { call: handleClaimLegacyYAXIS, loading: loadingClaimLegacyYAXIS } =
+		useContractWrite({
+			contractName: `rewards.Yaxis`,
+			method: 'getReward',
+			description: `claim YAXIS staking rewards`,
+		})
+
+	const {
+		loading: loadingClaimableLegacyYAXIS,
+		result: claimableLegacyYAXIS,
+	} = useSingleCallResultByName(`rewards.Yaxis`, 'earned', [account])
+
 	const legacyClaimable = useMemo(
-		() => new BigNumber(claimableMetaVault?.[0]?.toString() || 0),
-		[claimableMetaVault],
+		() =>
+			new BigNumber(claimableMetaVault?.[0]?.toString() || 0).plus(
+				claimableLegacyYAXIS?.[0]?.toString() || 0,
+			),
+		[claimableMetaVault, claimableLegacyYAXIS],
 	)
 	/***************************************************/
 
@@ -72,13 +87,10 @@ const ClaimAll: React.FC = () => {
 							disabled={
 								loadingContracts ||
 								loadingClaimableMetaVault ||
+								loadingClaimableLegacyYAXIS ||
 								loadingUserGauges ||
 								new BigNumber(claimable?.toString() || 0)
-									.plus(
-										claimableMetaVault
-											? claimableMetaVault.toString()
-											: 0,
-									)
+									.plus(legacyClaimable)
 									.isZero()
 							}
 							onClick={() => {
@@ -123,8 +135,19 @@ const ClaimAll: React.FC = () => {
 									).gt(0)
 								)
 									handleClaimMetaVault()
+
+								if (
+									new BigNumber(
+										claimableLegacyYAXIS?.toString() || 0,
+									).gt(0)
+								)
+									handleClaimLegacyYAXIS()
 							}}
-							loading={loadingClaimMetaVault || loadingClaimMany}
+							loading={
+								loadingClaimLegacyYAXIS ||
+								loadingClaimMetaVault ||
+								loadingClaimMany
+							}
 							height={'40px'}
 						>
 							{translate('Claim All')}

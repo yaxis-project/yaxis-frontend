@@ -30,7 +30,7 @@ const StepExit: React.FC<StepExitProps> = ({ stakedMVLT, walletMVLT }) => {
 
 	const { call: handleUnstake, loading: loadingUnstake } = useContractWrite({
 		contractName: `rewards.MetaVault`,
-		method: 'withdraw',
+		method: 'exit',
 		description: `unstake MVLT`,
 	})
 
@@ -47,15 +47,7 @@ const StepExit: React.FC<StepExitProps> = ({ stakedMVLT, walletMVLT }) => {
 				<Step
 					title={
 						<StyledButton
-							onClick={async () =>
-								handleUnstake({
-									args: [
-										stakedMVLT
-											.multipliedBy(10 ** 18)
-											.toString(),
-									],
-								})
-							}
+							onClick={async () => handleUnstake()}
 							loading={loadingUnstake}
 							height={'40px'}
 						>

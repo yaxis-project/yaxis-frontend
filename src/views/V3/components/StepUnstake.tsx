@@ -27,7 +27,7 @@ const StepUnstake: React.FC<StepUnstakeProps> = ({ stakedYAXIS }) => {
 
 	const { call: handleUnstake, loading: loadingUnstake } = useContractWrite({
 		contractName: `rewards.Yaxis`,
-		method: 'withdraw',
+		method: 'exit',
 		description: `unstake YAXIS`,
 	})
 
@@ -37,15 +37,7 @@ const StepUnstake: React.FC<StepUnstakeProps> = ({ stakedYAXIS }) => {
 				<Step
 					title={
 						<StyledButton
-							onClick={() =>
-								handleUnstake({
-									args: [
-										stakedYAXIS
-											.multipliedBy(10 ** 18)
-											.toString(),
-									],
-								})
-							}
+							onClick={() => handleUnstake()}
 							loading={loadingUnstake}
 							height={'40px'}
 						>
