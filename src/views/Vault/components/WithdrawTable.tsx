@@ -63,7 +63,7 @@ const makeColumns = (
 						decimals={2}
 					/>
 					<Text type="secondary">
-						{record.balance.toFixed(2)} {record.name}
+						{record.balance.toFormat(2)} {record.name}
 					</Text>
 				</>
 			),

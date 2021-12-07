@@ -78,7 +78,7 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 				<Col xs={11} sm={6} md={6} className="balance">
 					<Value value={balanceUSD} numberPrefix="$" decimals={2} />
 					<Text type="secondary">
-						{balance.toFixed(2)} {currency.name}
+						{balance.toFormat(2)} {currency.name}
 					</Text>
 				</Col>
 				<Col xs={18} sm={12} md={12}>

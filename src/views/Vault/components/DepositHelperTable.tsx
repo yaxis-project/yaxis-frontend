@@ -30,6 +30,7 @@ import ApprovalCover from '../../../components/ApprovalCover'
 import { DoubleApprovalCover } from '../../../components/ApprovalCover/DoubleApprovalCover'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
+import { Contracts } from '../../../constants/contracts'
 
 const { Text, Title } = Typography
 
@@ -39,6 +40,7 @@ const makeColumns = (
 	loading: boolean,
 	translate: any,
 	onChange: ReturnType<typeof handleFormInputChange>,
+	contracts: Contracts
 ) => {
 	return [
 		{
@@ -82,7 +84,17 @@ const makeColumns = (
 			title: translate('Amount'),
 			key: 'amount',
 			render: (text, record) => {
-				return (
+				const key = record.key
+				if (key === 'yaxis') return <ApprovalCover
+					contractName={`currencies.ERC677.${key}.contract`}
+					approvee={
+						contracts?.vaults[key].gauge.address
+					}
+					noWrapper
+					// Note: We display "Vault" to the user,
+					// but it is really interacting with the Gauge
+					buttonText={'Deposit'}
+				>
 					<Form.Item
 						validateStatus={
 							new BigNumber(record.value).gt(
@@ -106,6 +118,45 @@ const makeColumns = (
 							}
 						/>
 					</Form.Item>
+				</ApprovalCover>
+
+				return (
+					<DoubleApprovalCover
+						noWrapper
+						contractName1={`vaults.${key}.token.contract`}
+						approvee1={contracts?.vaults[key].vault.address}
+						buttonText1={'Deposit'}
+						contractName2={`vaults.${key}.token.contract`}
+						approvee2={
+							contracts?.internal.vaultHelper.address
+						}
+						buttonText2={'Automatic Staking'}
+					>
+						<Form.Item
+							validateStatus={
+								new BigNumber(record.value).gt(
+									new BigNumber(record.balance),
+								) && 'error'
+							}
+							style={{ marginBottom: 0 }}
+						>
+							<Input
+								onChange={(e) =>
+									onChange(record.tokenId, e.target.value)
+								}
+								value={record.inputValue}
+								min={'0'}
+								max={`${record.balance}`}
+								placeholder="0"
+								disabled={loading || record.balance.isZero()}
+								suffix={record.name}
+								onClickMax={() =>
+									onChange(record.tokenId, record.balance || '0')
+								}
+							/>
+						</Form.Item>
+					</DoubleApprovalCover>
+
 				)
 			},
 		},
@@ -120,8 +171,8 @@ const makeColumns = (
 							{record.apr.totalAPR.isNaN()
 								? 0
 								: record.apr.totalAPR
-										.multipliedBy(100)
-										.toFormat(2)}
+									.multipliedBy(100)
+									.toFormat(2)}
 							%
 							<Tooltip
 								style={{ minWidth: '350px' }}
@@ -334,70 +385,13 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])
 
 	const columns = useMemo(
-		() => makeColumns(loading, translate, onUpdate),
-		[translate, onUpdate, loading],
+		() => makeColumns(loading, translate, onUpdate, contracts),
+		[translate, onUpdate, loading, contracts],
 	)
-
-	const components = useMemo(() => {
-		return {
-			body: {
-				row: ({ children, className, ...props }) => {
-					const key = props['data-row-key']
-					if (key === 'yaxis')
-						return (
-							<tr
-								key={key}
-								className={className}
-								style={{
-									transform: 'translateY(0)',
-								}}
-							>
-								<ApprovalCover
-									contractName={`currencies.ERC677.${key}.contract`}
-									approvee={
-										contracts?.vaults[key].gauge.address
-									}
-									noWrapper
-									// Note: We display "Vault" to the user,
-									// but it is really interacting with the Gauge
-									buttonText={'Deposit'}
-								>
-									{children}
-								</ApprovalCover>
-							</tr>
-						)
-					return (
-						<tr
-							key={key}
-							className={className}
-							style={{
-								transform: 'translateY(0)',
-							}}
-						>
-							<DoubleApprovalCover
-								noWrapper
-								contractName1={`vaults.${key}.token.contract`}
-								approvee1={contracts?.vaults[key].vault.address}
-								buttonText1={'Deposit'}
-								contractName2={`vaults.${key}.token.contract`}
-								approvee2={
-									contracts?.internal.vaultHelper.address
-								}
-								buttonText2={'Automatic Staking'}
-							>
-								{children}
-							</DoubleApprovalCover>
-						</tr>
-					)
-				},
-			},
-		}
-	}, [contracts?.internal.vaultHelper.address, contracts?.vaults])
 
 	return (
 		<>
 			<Table
-				components={components}
 				columns={columns}
 				dataSource={data}
 				pagination={false}

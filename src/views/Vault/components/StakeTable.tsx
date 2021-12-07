@@ -29,6 +29,7 @@ import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
+import { Contracts } from '../../../constants/contracts'
 
 const { Text, Title } = Typography
 
@@ -38,6 +39,7 @@ const makeColumns = (
 	loading: boolean,
 	translate: any,
 	onChange: ReturnType<typeof handleFormInputChange>,
+	contracts: Contracts
 ) => {
 	return [
 		{
@@ -65,7 +67,7 @@ const makeColumns = (
 						numberPrefix="$"
 					/>
 					<Text type="secondary">
-						{record.balance.toFixed(2)} {record.name}
+						{record.balance.toFormat(2)} {record.name}
 					</Text>
 				</>
 			),
@@ -74,30 +76,41 @@ const makeColumns = (
 			title: translate('Amount'),
 			key: 'amount',
 			render: (text, record) => {
+				const key = record.key
+
+
 				return (
-					<Form.Item
-						validateStatus={
-							new BigNumber(record.value).gt(
-								new BigNumber(record.balance),
-							) && 'error'
-						}
-						style={{ marginBottom: 0 }}
+					<ApprovalCover
+						contractName={`vaults.${key}.vaultToken.contract`}
+						approvee={contracts?.vaults[key].gauge.address}
+						noWrapper
+						buttonText={'Gauge'}
 					>
-						<Input
-							onChange={(e) =>
-								onChange(record.tokenId, e.target.value)
+						<Form.Item
+							validateStatus={
+								new BigNumber(record.value).gt(
+									new BigNumber(record.balance),
+								) && 'error'
 							}
-							value={record.inputValue}
-							min={'0'}
-							max={`${record.balance}`}
-							placeholder="0"
-							disabled={loading || record.balance.isZero()}
-							suffix={record.name}
-							onClickMax={() =>
-								onChange(record.tokenId, record.balance || '0')
-							}
-						/>
-					</Form.Item>
+							style={{ marginBottom: 0 }}
+						>
+							<Input
+								onChange={(e) =>
+									onChange(record.tokenId, e.target.value)
+								}
+								value={record.inputValue}
+								min={'0'}
+								max={`${record.balance}`}
+								placeholder="0"
+								disabled={loading || record.balance.isZero()}
+								suffix={record.name}
+								onClickMax={() =>
+									onChange(record.tokenId, record.balance || '0')
+								}
+							/>
+						</Form.Item>
+					</ApprovalCover>
+
 				)
 			},
 		},
@@ -112,8 +125,8 @@ const makeColumns = (
 							{record.apr.totalAPR.isNaN()
 								? 0
 								: record.apr.totalAPR
-										.multipliedBy(100)
-										.toFormat(2)}
+									.multipliedBy(100)
+									.toFormat(2)}
 							%
 							<Tooltip
 								style={{ minWidth: '350px' }}
@@ -362,43 +375,13 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])
 
 	const columns = useMemo(
-		() => makeColumns(loading, translate, onUpdate),
-		[translate, onUpdate, loading],
+		() => makeColumns(loading, translate, onUpdate, contracts),
+		[translate, onUpdate, loading, contracts],
 	)
-
-	const components = useMemo(() => {
-		return {
-			body: {
-				row: ({ children, className, ...props }) => {
-					const key = props['data-row-key']
-
-					return (
-						<tr
-							key={key}
-							className={className}
-							style={{
-								transform: 'translateY(0)',
-							}}
-						>
-							<ApprovalCover
-								contractName={`vaults.${key}.vaultToken.contract`}
-								approvee={contracts?.vaults[key].gauge.address}
-								noWrapper
-								buttonText={'Gauge'}
-							>
-								{children}
-							</ApprovalCover>
-						</tr>
-					)
-				},
-			},
-		}
-	}, [contracts?.vaults])
 
 	return (
 		<>
 			<Table
-				components={components}
 				columns={columns}
 				dataSource={data}
 				pagination={false}
