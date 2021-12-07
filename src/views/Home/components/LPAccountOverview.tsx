@@ -17,29 +17,6 @@ const { Panel } = Collapse
 const { useBreakpoint } = Grid
 const { Text, Title } = Typography
 
-interface AccountOverviewCardProps {
-	loading: boolean
-	mainTitle: string
-	secondaryText: string
-	value: string
-}
-
-const StyledImage2 = styled.img`
-	@media only screen and (max-width: 575px) {
-		margin-left: 50px;
-	}
-`
-
-const StyledTitle = styled.div`
-	display: inline-block;
-	font-size: 22px;
-	font-style: normal;
-	font-weight: 600;
-	line-height: 29px;
-	letter-spacing: 0em;
-	color: ${(props) => props.theme.primary.font};
-`
-
 interface AdvancedNavigationRowProps {
 	balance: BigNumber
 	data: LiquidityPool
@@ -60,10 +37,6 @@ const StyledCollapse = styled(Collapse)`
 	svg {
 		fill: ${(props) => props.theme.primary.font};
 	}
-`
-
-const StyledPanelTitle = styled.span`
-	color: ${(props) => props.theme.primary.font};
 `
 
 const StyledRow = styled(Row)`

@@ -406,7 +406,7 @@ const ExtendLock: React.FC<ExtendLockProps> = ({ data: { end, locked } }) => {
 }
 
 const Lock: React.FC = () => {
-	const translate = useTranslation()
+	// const translate = useTranslation()
 
 	const { contracts } = useContracts()
 

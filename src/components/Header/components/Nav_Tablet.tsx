@@ -210,10 +210,6 @@ const StyledSubMenu = styled(Menu.SubMenu)`
 	height: 38px;
 `
 
-const ItemGroup = styled(Menu.ItemGroup)`
-	height: 30px;
-`
-
 const Connect = styled(Menu.Item)`
 	font-weight: bold;
 	font-size: 1.3em;

@@ -6,7 +6,6 @@ import {
 	CurrencyApproved,
 	ETH,
 	YAXIS,
-	MVLT,
 } from '../../constants/currencies'
 import {
 	TRewardsContracts,

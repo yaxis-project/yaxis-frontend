@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
-import useTranslation from '../../../hooks/useTranslation'
+// import useTranslation from '../../../hooks/useTranslation'
 import Card from '../../../components/Card'
 import Typography from '../../../components/Typography'
-import { Row, Col } from 'antd'
+import { Row } from 'antd'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { currentConfig } from '../../../constants/configs'
 import { TVaults } from '../../../constants/type'
@@ -25,7 +25,7 @@ const CurvePool: React.FC<Props> = ({ vault }) => {
 		[chainId, vault],
 	)
 
-	const t = useTranslation()
+	// const translate = useTranslation()
 
 	if (!vaultData.url) return null
 

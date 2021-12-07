@@ -326,12 +326,12 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 
 		if (transactions.length > 0) {
 			await Promise.allSettled(
-				transactions.map(([token, amount]) => {
+				transactions.map(([token, amount]) => 
 					callsLookup[`handleStake${token}`]({
 						args: [amount],
 						descriptionExtra: totalDepositing,
 					})
-				}),
+				),
 			)
 			setCurrencyValues(
 				currencies.reduce(

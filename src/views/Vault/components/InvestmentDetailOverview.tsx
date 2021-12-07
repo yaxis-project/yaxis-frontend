@@ -1,44 +1,13 @@
-import React, { useContext } from 'react'
-import styled from 'styled-components'
-import { useAPY } from '../../../state/internal/hooks'
+import React from 'react'
 
-import { Tooltip, Row } from 'antd'
-import APYCalculator from '../../../components/APYCalculator'
-import Typography from '../../../components/Typography'
-import Value from '../../../components/Value'
-import CardRow from '../../../components/CardRow'
+// import CardRow from '../../../components/CardRow'
 import ClaimAll from '../../../components/ClaimAll'
 import Card from '../../../components/Card'
-import { InfoCircleOutlined } from '@ant-design/icons'
-import BigNumber from 'bignumber.js'
+// import BigNumber from 'bignumber.js'
 import useTranslation from '../../../hooks/useTranslation'
 
-const { Text } = Typography
 
-interface TooltipRowProps {
-	main: string
-	value: any
-	suffix?: string
-}
 
-const TooltipRow = ({ main, value, suffix }: TooltipRowProps) => (
-	<>
-		<div
-			style={{ textDecoration: 'underline', textUnderlineOffset: '4px' }}
-		>
-			{main}
-		</div>
-		<Row>
-			<Value
-				value={value}
-				numberSuffix="%"
-				decimals={2}
-				color={'white'}
-			/>
-			<span style={{ fontSize: '10px' }}>{suffix}</span>
-		</Row>
-	</>
-)
 
 type Props = { totalUSDBalance: string; balanceLoading: boolean }
 
@@ -47,16 +16,6 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 	balanceLoading,
 }) => {
 	const translate = useTranslation()
-
-	const {
-		threeCrvApyPercent,
-		yaxisApyPercent,
-		yaxisAprPercent,
-		lpApyPercent,
-		totalAPY,
-		totalAPR,
-	} = useAPY('MetaVault')
-
 	return (
 		<Card title={translate('Account Overview')} icon="yaxis">
 			<ClaimAll />
@@ -149,8 +108,3 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 
 export default InvestmentDetailOverview
 
-const StyledInfoIcon = styled(InfoCircleOutlined)`
-	margin-left: 5px;
-	color: ${(props) => props.theme.secondary.font};
-	font-size: 15px;
-`

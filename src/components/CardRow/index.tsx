@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
 import Typography from '../../components/Typography'
-import Divider from '../../components/Divider'
 
 const { Text, Title } = Typography
 

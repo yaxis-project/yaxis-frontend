@@ -1,9 +1,6 @@
 import React from 'react'
-import Typography from '../../components/Typography'
 import Card from '../../components/Card'
 import './index.less'
-
-const { Title } = Typography
 
 const gridStyle = {
 	width: '100%',

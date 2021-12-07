@@ -1,47 +1,18 @@
-import React, { useContext } from 'react'
-import styled from 'styled-components'
+import React from 'react'
 import {
 	useUserBoost,
 	useVaultsAPRWithBoost,
 } from '../../../state/wallet/hooks'
 import useTranslation from '../../../hooks/useTranslation'
-import { Tooltip, Row } from 'antd'
-import APYCalculator from '../../../components/APYCalculator'
+import { Row } from 'antd'
 import Typography from '../../../components/Typography'
 import Card from '../../../components/Card'
 import Value from '../../../components/Value'
 import CardRow from '../../../components/CardRow'
 import Claim from '../../../components/Claim'
-import { InfoCircleOutlined } from '@ant-design/icons'
-import BigNumber from 'bignumber.js'
 import { TVaults } from '../../../constants/type'
 
 const { Text } = Typography
-
-interface TooltipRowProps {
-	main: string
-	value: any
-	suffix?: string
-}
-
-const TooltipRow = ({ main, value, suffix }: TooltipRowProps) => (
-	<>
-		<div
-			style={{ textDecoration: 'underline', textUnderlineOffset: '4px' }}
-		>
-			{main}
-		</div>
-		<Row>
-			<Value
-				value={value}
-				numberSuffix="%"
-				decimals={2}
-				color={'white'}
-			/>
-			<span style={{ fontSize: '10px' }}>{suffix}</span>
-		</Row>
-	</>
-)
 
 type Props = {
 	totalUSDBalance: string
@@ -58,7 +29,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 
 	const apr = useVaultsAPRWithBoost()
 
-	const { loading, boost } = useUserBoost(vault)
+	const {  boost } = useUserBoost(vault)
 
 	return (
 		<Card title={t('Account Overview')} icon="yaxis">
@@ -128,9 +99,3 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 }
 
 export default InvestmentDetailOverview
-
-const StyledInfoIcon = styled(InfoCircleOutlined)`
-	margin-left: 5px;
-	color: ${(props) => props.theme.secondary.font};
-	font-size: 15px;
-`

@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import logo from '../../assets/img/logo-ui.svg'
 import { LeftOutlined } from '@ant-design/icons'
 import { NavLink } from 'react-router-dom'
 import { defaultBaseTheme } from '../../theme'
