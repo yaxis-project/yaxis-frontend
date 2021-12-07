@@ -114,12 +114,12 @@ const GaugeWeight: React.FC = () => {
 				key: 'action',
 				width: '60%',
 				render: (record) => {
-					const cooldown = moment(record.end.toNumber() * 1000).add(
+					const cooldown = moment(record.lastVote.toNumber() * 1000).add(
 						WEIGHT_VOTE_DELAY * 1000,
 					)
 					return (
 						<div style={{ position: 'relative' }}>
-							{record.end.gt(0) && (
+							{record.lastVote.gt(0) && (
 								<div
 									style={{
 										position: 'absolute',

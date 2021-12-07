@@ -48,8 +48,8 @@ export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
 		() =>
 			uncheckedAddresses
 				? uncheckedAddresses
-						.filter((a) => ethers.utils.isAddress(a))
-						.sort()
+					.filter((a) => ethers.utils.isAddress(a))
+					.sort()
 				: [],
 		[uncheckedAddresses],
 	)
@@ -125,33 +125,33 @@ export function useTokenBalancesWithLoadingIndicator(
 			() =>
 				address && validatedTokens.length > 0
 					? validatedTokens.reduce<{
-							[tokenAddress: string]: CurrencyValue | undefined
-					  }>((memo, token, i) => {
-							const value = new BigNumber(
-								balances?.[i]?.result?.[0]?.toString() || 0,
-							)
-							const amount = new BigNumber(value).dividedBy(
-								10 ** token.decimals,
-							)
-							memo[token.tokenId] = {
-								...token,
-								amount,
-								value,
-							}
-							return memo
-					  }, {})
+						[tokenAddress: string]: CurrencyValue | undefined
+					}>((memo, token, i) => {
+						const value = new BigNumber(
+							balances?.[i]?.result?.[0]?.toString() || 0,
+						)
+						const amount = new BigNumber(value).dividedBy(
+							10 ** token.decimals,
+						)
+						memo[token.tokenId] = {
+							...token,
+							amount,
+							value,
+						}
+						return memo
+					}, {})
 					: Object.fromEntries(
-							tokens.map((t) => {
-								return [
-									t.tokenId,
-									{
-										...t,
-										amount: new BigNumber(0),
-										value: new BigNumber(0),
-									},
-								]
-							}),
-					  ),
+						tokens.map((t) => {
+							return [
+								t.tokenId,
+								{
+									...t,
+									amount: new BigNumber(0),
+									value: new BigNumber(0),
+								},
+							]
+						}),
+					),
 			[address, tokens, validatedTokens, balances],
 		),
 		anyLoading,
@@ -220,19 +220,19 @@ export function useStakedBalances(): StakedBalanceReturn {
 	return useMemo(() => {
 		return account && balances.length > 0
 			? balances.reduce<StakedBalanceReturn>((memo, token, i) => {
-					const value = new BigNumber(
-						token?.result?.[0]?.toString() || 0,
-					)
-					const amount = new BigNumber(
-						value.toString() || 0,
-					).dividedBy(10 ** YAXIS.decimals)
-					memo[rewardsContracts[i][0]] = {
-						...YAXIS,
-						value,
-						amount,
-					}
-					return memo
-			  }, {} as StakedBalanceReturn)
+				const value = new BigNumber(
+					token?.result?.[0]?.toString() || 0,
+				)
+				const amount = new BigNumber(
+					value.toString() || 0,
+				).dividedBy(10 ** YAXIS.decimals)
+				memo[rewardsContracts[i][0]] = {
+					...YAXIS,
+					value,
+					amount,
+				}
+				return memo
+			}, {} as StakedBalanceReturn)
 			: defaultStakedBalancesState
 	}, [account, rewardsContracts, balances])
 }
@@ -277,31 +277,31 @@ export function useApprovedAmounts(
 			() =>
 				spender && owner && validatedTokens.length > 0
 					? validatedTokens.reduce<ApprovedAmounts>(
-							(memo, token, i) => {
-								const value = new BigNumber(
-									balances?.[i]?.result?.[0]?.toString() || 0,
-								)
-								memo[token.tokenId] = {
-									...token,
-									approved: value,
-									spender,
-									owner,
-								}
-								return memo
-							},
-							{},
-					  )
+						(memo, token, i) => {
+							const value = new BigNumber(
+								balances?.[i]?.result?.[0]?.toString() || 0,
+							)
+							memo[token.tokenId] = {
+								...token,
+								approved: value,
+								spender,
+								owner,
+							}
+							return memo
+						},
+						{},
+					)
 					: Object.fromEntries(
-							tokens.map((t) => [
-								t.tokenId,
-								{
-									...t,
-									approved: new BigNumber(0),
-									spender,
-									owner,
-								},
-							]),
-					  ),
+						tokens.map((t) => [
+							t.tokenId,
+							{
+								...t,
+								approved: new BigNumber(0),
+								spender,
+								owner,
+							},
+						]),
+					),
 			[spender, owner, tokens, validatedTokens, balances],
 		),
 		anyLoading,
@@ -523,7 +523,7 @@ export const useReturns = () => {
 
 	const earned = useMultipleContractSingleData(
 		contracts &&
-			Object.values(contracts?.rewards || {}).map((c) => c.address),
+		Object.values(contracts?.rewards || {}).map((c) => c.address),
 		contracts && contracts.rewards.MetaVault.interface,
 		'earned',
 		[account],
@@ -835,9 +835,9 @@ export function useLPsBalance() {
 				const share = new BigNumber(totalSupply).isZero()
 					? new BigNumber(0)
 					: new BigNumber(stakedBalance?.value || 0)
-							.plus(new BigNumber(walletBalance?.value || 0))
-							.div(totalSupply.toString())
-							.dividedBy(10 ** 18)
+						.plus(new BigNumber(walletBalance?.value || 0))
+						.div(totalSupply.toString())
+						.dividedBy(10 ** 18)
 				const shareT0 = new BigNumber(
 					reserves?.['_reserve0']?.toString() || 0,
 				)
@@ -961,7 +961,7 @@ export function useUserGaugeWeights() {
 
 	const resultsWithDefaults = useMemo(() => {
 		if (results.length)
-			return results.map(({ result, loading }, i) => {
+			return results.map(({ result, loading }) => {
 				if (loading)
 					return [
 						ethers.BigNumber.from(0),
@@ -984,14 +984,34 @@ export function useUserGaugeWeights() {
 		])
 	}, [results])
 
+	const lastVote = useSingleContractMultipleData(
+		contracts?.internal.gaugeController,
+		'last_user_vote',
+		callInputs,
+	)
+
+	const lastVoteWithDefaults = useMemo(() => {
+		if (lastVote.length)
+			return lastVote.map(({ result, loading }) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result[0]
+			})
+
+		return Object.values(Vaults).map(() =>
+			ethers.BigNumber.from(0)
+		)
+	}, [lastVote])
+
 	useEffect(() => {
 		if (
 			!loadingContracts &&
 			results.every(({ valid, loading }) => valid && !loading) &&
+			lastVote.every(({ valid, loading }) => valid && !loading) &&
 			loading
 		)
 			setLoading(false)
-	}, [results, loadingContracts, loading])
+	}, [results, lastVote, loadingContracts, loading])
 
 	return useMemo(() => {
 		return [
@@ -1004,12 +1024,13 @@ export function useUserGaugeWeights() {
 							slope: resultsWithDefaults[i][0],
 							power: resultsWithDefaults[i][1],
 							end: resultsWithDefaults[i][2],
+							lastVote: lastVoteWithDefaults[i]
 						},
 					]
 				}),
 			),
 		]
-	}, [loading, resultsWithDefaults])
+	}, [loading, resultsWithDefaults, lastVoteWithDefaults])
 }
 
 export function useUserGaugeClaimable() {
