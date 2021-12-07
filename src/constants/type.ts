@@ -63,7 +63,7 @@ export type TCurrenciesERC20 = typeof CurrenciesERC20[number]
 export const CurrenciesERC677 = <const>['yaxis']
 export type TCurrenciesERC677 = typeof CurrenciesERC677[number]
 
-export const additionalCurrencies = <const>['eth', 'btc']
+export const additionalCurrencies = <const>['eth', 'btc', 'aleth']
 export type TAdditionalCurrencies = typeof additionalCurrencies[number]
 
 export const crvLPCurrencies = <const>[

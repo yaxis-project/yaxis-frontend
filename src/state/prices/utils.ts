@@ -24,6 +24,7 @@ const tokenCgkIdMap: { [key in Ticker]: CoinGeckoID } = {
 	alethcrv: '',
 	linkcrv: '',
 	spell: 'spell-token',
+	aleth: 'alchemix-eth'
 }
 
 export async function getCoinGeckoPrices() {

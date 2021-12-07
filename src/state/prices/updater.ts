@@ -120,12 +120,12 @@ export default function Updater(): void {
 					prices: {
 						alethcrv: alethcrvPrice
 							.dividedBy(10 ** 18)
-							.multipliedBy(state.prices.weth)
+							.multipliedBy(state.prices.aleth)
 							.toNumber(),
 					},
 				}),
 			)
-	}, [dispatch, alethcrvResult, state.prices.weth])
+	}, [dispatch, alethcrvResult, state.prices.aleth])
 
 	const linkcrvLP = useMemo(() => contracts?.vaults['link'], [contracts])
 
