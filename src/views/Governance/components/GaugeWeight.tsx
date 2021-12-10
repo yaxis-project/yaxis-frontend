@@ -127,7 +127,7 @@ const GaugeWeight: React.FC = () => {
 										left: 30,
 									}}
 								>
-									Unlocks in {cooldown.fromNow()}
+									Unlocks {cooldown.fromNow()}
 								</div>
 							)}
 							<Slider
