@@ -4,6 +4,7 @@ export const RewardsContracts = <const>[
 	'MetaVault',
 	'Yaxis',
 	'Uniswap YAXIS/ETH',
+	'FeeDistributor'
 ]
 export type TRewardsContracts = typeof RewardsContracts[number]
 
