@@ -31,4 +31,5 @@ export const abis = {
 	XYaxStakingABI: require('./xYax.json') as JsonFragment[],
 	YaxisChefABI: require('./yaxis_chef.json') as JsonFragment[],
 	YAxisMetaVaultABI: require('./yAxisMetaVault.json') as JsonFragment[],
+	FeeDistributorABI: require('./FeeDistributor.json') as JsonFragment[],
 }

@@ -102,6 +102,7 @@ const mainnet: Config = {
 		MetaVault: '0x226f9954A1221cDe805C76CfB312A5d761630E14',
 		Yaxis: '0x3b09B9ADFe11f92225b4C55De89fa81456595CD9',
 		'Uniswap YAXIS/ETH': '0xEDaFe410e2f07ab9D7F1B04316D29C2F49dCb104',
+		FeeDistributor: '0x2e525f795FFf8E04df74F4F93DDC2Cd3990fF0C3',
 	},
 	vaults: {
 		usd: {

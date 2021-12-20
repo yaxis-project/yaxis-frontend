@@ -202,6 +202,7 @@ export type Phrases =
 	| 'Lock & Boost'
 	| 'Duration'
 	| 'Distribute Rewards'
+	| 'Fee Distribution'
 	| 'Current Strategies'
 	| 'Approve Automatic Unstaking'
 	| 'of total Voting Power'
@@ -426,6 +427,7 @@ const EN: Translations = {
 	'Boost rewards': 'Boost rewards',
 	'Lock & Boost': 'Lock & Boost',
 	'Distribute Rewards': 'Distribute Rewards',
+	'Fee Distribution': 'Fee Distribution',
 	'Current Strategies': 'Current Strategies',
 	'of total Voting Power': 'of total Voting Power',
 	'Approve Automatic Unstaking': 'Approve Automatic Unstaking',
@@ -631,6 +633,7 @@ const ES: Translations = {
 	'Boost rewards': '',
 	'Lock & Boost': '',
 	'Distribute Rewards': '',
+	'Fee Distribution': '',
 	'Current Strategies': '',
 	Duration: '',
 	English: '',
@@ -831,6 +834,7 @@ const KO: Translations = {
 	'Boost rewards': '',
 	'Lock & Boost': '',
 	'Distribute Rewards': '',
+	'Fee Distribution': '',
 	'Current Strategies': '',
 	Duration: '',
 	English: '',
@@ -1032,6 +1036,7 @@ const ZH: Translations = {
 	'Boost rewards': '',
 	'Lock & Boost': '',
 	'Distribute Rewards': '',
+	'Fee Distribution': '',
 	'Current Strategies': '',
 	Duration: '',
 	English: '',
@@ -1234,6 +1239,7 @@ const RU: Translations = {
 	'Boost rewards': '',
 	'Lock & Boost': '',
 	'Distribute Rewards': '',
+	'Fee Distribution': '',
 	'Current Strategies': '',
 	Duration: '',
 	English: 'Английский',
@@ -1434,6 +1440,7 @@ const JA: Translations = {
 	'Boost rewards': '',
 	'Lock & Boost': '',
 	'Distribute Rewards': '',
+	'Fee Distribution': '',
 	'Current Strategies': '',
 	Duration: '',
 	English: '',
