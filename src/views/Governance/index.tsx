@@ -17,6 +17,7 @@ import {
 } from './components'
 import { useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { useVotingPower } from '../../state/wallet/hooks'
+import FeeDistributor from './components/FeeDistributor'
 
 const { TabPane } = Tabs
 
@@ -93,6 +94,7 @@ const Governance: React.FC = () => {
 				<StyledCol xs={24} sm={24} md={24} lg={8}>
 					{activeKey === '#lock' && (
 						<>
+							<FeeDistributor />
 							<GovernanceOverview />
 							<BoostCalculator />
 						</>

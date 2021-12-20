@@ -148,6 +148,7 @@ const kovan: Config = {
 		MetaVault: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8',
 		Yaxis: '0x361B4D521Cd9553e42af65985bb2038CcbbCEb96',
 		'Uniswap YAXIS/ETH': '0x23eEE2ce498D9239a034a225d7Be91fb8D69EdBc',
+		FeeDistributor: '0x2e525f795FFf8E04df74F4F93DDC2Cd3990fF0C3',
 	},
 	pools: {
 		'Uniswap YAXIS/ETH': {
