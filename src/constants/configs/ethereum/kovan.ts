@@ -138,6 +138,7 @@ const kovan: Config = {
 		votingEscrow: '0x2721D6A92d52b655C6bdaC5648dC89483F6400E5',
 		gaugeController: '0x6EAF4cEd8319881F7F1929A9b3f543F68e6238C2',
 		merkleDistributor: '0x51A8F76b848E478e08B771DE55e5e17370DE1D25',
+		feeDistributor: '0x2e525f795FFf8E04df74F4F93DDC2Cd3990fF0C3',
 		// Legacy
 		swap: '0x9eFe0a877dbDAce67a43211fCA441325c96C6323',
 		yaxisChef: '0xf4aAEd33b7004AE67d3E51eea995E5891Fe5A96c',
@@ -148,7 +149,6 @@ const kovan: Config = {
 		MetaVault: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8',
 		Yaxis: '0x361B4D521Cd9553e42af65985bb2038CcbbCEb96',
 		'Uniswap YAXIS/ETH': '0x23eEE2ce498D9239a034a225d7Be91fb8D69EdBc',
-		FeeDistributor: '0x2e525f795FFf8E04df74F4F93DDC2Cd3990fF0C3',
 	},
 	pools: {
 		'Uniswap YAXIS/ETH': {
