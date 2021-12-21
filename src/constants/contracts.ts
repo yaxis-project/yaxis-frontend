@@ -155,19 +155,11 @@ export class Contracts {
 
 		this.rewards = {} as RewardsC
 		for (const title of RewardsContracts) {
-			if(title === "FeeDistributor") {
-				this.rewards[title] = new Contract(
-					this.config.rewards[title],
-					abis.FeeDistributorABI,
-					provider,
-				)
-			} else {
-				this.rewards[title] = new Contract(
-					this.config.rewards[title],
-					abis.RewardsABI,
-					provider,
-				)
-			}
+			this.rewards[title] = new Contract(
+				this.config.rewards[title],
+				abis.RewardsABI,
+				provider,
+			)
 		}
 
 		this.currencies = {
