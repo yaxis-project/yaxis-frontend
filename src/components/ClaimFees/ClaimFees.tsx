@@ -16,17 +16,23 @@ const ClaimFees: React.FC = () => {
 
 	const { account } = useWeb3Provider()
 
-	const { loading: loadingContracts } = useContracts()
+	const { contracts, loading: loadingContracts } = useContracts()
+
+	const yaxis = useMemo(
+		() =>
+		contracts?.currencies?.ERC677.yaxis.contract.address,
+		[contracts],
+	)
 
 	const { call: handleClaimFees, loading: loadingClaimFees } =
 		useContractWrite({
-			contractName: `rewards.FeeDistributor`,
+			contractName: `internal.FeeDistributor`,
 			method: 'claimRewards',
 			description: `claim YAXIS rewards`,
 		})
 
 	const { loading: loadingRewardAmount, result: rewardAmount } =
-		useSingleCallResultByName(`rewards.FeeDistributor`, 'getRewardAmount', ["0x0ada190c81b814548ddc2f6adc4a689ce7c1fe73", account])
+		useSingleCallResultByName(`internal.FeeDistributor`, 'getRewardAmount', [yaxis, account])
 
 
 	const rewardsClaimable = useMemo(
@@ -58,7 +64,7 @@ const ClaimFees: React.FC = () => {
 							onClick={() => {
 								if (rewardsClaimable.gt(0)) {
 									handleClaimFees({
-										args: ["0x0ada190c81b814548ddc2f6adc4a689ce7c1fe73"],
+										args: [yaxis],
 									})
 								}
 							}}
