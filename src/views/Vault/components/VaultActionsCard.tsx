@@ -25,6 +25,7 @@ import useTranslation from '../../../hooks/useTranslation'
 const { TabPane } = Tabs
 
 const DEFAULT_TAB = '#deposit'
+const DEFAULT_TAB_YAXIS_DETAILS = '#unstake'
 
 const TABS = {
 	'#deposit': '#deposit',
@@ -39,7 +40,6 @@ const TABS_AUTOSTAKE = {
 }
 
 const TABS_YAXIS_DETAILS = {
-	'#stake': '#stake',
 	'#unstake': '#unstake',
 }
 
@@ -125,7 +125,7 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 
 	const showDepositTab = useMemo(() => !isYaxisDetails, [isYaxisDetails])
 	const showStakeTab = useMemo(
-		() => !autoStake || isYaxisDetails,
+		() => !autoStake && !isYaxisDetails,
 		[autoStake, isYaxisDetails],
 	)
 	const showUnstakeTab = useMemo(
@@ -136,7 +136,7 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 
 	const activeKey = useMemo(() => {
 		if (location.hash) return location.hash
-		if (isYaxisDetails) return '#stake'
+		if (isYaxisDetails) return DEFAULT_TAB_YAXIS_DETAILS
 		return DEFAULT_TAB
 	}, [location.hash, isYaxisDetails])
 
@@ -161,7 +161,14 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 						{autoStake ? (
 							<DepositHelperTable
 								fees={fees}
-								currencies={currencies}
+								currencies={
+									// NOTE: YAXIS vault deprecated in YIP-14
+									currencies
+									.filter(
+										(currency) =>
+											currency.tokenId !== 'yaxis',
+									)
+								}
 							/>
 						) : (
 							<DepositTable
@@ -178,7 +185,14 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 				)}
 				{showStakeTab && (
 					<TabPane tab={translate('Stake')} key="#stake">
-						<StakeTable fees={fees} currencies={currencies} />
+						<StakeTable fees={fees} currencies={
+							// NOTE: YAXIS vault deprecated in YIP-14
+							currencies
+							.filter(
+								(currency) =>
+									currency.tokenId !== 'yaxis',
+							)
+						} />
 					</TabPane>
 				)}
 				{showUnstakeTab && (

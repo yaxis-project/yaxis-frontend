@@ -15,7 +15,7 @@ interface CardRowProps {
 const CardRow = (props: CardRowProps) => {
 	const { main, secondary, rightContent, last } = props
 	return (
-		<StyledRow align={'middle'} last={last}>
+		<StyledRow align={'middle'} last={`${last}`}>
 			<Col span={rightContent ? 12 : 24}>
 				<Text
 					style={{
@@ -42,12 +42,12 @@ const CardRow = (props: CardRowProps) => {
 
 export default CardRow
 
-const StyledRow = styled(Row)<{ last: boolean }>`
+const StyledRow = styled(Row)<{ last: string }>`
 	&&& {
 		background: ${(props) => props.theme.secondary.background};
 		border-color: ${(props) => props.theme.secondary.border};
 		${(props) =>
-			props.last
+			props.last === 'true'
 				? ''
 				: `border-bottom: 2px solid ${props.theme.secondary.border};`}
 	}

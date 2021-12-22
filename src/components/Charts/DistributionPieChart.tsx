@@ -41,6 +41,8 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 			}
 
 		const gaugeData = Object.entries(gauges)
+		// YAXIS gauge removed in YIP-14
+		.filter(([name]) => name !== 'yaxis')
 
 		return {
 			labels: [],

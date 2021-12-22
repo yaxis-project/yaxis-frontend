@@ -32,7 +32,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 				title={
 					<StyledCol>
 						<StyledRow
-							mobile={mobile}
+							mobile={`${mobile}`}
 							style={{
 								margin: '5px 10px 12px 10px',
 							}}
@@ -54,7 +54,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 												<CopyOutlined key="copy-icon" />
 											</Col>
 											<Col>
-												<StyledText mobile={mobile}>
+												<StyledText mobile={`${mobile}`}>
 													{translate('Copy Address')}
 												</StyledText>
 											</Col>
@@ -67,7 +67,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 												/>
 											</Col>
 											<Col>
-												<StyledText mobile={mobile}>
+												<StyledText mobile={`${mobile}`}>
 													{translate(
 														'Address Copied',
 													)}
@@ -83,7 +83,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 						</StyledRow>
 						<StyledRow>
 							<StyledBlockOutlined />
-							<StyledText mobile={mobile}>
+							<StyledText mobile={`${mobile}`}>
 								<a
 									href={etherscanUrl(
 										`/address/${account}`,
@@ -98,7 +98,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 						</StyledRow>
 						<StyledRow>
 							<CheckCircleTwoTone twoToneColor="#52c41a" />{' '}
-							<StyledText mobile={mobile}>
+							<StyledText mobile={`${mobile}`}>
 								{friendlyNetworkName}
 							</StyledText>
 						</StyledRow>
@@ -117,16 +117,16 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
 export default AccountInfo
 
-const StyledRow = styled(Row)<{ mobile?: boolean }>`
+const StyledRow = styled(Row) <{ mobile?: string }>`
 	display: flex;
 	align-items: center;
-	margin-bottom: ${(props) => (props.mobile ? '10' : '10')}px;
+	margin-bottom: ${(props) => (props.mobile === 'true' ? '10' : '10')}px;
 	margin-right: 10px;
 `
-const StyledText = styled.div<{ mobile?: boolean }>`
+const StyledText = styled.div<{ mobile?: string }>`
 	color: ${(props) => props.theme.secondary.font};
 	text-align: center;
-	font-size: ${(props) => (props.mobile ? '1.1' : '1')}em;
+	font-size: ${(props) => (props.mobile === 'true' ? '1.1' : '1')}em;
 	margin-left: 10px;
 `
 

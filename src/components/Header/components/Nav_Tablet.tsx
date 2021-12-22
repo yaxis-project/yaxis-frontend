@@ -87,7 +87,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 				</MenuItem>
 
 				<StyledSubMenu
-					key={'/vault'}
+					key={'/vault-menu'}
 					title={<StyledSpan>{translate('Vault')}</StyledSpan>}
 				>
 					<Menu.Item>
@@ -109,7 +109,7 @@ const NavTablet: React.FC<NavTabletProps> = () => {
 				</StyledSubMenu>
 
 				<StyledSubMenu
-					key={'/liquidity'}
+					key={'/liquidity-menu'}
 					title={<StyledSpan>{translate('Liquidity')}</StyledSpan>}
 				>
 					<Menu.Item>
