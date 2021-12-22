@@ -26,18 +26,18 @@ const ClaimFees: React.FC = () => {
 
 	const { call: handleClaimFees, loading: loadingClaimFees } =
 		useContractWrite({
-			contractName: `internal.FeeDistributor`,
+			contractName: `internal.feeDistributor`,
 			method: 'claimRewards',
 			description: `claim YAXIS rewards`,
 		})
 
 	const { loading: loadingRewardAmount, result: rewardAmount } =
-		useSingleCallResultByName(`internal.FeeDistributor`, 'getRewardAmount', [yaxis, account])
+		useSingleCallResultByName(`internal.feeDistributor`, 'getRewardAmount', [yaxis, account])
 
 
 	const rewardsClaimable = useMemo(
 		() =>
-			new BigNumber(rewardAmount?.[0]?.toString()),
+			new BigNumber(rewardAmount?.[0]?.toString() || 0).dividedBy(10**18),
 		[rewardAmount],
 	)
 
@@ -58,7 +58,7 @@ const ClaimFees: React.FC = () => {
 							disabled={
 								loadingContracts ||
 								loadingRewardAmount ||
-								new BigNumber(rewardsClaimable?.toString() || 0)
+								rewardsClaimable
 									.isZero()
 							}
 							onClick={() => {
@@ -73,7 +73,7 @@ const ClaimFees: React.FC = () => {
 							}
 							height={'40px'}
 						>
-							{translate('Claim All')}
+							{translate('Claim')}
 						</Button>
 					</Col>
 				</Row>

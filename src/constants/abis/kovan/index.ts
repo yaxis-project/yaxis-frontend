@@ -9,6 +9,7 @@ export const abis = {
 	CVXABI: require('./CVX.json') as JsonFragment[],
 	ERC20Abi: require('./erc20.json') as JsonFragment[],
 	ERC677Abi: require('./erc677.json') as JsonFragment[],
+	FeeDistributorABI: require('./FeeDistributor.json') as JsonFragment[],
 	GaugeABI: require('./gauge.json') as JsonFragment[],
 	GaugeControllerABI: require('./GaugeController.json') as JsonFragment[],
 	ManagerABI: require('./Manager.json') as JsonFragment[],
@@ -31,5 +32,4 @@ export const abis = {
 	XYaxStakingABI: require('./xYax.json') as JsonFragment[],
 	YaxisChefABI: require('./yaxis_chef.json') as JsonFragment[],
 	YAxisMetaVaultABI: require('./yAxisMetaVault.json') as JsonFragment[],
-	FeeDistributorABI: require('./FeeDistributor.json') as JsonFragment[],
 }
