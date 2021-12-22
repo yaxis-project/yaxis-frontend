@@ -43,7 +43,7 @@ const Nav: React.FC = () => {
 			</MenuItem>
 
 			<StyledSubMenu
-				key={'/vault'}
+				key={'/vault-menu'}
 				title={
 					<StyledLink to="/vault">
 						{translate('Vault')}{' '}
@@ -87,7 +87,7 @@ const Nav: React.FC = () => {
 			</StyledSubMenu>
 
 			<StyledSubMenu
-				key={'/liquidity'}
+				key={'/liquidity-menu'}
 				title={
 					<StyledLink to="/liquidity">
 						{translate('Liquidity')}{' '}

@@ -119,6 +119,8 @@ const GaugeWeight: React.FC = () => {
 					)
 					return (
 						<div style={{ position: 'relative' }}>
+							{/* TODO: remove the following text in Jan 2022 once all YAXIS vote times have expired */}
+							{record.name === 'YAXIS' && <div>*YAXIS vault deprecated in YIP-14</div>}
 							{record.lastVote.gt(0) && (
 								<div
 									style={{
@@ -134,7 +136,9 @@ const GaugeWeight: React.FC = () => {
 								value={weights[record.key]}
 								tipFormatter={(value) => `${value}%`}
 								disabled={
-									disabled || moment().isBefore(cooldown)
+									disabled || moment().isBefore(cooldown) 
+									// YAXIS gauge disabled in YIP-14
+									|| record.name === 'YAXIS'
 								}
 								onChange={(value) => {
 									const nextWeights = [...weights]

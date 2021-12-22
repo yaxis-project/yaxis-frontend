@@ -16,7 +16,7 @@ import { useWeb3React } from '@web3-react/core'
 import { useClearPendingTransactions } from '../../../state/transactions/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 
-interface AccountButtonProps {}
+interface AccountButtonProps { }
 
 const AccountButton: React.FC<AccountButtonProps> = (props) => {
 	const translate = useTranslation()
@@ -59,7 +59,9 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 									mobile={false}
 								/>
 
-								<StyledText>
+								<StyledText
+									key="help"
+								>
 									<a
 										href="https://resources.yaxis.io/"
 										rel="noopener noreferrer"
@@ -68,10 +70,11 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 										{translate('Help Center')}
 									</a>
 								</StyledText>
-								<StyledText onClick={handleClearPending}>
+								<StyledText onClick={handleClearPending} key="clear">
 									{translate('Clear Pending')}
 								</StyledText>
 								<StyledText
+									key="logout"
 									onClick={handleSignOutClick}
 									style={{
 										marginBottom: '8px',
