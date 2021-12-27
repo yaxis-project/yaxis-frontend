@@ -49,9 +49,17 @@ const GaugeWeight: React.FC = () => {
 
 	useEffect(() => {
 		if (!loadingVotedWeights && initialWeights === -1) {
-			const nextWeights = Vaults.map((vault) =>
-				votedWeights[vault].power.div(100).toNumber(),
-			)
+			const nextWeights = Vaults.reduce((acc, vault) => {
+				// remove the following in Jan 2022 once all YAXIS vote times have expired
+				const cooldown = moment(votedWeights[vault].lastVote.toNumber() * 1000).add(
+					WEIGHT_VOTE_DELAY * 1000,
+				)
+				if ((vault === 'yaxis' && moment().isAfter(cooldown))) return acc
+				//
+				acc.push(votedWeights[vault].power.div(100).toNumber())
+				return acc
+			}
+				, [])
 			setInitialWeights(nextWeights.reduce((acc, curr) => acc + curr, 0))
 			setWeights(nextWeights)
 		}
@@ -64,20 +72,27 @@ const GaugeWeight: React.FC = () => {
 	])
 
 	const data = useMemo(() => {
-		return Vaults.map((name, i) => {
+		return Vaults.reduce((acc, name, i) => {
 			const userShare = boost[name].workingSupply.isZero()
 				? new BigNumber(0)
 				: boost[name].workingBalance.dividedBy(
-						boost[name].workingSupply,
-				  )
-			return {
+					boost[name].workingSupply,
+				)
+			// remove the following in Jan 2022 once all YAXIS vote times have expired
+			const cooldown = moment(votedWeights[name].lastVote.toNumber() * 1000).add(
+				WEIGHT_VOTE_DELAY * 1000,
+			)
+			if ((name === 'yaxis' && moment().isAfter(cooldown))) return acc
+			//
+			acc.push({
 				key: i,
 				name: name.toUpperCase(),
 				vaultWeight: weights[i],
 				userShare,
 				...votedWeights[name],
-			}
-		})
+			})
+			return acc
+		}, [])
 	}, [weights, votedWeights, boost])
 
 	const disabled = useMemo(
@@ -132,13 +147,12 @@ const GaugeWeight: React.FC = () => {
 									Unlocks {cooldown.fromNow()}
 								</div>
 							)}
+
 							<Slider
 								value={weights[record.key]}
 								tipFormatter={(value) => `${value}%`}
 								disabled={
-									disabled || moment().isBefore(cooldown) 
-									// YAXIS gauge disabled in YIP-14
-									|| record.name === 'YAXIS'
+									disabled || moment().isBefore(cooldown)
 								}
 								onChange={(value) => {
 									const nextWeights = [...weights]

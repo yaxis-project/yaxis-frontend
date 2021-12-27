@@ -67,9 +67,9 @@ const BoostCalculator: React.FC = () => {
 			yaxisLockedBN.isNaN()
 				? new BigNumber(0)
 				: yaxisLockedBN
-						.multipliedBy(10 ** 18)
-						.dividedBy(MAX_TIME)
-						.multipliedBy(duration * 7 * 86400),
+					.multipliedBy(10 ** 18)
+					.dividedBy(MAX_TIME)
+					.multipliedBy(duration * 7 * 86400),
 		)
 	}, [yaxisLocked, duration])
 
@@ -138,7 +138,7 @@ const BoostCalculator: React.FC = () => {
 					value={selectedVault}
 					onChange={(value) => setSelectedVault(value)}
 				>
-					{Vaults.map((vault) => (
+					{Vaults.filter(v => v !== 'yaxis').map((vault) => (
 						<Option value={vault} key={vault}>
 							<img
 								src={Currencies[vault.toUpperCase()].icon}
