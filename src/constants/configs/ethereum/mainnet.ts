@@ -92,7 +92,7 @@ const mainnet: Config = {
 		votingEscrow: '0x66b4c0dAA0C65ED1eae84B4d738B9572a79389c4',
 		gaugeController: '0x17F9F0dAc5066d43d0875Fa08E5757580BBf4C8C',
 		merkleDistributor: '0xd0c9432625a181c823b3e63d5e6656f87231ae96',
-		feeDistributor: '0x2e525f795FFf8E04df74F4F93DDC2Cd3990fF0C3',
+		feeDistributor: '0x2BedCEd99bc5cccA1E94F7b0b4DbE81f7bE201B8',
 		// Legacy
 		swap: '0xCdF398537adbF8617a8401B14DCEe7F67CF8c64b',
 		yaxisChef: '0xc330e7e73717cd13fb6ba068ee871584cf8a194f',
