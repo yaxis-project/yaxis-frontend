@@ -1,7 +1,11 @@
 import { createAction } from '@reduxjs/toolkit'
 import { CalcPages, FutureBalanceCalculator } from './reducer'
 import { TLanguages } from '../../constants/translations'
+import { SupportedChainId } from '../../constants/chains'
 
+export const updateChain = createAction<{ chainId: SupportedChainId }>(
+	'user/updateChain',
+)
 export const updateLanguage = createAction<{ language: TLanguages }>(
 	'user/updateLanguage',
 )

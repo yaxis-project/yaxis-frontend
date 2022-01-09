@@ -5,6 +5,7 @@ import AccountButton from './components/AccountButton'
 import Nav from './components/Nav'
 import NavTablet from './components/Nav_Tablet'
 // import LanguageSelect from './components/LanguageSelect'
+import NetworkSelect from './components/NetworkSelect'
 import ThemeToggle from '../ThemeToggle'
 
 const { Header: BaseHeader } = Layout
@@ -30,7 +31,10 @@ const Header = () => {
 					<Col flex="auto" style={{ color: 'white' }}>
 						<Nav />
 					</Col>
-					{/* <Col>
+					<Col>
+						<NetworkSelect />
+					</Col>
+							{/* <Col>
 						<LanguageSelect />
 					</Col> */}
 					<Col>

@@ -9,7 +9,7 @@ import {
 	useMultipleContractSingleData,
 } from '../onchain/hooks'
 import BigNumber from 'bignumber.js'
-import { abis } from '../../constants/abis/mainnet'
+import { abis } from '../../constants/abis/ethereum/mainnet'
 
 const REWARD_INTERFACE = new ethers.utils.Interface(abis.RewardsABI)
 
