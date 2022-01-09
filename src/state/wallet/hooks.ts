@@ -28,8 +28,8 @@ import { useLP } from '../external/hooks'
 import { ethers } from 'ethers'
 import { Interface } from '@ethersproject/abi'
 import { useBlockNumber } from '../application/hooks'
-import ERC20Abi from '../../constants/abis/mainnet/erc20.json'
-import GaugeAbi from '../../constants/abis/mainnet/gauge.json'
+import ERC20Abi from '../../constants/abis/ethereum/mainnet/erc20.json'
+import GaugeAbi from '../../constants/abis/ethereum/mainnet/gauge.json'
 import { useVaults, useLiquidityPools, useVaultsAPR } from '../internal/hooks'
 
 const ERC20_INTERFACE = new Interface(ERC20Abi)

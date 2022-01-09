@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import { uniq, isEmpty } from 'lodash'
 import BigNumber from 'bignumber.js'
 import { useContracts } from '../../contexts/Contracts'
-import { abis } from '../../constants/abis/mainnet'
+import { abis } from '../../constants/abis/ethereum/mainnet'
 import {
 	TLiquidityPools,
 	TRewardsContracts,
