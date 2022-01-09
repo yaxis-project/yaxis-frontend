@@ -1,9 +1,15 @@
 import { Config } from '../type'
 
 import ethereum from './ethereum'
+import avalanche from './avalanche'
+
+export const Networks = <const>['ethereum', 'avalanche']
+
+export type TNetworks = typeof Networks[number]
 
 export const configs = {
 	ethereum,
+	avalanche
 }
 
 /**
