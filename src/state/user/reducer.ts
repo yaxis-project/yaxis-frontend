@@ -5,8 +5,10 @@ import {
 	updateFutureBalanceCalc,
 	updateLanguage,
 	updateVaultAutoStake,
+	updateChain
 } from './actions'
 import { TLanguages } from '../../constants/translations'
+import { SupportedChainId } from '../../constants/chains'
 
 const currentTimestamp = () => new Date().getTime()
 
@@ -16,6 +18,7 @@ export interface FutureBalanceCalculator {
 	yearlyCompounds: number
 }
 export interface UserState {
+	chainId: SupportedChainId
 	vaultAutoStake: boolean
 	language: TLanguages
 	userDarkMode: boolean | null // the user's choice for dark mode or light mode
@@ -29,6 +32,7 @@ export interface UserState {
 // const browserLanguage = navigator.language?.split('-')?.[0]?.toUpperCase()
 
 export const initialState: UserState = {
+	chainId: 1,
 	vaultAutoStake: true,
 	language: 'EN',
 	// TODO: enable language support
@@ -56,6 +60,10 @@ export const initialState: UserState = {
 
 export default createReducer(initialState, (builder) =>
 	builder
+		.addCase(updateChain, (state, action) => {
+			state.chainId = action.payload.chainId
+			state.timestamp = currentTimestamp()
+		})
 		.addCase(updateVaultAutoStake, (state, action) => {
 			state.vaultAutoStake = action.payload.vaultAutoStake
 			state.timestamp = currentTimestamp()
