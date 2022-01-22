@@ -264,8 +264,8 @@ const GaugeWeight: React.FC = () => {
 						disabled={disabled || !hasChange}
 						onClick={() => {
 							weights.forEach((weight, i) => {
-								// Only vote if there was a change
-								if (weight > 0 && weight * 100 !== votedWeights[Vaults[i]].power.toNumber())
+								const hasChange = weight * 100 !== votedWeights[Vaults[i]].power.toNumber()
+								if (hasChange)
 									call({
 										args: [
 											contracts.vaults[Vaults[i]].gauge
