@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Row, Tooltip } from 'antd'
+import styled from 'styled-components'
 import { NavLink } from 'react-router-dom'
 import Table from '../../../components/Table'
 import Button from '../../../components/Button'
@@ -50,12 +51,6 @@ const GaugeWeight: React.FC = () => {
 	useEffect(() => {
 		if (!loadingVotedWeights && initialWeights === -1) {
 			const nextWeights = Vaults.reduce((acc, vault) => {
-				// remove the following in Jan 2022 once all YAXIS vote times have expired
-				const cooldown = moment(votedWeights[vault].lastVote.toNumber() * 1000).add(
-					WEIGHT_VOTE_DELAY * 1000,
-				)
-				if ((vault === 'yaxis' && moment().isAfter(cooldown))) return acc
-				//
 				acc.push(votedWeights[vault].power.div(100).toNumber())
 				return acc
 			}
@@ -78,12 +73,11 @@ const GaugeWeight: React.FC = () => {
 				: boost[name].workingBalance.dividedBy(
 					boost[name].workingSupply,
 				)
-			// remove the following in Jan 2022 once all YAXIS vote times have expired
-			const cooldown = moment(votedWeights[name].lastVote.toNumber() * 1000).add(
-				WEIGHT_VOTE_DELAY * 1000,
-			)
-			if ((name === 'yaxis' && moment().isAfter(cooldown))) return acc
-			//
+
+			// YAXIS vault has been deprecated.
+			// Filter it out if the user has redistributed out. 
+			if ((name === 'yaxis' && votedWeights[name].power.toNumber() === 0)) return acc
+
 			acc.push({
 				key: i,
 				name: name.toUpperCase(),
@@ -101,6 +95,21 @@ const GaugeWeight: React.FC = () => {
 				moment().add(7, 'days'),
 			) || lock.loading,
 		[lock.end, lock.loading],
+	)
+
+
+	const hasChange = useMemo(
+		() => {
+			if (loadingVotedWeights || initialWeights === -1)
+				return false
+
+			const nextWeights = Vaults.reduce((acc, vault) => {
+				acc.push(votedWeights[vault].power.div(100).toNumber())
+				return acc
+			}, [])
+			return JSON.stringify(nextWeights) !== JSON.stringify(weights)
+		},
+		[loadingVotedWeights, initialWeights, votedWeights, weights],
 	)
 
 	const columns = useMemo(
@@ -134,9 +143,17 @@ const GaugeWeight: React.FC = () => {
 					)
 					return (
 						<div style={{ position: 'relative' }}>
-							{/* TODO: remove the following text in Jan 2022 once all YAXIS vote times have expired */}
-							{record.name === 'YAXIS' && <div>*YAXIS vault deprecated in YIP-14</div>}
-							{record.lastVote.gt(0) && (
+							{record.name === 'YAXIS' && <div>*YAXIS vault deprecated in {" "}
+								<TextLink
+									rel="noopener noreferrer"
+									target="_blank"
+									href="https://discord.com/channels/754774398304649308/916162568509333554/919013222550482976">
+									YIP-14
+								</TextLink>
+								.</div>}
+
+							{record.name === 'YAXIS' && <div>Set the slider to 0 and redistribute elsewhere.</div>}
+							{record.lastVote.gt(Date.now()) && (
 								<div
 									style={{
 										position: 'absolute',
@@ -244,10 +261,11 @@ const GaugeWeight: React.FC = () => {
 					<Button
 						style={{ width: '100%' }}
 						loading={loading}
-						disabled={disabled || initialWeights === totalWeight}
+						disabled={disabled || !hasChange}
 						onClick={() => {
 							weights.forEach((weight, i) => {
-								if (weight > 0)
+								// Only vote if there was a change
+								if (weight > 0 && weight * 100 !== votedWeights[Vaults[i]].power.toNumber())
 									call({
 										args: [
 											contracts.vaults[Vaults[i]].gauge
@@ -267,3 +285,9 @@ const GaugeWeight: React.FC = () => {
 }
 
 export { GaugeWeight }
+
+
+const TextLink = styled.a`
+	color: ${(props) => props.theme.primary.main};
+	font-weight: 600;
+`
