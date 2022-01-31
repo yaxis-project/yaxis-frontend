@@ -39,7 +39,7 @@ const makeColumns = (
 	loading: boolean,
 	translate: any,
 	onChange: ReturnType<typeof handleFormInputChange>,
-	contracts: Contracts
+	contracts: Contracts,
 ) => {
 	return [
 		{
@@ -92,7 +92,6 @@ const makeColumns = (
 						noWrapper
 						buttonText={'Vault'}
 					>
-
 						<Form.Item
 							validateStatus={
 								new BigNumber(record.value).gt(
@@ -112,7 +111,10 @@ const makeColumns = (
 								disabled={loading || record.balance.isZero()}
 								suffix={record.name}
 								onClickMax={() =>
-									onChange(record.tokenId, record.balance || '0')
+									onChange(
+										record.tokenId,
+										record.balance || '0',
+									)
 								}
 							/>
 						</Form.Item>
@@ -131,8 +133,8 @@ const makeColumns = (
 							{record.apr.totalAPR.isNaN()
 								? 0
 								: record.apr.totalAPR
-									.multipliedBy(100)
-									.toFormat(2)}
+										.multipliedBy(100)
+										.toFormat(2)}
 							%
 							<Tooltip
 								style={{ minWidth: '350px' }}
@@ -373,11 +375,7 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, currencies }) => {
 
 	return (
 		<>
-			<Table
-				columns={columns}
-				dataSource={data}
-				pagination={false}
-			/>
+			<Table columns={columns} dataSource={data} pagination={false} />
 			<div
 				style={
 					md

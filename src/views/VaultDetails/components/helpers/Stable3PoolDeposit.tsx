@@ -5,11 +5,11 @@ import { useAllTokenBalances } from '../../../../state/wallet/hooks'
 import { usePrices } from '../../../../state/prices/hooks'
 import { useContracts } from '../../../../contexts/Contracts'
 import { reduce } from 'lodash'
-import { Row, Col, Grid, Typography } from 'antd'
+import { Row, Col, Grid, Space } from 'antd'
+import Typography from '../../../../components/Typography'
 import { numberToDecimal } from '../../../../utils/number'
 import useContractWrite from '../../../../hooks/useContractWrite'
 import Button from '../../../../components/Button'
-import { ArrowDownOutlined } from '@ant-design/icons'
 import {
 	CurrencyValues,
 	handleFormInputChange,
@@ -84,41 +84,55 @@ export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
 	}, [currencyValues, handleDeposit3Pool, contracts, value3crv, set3crvValue])
 
 	return (
-		<>
-			{Currencies3Pool.map((currency) => (
-				<DepositAssetRow
-					key={currency.name}
-					currency={currency}
-					onChange={handleFormInputChange(setCurrencyValues)}
-					value={currencyValues[currency.tokenId]}
-					contractName={`currencies.ERC20.${currency.tokenId}.contract`}
-					approvee={contracts?.externalLP['3pool'].pool.address}
-				/>
-			))}
-			<Row
-				className="total"
-				style={md ? {} : { padding: '0 10%' }}
-				align="middle"
-			>
-				<Col xs={24} sm={24} md={12}>
-					<Row justify="center">
-						<ArrowDownOutlined style={{ fontSize: '40px' }} />
-					</Row>
-				</Col>
-				<Col xs={24} sm={24} md={4}>
-					<Text type="secondary">Total</Text>
-					<Title level={3}>${totalDepositing}</Title>
-				</Col>
-				<Col xs={24} sm={24} md={6}>
-					<Button
-						disabled={disabled}
-						loading={loadingDeposit3Pool}
-						onClick={handleSubmit}
-					>
-						Convert
-					</Button>
-				</Col>
-			</Row>
-		</>
+		<Row justify="center">
+			<Col xs={22}>
+				<Row justify="space-between">
+					<Col xs={24}>
+						<Space
+							direction="vertical"
+							size="small"
+							style={{ width: '100%' }}
+						>
+							{Currencies3Pool.map((currency) => (
+								<DepositAssetRow
+									key={currency.name}
+									currency={currency}
+									onChange={handleFormInputChange(
+										setCurrencyValues,
+									)}
+									value={currencyValues[currency.tokenId]}
+									contractName={`currencies.ERC20.${currency.tokenId}.contract`}
+									approvee={
+										contracts?.externalLP['3pool'].pool
+											.address
+									}
+								/>
+							))}
+						</Space>
+					</Col>
+				</Row>
+				<Row
+					className="total"
+					style={{ marginTop: '1rem' }}
+					align="middle"
+					justify="center"
+				>
+					<Col xs={12}>
+						<Text type="secondary">Total</Text>
+						<Title level={3} style={{ margin: '0 0 10px 0' }}>
+							${totalDepositing}
+						</Title>
+						<Button
+							disabled={disabled}
+							loading={loadingDeposit3Pool}
+							onClick={handleSubmit}
+							style={{ fontSize: '18px', width: '100%' }}
+						>
+							Deposit
+						</Button>
+					</Col>
+				</Row>
+			</Col>
+		</Row>
 	)
 }

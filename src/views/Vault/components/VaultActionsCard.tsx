@@ -163,8 +163,7 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 								fees={fees}
 								currencies={
 									// NOTE: YAXIS vault deprecated in YIP-14
-									currencies
-									.filter(
+									currencies.filter(
 										(currency) =>
 											currency.tokenId !== 'yaxis',
 									)
@@ -185,14 +184,15 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 				)}
 				{showStakeTab && (
 					<TabPane tab={translate('Stake')} key="#stake">
-						<StakeTable fees={fees} currencies={
-							// NOTE: YAXIS vault deprecated in YIP-14
-							currencies
-							.filter(
-								(currency) =>
-									currency.tokenId !== 'yaxis',
-							)
-						} />
+						<StakeTable
+							fees={fees}
+							currencies={
+								// NOTE: YAXIS vault deprecated in YIP-14
+								currencies.filter(
+									(currency) => currency.tokenId !== 'yaxis',
+								)
+							}
+						/>
 					</TabPane>
 				)}
 				{showUnstakeTab && (

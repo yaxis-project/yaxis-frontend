@@ -12,9 +12,6 @@ import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { NETWORK_NAMES } from '../../connectors'
 import AccountOverview from './components/AccountOverview'
 import VaultStatsCard from './components/VaultStatsCard'
-// import UsersVaultDetails from './components/UsersVaultDetails'
-import CurvePool from './components/CurvePool'
-// import { Converter } from './components/Converter'
 import { useVaultsBalances } from '../../state/wallet/hooks'
 import { useYaxisManager } from '../../state/internal/hooks'
 import { TVaults } from '../../constants/type'
@@ -22,6 +19,8 @@ import { LPVaults } from '../../constants/type'
 
 import { Currencies } from '../../constants/currencies'
 import VaultActionsCard from '../Vault/components/VaultActionsCard'
+import { Converter } from './components/Converter'
+import UsersVaultDetails from './components/UsersVaultDetails'
 
 const { Text } = Typography
 
@@ -52,44 +51,52 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 			backNavigate="/vault"
 		>
 			<>
-				{vault === 'yaxis' && (<Row gutter={16}>
-					<Col span={24}>
-						<Card style={{ marginBottom: "10px", background: 'rgb(253,94,97)' }}>
-							<Row justify="center">
-								<Col>
-									<Text style={{ fontSize: "20px" }}>
-										<a href="https://yaxis.discourse.group/t/fine-tune-yaxis-tokenomics/302/30">YIP-14 </a>
-										passed with 97% approval, deprecating the YAXIS vault.
+				{vault === 'yaxis' && (
+					<Row gutter={16}>
+						<Col span={24}>
+							<Card
+								style={{
+									marginBottom: '10px',
+									background: 'rgb(253,94,97)',
+								}}
+							>
+								<Row justify="center">
+									<Col>
+										<Text style={{ fontSize: '20px' }}>
+											<a href="https://yaxis.discourse.group/t/fine-tune-yaxis-tokenomics/302/30">
+												YIP-14{' '}
+											</a>
+											passed with 97% approval,
+											deprecating the YAXIS vault.
+										</Text>
+									</Col>
+									<Col></Col>
+									<Text style={{ fontSize: '20px' }}>
+										<NavLink to={'/governance'}>
+											Lock YAXIS into Governance
+										</NavLink>{' '}
+										to recieve further emissions.
 									</Text>
-								</Col>
-								<Col>
-								</Col>
-								<Text style={{ fontSize: "20px" }}>
-									<NavLink to={"/governance"}>
-										Lock YAXIS into Governance
-									</NavLink>
-									{" "} to recieve further emissions.
-								</Text>
-							</Row>
-						</Card>
-					</Col>
-				</Row>)}
+								</Row>
+							</Card>
+						</Col>
+					</Row>
+				)}
 				<Row gutter={16}>
 					<Col xs={24} sm={24} md={24} lg={16}>
-						<CurvePool vault={vault} />
+						<Converter vault={vault} />
 						<VaultActionsCard
 							type="details"
 							fees={fees}
 							currencies={[
 								Currencies[
-								LPVaults.find(
-									([, name]) => name === vault,
-								)[0].toUpperCase()
+									LPVaults.find(
+										([, name]) => name === vault,
+									)[0].toUpperCase()
 								],
 							]}
 						/>
 						{/* <UsersVaultDetails vault={vault} /> */}
-						{/* <Converter vault={vault} /> */}
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
 						<AccountOverview

@@ -11,7 +11,8 @@ import { useAllTokenBalances } from '../../../../state/wallet/hooks'
 import { usePrices } from '../../../../state/prices/hooks'
 import { useContracts } from '../../../../contexts/Contracts'
 import { reduce } from 'lodash'
-import { Row, Col, Grid, Typography, Divider, Form } from 'antd'
+import { Row, Col, Grid, Divider, Form, Space } from 'antd'
+import Typography from '../../../../components/Typography'
 import useContractWrite from '../../../../hooks/useContractWrite'
 import Button from '../../../../components/Button'
 import { CurrencyValues, handleFormInputChange } from '../../../Vault/utils'
@@ -121,54 +122,83 @@ export default function Stable3PoolWithdraw() {
 
 	return (
 		<>
-			<Row gutter={20} align="middle" style={{ marginBottom: '10px' }}>
-				<Col xs={4} sm={6}>
-					<Text>You have</Text>
-				</Col>
-				<Col span={3}>
-					<img
-						src={threeCRV.icon}
-						height="36"
-						width="36"
-						alt="logo"
-					/>
-				</Col>
-				<Col>
-					<Title
-						level={4}
-						style={{
-							margin: 0,
-						}}
-					>
-						{balance3CRV.toFixed(2)} 3CRV
-					</Title>
-					<Title level={5} type="secondary" style={{ margin: 0 }}>
-						${usdBalance3CRV.toFixed(2)}
-					</Title>
+			<Row
+				align="middle"
+				justify="center"
+				style={{ marginBottom: '10px' }}
+			>
+				<Col xs={6}>
+					<Row align="bottom">
+						<img
+							src={threeCRV.icon}
+							height="36"
+							width="36"
+							alt="logo"
+							style={{ marginBottom: '0.5rem' }}
+						/>
+						<div style={{ marginLeft: '0.8rem' }}>
+							<Text>You have</Text>
+							<Title
+								level={4}
+								style={{
+									margin: 0,
+								}}
+							>
+								{balance3CRV.toFixed(2)} 3CRV
+							</Title>
+							<Title
+								level={5}
+								type="secondary"
+								style={{ margin: 0 }}
+							>
+								${usdBalance3CRV.toFixed(2)}
+							</Title>
+						</div>
+					</Row>
 				</Col>
 			</Row>
-			<Divider style={{ marginTop: '0' }}>TO</Divider>
-			{Currencies3Pool.map((currency) => (
-				<PaddedRow key={currency.name}>
-					<WithdrawAssetRow
-						currency={currency}
-						onChange={handleFormInputChange(setCurrencyValues)}
-						value={currencyValues[currency.tokenId]}
-						error={error}
-						balance={balance3CRV}
-						inputBalance={input3CRV}
-						approvee={contracts?.externalLP['3pool'].pool.address}
-					/>
-				</PaddedRow>
-			))}
-			<Row style={md ? {} : { padding: '0 10%' }} align="middle">
-				<Col xs={24} sm={24} md={24} style={{ marginTop: '10px' }}>
+			<Divider style={{ marginTop: '0' }}></Divider>
+			<Row justify="center">
+				<Col xs={22}>
+					<Space
+						direction="vertical"
+						size="small"
+						style={{ width: '100%' }}
+					>
+						{Currencies3Pool.map((currency) => (
+							<PaddedRow key={currency.name}>
+								<WithdrawAssetRow
+									currency={currency}
+									onChange={handleFormInputChange(
+										setCurrencyValues,
+									)}
+									value={currencyValues[currency.tokenId]}
+									error={error}
+									balance={balance3CRV}
+									inputBalance={input3CRV}
+									approvee={
+										contracts?.externalLP['3pool'].pool
+											.address
+									}
+								/>
+							</PaddedRow>
+						))}
+					</Space>
+				</Col>
+			</Row>
+			<Row
+				style={{ marginTop: '1.5rem' }}
+				align="middle"
+				justify="center"
+			>
+				<Col xs={12}>
 					<Button
 						disabled={balance3CRV.eq(0) || error || input3CRV.eq(0)}
 						loading={loadingWithdraw3Pool}
 						onClick={handleSubmit}
+						style={{ fontSize: '18px', width: '100%' }}
 					>
-						Convert
+						Withdraw
 					</Button>
 				</Col>
 			</Row>
