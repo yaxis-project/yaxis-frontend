@@ -149,4 +149,73 @@ export default function Updater(): void {
 				}),
 			)
 	}, [dispatch, linkcrvResult, state.prices.link])
+
+	const crvcvxLP = useMemo(() => contracts?.vaults['cvx'], [contracts])
+
+	const { result: crvcvxResult } = useSingleCallResult(
+		crvcvxLP?.tokenPool,
+		'get_virtual_price()',
+	)
+
+	useEffect(() => {
+		const crvcvxPrice = new BigNumber(crvcvxResult?.toString() || 0)
+		// Fill curve LP token prices from Curve Liqudiity Pools
+		if (crvcvxPrice.gt(0))
+			dispatch(
+				updatePrices({
+					prices: {
+						crvcvxeth: crvcvxPrice
+							.dividedBy(10 ** 18)
+							.multipliedBy(state.prices.cvx)
+							.toNumber(),
+					},
+				}),
+			)
+	}, [dispatch, crvcvxResult, state.prices.cvx])
+
+	const tricryptoLP = useMemo(() => contracts?.vaults['link'], [contracts])
+
+	const { result: tricryptoResult } = useSingleCallResult(
+		tricryptoLP?.tokenPool,
+		'get_virtual_price()',
+	)
+
+	useEffect(() => {
+		const tricryptoPrice = new BigNumber(tricryptoResult?.toString() || 0)
+		// Fill curve LP token prices from Curve Liqudiity Pools
+		if (tricryptoPrice.gt(0))
+			dispatch(
+				updatePrices({
+					prices: {
+						crv3crypto: tricryptoPrice
+							.dividedBy(10 ** 18)
+							.multipliedBy(state.prices.link) // TODO
+							.toNumber(),
+					},
+				}),
+			)
+	}, [dispatch, tricryptoResult, state.prices.link])
+
+	const fraxLP = useMemo(() => contracts?.vaults['link'], [contracts])
+
+	const { result: fraxResult } = useSingleCallResult(
+		fraxLP?.tokenPool,
+		'get_virtual_price()',
+	)
+
+	useEffect(() => {
+		const fraxPrice = new BigNumber(fraxResult?.toString() || 0)
+		// Fill curve LP token prices from Curve Liqudiity Pools
+		if (fraxPrice.gt(0))
+			dispatch(
+				updatePrices({
+					prices: {
+						frax: fraxPrice
+							.dividedBy(10 ** 18)
+							.multipliedBy(state.prices.frax)
+							.toNumber(),
+					},
+				}),
+			)
+	}, [dispatch, fraxResult, state.prices.frax])
 }

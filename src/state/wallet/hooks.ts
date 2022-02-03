@@ -1118,6 +1118,9 @@ export function useBoosts() {
 	const btc = useUserBoost('btc')
 	const eth = useUserBoost('eth')
 	const link = useUserBoost('link')
+	const cvx = useUserBoost('cvx')
+	const tricrypto = useUserBoost('tricrypto')
+	const frax = useUserBoost('frax')
 	const yaxis = useUserBoost('yaxis')
 
 	return useMemo(() => {
@@ -1126,9 +1129,16 @@ export function useBoosts() {
 			btc,
 			eth,
 			link,
+			cvx,
+			tricrypto,
+			frax,
 			yaxis,
 		}
-	}, [usd, btc, eth, link, yaxis])
+	}, [usd, btc, eth, link,
+		cvx,
+		tricrypto,
+		frax,
+		yaxis])
 }
 
 export function useVaultsAPRWithBoost() {

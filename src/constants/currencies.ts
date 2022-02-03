@@ -5,6 +5,8 @@ import crv3 from '../assets/img/currencies/3crv.svg'
 import dai from '../assets/img/currencies/dai.svg'
 import eth from '../assets/img/currencies/eth.svg'
 import pickle from '../assets/img/currencies/pickle.svg'
+import frax from '../assets/img/currencies/frax.svg'
+import cvx from '../assets/img/currencies/cvx.svg'
 import uni from '../assets/img/currencies/uni.svg'
 import usdc from '../assets/img/currencies/usdc.svg'
 import usdt from '../assets/img/currencies/usdt.svg'
@@ -150,6 +152,50 @@ export const CVLINKgauge: Currency = {
 	decimals: 18,
 }
 
+export const CVCVX: Currency = {
+	name: 'CV:CVX',
+	tokenId: 'cv:cvx',
+	icon: cvx,
+	decimals: 18,
+}
+
+export const CVCVXgauge: Currency = {
+	name: 'CV:CVX-GAUGE',
+	tokenId: 'cv:cvx-gauge',
+	icon: cvx,
+	decimals: 18,
+}
+
+export const CVTRICRYPTO: Currency = {
+	name: 'CV:TRICRYPTO',
+	tokenId: 'cv:tricrypto',
+	icon: crv3,
+	childIcons: [usdt, wbtc, eth],
+	decimals: 18,
+}
+
+export const CVTRICRYPTOgauge: Currency = {
+	name: 'CV:TRICRYPTO-GAUGE',
+	tokenId: 'cv:tricrypto-gauge',
+	icon: crv3,
+	childIcons: [usdt, wbtc, eth],
+	decimals: 18,
+}
+
+export const CVFRAX: Currency = {
+	name: 'CV:FRAX',
+	tokenId: 'cv:frax',
+	icon: frax,
+	decimals: 18,
+}
+
+export const CVFRAXgauge: Currency = {
+	name: 'CV:FRAX-GAUGE',
+	tokenId: 'cv:frax-gauge',
+	icon: frax,
+	decimals: 18,
+}
+
 export const YAXISgauge: Currency = {
 	name: 'YAXIS-GAUGE',
 	tokenId: 'yaxis-gauge',
@@ -219,7 +265,7 @@ export const MIM: Currency = {
 export const CVX: Currency = {
 	name: 'CVX',
 	tokenId: 'cvx',
-	icon: eth,
+	icon: cvx,
 	decimals: 18,
 	priceMapKey: 'cvx',
 }
@@ -243,6 +289,22 @@ export const PICKLE: Currency = {
 	name: 'Pickle',
 	tokenId: 'pickle',
 	icon: pickle,
+	decimals: 18,
+}
+
+export const FRAX: Currency = {
+	name: 'Pickle',
+	tokenId: 'pickle',
+	icon: frax,
+	decimals: 18,
+	priceMapKey: 'frax',
+}
+
+export const TRICRYPTO: Currency = {
+	name: 'Tri-Crypto',
+	tokenId: 'tricrypto',
+	icon: crv3,
+	childIcons: [usdt, wbtc, eth],
 	decimals: 18,
 }
 
@@ -286,6 +348,30 @@ export const ALETHCRV: Currency = {
 	tokenId: 'alethcrv',
 	icon: eth,
 	childIcons: [WETH.icon],
+	decimals: 18,
+}
+
+export const CRVCVXETH: Currency = {
+	name: 'crvCVXETH',
+	tokenId: 'crvcvxeth',
+	icon: cvx,
+	childIcons: [CVX.icon, WETH.icon],
+	decimals: 18,
+}
+
+export const CRV3CRYPTO: Currency = {
+	name: 'crv3crypto',
+	tokenId: 'crv3crypto',
+	icon: crv3,
+	childIcons: [USDT.icon, WBTC.icon, WETH.icon],
+	decimals: 18,
+}
+
+export const FRAX3CRV: Currency = {
+	name: 'FRAX3CRV-f',
+	tokenId: 'frax3crv',
+	icon: frax,
+	childIcons: [FRAX.icon, USDC.icon, USDT.icon, DAI.icon],
 	decimals: 18,
 }
 
@@ -335,6 +421,14 @@ export const Currencies = {
 	'CV:ETH-GAUGE': CVETHgauge,
 	'CV:LINK': CVLINK,
 	'CV:LINK-GAUGE': CVLINKgauge,
+	'CV:CVX': CVCVX,
+	'CV:CVX-GAUGE': CVCVXgauge,
+	'CV:TRICRYPTO': CVTRICRYPTO,
+	'CV:TRICRYPTO-GAUGE': CVTRICRYPTOgauge,
+	'CV:FRAX': CVFRAX,
+	'CV:FRAX-GAUGE': CVFRAXgauge,
+	FRAX,
+	TRICRYPTO,
 	MIM,
 	SPELL,
 	CVX,
@@ -348,6 +442,9 @@ export const Currencies = {
 	MIM3CRV,
 	ALETHCRV,
 	LINKCRV,
+	FRAX3CRV,
+	CRV3CRYPTO,
+	CRVCVXETH,
 	'3CRV': threeCRV,
 	PICKLE,
 	UNISWAP_LP,
