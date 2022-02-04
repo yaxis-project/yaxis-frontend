@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { Button, Menu, Dropdown, Row, Col } from 'antd'
 import { CaretDownOutlined } from '@ant-design/icons'
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
+import Davatar from "@davatar/react"
 import { useOpenModal } from '../../../state/application/hooks'
 import { ApplicationModal } from '../../../state/application/actions'
 import AccountInfo from '../components/AccountInfo'
@@ -86,9 +86,9 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 						}
 					>
 						<div style={{ display: 'flex', alignItems: 'center' }}>
-							<Jazzicon
-								diameter={36}
-								seed={jsNumberForAddress(account)}
+							<Davatar
+								size={36}
+								address={account}
 							/>
 							<CaretDownOutlined style={{ paddingLeft: '5px' }} />
 						</div>
