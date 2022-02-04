@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons'
 import { etherscanUrl } from '../../../utils'
 import useTranslation from '../../../hooks/useTranslation'
+import { useENS } from '../../../hooks/useENS'
 
 const { Text } = Typography
 
@@ -26,6 +27,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 	mobile,
 }) => {
 	const translate = useTranslation()
+	const {ensName} = useENS(account)
 	return (
 		<>
 			<Menu.ItemGroup
@@ -39,7 +41,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 						>
 							<AccountText>{translate('Account')}:</AccountText>
 							<AccountIdText>
-								{account.slice(0, 4)} ... {account.slice(-2)}
+								{ensName || `${account.slice(0, 4)} ... ${account.slice(-2)}`}
 							</AccountIdText>
 						</StyledRow>
 						<StyledRow>
