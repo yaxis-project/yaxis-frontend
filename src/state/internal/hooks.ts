@@ -259,12 +259,21 @@ export function useVaults() {
 			btc,
 			eth,
 			link,
-			yaxis,
 			frax,
 			tricrypto,
 			cvx,
+			yaxis,
 		}
-	}, [usd, btc, eth, link, frax, tricrypto, cvx, yaxis])
+	}, [
+		usd,
+		btc,
+		eth,
+		link,
+		frax,
+		tricrypto,
+		cvx,
+		yaxis
+	])
 }
 
 const DEV_FUND_ADDRESS = '0x5118Df9210e1b97a4de0df15FBbf438499d6b446'

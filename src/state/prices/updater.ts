@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
 import { updatePrices } from './actions'
-import { useSingleCallResult } from '../onchain/hooks'
+import { useSingleCallResult, useSingleContractMultipleMethods } from '../onchain/hooks'
 import { getCoinGeckoPrices } from './utils'
 import { useContracts } from '../../contexts/Contracts'
 import BigNumber from 'bignumber.js'
@@ -173,30 +173,44 @@ export default function Updater(): void {
 			)
 	}, [dispatch, crvcvxResult, state.prices.cvx])
 
-	const tricryptoLP = useMemo(() => contracts?.vaults['link'], [contracts])
+	const tricryptoLP = useMemo(() => contracts?.vaults['tricrypto'], [contracts])
 
-	const { result: tricryptoResult } = useSingleCallResult(
+	const tricryptoResult = useSingleContractMultipleMethods(
 		tricryptoLP?.tokenPool,
-		'get_virtual_price()',
+		[['get_virtual_price()'], ['balances', [0]], ['balances', [1]], ['balances', [2]]],
+	)
+
+	const [virtualPrice, balance0, balance1, balance2] = useMemo(() => tricryptoResult.map(({ result, loading }) => {
+		if (loading) return new BigNumber(0)
+		if (!result) return new BigNumber(0)
+		return result.toString()
+	}), [tricryptoResult])
+
+	const { result: supplyOfTriCrypto } = useSingleCallResult(
+		tricryptoLP?.token.contract,
+		'totalSupply',
 	)
 
 	useEffect(() => {
-		const tricryptoPrice = new BigNumber(tricryptoResult?.toString() || 0)
 		// Fill curve LP token prices from Curve Liqudiity Pools
-		if (tricryptoPrice.gt(0))
+		const supply = new BigNumber(supplyOfTriCrypto?.toString() || 0)
+
+		const tether = new BigNumber(balance0).dividedBy(10 ** 6).multipliedBy(state.prices.usdt)
+		const wbtc = new BigNumber(balance1).dividedBy(10 ** 8).multipliedBy(state.prices.wbtc)
+		const weth = new BigNumber(balance2).dividedBy(10 ** 18).multipliedBy(state.prices.weth)
+		const total = tether.plus(wbtc).plus(weth)
+
+		if (new BigNumber(virtualPrice).gt(0))
 			dispatch(
 				updatePrices({
 					prices: {
-						crv3crypto: tricryptoPrice
-							.dividedBy(10 ** 18)
-							.multipliedBy(state.prices.link) // TODO
-							.toNumber(),
+						crv3crypto: total.dividedBy(supply.dividedBy(10 ** 18)).multipliedBy(new BigNumber(virtualPrice).dividedBy(10 ** 18)).toNumber(),
 					},
 				}),
 			)
-	}, [dispatch, tricryptoResult, state.prices.link])
+	}, [dispatch, supplyOfTriCrypto, virtualPrice, balance0, balance1, balance2, state.prices.usdt, state.prices.wbtc, state.prices.weth])
 
-	const fraxLP = useMemo(() => contracts?.vaults['link'], [contracts])
+	const fraxLP = useMemo(() => contracts?.vaults['frax'], [contracts])
 
 	const { result: fraxResult } = useSingleCallResult(
 		fraxLP?.tokenPool,
@@ -210,7 +224,7 @@ export default function Updater(): void {
 			dispatch(
 				updatePrices({
 					prices: {
-						frax: fraxPrice
+						frax3crv: fraxPrice
 							.dividedBy(10 ** 18)
 							.multipliedBy(state.prices.frax)
 							.toNumber(),

@@ -250,8 +250,8 @@ export function useConvexAPY(name: TCurveLPContracts) {
 		const crvPriceConversion =
 			currency !== 'usd'
 				? new BigNumber(prices?.crv)
-						.dividedBy(prices?.[currency])
-						.toString()
+					.dividedBy(prices?.[currency])
+					.toString()
 				: prices?.crv
 		const crvAPR = crvPerYear.multipliedBy(crvPriceConversion || 0)
 
@@ -264,8 +264,8 @@ export function useConvexAPY(name: TCurveLPContracts) {
 		const cvxPriceConversion =
 			currency !== 'usd'
 				? new BigNumber(prices?.cvx)
-						.dividedBy(prices?.[currency])
-						.toString()
+					.dividedBy(prices?.[currency])
+					.toString()
 				: prices?.cvx
 		const cvxAPR = cvxPerYear.multipliedBy(cvxPriceConversion)
 

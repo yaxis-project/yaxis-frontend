@@ -13,6 +13,7 @@ import usdt from '../assets/img/currencies/usdt.svg'
 import link from '../assets/img/currencies/link.svg'
 import wbtc from '../assets/img/currencies/wbtc.svg'
 import usd from '../assets/img/currencies/usd.svg'
+import tricrypto from '../assets/img/currencies/tricrypto.svg'
 import linkswap from '../assets/img/icons/pool-token.svg'
 import yax from '../assets/img/logo-ui.svg'
 
@@ -169,7 +170,7 @@ export const CVCVXgauge: Currency = {
 export const CVTRICRYPTO: Currency = {
 	name: 'CV:TRICRYPTO',
 	tokenId: 'cv:tricrypto',
-	icon: crv3,
+	icon: tricrypto,
 	childIcons: [usdt, wbtc, eth],
 	decimals: 18,
 }
@@ -177,7 +178,7 @@ export const CVTRICRYPTO: Currency = {
 export const CVTRICRYPTOgauge: Currency = {
 	name: 'CV:TRICRYPTO-GAUGE',
 	tokenId: 'cv:tricrypto-gauge',
-	icon: crv3,
+	icon: tricrypto,
 	childIcons: [usdt, wbtc, eth],
 	decimals: 18,
 }
@@ -303,7 +304,7 @@ export const FRAX: Currency = {
 export const TRICRYPTO: Currency = {
 	name: 'Tri-Crypto',
 	tokenId: 'tricrypto',
-	icon: crv3,
+	icon: tricrypto,
 	childIcons: [usdt, wbtc, eth],
 	decimals: 18,
 }
@@ -362,7 +363,7 @@ export const CRVCVXETH: Currency = {
 export const CRV3CRYPTO: Currency = {
 	name: 'crv3crypto',
 	tokenId: 'crv3crypto',
-	icon: crv3,
+	icon: tricrypto,
 	childIcons: [USDT.icon, WBTC.icon, WETH.icon],
 	decimals: 18,
 }

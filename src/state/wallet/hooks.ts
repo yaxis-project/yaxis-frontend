@@ -1134,11 +1134,16 @@ export function useBoosts() {
 			frax,
 			yaxis,
 		}
-	}, [usd, btc, eth, link,
+	}, [
+		usd,
+		btc,
+		eth,
+		link,
 		cvx,
 		tricrypto,
 		frax,
-		yaxis])
+		yaxis
+	])
 }
 
 export function useVaultsAPRWithBoost() {
