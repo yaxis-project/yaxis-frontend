@@ -294,8 +294,8 @@ export const PICKLE: Currency = {
 }
 
 export const FRAX: Currency = {
-	name: 'Pickle',
-	tokenId: 'pickle',
+	name: 'Frax',
+	tokenId: 'frax',
 	icon: frax,
 	decimals: 18,
 	priceMapKey: 'frax',
