@@ -1,5 +1,16 @@
-import { useState, useMemo, useCallback } from 'react'
-import { DAI, USDT, USDC } from '../../../../constants/currencies'
+import { useState, useMemo, useCallback, useEffect } from 'react'
+import {
+	MIM,
+	DAI,
+	USDT,
+	USDC,
+	RENCRV,
+	WBTC,
+	ALETHCRV,
+	ETH,
+	LINKCRV,
+	LINK,
+} from '../../../../constants/currencies'
 import DepositAssetRow from '../../../Vault/components/DepositAssetRow'
 import { useAllTokenBalances } from '../../../../state/wallet/hooks'
 import { usePrices } from '../../../../state/prices/hooks'
@@ -19,25 +30,40 @@ import {
 import BigNumber from 'bignumber.js'
 
 const { Title, Text } = Typography
-const { useBreakpoint } = Grid
-
-const Currencies3Pool = [DAI, USDT, USDC]
-
-const initialCurrencyValues: CurrencyValues = reduce(
-	Currencies3Pool,
-	(prev, curr) => ({
-		...prev,
-		[curr.tokenId]: '',
-	}),
-	{},
-)
+// const { useBreakpoint } = Grid
 
 /**
  * Creates a deposit table for the savings account.
  */
-export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
+export default function Stable3PoolDeposit({ set3crvValue, value3crv, vault }) {
+	const [Currencies3Pool, setCurrencies3Pool] = useState<any>([])
+
+	useEffect(() => {
+		switch (vault) {
+			case 'usd':
+				setCurrencies3Pool([MIM, DAI, USDT, USDC])
+				break
+			case 'btc':
+				setCurrencies3Pool([RENCRV, WBTC])
+				break
+			case 'eth':
+				setCurrencies3Pool([ALETHCRV, ETH])
+				break
+			default:
+				setCurrencies3Pool([LINKCRV, LINK])
+				break
+		}
+	}, [vault])
+
+	const initialCurrencyValues: CurrencyValues = reduce(
+		Currencies3Pool,
+		(prev, curr) => ({
+			...prev,
+			[curr.tokenId]: '',
+		}),
+		{},
+	)
 	const { contracts } = useContracts()
-	const { md } = useBreakpoint()
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		initialCurrencyValues,

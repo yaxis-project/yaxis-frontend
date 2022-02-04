@@ -18,7 +18,11 @@ const StyledCard = styled(Card)`
 	}
 `
 
-const Stable3PoolTabs = function () {
+type props = {
+	vault: string
+}
+
+const Stable3PoolTabs = function ({ vault }: props) {
 	const t = useTranslation()
 	const [value3crv, set3crvValue] = React.useState()
 	const [active, setActive] = useState('deposit')
@@ -29,10 +33,11 @@ const Stable3PoolTabs = function () {
 					<Stable3PoolDeposit
 						set3crvValue={set3crvValue}
 						value3crv={value3crv}
+						vault={vault}
 					/>
 				</TabPane>
 				<TabPane tab={t('Withdraw')} key="withdraw">
-					<Stable3PoolWithdraw />
+					<Stable3PoolWithdraw vault={vault} />
 				</TabPane>
 			</Tabs>
 		</StyledCard>

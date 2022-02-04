@@ -24,15 +24,17 @@ const Converter: React.FC<Props> = ({ vault }) => {
 		<DetailOverviewCard
 			title={
 				<>
-					<Title style={{ fontSize: 22 }}>Curve pool (MIM3CRV)</Title>
+					<Title style={{ fontSize: 22 }}>
+						Curve pool ({vaultData.token.toUpperCase()})
+					</Title>
 					<Text style={{ fontSize: 14 }}>
-						This Vault accepts {vaultData.token.toUpperCase()}
+						This Vault accepts {vaultData.token.toUpperCase()}{' '}
 						deposits...
 					</Text>
 				</>
 			}
 		>
-			{vault === 'usd' && <Helpers.Stable3PoolTabs />}
+			<Helpers.Stable3PoolTabs vault={vault} />
 		</DetailOverviewCard>
 	)
 }

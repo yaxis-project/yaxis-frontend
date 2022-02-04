@@ -1,11 +1,18 @@
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import {
 	Currency,
-	threeCRV,
+	MIM,
 	DAI,
 	USDT,
 	USDC,
+	RENCRV,
+	WBTC,
+	ALETHCRV,
+	ETH,
+	LINKCRV,
+	LINK,
+	threeCRV,
 } from '../../../../constants/currencies'
 import { useAllTokenBalances } from '../../../../state/wallet/hooks'
 import { usePrices } from '../../../../state/prices/hooks'
@@ -25,22 +32,38 @@ import { useSingleCallResult } from '../../../../state/onchain/hooks'
 const { Title, Text } = Typography
 const { useBreakpoint } = Grid
 
-const Currencies3Pool = [DAI, USDT, USDC]
-
-const initialCurrencyValues: CurrencyValues = reduce(
-	[DAI, USDT, USDC],
-	(prev, curr) => ({
-		...prev,
-		[curr.tokenId]: '',
-	}),
-	{},
-)
-
 /**
  * Creates a deposit table for the savings account.
  */
-export default function Stable3PoolWithdraw() {
-	const { md } = useBreakpoint()
+export default function Stable3PoolWithdraw({ vault }: any) {
+	const [Currencies3Pool, setCurrencies3Pool] = useState<any>([])
+
+	useEffect(() => {
+		switch (vault) {
+			case 'usd':
+				setCurrencies3Pool([MIM, DAI, USDT, USDC])
+				break
+			case 'btc':
+				setCurrencies3Pool([RENCRV, WBTC])
+				break
+			case 'eth':
+				setCurrencies3Pool([ALETHCRV, ETH])
+				break
+			default:
+				setCurrencies3Pool([LINKCRV, LINK])
+				break
+		}
+	}, [vault])
+
+	const initialCurrencyValues: CurrencyValues = reduce(
+		[DAI, USDT, USDC],
+		(prev, curr) => ({
+			...prev,
+			[curr.tokenId]: '',
+		}),
+		{},
+	)
+
 	const { contracts } = useContracts()
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
@@ -180,6 +203,7 @@ export default function Stable3PoolWithdraw() {
 										contracts?.externalLP['3pool'].pool
 											.address
 									}
+									Currencies3Pool={Currencies3Pool}
 								/>
 							</PaddedRow>
 						))}
@@ -219,6 +243,7 @@ interface WithdrawAssetRowProps {
 	inputBalance: BigNumber
 	approvee: string
 	containerStyle?: any
+	Currencies3Pool?: any
 }
 
 /**
@@ -235,6 +260,7 @@ const WithdrawAssetRow: React.FC<WithdrawAssetRowProps> = ({
 	inputBalance,
 	approvee,
 	containerStyle,
+	Currencies3Pool,
 }) => {
 	const currencyIndex = useMemo(
 		() => Currencies3Pool.findIndex((c) => c.tokenId === currency.tokenId),
@@ -295,7 +321,7 @@ const WithdrawAssetRow: React.FC<WithdrawAssetRowProps> = ({
 								min={'0'}
 								placeholder="0"
 								disabled={balance.isZero()}
-								suffix={'3CRV'}
+								suffix={currency.name}
 								onClickMax={() => {
 									const max = balance.minus(inputBalance)
 									if (max.gt(0))
@@ -317,7 +343,11 @@ const WithdrawAssetRow: React.FC<WithdrawAssetRowProps> = ({
 					</Row>
 				</Col>
 				<Col xs={11} sm={5} md={5} className="balance">
-					<Value value={balanceUSD} numberPrefix="$" decimals={2} />
+					<Value
+						value={balanceUSD === 'NaN' ? '0.00' : balanceUSD}
+						numberPrefix="$"
+						decimals={2}
+					/>
 					<Text type="secondary">
 						{new BigNumber(value || 0)
 							.times(conversionRate)

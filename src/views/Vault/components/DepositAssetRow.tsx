@@ -55,7 +55,6 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 	)
 
 	const [inputError, setInputError] = useState<boolean>(false)
-
 	return (
 		<>
 			<Row
@@ -76,7 +75,11 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 					</Row>
 				</Col>
 				<Col xs={11} sm={6} md={6} className="balance">
-					<Value value={balanceUSD} numberPrefix="$" decimals={2} />
+					<Value
+						value={balanceUSD === 'NaN' ? '0.00' : balanceUSD}
+						numberPrefix="$"
+						decimals={2}
+					/>
 					<Text type="secondary">
 						{balance.toFormat(2)} {currency.name}
 					</Text>
