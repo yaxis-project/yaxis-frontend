@@ -56,14 +56,13 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 					<Col span={24}>
 						<Card style={{ marginBottom: "10px", background: 'rgb(253,94,97)' }}>
 							<Row justify="center">
-								<Col>
-									<Text style={{ fontSize: "20px" }}>
-										<a href="https://yaxis.discourse.group/t/fine-tune-yaxis-tokenomics/302/30">YIP-14 </a>
-										passed with 97% approval, deprecating the YAXIS vault.
-									</Text>
-								</Col>
-								<Col>
-								</Col>
+								<Text style={{ fontSize: "20px" }}>
+									<a href="https://yaxis.discourse.group/t/fine-tune-yaxis-tokenomics/302/30">YIP-14 </a>
+									passed with 97% approval, deprecating the YAXIS vault.
+								</Text>
+							</Row>
+							<Row justify="center">
+
 								<Text style={{ fontSize: "20px" }}>
 									<NavLink to={"/governance"}>
 										Lock YAXIS into Governance
