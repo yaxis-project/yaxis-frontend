@@ -184,7 +184,7 @@ const mainnet: Config = {
 			gauge: '0x951E7726d70017E56756A6807886113708A699Fb',
 		},
 		cvx: {
-			url: 'https://curve.fi/cvxeth/',
+			url: 'https://curve.fi/cvxeth/deposit',
 			tokenPoolContract: externalPools.curve.crvcvxeth.pool,
 			token: 'CRVCVXETH',
 			tokenContract: externalPools.curve.crvcvxeth.token,
@@ -194,7 +194,7 @@ const mainnet: Config = {
 			gauge: '0x7b552Fd9cf50446D50163F876F23E8756B06fA00',
 		},
 		tricrypto: {
-			url: 'https://curve.fi/tricrypto2/',
+			url: 'https://curve.fi/tricrypto2/deposit',
 			tokenPoolContract: externalPools.curve.crv3crypto.pool,
 			token: 'CRV3CRYPTO',
 			tokenContract: externalPools.curve.crv3crypto.token,
@@ -204,7 +204,7 @@ const mainnet: Config = {
 			gauge: '0x3BE5f25B47233D0c5293DDc0848e1dA9399eBbD9',
 		},
 		frax: {
-			url: 'https://curve.fi/frax',
+			url: 'https://curve.fi/frax/deposit',
 			tokenPoolContract: externalPools.curve.frax3crv.pool,
 			token: 'FRAX3CRV',
 			tokenContract: externalPools.curve.frax3crv.token,
