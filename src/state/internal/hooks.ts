@@ -130,10 +130,11 @@ export function useVaultRewards(name: TVaults) {
 			.multipliedBy(relativeWeight?.result?.toString() || 0)
 			.dividedBy(10 ** 18)
 			.dividedBy(virtualSupply)
-
-		const yaxisPerYear = yaxisPerSecond
-			.multipliedBy(86400)
-			.multipliedBy(365)
+		const yaxisPerYear = yaxisPerSecond.isNaN() ?
+			new BigNumber(0)
+			: yaxisPerSecond
+				.multipliedBy(86400)
+				.multipliedBy(365)
 
 		const APR = yaxisPerYear.multipliedBy(prices?.yaxis || 0)
 
@@ -141,7 +142,7 @@ export function useVaultRewards(name: TVaults) {
 			workingSupply: new BigNumber(balance?.result?.toString() || 0),
 			amountPerYear: yaxisPerYear,
 			maxAPR: APR,
-			minAPR: APR.dividedBy(2.5),
+			minAPR: APR.isZero() ? APR : APR.dividedBy(2.5),
 		}
 	}, [name, contracts?.vaults, prices, relativeWeight, balance, rate])
 }
@@ -160,8 +161,8 @@ export function useVaultsAPR() {
 	const rencrv = useConvexAPY('rencrv')
 	const alethcrv = useConvexAPY('alethcrv')
 	const linkcrv = useConvexAPY('linkcrv')
-	const crvcvxeth = useConvexAPY('crvcvxeth')
-	const crv3crypto = useConvexAPY('crv3crypto')
+	const crvcvxeth = useConvexAPY('crvcvxeth', true)
+	const crv3crypto = useConvexAPY('crv3crypto', true)
 	const frax3crv = useConvexAPY('frax3crv')
 
 	return useMemo(() => {
