@@ -84,6 +84,12 @@ const externalPools: ExternalPoolsConfig = {
 			token: '0x3A283D9c08E8b55966afb64C515f5143cf907611',
 			gauge: '0x7E1444BA99dcdFfE8fBdb42C02F0005D14f13BE1',
 			convexRewards: '0xb1Fb0BA0676A1fFA83882c7F4805408bA232C1fA',
+			extraRewards: {
+				cvx: {
+					contract: '0x834B9147Fd23bF131644aBC6e557Daf99C5cDa15',
+					token: '0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B'
+				}
+			}
 		},
 		crv3crypto: {
 			currency: 'usd',
