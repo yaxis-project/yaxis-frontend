@@ -156,6 +156,27 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, currencies }) => {
 			description: `withdrew from LINK Vault`,
 		})
 
+	const { call: handleWithdrawFRAX, loading: isSubmittingFRAX } =
+		useContractWrite({
+			contractName: 'vaults.frax.vault',
+			method: 'withdraw',
+			description: `withdrew from FRAX Vault`,
+		})
+
+	const { call: handleWithdrawTRICRYPTO, loading: isSubmittingTRICRYPTO } =
+		useContractWrite({
+			contractName: 'vaults.tricrypto.vault',
+			method: 'withdraw',
+			description: `withdrew from TRICRYPTO Vault`,
+		})
+
+	const { call: handleWithdrawCVX, loading: isSubmittinwCVX } =
+		useContractWrite({
+			contractName: 'vaultswCVX.vault',
+			method: 'withdraw',
+			description: `withdrew fromwCVX Vault`,
+		})
+
 	const callsLookup = useMemo(() => {
 		return {
 			handleWithdrawETH,
@@ -166,6 +187,12 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, currencies }) => {
 			isSubmittingUSD,
 			handleWithdrawLINK,
 			isSubmittingLINK,
+			handleWithdrawFRAX,
+			isSubmittingFRAX,
+			handleWithdrawTRICRYPTO,
+			isSubmittingTRICRYPTO,
+			handleWithdrawCVX,
+			isSubmittinwCVX,
 		}
 	}, [
 		handleWithdrawETH,
@@ -176,6 +203,12 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, currencies }) => {
 		isSubmittingUSD,
 		handleWithdrawLINK,
 		isSubmittingLINK,
+		handleWithdrawFRAX,
+		isSubmittingFRAX,
+		handleWithdrawTRICRYPTO,
+		isSubmittingTRICRYPTO,
+		handleWithdrawCVX,
+		isSubmittinwCVX,
 	])
 
 	const { prices } = usePrices()
