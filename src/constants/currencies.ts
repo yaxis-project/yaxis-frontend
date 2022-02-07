@@ -369,7 +369,7 @@ export const CRV3CRYPTO: Currency = {
 }
 
 export const FRAX3CRV: Currency = {
-	name: 'FRAX3CRV-f',
+	name: 'FRAX3CRV',
 	tokenId: 'frax3crv',
 	icon: frax,
 	childIcons: [FRAX.icon, USDC.icon, USDT.icon, DAI.icon],
