@@ -49,10 +49,12 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 		prices: { [currency.priceMapKey]: price },
 	} = usePrices()
 
-	const balanceUSD = useMemo(
-		() => new BigNumber(price).times(balance).toFixed(2),
-		[balance, price],
-	)
+	const balanceUSD = useMemo(() => {
+		if (price === undefined) {
+			return '0.00'
+		}
+		return new BigNumber(price).times(balance).toFixed(2)
+	}, [balance, price])
 
 	const [inputError, setInputError] = useState<boolean>(false)
 	return (
@@ -75,11 +77,7 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 					</Row>
 				</Col>
 				<Col xs={11} sm={6} md={6} className="balance">
-					<Value
-						value={balanceUSD === 'NaN' ? '0.00' : balanceUSD}
-						numberPrefix="$"
-						decimals={2}
-					/>
+					<Value value={balanceUSD} numberPrefix="$" decimals={2} />
 					<Text type="secondary">
 						{balance.toFormat(2)} {currency.name}
 					</Text>
