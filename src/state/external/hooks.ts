@@ -177,7 +177,7 @@ function getCVXMintAmount(crvEarned: BigNumber, cvxSupply: BigNumber) {
 	return new BigNumber(0)
 }
 
-export function useConvexAPY(name: TCurveLPContracts) {
+export function useConvexAPY(name: TCurveLPContracts, curvePoolv2 = false) {
 	const { contracts } = useContracts()
 
 	const currency = useMemo(
@@ -192,10 +192,15 @@ export function useConvexAPY(name: TCurveLPContracts) {
 
 	const { prices } = usePrices()
 
-	const virtualPrice = useSingleCallResult(
+	const virtualPriceV1 = useSingleCallResult(
 		contracts?.externalLP[name].pool,
 		'get_virtual_price()',
 	)
+	const virtualPrice = useMemo(() =>
+		curvePoolv2 ?
+			{ result: new BigNumber(prices[name]).multipliedBy(10 ** 18) }
+			: virtualPriceV1
+		, [name, curvePoolv2, prices, virtualPriceV1])
 
 	const cvxTotalSupply = useSingleCallResult(
 		contracts?.currencies.ERC20.cvx.contract,
@@ -250,8 +255,8 @@ export function useConvexAPY(name: TCurveLPContracts) {
 		const crvPriceConversion =
 			currency !== 'usd'
 				? new BigNumber(prices?.crv)
-						.dividedBy(prices?.[currency])
-						.toString()
+					.dividedBy(prices?.[currency])
+					.toString()
 				: prices?.crv
 		const crvAPR = crvPerYear.multipliedBy(crvPriceConversion || 0)
 
@@ -264,8 +269,8 @@ export function useConvexAPY(name: TCurveLPContracts) {
 		const cvxPriceConversion =
 			currency !== 'usd'
 				? new BigNumber(prices?.cvx)
-						.dividedBy(prices?.[currency])
-						.toString()
+					.dividedBy(prices?.[currency])
+					.toString()
 				: prices?.cvx
 		const cvxAPR = cvxPerYear.multipliedBy(cvxPriceConversion)
 

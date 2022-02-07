@@ -160,6 +160,27 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, currencies }) => {
 			description: `unstaked from YAXIS Gauge`,
 		})
 
+	const { call: handleUnstakeFRAX, loading: isSubmittingFRAX } =
+		useContractWrite({
+			contractName: 'vaults.frax.gauge',
+			method: 'withdraw(uint256)',
+			description: `unstaked from FRAX Gauge`,
+		})
+
+	const { call: handleUnstakeTRICRYPTO, loading: isSubmittingTRICRYPTO } =
+		useContractWrite({
+			contractName: 'vaults.tricrypto.gauge',
+			method: 'withdraw(uint256)',
+			description: `unstaked from TRICRYPTO Gauge`,
+		})
+
+	const { call: handleUnstakeCVX, loading: isSubmittingCVX } =
+		useContractWrite({
+			contractName: 'vaults.cvx.gauge',
+			method: 'withdraw(uint256)',
+			description: `unstaked from CVX Gauge`,
+		})
+
 	const callsLookup = useMemo(() => {
 		return {
 			handleUnstakeETH,
@@ -172,6 +193,12 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, currencies }) => {
 			isSubmittingLINK,
 			handleUnstakeYAXIS,
 			isSubmittingYAXIS,
+			handleUnstakeFRAX,
+			isSubmittingFRAX,
+			handleUnstakeTRICRYPTO,
+			isSubmittingTRICRYPTO,
+			handleUnstakeCVX,
+			isSubmittingCVX,
 		}
 	}, [
 		handleUnstakeETH,
@@ -184,6 +211,12 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, currencies }) => {
 		isSubmittingLINK,
 		handleUnstakeYAXIS,
 		isSubmittingYAXIS,
+		handleUnstakeFRAX,
+		isSubmittingFRAX,
+		handleUnstakeTRICRYPTO,
+		isSubmittingTRICRYPTO,
+		handleUnstakeCVX,
+		isSubmittingCVX,
 	])
 
 	const { prices } = usePrices()

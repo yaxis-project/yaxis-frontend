@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
 import { updatePrices } from './actions'
-import { useSingleCallResult } from '../onchain/hooks'
+import { useSingleCallResult, useSingleContractMultipleMethods } from '../onchain/hooks'
 import { getCoinGeckoPrices } from './utils'
 import { useContracts } from '../../contexts/Contracts'
 import BigNumber from 'bignumber.js'
@@ -149,4 +149,116 @@ export default function Updater(): void {
 				}),
 			)
 	}, [dispatch, linkcrvResult, state.prices.link])
+
+	const crvcvxLP = useMemo(() => contracts?.vaults['cvx'], [contracts])
+
+	const crvcvxResult = useSingleContractMultipleMethods(
+		crvcvxLP?.tokenPool,
+		[['get_virtual_price()'], ['balances', [0]], ['balances', [1]]],
+	)
+
+	const [crvcvxVP, crvcvxBalance0, crvcvxBalance1] = useMemo(() => crvcvxResult.map(({ result, loading }) => {
+		if (loading) return new BigNumber(0)
+		if (!result) return new BigNumber(0)
+		return result.toString()
+	}), [crvcvxResult])
+
+	const { result: supplyOfCrvcvx } = useSingleCallResult(
+		crvcvxLP?.token.contract,
+		'totalSupply',
+	)
+
+	useEffect(() => {
+		// Fill curve LP token prices from Curve Liqudiity Pools
+		const supply = new BigNumber(supplyOfCrvcvx?.toString() || 0)
+
+		const weth = new BigNumber(crvcvxBalance0).dividedBy(10 ** 18).multipliedBy(state.prices.weth)
+		const cvx = new BigNumber(crvcvxBalance1).dividedBy(10 ** 18).multipliedBy(state.prices.cvx)
+		const total = cvx.plus(weth)
+
+		if (new BigNumber(crvcvxVP).gt(0))
+			dispatch(
+				updatePrices({
+					prices: {
+						crvcvxeth: total.dividedBy(supply.dividedBy(10 ** 18))
+							.multipliedBy(new BigNumber(crvcvxVP)
+								.dividedBy(10 ** 18))
+							.toNumber(),
+					},
+				}),
+			)
+	}, [dispatch, state.prices.cvx, state.prices.weth, crvcvxVP, crvcvxBalance0, crvcvxBalance1, supplyOfCrvcvx])
+
+	const tricryptoLP = useMemo(() => contracts?.vaults['tricrypto'], [contracts])
+
+	const tricryptoResult = useSingleContractMultipleMethods(
+		tricryptoLP?.tokenPool,
+		[['get_virtual_price()'], ['balances', [0]], ['balances', [1]], ['balances', [2]]],
+	)
+
+	const [tricryptoVP, tricryptoBalance0, tricryptoBalance1, tricryptoBalance2] = useMemo(() => tricryptoResult.map(({ result, loading }) => {
+		if (loading) return new BigNumber(0)
+		if (!result) return new BigNumber(0)
+		return result.toString()
+	}), [tricryptoResult])
+
+	const { result: supplyOfTriCrypto } = useSingleCallResult(
+		tricryptoLP?.token.contract,
+		'totalSupply',
+	)
+
+	useEffect(() => {
+		// Fill curve LP token prices from Curve Liqudiity Pools
+		const supply = new BigNumber(supplyOfTriCrypto?.toString() || 0)
+
+		const tether = new BigNumber(tricryptoBalance0).dividedBy(10 ** 6).multipliedBy(state.prices.usdt)
+		const wbtc = new BigNumber(tricryptoBalance1).dividedBy(10 ** 8).multipliedBy(state.prices.wbtc)
+		const weth = new BigNumber(tricryptoBalance2).dividedBy(10 ** 18).multipliedBy(state.prices.weth)
+		const total = tether.plus(wbtc).plus(weth)
+
+		if (new BigNumber(tricryptoVP).gt(0))
+			dispatch(
+				updatePrices({
+					prices: {
+						crv3crypto: total.dividedBy(supply.dividedBy(10 ** 18))
+							.multipliedBy(new BigNumber(tricryptoVP)
+								.dividedBy(10 ** 18))
+							.toNumber(),
+					},
+				}),
+			)
+	}, [
+		dispatch,
+		supplyOfTriCrypto,
+		tricryptoVP,
+		tricryptoBalance0,
+		tricryptoBalance1,
+		tricryptoBalance2,
+		state.prices.usdt,
+		state.prices.wbtc,
+		state.prices.weth
+	])
+
+	const fraxLP = useMemo(() => contracts?.vaults['frax'], [contracts])
+
+	const { result: fraxResult } = useSingleCallResult(
+		fraxLP?.tokenPool,
+		'get_virtual_price()',
+	)
+
+	useEffect(() => {
+		const fraxPrice = new BigNumber(fraxResult?.toString() || 0)
+		// Fill curve LP token prices from Curve Liqudiity Pools
+		if (fraxPrice.gt(0))
+			dispatch(
+				updatePrices({
+					prices: {
+						frax3crv: fraxPrice
+							.dividedBy(10 ** 18)
+							.multipliedBy(state.prices.frax)
+							.toNumber(),
+					},
+				}),
+			)
+	}, [dispatch, fraxResult, state.prices.frax])
 }

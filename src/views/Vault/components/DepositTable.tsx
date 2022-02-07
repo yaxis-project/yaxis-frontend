@@ -258,6 +258,27 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, currencies }) => {
 			description: `deposit LINK Vault`,
 		})
 
+	const { call: handleDepositFRAX, loading: isSubmittingFRAX } =
+		useContractWrite({
+			contractName: 'vaults.frax.vault',
+			method: 'deposit',
+			description: `deposit FRAX Vault`,
+		})
+
+	const { call: handleDepositTRICRYPTO, loading: isSubmittingTRICRYPTO } =
+		useContractWrite({
+			contractName: 'vaults.tricrypto.vault',
+			method: 'deposit',
+			description: `deposit TRICRYPTO Vault`,
+		})
+
+	const { call: handleDepositCVX, loading: isSubmittingCVX } =
+		useContractWrite({
+			contractName: 'vaults.cvx.vault',
+			method: 'deposit',
+			description: `deposit CVX Vault`,
+		})
+
 	const callsLookup = useMemo(() => {
 		return {
 			handleDepositETH,
@@ -268,6 +289,12 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, currencies }) => {
 			isSubmittingUSD,
 			handleDepositLINK,
 			isSubmittingLINK,
+			handleDepositFRAX,
+			isSubmittingFRAX,
+			handleDepositTRICRYPTO,
+			isSubmittingTRICRYPTO,
+			handleDepositCVX,
+			isSubmittingCVX,
 		}
 	}, [
 		handleDepositETH,
@@ -278,6 +305,12 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, currencies }) => {
 		isSubmittingUSD,
 		handleDepositLINK,
 		isSubmittingLINK,
+		handleDepositFRAX,
+		isSubmittingFRAX,
+		handleDepositTRICRYPTO,
+		isSubmittingTRICRYPTO,
+		handleDepositCVX,
+		isSubmittingCVX,
 	])
 
 	const { prices } = usePrices()

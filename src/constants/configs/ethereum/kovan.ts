@@ -20,6 +20,7 @@ const currencies: CurrenciesConfig = {
 		weth: '0xdC2f70dEd078e3f5F3dC6111978E38a4E38f2370',
 		mvlt: '0x5cDf227131880CFd6947A47cC903b40207834846',
 		spell: '0xc968d40Abc8a0c365769309982D783825510641F', // needs mock
+		frax: '0x64C1d8cd206aF84f54eadb1cbD1E4c3643875Ee8'  // needs mock
 	},
 	ERC677: {
 		yaxis: '0xDE78295b8a50413f5a6faBd1f4921E8449d2433C',
@@ -71,6 +72,27 @@ const externalPools: ExternalPoolsConfig = {
 			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
 			convexRewards: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8', // needs mock
 		},
+		crvcvxeth: {
+			currency: 'usd',
+			pool: '0xF0cCAbb34899652eFea9751616fd94A73E4bD501',
+			token: '0xd36C376154e770ea4f6596D7400ACe73b4f67916',
+			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
+			convexRewards: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8', // needs mock
+		},
+		crv3crypto: {
+			currency: 'usd',
+			pool: '0xF0cCAbb34899652eFea9751616fd94A73E4bD501',
+			token: '0x924CAf02657d1c98C31670A412b9672E6F42664c',
+			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
+			convexRewards: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8', // needs mock
+		},
+		frax3crv: {
+			currency: 'usd',
+			pool: '0xF0cCAbb34899652eFea9751616fd94A73E4bD501',
+			token: '0x64C1d8cd206aF84f54eadb1cbD1E4c3643875Ee8',
+			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
+			convexRewards: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8', // needs mock
+		},
 	},
 }
 
@@ -82,7 +104,7 @@ const kovan: Config = {
 			token: 'MIM3CRV',
 			tokenContract: '0x7D91365bC65CF9caDC6aE1d86d35f5add750Fe37',
 			vault: '0x631EB675F927ba765b6C6c02df0651144B9858e5',
-			vaultToken: 'CV:3CRV',
+			vaultToken: 'CV:USD',
 			vaultTokenContract: '0x3cF8802D91C0560b54A5CeEC6da108B7b2946BdB',
 			gauge: '0xEc8E054A174B38edC5894187A55AE2D47c1f04eD',
 		},
@@ -92,7 +114,7 @@ const kovan: Config = {
 			token: 'RENCRV',
 			tokenContract: '0xA8A28853C2CefF3f7B4EC75A07E7B84d637B9a88',
 			vault: '0xF269F793F2a774d4019F22C7D519f1e748643C9a',
-			vaultToken: 'CV:WBTC',
+			vaultToken: 'CV:BTC',
 			vaultTokenContract: '0xb5b089B18a3EEFEf762484A279B72F666eFD4d31',
 			gauge: '0x2CDD8dd06b6854ABDF1cD050356efEBfde0c9E7E',
 		},
@@ -102,7 +124,7 @@ const kovan: Config = {
 			tokenPoolContract: '0xa2373Ffc62cA0CA01aE9edfFC19762E3fC75F99C',
 			tokenContract: externalPools.curve.alethcrv.token,
 			vault: '0x0596235bF475e1c16247D5E1f2C4e5B3bbb9279c',
-			vaultToken: 'CV:WETH',
+			vaultToken: 'CV:ETH',
 			vaultTokenContract: '0x56b27181fa92DFC5909F1B537f0D5A5929Fbc765',
 			gauge: '0xCD7C79e7A0678af31a3b5b0aFc5dd89aB734feD8',
 		},
@@ -125,6 +147,36 @@ const kovan: Config = {
 			vaultToken: 'YAXIS',
 			vaultTokenContract: currencies.ERC677.yaxis,
 			gauge: '0x9a6Bf749a57fDCDFf8cbD69B39202aAd5a73E4E1',
+		},
+		cvx: {
+			url: 'https://curve.fi/cvxeth/',
+			tokenPoolContract: externalPools.curve.crvcvxeth.pool,
+			token: 'CRVCVXETH',
+			tokenContract: externalPools.curve.crvcvxeth.token,
+			vault: '0xB31dfBF39Ab56de5e847360018e48E11bb88Ed4e',
+			vaultToken: 'CV:CVX',
+			vaultTokenContract: '0xa71d40f9ebAaff20633489cD77E673c558dF487e',
+			gauge: '0x88205736AFE9A5F49f6108b2A84892656194bE27',
+		},
+		tricrypto: {
+			url: 'https://curve.fi/tricrypto2/',
+			tokenPoolContract: externalPools.curve.crv3crypto.pool,
+			token: 'CRV3CRYPTO',
+			tokenContract: externalPools.curve.crv3crypto.token,
+			vault: '0x73f05eA672299d2ff3D1FdFc662c5b09031950f3',
+			vaultToken: 'CV:TRICRYPTO',
+			vaultTokenContract: '0xa4eC591D88f52bDe13CFff81d9918e4bCD6cea65',
+			gauge: '0x10BF38631ef414CE08D09ed33A7ABA9Ad58C7818',
+		},
+		frax: {
+			url: 'https://curve.fi/frax',
+			tokenPoolContract: externalPools.curve.frax3crv.pool,
+			token: 'FRAX3CRV',
+			tokenContract: externalPools.curve.frax3crv.token,
+			vault: '0xdd507197D317ac2D17028d642bf6B875Ad9673fC',
+			vaultToken: 'CV:FRAX',
+			vaultTokenContract: '0x05d76F1F6a7528B455d3Bfb850B0eDFe2BF05878',
+			gauge: '0xF7A88a99976A478D66FE59cb3c6E90c45E8F185B',
 		},
 	},
 	internal: {

@@ -258,6 +258,30 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 			description: `staked in YAXIS Gauge`,
 		})
 
+
+	const { call: handleStakeFRAX, loading: isSubmittingFRAX } =
+		useContractWrite({
+			contractName: 'vaults.frax.gauge',
+			method: 'deposit(uint256)',
+			description: `staked in FRAX Gauge`,
+		})
+
+
+	const { call: handleStakeTRICRYPTO, loading: isSubmittingTRICRYPTO } =
+		useContractWrite({
+			contractName: 'vaults.tricrypto.gauge',
+			method: 'deposit(uint256)',
+			description: `staked in TRICRYPTO Gauge`,
+		})
+
+
+	const { call: handleStakeCVX, loading: isSubmittingCVX } =
+		useContractWrite({
+			contractName: 'vaults.cvx.gauge',
+			method: 'deposit(uint256)',
+			description: `staked in CVX Gauge`,
+		})
+
 	const callsLookup = useMemo(() => {
 		return {
 			handleStakeETH,
@@ -270,6 +294,12 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 			isSubmittingLINK,
 			handleStakeYAXIS,
 			isSubmittingYAXIS,
+			handleStakeFRAX,
+			isSubmittingFRAX,
+			handleStakeTRICRYPTO,
+			isSubmittingTRICRYPTO,
+			handleStakeCVX,
+			isSubmittingCVX,
 		}
 	}, [
 		handleStakeETH,
@@ -282,6 +312,12 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 		isSubmittingLINK,
 		handleStakeYAXIS,
 		isSubmittingYAXIS,
+		handleStakeFRAX,
+		isSubmittingFRAX,
+		handleStakeTRICRYPTO,
+		isSubmittingTRICRYPTO,
+		handleStakeCVX,
+		isSubmittingCVX,
 	])
 
 	const { prices } = usePrices()
@@ -326,7 +362,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 
 		if (transactions.length > 0) {
 			await Promise.allSettled(
-				transactions.map(([token, amount]) => 
+				transactions.map(([token, amount]) =>
 					callsLookup[`handleStake${token}`]({
 						args: [amount],
 						descriptionExtra: totalDepositing,
