@@ -130,10 +130,11 @@ export function useVaultRewards(name: TVaults) {
 			.multipliedBy(relativeWeight?.result?.toString() || 0)
 			.dividedBy(10 ** 18)
 			.dividedBy(virtualSupply)
-
-		const yaxisPerYear = yaxisPerSecond
-			.multipliedBy(86400)
-			.multipliedBy(365)
+		const yaxisPerYear = yaxisPerSecond.isNaN() ?
+			new BigNumber(0)
+			: yaxisPerSecond
+				.multipliedBy(86400)
+				.multipliedBy(365)
 
 		const APR = yaxisPerYear.multipliedBy(prices?.yaxis || 0)
 
@@ -141,7 +142,7 @@ export function useVaultRewards(name: TVaults) {
 			workingSupply: new BigNumber(balance?.result?.toString() || 0),
 			amountPerYear: yaxisPerYear,
 			maxAPR: APR,
-			minAPR: APR.dividedBy(2.5),
+			minAPR: APR.isZero() ? APR : APR.dividedBy(2.5),
 		}
 	}, [name, contracts?.vaults, prices, relativeWeight, balance, rate])
 }
@@ -151,12 +152,18 @@ export function useVaultsAPR() {
 	const btc = useVaultRewards('btc')
 	const eth = useVaultRewards('eth')
 	const link = useVaultRewards('link')
+	const frax = useVaultRewards('frax')
+	const tricrypto = useVaultRewards('tricrypto')
+	const cvx = useVaultRewards('cvx')
 	const yaxis = useVaultRewards('yaxis')
 
 	const mim3crv = useConvexAPY('mim3crv')
 	const rencrv = useConvexAPY('rencrv')
 	const alethcrv = useConvexAPY('alethcrv')
 	const linkcrv = useConvexAPY('linkcrv')
+	const crvcvxeth = useConvexAPY('crvcvxeth', true)
+	const crv3crypto = useConvexAPY('crv3crypto', true)
+	const frax3crv = useConvexAPY('frax3crv')
 
 	return useMemo(() => {
 		return {
@@ -188,6 +195,27 @@ export function useVaultsAPR() {
 				},
 				strategy: linkcrv,
 			},
+			cvx: {
+				yaxisAPR: {
+					min: cvx.minAPR,
+					max: cvx.maxAPR,
+				},
+				strategy: crvcvxeth,
+			},
+			tricrypto: {
+				yaxisAPR: {
+					min: tricrypto.minAPR,
+					max: tricrypto.maxAPR,
+				},
+				strategy: crv3crypto,
+			},
+			frax: {
+				yaxisAPR: {
+					min: frax.minAPR,
+					max: frax.maxAPR,
+				},
+				strategy: frax3crv,
+			},
 			yaxis: {
 				yaxisAPR: {
 					min: yaxis.minAPR,
@@ -198,7 +226,22 @@ export function useVaultsAPR() {
 				},
 			},
 		}
-	}, [usd, btc, eth, link, yaxis, mim3crv, rencrv, alethcrv, linkcrv])
+	}, [usd,
+		btc,
+		eth,
+		link,
+		cvx,
+		tricrypto,
+		frax,
+		yaxis,
+		mim3crv,
+		rencrv,
+		alethcrv,
+		linkcrv,
+		crvcvxeth,
+		crv3crypto,
+		frax3crv,
+	])
 }
 
 export function useVaults() {
@@ -206,6 +249,9 @@ export function useVaults() {
 	const btc = useVault('btc')
 	const eth = useVault('eth')
 	const link = useVault('link')
+	const frax = useVault('frax')
+	const tricrypto = useVault('tricrypto')
+	const cvx = useVault('cvx')
 	const yaxis = useYaxisGauge()
 
 	return useMemo(() => {
@@ -214,9 +260,21 @@ export function useVaults() {
 			btc,
 			eth,
 			link,
+			frax,
+			tricrypto,
+			cvx,
 			yaxis,
 		}
-	}, [usd, btc, eth, link, yaxis])
+	}, [
+		usd,
+		btc,
+		eth,
+		link,
+		frax,
+		tricrypto,
+		cvx,
+		yaxis
+	])
 }
 
 const DEV_FUND_ADDRESS = '0x5118Df9210e1b97a4de0df15FBbf438499d6b446'
@@ -360,9 +418,9 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 		const rewardsPerBlock = funding.isZero()
 			? new BigNumber(0)
 			: funding
-					.dividedBy(period)
-					.dividedBy(AVERAGE_BLOCKS_PER_DAY)
-					.dividedBy(10 ** 18)
+				.dividedBy(period)
+				.dividedBy(AVERAGE_BLOCKS_PER_DAY)
+				.dividedBy(10 ** 18)
 
 		const rewardPerToken = tvl.isZero()
 			? new BigNumber(0)

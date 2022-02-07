@@ -20,6 +20,7 @@ const currencies: CurrenciesConfig = {
 		weth: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
 		mvlt: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
 		spell: '0x090185f2135308bad17527004364ebcc2d37e5f6',
+		frax: '0x853d955acef822db058eb8505911ed77f175b99e',
 	},
 	ERC677: {
 		yaxis: '0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73',
@@ -76,6 +77,33 @@ const externalPools: ExternalPoolsConfig = {
 			token: '0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490',
 			gauge: '0xbFcF63294aD7105dEa65aA58F8AE5BE2D9d0952A',
 			convexRewards: '0x689440f2Ff927E1f24c72F1087E1FAF471eCe1c8',
+		},
+		crvcvxeth: {
+			currency: 'usd',
+			pool: '0xB576491F1E6e5E62f1d8F26062Ee822B40B0E0d4',
+			token: '0x3A283D9c08E8b55966afb64C515f5143cf907611',
+			gauge: '0x7E1444BA99dcdFfE8fBdb42C02F0005D14f13BE1',
+			convexRewards: '0xb1Fb0BA0676A1fFA83882c7F4805408bA232C1fA',
+			extraRewards: {
+				cvx: {
+					contract: '0x834B9147Fd23bF131644aBC6e557Daf99C5cDa15',
+					token: '0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B'
+				}
+			}
+		},
+		crv3crypto: {
+			currency: 'usd',
+			pool: '0xD51a44d3FaE010294C616388b506AcdA1bfAAE46',
+			token: '0xc4AD29ba4B3c580e6D59105FFf484999997675Ff',
+			gauge: '0xDeFd8FdD20e0f34115C7018CCfb655796F6B2168',
+			convexRewards: '0x9D5C5E364D81DaB193b72db9E9BE9D8ee669B652',
+		},
+		frax3crv: {
+			currency: 'usd',
+			pool: '0xd632f22692FaC7611d2AA1C0D552930D43CAEd3B',
+			token: '0xd632f22692FaC7611d2AA1C0D552930D43CAEd3B',
+			gauge: '0x72e158d38dbd50a483501c24f792bdaaa3e7d55c',
+			convexRewards: '0xB900EF131301B307dB5eFcbed9DBb50A3e209B2e',
 		},
 	},
 }
@@ -154,6 +182,36 @@ const mainnet: Config = {
 			vaultToken: 'YAXIS',
 			vaultTokenContract: currencies.ERC677.yaxis,
 			gauge: '0x951E7726d70017E56756A6807886113708A699Fb',
+		},
+		cvx: {
+			url: 'https://curve.fi/cvxeth/deposit',
+			tokenPoolContract: externalPools.curve.crvcvxeth.pool,
+			token: 'CRVCVXETH',
+			tokenContract: externalPools.curve.crvcvxeth.token,
+			vault: '0x274dd71DfBea338324242042A841d97246597872',
+			vaultToken: 'CV:CVX',
+			vaultTokenContract: '0xF92A829240683948e50e5092cDA57Bfb125989eD',
+			gauge: '0x7b552Fd9cf50446D50163F876F23E8756B06fA00',
+		},
+		tricrypto: {
+			url: 'https://curve.fi/tricrypto2/deposit',
+			tokenPoolContract: externalPools.curve.crv3crypto.pool,
+			token: 'CRV3CRYPTO',
+			tokenContract: externalPools.curve.crv3crypto.token,
+			vault: '0x6847B84c66C9a227D1A9fE577855B48d9CB03D81',
+			vaultToken: 'CV:TRICRYPTO',
+			vaultTokenContract: '0xf87E9A4d3Ab7185f54C332941AA7c62a550dB7cB',
+			gauge: '0x3BE5f25B47233D0c5293DDc0848e1dA9399eBbD9',
+		},
+		frax: {
+			url: 'https://curve.fi/frax/deposit',
+			tokenPoolContract: externalPools.curve.frax3crv.pool,
+			token: 'FRAX3CRV',
+			tokenContract: externalPools.curve.frax3crv.token,
+			vault: '0x305dC8cE1F37a247EcFe77741D1A15E256BEfcA6',
+			vaultToken: 'CV:FRAX',
+			vaultTokenContract: '0x5a1cdcAAd1D9BF1e9DA7D6dF6473091B059daFf6',
+			gauge: '0x9947117cA458385E9Ac1b3088F43612846e5251B',
 		},
 	},
 	pools: {

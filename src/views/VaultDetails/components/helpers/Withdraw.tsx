@@ -18,7 +18,7 @@ import { useAllTokenBalances } from '../../../../state/wallet/hooks'
 import { usePrices } from '../../../../state/prices/hooks'
 import { useContracts } from '../../../../contexts/Contracts'
 import { reduce } from 'lodash'
-import { Row, Col, Grid, Divider, Form, Space } from 'antd'
+import { Row, Col, Divider, Form, Space } from 'antd'
 import Typography from '../../../../components/Typography'
 import useContractWrite from '../../../../hooks/useContractWrite'
 import Button from '../../../../components/Button'
@@ -30,7 +30,6 @@ import Input from '../../../../components/Input'
 import { useSingleCallResult } from '../../../../state/onchain/hooks'
 
 const { Title, Text } = Typography
-const { useBreakpoint } = Grid
 
 /**
  * Creates a deposit table for the savings account.
@@ -141,7 +140,14 @@ export default function Stable3PoolWithdraw({ vault }: any) {
 		} catch (e) {
 			console.log(e)
 		}
-	}, [currencyValues, input3CRV, handleWithdraw3Pool, contracts])
+	}, [
+		Currencies3Pool,
+		handleWithdraw3Pool,
+		input3CRV,
+		initialCurrencyValues,
+		contracts?.externalLP,
+		currencyValues,
+	])
 
 	return (
 		<>
@@ -264,7 +270,7 @@ const WithdrawAssetRow: React.FC<WithdrawAssetRowProps> = ({
 }) => {
 	const currencyIndex = useMemo(
 		() => Currencies3Pool.findIndex((c) => c.tokenId === currency.tokenId),
-		[currency],
+		[Currencies3Pool, currency.tokenId],
 	)
 	const { contracts } = useContracts()
 

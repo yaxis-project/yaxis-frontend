@@ -7,15 +7,31 @@ import { LoadingOutlined } from '@ant-design/icons'
 
 Chart.register(ChartDataLabels)
 
-// TODO: fixed colors
+const Colors: { [vault: string]: [number, number, number] } = {
+	usd: [0, 150, 0],
+	btc: [255, 159, 64],
+	eth: [77, 97, 233],
+	link: [24, 45, 142],
+	yaxis: [0, 0, 0],
+	frax: [54, 162, 235],
+	tricrypto: [255, 99, 132],
+	cvx: [153, 102, 255],
+}
 
-// const colors = {
-// 	'3crv': '',
-// 	wbtc: '',
-// 	weth: '',
-// 	link: '',
-// 	yaxis: '',
-// }
+// 		'rgba(255, 99, 132, 1)',
+// 		'rgba(54, 162, 235, 1)',
+// 		'rgba(255, 206, 86, 1)',
+// 		'rgba(75, 192, 192, 1)',
+// 		'rgba(153, 102, 255, 1)',
+
+const randomBetween = (min, max) => min + Math.floor(Math.random() * (max - min + 1))
+const generateRGBA = (
+	r = randomBetween(0, 255),
+	g = randomBetween(0, 255),
+	b = randomBetween(0, 255),
+	a = randomBetween(0, 1)
+) =>
+	`rgba(${r},${g},${b},${a})`
 
 interface Props {
 	type: 'relativeWeight' | 'nextRelativeWeight'
@@ -25,6 +41,19 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 	const { loading, gauges } = useGauges()
 
 	const rate = useRewardRate()
+
+	const gaugeData = useMemo(() => Object.entries(gauges)
+		// YAXIS gauge removed in YIP-14
+		.filter(([name, data]) => name !== 'yaxis' && data[type].gt(0)), [gauges, type])
+
+	const colors = useMemo(() =>
+		gaugeData.reduce((acc, [name]) => {
+			const [r, g, b] = Colors[name] || [randomBetween(0, 255), randomBetween(0, 255), randomBetween(0, 255)]
+			console.log(name, r, g, b)
+			acc.background.push(generateRGBA(r, g, b, 0.2))
+			acc.border.push(generateRGBA(r, g, b, 1))
+			return acc
+		}, { background: [], border: [] }), [gaugeData])
 
 	const data = useMemo(() => {
 		if (loading)
@@ -40,10 +69,6 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 				],
 			}
 
-		const gaugeData = Object.entries(gauges)
-		// YAXIS gauge removed in YIP-14
-		.filter(([name]) => name !== 'yaxis')
-
 		return {
 			labels: [],
 			datasets: [
@@ -54,22 +79,9 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 					datalabels: {
 						anchor: 'end' as const,
 					},
-					backgroundColor: [
-						'rgba(255, 99, 132, 0.2)',
-						'rgba(54, 162, 235, 0.2)',
-						'rgba(255, 206, 86, 0.2)',
-						'rgba(75, 192, 192, 0.2)',
-						'rgba(153, 102, 255, 0.2)',
-						'rgba(255, 159, 64, 0.2)',
-					],
-					borderColor: [
-						'rgba(255, 99, 132, 1)',
-						'rgba(54, 162, 235, 1)',
-						'rgba(255, 206, 86, 1)',
-						'rgba(75, 192, 192, 1)',
-						'rgba(153, 102, 255, 1)',
-						'rgba(255, 159, 64, 1)',
-					],
+					backgroundColor: colors.background
+					,
+					borderColor: colors.border,
 					borderWidth: 2,
 				},
 				// TODO: second dataset for upcoming
@@ -103,7 +115,7 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 				// },
 			],
 		}
-	}, [loading, gauges, type])
+	}, [loading, gaugeData, type, colors])
 
 	return (
 		<>
@@ -160,7 +172,7 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 								},
 								formatter: (value, context) =>
 									(context.dataset as any).labels[
-										context.dataIndex
+									context.dataIndex
 									],
 							},
 						},
