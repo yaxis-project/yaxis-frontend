@@ -454,3 +454,10 @@ export const Currencies = {
 	LINKSWAP_LP,
 	YAX_ETH_LINKSWAP_LP,
 }
+
+export const converterData = {
+	usd: [MIM, DAI, USDT, USDC],
+	btc: [RENCRV, WBTC],
+	eth: [ALETHCRV, ETH],
+	link: [LINKCRV, LINK],
+}

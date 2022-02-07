@@ -1,16 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import {
-	MIM,
-	DAI,
-	USDT,
-	USDC,
-	RENCRV,
-	WBTC,
-	ALETHCRV,
-	ETH,
-	LINKCRV,
-	LINK,
-} from '../../../../constants/currencies'
+import { converterData } from '../../../../constants/currencies'
 import DepositAssetRow from '../../../Vault/components/DepositAssetRow'
 import { useAllTokenBalances } from '../../../../state/wallet/hooks'
 import { usePrices } from '../../../../state/prices/hooks'
@@ -39,19 +28,10 @@ export default function Deposit({ set3crvValue, value3crv, vault }) {
 	const [Currencies3Pool, setCurrencies3Pool] = useState<any>([])
 
 	useEffect(() => {
-		switch (vault) {
-			case 'usd':
-				setCurrencies3Pool([MIM, DAI, USDT, USDC])
-				break
-			case 'btc':
-				setCurrencies3Pool([RENCRV, WBTC])
-				break
-			case 'eth':
-				setCurrencies3Pool([ALETHCRV, ETH])
-				break
-			default:
-				setCurrencies3Pool([LINKCRV, LINK])
-				break
+		if (converterData[vault] === undefined) {
+			setCurrencies3Pool(converterData['usd'])
+		} else {
+			setCurrencies3Pool(converterData[vault])
 		}
 	}, [vault])
 
