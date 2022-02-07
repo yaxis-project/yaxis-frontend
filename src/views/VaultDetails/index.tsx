@@ -20,7 +20,6 @@ import { LPVaults } from '../../constants/type'
 import { Currencies } from '../../constants/currencies'
 import VaultActionsCard from '../Vault/components/VaultActionsCard'
 import { Converter } from './components/Converter'
-import UsersVaultDetails from './components/UsersVaultDetails'
 
 const { Text } = Typography
 

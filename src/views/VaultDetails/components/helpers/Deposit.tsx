@@ -16,7 +16,7 @@ import { useAllTokenBalances } from '../../../../state/wallet/hooks'
 import { usePrices } from '../../../../state/prices/hooks'
 import { useContracts } from '../../../../contexts/Contracts'
 import { reduce } from 'lodash'
-import { Row, Col, Grid, Space } from 'antd'
+import { Row, Col, Space } from 'antd'
 import Typography from '../../../../components/Typography'
 import { numberToDecimal } from '../../../../utils/number'
 import useContractWrite from '../../../../hooks/useContractWrite'
@@ -35,7 +35,7 @@ const { Title, Text } = Typography
 /**
  * Creates a deposit table for the savings account.
  */
-export default function Stable3PoolDeposit({ set3crvValue, value3crv, vault }) {
+export default function Deposit({ set3crvValue, value3crv, vault }) {
 	const [Currencies3Pool, setCurrencies3Pool] = useState<any>([])
 
 	useEffect(() => {
@@ -78,7 +78,7 @@ export default function Stable3PoolDeposit({ set3crvValue, value3crv, vault }) {
 
 	const totalDepositing = useMemo(
 		() => computeTotalDepositing(Currencies3Pool, currencyValues, prices),
-		[currencyValues, prices],
+		[Currencies3Pool, currencyValues, prices],
 	)
 
 	const { call: handleDeposit3Pool, loading: loadingDeposit3Pool } =
@@ -107,7 +107,15 @@ export default function Stable3PoolDeposit({ set3crvValue, value3crv, vault }) {
 			setCurrencyValues(initialCurrencyValues)
 			set3crvValue('3CRV', value3crv['3CRV'])
 		} catch {}
-	}, [currencyValues, handleDeposit3Pool, contracts, value3crv, set3crvValue])
+	}, [
+		Currencies3Pool,
+		contracts?.externalLP,
+		handleDeposit3Pool,
+		initialCurrencyValues,
+		set3crvValue,
+		value3crv,
+		currencyValues,
+	])
 
 	return (
 		<Row justify="center">

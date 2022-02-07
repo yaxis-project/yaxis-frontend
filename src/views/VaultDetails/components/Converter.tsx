@@ -34,7 +34,7 @@ const Converter: React.FC<Props> = ({ vault }) => {
 				</>
 			}
 		>
-			<Helpers.Stable3PoolTabs vault={vault} />
+			<Helpers.ConverterTabs vault={vault} />
 		</DetailOverviewCard>
 	)
 }

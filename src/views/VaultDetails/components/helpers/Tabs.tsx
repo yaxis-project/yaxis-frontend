@@ -5,8 +5,8 @@ import useTranslation from '../../../../hooks/useTranslation'
 import Card from '../../../../components/Card'
 import Tabs from '../../../../components/Tabs'
 
-import Stable3PoolDeposit from './Stable3PoolDeposit'
-import Stable3PoolWithdraw from './Stable3PoolWithdraw'
+import Deposit from './Deposit'
+import Withdraw from './Withdraw'
 const { TabPane } = Tabs
 const StyledCard = styled(Card)`
 	border: none;
@@ -22,7 +22,7 @@ type props = {
 	vault: string
 }
 
-const Stable3PoolTabs = function ({ vault }: props) {
+const ConverterTabs = function ({ vault }: props) {
 	const t = useTranslation()
 	const [value3crv, set3crvValue] = React.useState()
 	const [active, setActive] = useState('deposit')
@@ -30,18 +30,18 @@ const Stable3PoolTabs = function ({ vault }: props) {
 		<StyledCard>
 			<Tabs activeKey={active} onTabClick={(key) => setActive(key)}>
 				<TabPane tab={t('Deposit')} key="deposit">
-					<Stable3PoolDeposit
+					<Deposit
 						set3crvValue={set3crvValue}
 						value3crv={value3crv}
 						vault={vault}
 					/>
 				</TabPane>
 				<TabPane tab={t('Withdraw')} key="withdraw">
-					<Stable3PoolWithdraw vault={vault} />
+					<Withdraw vault={vault} />
 				</TabPane>
 			</Tabs>
 		</StyledCard>
 	)
 }
 
-export { Stable3PoolTabs }
+export { ConverterTabs }
