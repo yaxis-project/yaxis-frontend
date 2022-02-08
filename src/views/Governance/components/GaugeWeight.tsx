@@ -153,7 +153,7 @@ const GaugeWeight: React.FC = () => {
 								.</div>}
 
 							{record.name === 'YAXIS' && <div>Set the slider to 0 and redistribute elsewhere.</div>}
-							{record.lastVote.gt(Date.now()) && (
+							{cooldown.isAfter(Date.now()) && (
 								<div
 									style={{
 										position: 'absolute',
@@ -164,7 +164,7 @@ const GaugeWeight: React.FC = () => {
 									Unlocks {cooldown.fromNow()}
 								</div>
 							)}
-
+							{console.log(record.lastVote.toString(), record.lastVote.gt(Date.now()))}
 							<Slider
 								value={weights[record.key]}
 								tipFormatter={(value) => `${value}%`}

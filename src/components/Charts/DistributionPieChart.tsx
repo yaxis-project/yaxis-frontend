@@ -49,7 +49,6 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 	const colors = useMemo(() =>
 		gaugeData.reduce((acc, [name]) => {
 			const [r, g, b] = Colors[name] || [randomBetween(0, 255), randomBetween(0, 255), randomBetween(0, 255)]
-			console.log(name, r, g, b)
 			acc.background.push(generateRGBA(r, g, b, 0.2))
 			acc.border.push(generateRGBA(r, g, b, 1))
 			return acc
