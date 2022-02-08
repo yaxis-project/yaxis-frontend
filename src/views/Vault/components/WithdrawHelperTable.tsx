@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useVaultsBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-import { LPVaults } from '../../../constants/type'
+import { LPVaults } from '../../../constants/type/ethereum'
 import { Row, Grid, Form } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
@@ -248,8 +248,8 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 					balanceUSD: balance?.usd || new BigNumber(0),
 					value: currencyValues
 						? new BigNumber(
-								currencyValues[c.name.toLowerCase()] || 0,
-						  )
+							currencyValues[c.name.toLowerCase()] || 0,
+						)
 						: new BigNumber(0),
 					inputValue: currencyValues[c.name.toLowerCase()],
 					key: vault,

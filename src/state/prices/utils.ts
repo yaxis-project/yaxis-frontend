@@ -1,4 +1,4 @@
-import { Ticker } from '../../constants/type'
+import { Ticker } from '../../constants/type/ethereum'
 
 const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price'
 

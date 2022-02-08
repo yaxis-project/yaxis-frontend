@@ -22,7 +22,7 @@ import {
 	lpToken,
 	Vaults,
 	TVaults,
-} from './type'
+} from './type/ethereum'
 
 type InternalC = {
 	[key in TInternalContracts]: Contract

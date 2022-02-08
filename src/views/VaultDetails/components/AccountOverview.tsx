@@ -10,7 +10,7 @@ import Card from '../../../components/Card'
 import Value from '../../../components/Value'
 import CardRow from '../../../components/CardRow'
 import Claim from '../../../components/Claim'
-import { TVaults } from '../../../constants/type'
+import { TVaults } from '../../../constants/type/ethereum'
 
 const { Text } = Typography
 
@@ -29,7 +29,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 
 	const apr = useVaultsAPRWithBoost()
 
-	const {  boost } = useUserBoost(vault)
+	const { boost } = useUserBoost(vault)
 
 	return (
 		<Card title={t('Account Overview')} icon="yaxis">

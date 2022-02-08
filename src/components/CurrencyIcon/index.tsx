@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Ticker } from '../../constants/type'
+import { Ticker } from '../../constants/type/ethereum'
 import { Currencies } from '../../constants/currencies'
 
 export interface Props {

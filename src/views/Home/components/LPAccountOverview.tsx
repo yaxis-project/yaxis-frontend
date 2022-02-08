@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { currentConfig } from '../../../constants/configs'
-import { LiquidityPool } from '../../../constants/type'
+import { LiquidityPool } from '../../../constants/type/ethereum'
 import { Row, Col, Collapse, Grid } from 'antd'
 import { Currencies } from '../../../constants/currencies'
 import { brandBlue } from '../../../theme/colors'

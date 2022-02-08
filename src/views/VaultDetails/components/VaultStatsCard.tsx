@@ -4,7 +4,7 @@ import { useTVL, useVaultStrategies } from '../../../state/internal/hooks'
 import Value from '../../../components/Value'
 import CardRow from '../../../components/CardRow'
 import useTranslation from '../../../hooks/useTranslation'
-import { TVaults } from '../../../constants/type'
+import { TVaults } from '../../../constants/type/ethereum'
 
 interface UserVaultDetailsProps {
 	vault: TVaults

@@ -17,7 +17,7 @@ import { useInactiveListener } from './hooks/useInactiveListener'
 
 import SwapBanner from './components/Banner/Banners/SwapBanner'
 import Modals from './components/Modals'
-import { TVaults } from './constants/type'
+import { TVaults } from './constants/type/ethereum'
 
 notification.config({
 	placement: 'topRight',

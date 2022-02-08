@@ -1,4 +1,4 @@
-import { Config } from '../../type'
+import { Config } from '../../type/ethereum'
 
 import kovan from './kovan'
 import mainnet from './mainnet'

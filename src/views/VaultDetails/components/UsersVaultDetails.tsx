@@ -7,7 +7,7 @@ import Value from '../../../components/Value'
 import useTranslation from '../../../hooks/useTranslation'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import { Row, Col } from 'antd'
-import { TVaults } from '../../../constants/type'
+import { TVaults } from '../../../constants/type/ethereum'
 
 interface UserVaultDetailsProps {
 	vault: TVaults

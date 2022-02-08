@@ -8,7 +8,7 @@ import PairStatsCard from './components/PairStatsCard'
 import './index.less'
 import { useAccountLP } from '../../state/wallet/hooks'
 import { usePrices } from '../../state/prices/hooks'
-import { LiquidityPool } from '../../constants/type'
+import { LiquidityPool } from '../../constants/type/ethereum'
 import Stake from './components/Stake'
 import LegacyStake from './components/LegacyStake'
 import { red } from '../../theme/colors'
@@ -43,8 +43,8 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 		const share = totalSupply.isZero()
 			? new BigNumber(0)
 			: new BigNumber(stakedBalance?.value || 0)
-					.plus(new BigNumber(walletBalance?.value || 0))
-					.div(totalSupply.toString())
+				.plus(new BigNumber(walletBalance?.value || 0))
+				.div(totalSupply.toString())
 		const shareT0 = new BigNumber(reserves?.['_reserve0']?.toString() || 0)
 			.multipliedBy(share)
 			.dividedBy(10 ** 18)

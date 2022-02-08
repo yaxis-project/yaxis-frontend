@@ -8,7 +8,7 @@ import Divider from '../../../components/Divider'
 import Typography from '../../../components/Typography'
 import { Currencies } from '../../../constants/currencies'
 import { currentConfig } from '../../../constants/configs'
-import { Vaults, TVaults } from '../../../constants/type'
+import { Vaults, TVaults } from '../../../constants/type/ethereum'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useTranslation from '../../../hooks/useTranslation'
 import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
@@ -157,9 +157,7 @@ const BoostCalculator: React.FC = () => {
 				</Row>
 				<Input
 					value={
-						useVaultBalance
-							? selectedVaultBalance
-							: inputVaultBalance
+						useVaultBalance ? selectedVaultBalance : inputVaultBalance
 					}
 					suffix={selectedVault ? vaults[selectedVault].token : '-'}
 					disabled={!selectedVault || useVaultBalance}

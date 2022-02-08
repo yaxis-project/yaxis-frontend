@@ -3,7 +3,7 @@ import {
 	CurrenciesConfig,
 	ExternalConfig,
 	ExternalPoolsConfig,
-} from '../../type'
+} from '../../type/ethereum'
 
 const currencies: CurrenciesConfig = {
 	ERC20: {
@@ -20,6 +20,7 @@ const currencies: CurrenciesConfig = {
 		weth: '',
 		mvlt: '',
 		spell: '',
+		frax: '',
 	},
 	ERC677: {
 		yaxis: '',
@@ -77,6 +78,27 @@ const externalPools: ExternalPoolsConfig = {
 			gauge: '',
 			convexRewards: '',
 		},
+		crv3crypto: {
+			currency: '',
+			pool: '',
+			token: '',
+			gauge: '',
+			convexRewards: '',
+		},
+		crvcvxeth: {
+			currency: '',
+			pool: '',
+			token: '',
+			gauge: '',
+			convexRewards: '',
+		},
+		frax3crv: {
+			currency: '',
+			pool: '',
+			token: '',
+			gauge: '',
+			convexRewards: '',
+		},
 	},
 }
 
@@ -91,9 +113,9 @@ const mainnet: Config = {
 		stableSwap3PoolConverter: '',
 		votingEscrow: '',
 		gaugeController: '',
-		merkleDistributor: '',
 		feeDistributor: '',
 		// Legacy
+		merkleDistributor: '',
 		swap: '',
 		yaxisChef: '',
 		xYaxStaking: '',
@@ -155,10 +177,40 @@ const mainnet: Config = {
 			vaultTokenContract: currencies.ERC677.yaxis,
 			gauge: '',
 		},
+		cvx: {
+			url: '',
+			tokenPoolContract: externalPools.curve.crvcvxeth.pool,
+			token: '',
+			tokenContract: externalPools.curve.crvcvxeth.token,
+			vault: '',
+			vaultToken: 'CV:CVX',
+			vaultTokenContract: '',
+			gauge: '',
+		},
+		tricrypto: {
+			url: '',
+			tokenPoolContract: externalPools.curve.crv3crypto.pool,
+			token: '',
+			tokenContract: externalPools.curve.crv3crypto.token,
+			vault: '',
+			vaultToken: 'CV:TRICRYPTO',
+			vaultTokenContract: '',
+			gauge: '',
+		},
+		frax: {
+			url: '',
+			tokenPoolContract: externalPools.curve.frax3crv.pool,
+			token: '',
+			tokenContract: externalPools.curve.frax3crv.token,
+			vault: '',
+			vaultToken: 'CV:FRAX',
+			vaultTokenContract: '',
+			gauge: '',
+		},
 	},
 	pools: {
-        // TODO: rework
-        'Uniswap YAXIS/ETH': {
+		// TODO: rework
+		'Uniswap YAXIS/ETH': {
 			active: true,
 			legacy: false,
 			type: 'uniswap',

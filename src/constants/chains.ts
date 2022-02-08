@@ -13,8 +13,13 @@ export enum SupportedChainId {
 }
 
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
-if (typeof INFURA_KEY === 'undefined') {
-  throw new Error(`REACT_APP_INFURA_KEY must be a defined environment variable`)
+const RPC_URL_1 = process.env.REACT_APP_RPC_URL_1
+const RPC_URL_42 = process.env.REACT_APP_RPC_URL_42
+if (
+  (typeof RPC_URL_1 === 'undefined' || typeof RPC_URL_42 === 'undefined')
+  && typeof INFURA_KEY === 'undefined'
+) {
+  throw new Error(`Either both RPC_URL_1 and RPC_URL_42 must be set environment variables, or REACT_APP_INFURA_KEY must be set`)
 }
 
 /**
@@ -49,10 +54,10 @@ export type SupportedL2ChainId = typeof L2_CHAIN_IDS[number]
  * These are the network URLs used by the interface when there is not another available source of chain data
  */
 export const INFURA_NETWORK_URLS: { [key in SupportedChainId]: string } = {
-  [SupportedChainId.ETHEREUM_MAINNET]: `https://mainnet.infura.io/v3/${INFURA_KEY}`,
-  [SupportedChainId.ETHEREUM_KOVAN]: `https://kovan.infura.io/v3/${INFURA_KEY}`,
-  [SupportedChainId.AVALANCHE_MAINNET]: `https://optimism-mainnet.infura.io/v3/${INFURA_KEY}`,
-  [SupportedChainId.AVALANCHE_FUJI]: `https://optimism-kovan.infura.io/v3/${INFURA_KEY}`,
+  [SupportedChainId.ETHEREUM_MAINNET]: RPC_URL_1 || `https://mainnet.infura.io/v3/${INFURA_KEY}`,
+  [SupportedChainId.ETHEREUM_KOVAN]: RPC_URL_42 || `https://kovan.infura.io/v3/${INFURA_KEY}`,
+  [SupportedChainId.AVALANCHE_MAINNET]: "https://api.avax.network/ext/bc/C/rpc",
+  [SupportedChainId.AVALANCHE_FUJI]: "https://api.avax-test.network/ext/bc/C/rpc",
 }
 
 /**

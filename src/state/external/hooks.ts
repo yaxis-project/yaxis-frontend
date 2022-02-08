@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useContracts } from '../../contexts/Contracts'
-import { TLiquidityPools, TCurveLPContracts } from '../../constants/type'
+import { TLiquidityPools, TCurveLPContracts } from '../../constants/type/ethereum'
 import { usePrices } from '../prices/hooks'
 import {
 	useSingleCallResult,
