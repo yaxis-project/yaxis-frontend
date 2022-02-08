@@ -6,7 +6,7 @@ import {
 	CurrenciesERC677,
 	additionalCurrencies,
 	crvLPCurrencies,
-} from '../../constants/type'
+} from '../../constants/type/ethereum'
 
 const currentTimestamp = () => new Date().getTime()
 

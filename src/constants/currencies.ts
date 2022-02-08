@@ -1,6 +1,6 @@
 import { Contract } from '@ethersproject/contracts'
 import BigNumber from 'bignumber.js'
-import { Ticker } from './type'
+import { Ticker } from './type/ethereum'
 import crv3 from '../assets/img/currencies/3crv.svg'
 import dai from '../assets/img/currencies/dai.svg'
 import eth from '../assets/img/currencies/eth.svg'

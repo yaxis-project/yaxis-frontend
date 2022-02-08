@@ -2,7 +2,7 @@ import useTranslation from '../../../hooks/useTranslation'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import { Row } from 'antd'
 import * as Helpers from './helpers'
-import { TVaults } from '../../../constants/type'
+import { TVaults } from '../../../constants/type/ethereum'
 
 type Props = {
 	vault: TVaults

@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
-import { LPVaults } from '../../../constants/type'
+import { LPVaults } from '../../../constants/type/ethereum'
 import { Currencies, Currency } from '../../../constants/currencies'
 import {
 	useAllTokenBalances,

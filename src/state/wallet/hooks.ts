@@ -14,7 +14,7 @@ import {
 	Vaults,
 	TVaults,
 	LPVaults,
-} from '../../constants/type'
+} from '../../constants/type/ethereum'
 import { usePrices } from '../prices/hooks'
 import {
 	useSingleContractMultipleData,

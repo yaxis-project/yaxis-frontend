@@ -11,7 +11,7 @@ import WithdrawHelperTable from './WithdrawHelperTable'
 import Card from '../../../components/Card'
 import Icon from '../../../components/Icon'
 import Tooltip from '../../../components/Tooltip'
-import { LPVaults } from '../../../constants/type'
+import { LPVaults } from '../../../constants/type/ethereum'
 import { Dropdown, Menu, Button, Checkbox, Row, Col } from 'antd'
 import { useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { QuestionCircleOutlined } from '@ant-design/icons'
@@ -164,10 +164,10 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 								currencies={
 									// NOTE: YAXIS vault deprecated in YIP-14
 									currencies
-									.filter(
-										(currency) =>
-											currency.tokenId !== 'yaxis',
-									)
+										.filter(
+											(currency) =>
+												currency.tokenId !== 'yaxis',
+										)
 								}
 							/>
 						) : (
@@ -188,10 +188,10 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 						<StakeTable fees={fees} currencies={
 							// NOTE: YAXIS vault deprecated in YIP-14
 							currencies
-							.filter(
-								(currency) =>
-									currency.tokenId !== 'yaxis',
-							)
+								.filter(
+									(currency) =>
+										currency.tokenId !== 'yaxis',
+								)
 						} />
 					</TabPane>
 				)}

@@ -1,4 +1,4 @@
-import { Config } from '../type'
+import { Config } from '../type/ethereum'
 
 import ethereum from './ethereum'
 import avalanche from './avalanche'

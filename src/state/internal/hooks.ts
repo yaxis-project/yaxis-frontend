@@ -8,7 +8,7 @@ import {
 	TLiquidityPools,
 	TRewardsContracts,
 	TVaults,
-} from '../../constants/type'
+} from '../../constants/type/ethereum'
 import { numberToFloat } from '../../utils/number'
 import {
 	useSingleContractMultipleMethods,

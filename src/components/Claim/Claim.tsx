@@ -7,7 +7,7 @@ import { useSingleCallResultByName } from '../../state/onchain/hooks'
 import { getBalanceNumber } from '../../utils/formatBalance'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import BigNumber from 'bignumber.js'
-import { TVaults, TRewardsContracts } from '../../constants/type'
+import { TVaults, TRewardsContracts } from '../../constants/type/ethereum'
 import useTranslation from '../../hooks/useTranslation'
 import { useContracts } from '../../contexts/Contracts'
 
