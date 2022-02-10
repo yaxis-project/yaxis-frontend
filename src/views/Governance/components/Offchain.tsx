@@ -1,37 +1,20 @@
 import React from 'react'
-import { Row } from 'antd'
+import { Row, Col } from 'antd'
 import Typography from '../../../components/Typography'
-import Button from '../../../components/Button'
 
 const { Text } = Typography
 
 const Offchain: React.FC = () => (
 	<>
-		<Row style={{ margin: '7%' }}>
+		<Row style={{ margin: '2% 0' }} justify='center'>
 			<Text style={{ fontSize: '18px' }}>
 				Participate in the DAO by voting on yAxis Improvement Proposals.
 			</Text>
 		</Row>
-		<Row style={{ margin: '5% 10% 5% 10%' }} justify="center">
-			<Button
-				style={{ width: '100%' }}
-				target="_blank"
-				href="https://gov.yaxis.io/#/"
-				rel="noopener noreferrer"
-			>
-				<div style={{ marginTop: '8px' }}>
-					<span
-						style={{
-							position: 'relative',
-							fontSize: '20px',
-							top: '3px',
-						}}
-					>
-						⚡️
-					</span>
-					Snapshot
-				</div>
-			</Button>
+		<Row style={{ height: "500px", width: "100%" }} justify="center">
+			<Col style={{ height: "100%", width: "100%" }}>
+				<iframe title="snapshot" width="100%" height="100%" src="https://gov.yaxis.io/#/" />
+			</Col>
 		</Row>
 	</>
 )
