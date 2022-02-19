@@ -1,7 +1,10 @@
 import { useMemo, useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useContracts } from '../../contexts/Contracts'
-import { TLiquidityPools, TCurveLPContracts } from '../../constants/type/ethereum'
+import {
+	TLiquidityPools,
+	TCurveLPContracts,
+} from '../../constants/type/ethereum'
 import { usePrices } from '../prices/hooks'
 import {
 	useSingleCallResult,
@@ -151,9 +154,9 @@ export function useCurvePoolRewards(name: TCurveLPContracts) {
 	}, [prices?.crv, relativeWeight, virtualPrice, balance, rate])
 }
 
-let cliffSize = new BigNumber(100_000) // * 1e18; //new cliff every 100,000 tokens
-let cliffCount = new BigNumber(1_000) // 1,000 cliffs
-let maxSupply = new BigNumber(100_000_000) // * 1e18; //100 mil max supply
+const cliffSize = new BigNumber(100_000) // * 1e18; //new cliff every 100,000 tokens
+const cliffCount = new BigNumber(1_000) // 1,000 cliffs
+const maxSupply = new BigNumber(100_000_000) // * 1e18; //100 mil max supply
 
 function getCVXMintAmount(crvEarned: BigNumber, cvxSupply: BigNumber) {
 	//get current cliff
@@ -196,11 +199,13 @@ export function useConvexAPY(name: TCurveLPContracts, curvePoolv2 = false) {
 		contracts?.externalLP[name].pool,
 		'get_virtual_price()',
 	)
-	const virtualPrice = useMemo(() =>
-		curvePoolv2 ?
-			{ result: new BigNumber(prices[name]).multipliedBy(10 ** 18) }
-			: virtualPriceV1
-		, [name, curvePoolv2, prices, virtualPriceV1])
+	const virtualPrice = useMemo(
+		() =>
+			curvePoolv2
+				? { result: new BigNumber(prices[name]).multipliedBy(10 ** 18) }
+				: virtualPriceV1,
+		[name, curvePoolv2, prices, virtualPriceV1],
+	)
 
 	const cvxTotalSupply = useSingleCallResult(
 		contracts?.currencies.ERC20.cvx.contract,
@@ -255,8 +260,8 @@ export function useConvexAPY(name: TCurveLPContracts, curvePoolv2 = false) {
 		const crvPriceConversion =
 			currency !== 'usd'
 				? new BigNumber(prices?.crv)
-					.dividedBy(prices?.[currency])
-					.toString()
+						.dividedBy(prices?.[currency])
+						.toString()
 				: prices?.crv
 		const crvAPR = crvPerYear.multipliedBy(crvPriceConversion || 0)
 
@@ -269,8 +274,8 @@ export function useConvexAPY(name: TCurveLPContracts, curvePoolv2 = false) {
 		const cvxPriceConversion =
 			currency !== 'usd'
 				? new BigNumber(prices?.cvx)
-					.dividedBy(prices?.[currency])
-					.toString()
+						.dividedBy(prices?.[currency])
+						.toString()
 				: prices?.cvx
 		const cvxAPR = cvxPerYear.multipliedBy(cvxPriceConversion)
 

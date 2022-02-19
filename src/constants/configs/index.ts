@@ -9,7 +9,7 @@ export type TNetworks = typeof Networks[number]
 
 export const configs = {
 	ethereum,
-	avalanche
+	avalanche,
 }
 
 /**

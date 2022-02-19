@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { Button, Menu, Dropdown, Row, Col } from 'antd'
 import { CaretDownOutlined } from '@ant-design/icons'
-import Davatar from "@davatar/react"
+import Davatar from '@davatar/react'
 import { useOpenModal } from '../../../state/application/hooks'
 import { ApplicationModal } from '../../../state/application/actions'
 import AccountInfo from '../components/AccountInfo'
@@ -16,9 +16,7 @@ import { useWeb3React } from '@web3-react/core'
 import { useClearPendingTransactions } from '../../../state/transactions/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 
-interface AccountButtonProps { }
-
-const AccountButton: React.FC<AccountButtonProps> = (props) => {
+const AccountButton: React.FC = () => {
 	const translate = useTranslation()
 
 	const { account, deactivate, chainId } = useWeb3Provider()
@@ -59,9 +57,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 									mobile={false}
 								/>
 
-								<StyledText
-									key="help"
-								>
+								<StyledText key="help">
 									<a
 										href="https://resources.yaxis.io/"
 										rel="noopener noreferrer"
@@ -70,7 +66,10 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 										{translate('Help Center')}
 									</a>
 								</StyledText>
-								<StyledText onClick={handleClearPending} key="clear">
+								<StyledText
+									onClick={handleClearPending}
+									key="clear"
+								>
 									{translate('Clear Pending')}
 								</StyledText>
 								<StyledText
@@ -86,10 +85,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
 						}
 					>
 						<div style={{ display: 'flex', alignItems: 'center' }}>
-							<Davatar
-								size={36}
-								address={account}
-							/>
+							<Davatar size={36} address={account} />
 							<CaretDownOutlined style={{ paddingLeft: '5px' }} />
 						</div>
 					</Dropdown>

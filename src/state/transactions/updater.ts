@@ -7,12 +7,17 @@ import { checkedTransaction, finalizeTransaction } from './actions'
 import { notification } from 'antd'
 import { etherscanUrl } from '../../utils'
 import { NETWORK_NAMES } from '../../connectors'
+import { SerializableTransactionReceipt } from '.'
 
 const clickableStyle = { cursor: 'pointer' }
 
 export function shouldCheck(
 	lastBlockNumber: number,
-	tx: { addedTime: number; receipt?: {}; lastCheckedBlockNumber?: number },
+	tx: {
+		addedTime: number
+		receipt?: SerializableTransactionReceipt
+		lastCheckedBlockNumber?: number
+	},
 ): boolean {
 	if (tx.receipt) return false
 	if (!tx.lastCheckedBlockNumber) return true

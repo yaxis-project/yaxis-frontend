@@ -27,7 +27,7 @@ export const getFullDisplayBalance = (
 }
 
 export const abbrNumber = (_num: number, digits = 2) => {
-	let num = _num
+	const num = _num
 	const units = ['K', 'M', 'B', 'T', 'P', 'E', 'Z', 'Y']
 	let decimal = 0
 	if (_num < 1e3) {

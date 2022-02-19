@@ -87,9 +87,9 @@ const externalPools: ExternalPoolsConfig = {
 			extraRewards: {
 				cvx: {
 					contract: '0x834B9147Fd23bF131644aBC6e557Daf99C5cDa15',
-					token: '0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B'
-				}
-			}
+					token: '0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B',
+				},
+			},
 		},
 		crv3crypto: {
 			currency: 'usd',

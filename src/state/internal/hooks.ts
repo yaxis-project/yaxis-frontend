@@ -130,11 +130,9 @@ export function useVaultRewards(name: TVaults) {
 			.multipliedBy(relativeWeight?.result?.toString() || 0)
 			.dividedBy(10 ** 18)
 			.dividedBy(virtualSupply)
-		const yaxisPerYear = yaxisPerSecond.isNaN() ?
-			new BigNumber(0)
-			: yaxisPerSecond
-				.multipliedBy(86400)
-				.multipliedBy(365)
+		const yaxisPerYear = yaxisPerSecond.isNaN()
+			? new BigNumber(0)
+			: yaxisPerSecond.multipliedBy(86400).multipliedBy(365)
 
 		const APR = yaxisPerYear.multipliedBy(prices?.yaxis || 0)
 
@@ -226,7 +224,8 @@ export function useVaultsAPR() {
 				},
 			},
 		}
-	}, [usd,
+	}, [
+		usd,
 		btc,
 		eth,
 		link,
@@ -265,16 +264,7 @@ export function useVaults() {
 			cvx,
 			yaxis,
 		}
-	}, [
-		usd,
-		btc,
-		eth,
-		link,
-		frax,
-		tricrypto,
-		cvx,
-		yaxis
-	])
+	}, [usd, btc, eth, link, frax, tricrypto, cvx, yaxis])
 }
 
 const DEV_FUND_ADDRESS = '0x5118Df9210e1b97a4de0df15FBbf438499d6b446'
@@ -418,9 +408,9 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 		const rewardsPerBlock = funding.isZero()
 			? new BigNumber(0)
 			: funding
-				.dividedBy(period)
-				.dividedBy(AVERAGE_BLOCKS_PER_DAY)
-				.dividedBy(10 ** 18)
+					.dividedBy(period)
+					.dividedBy(AVERAGE_BLOCKS_PER_DAY)
+					.dividedBy(10 ** 18)
 
 		const rewardPerToken = tvl.isZero()
 			? new BigNumber(0)
@@ -475,7 +465,7 @@ export function useLiquidityPool(name: TLiquidityPools) {
 			numberToFloat(_reserve1, LP?.lpTokens[1].decimals),
 		]
 
-		let totalSupplyBN = numberToFloat(totalSupply.toString())
+		const totalSupplyBN = numberToFloat(totalSupply.toString())
 
 		const tokenPrices = [
 			prices[LP?.lpTokens[0].tokenId.toLowerCase()],
@@ -621,7 +611,7 @@ export function useTVL() {
 
 export function useAPY(
 	rewardsContract: TRewardsContracts,
-	strategyPercentage: number = 1,
+	strategyPercentage = 1,
 ) {
 	const curveRewardsAPRs = useCurvePoolRewards('3pool')
 	const curveBaseAPR = useFetchCurvePoolBaseAPR()
@@ -637,7 +627,7 @@ export function useAPY(
 			.minus(1)
 			.multipliedBy(100)
 
-		let lpAprPercent = new BigNumber(
+		const lpAprPercent = new BigNumber(
 			curveBaseAPR.apy.day['3pool'] || 0,
 		).times(100)
 		let lpApyPercent = lpAprPercent
@@ -650,7 +640,7 @@ export function useAPY(
 			.decimalPlaces(18)
 		lpApyPercent = lpApyPercent.multipliedBy(strategyPercentage)
 
-		let threeCrvAprPercent = new BigNumber(curveRewardsAPRs['3crv'])
+		const threeCrvAprPercent = new BigNumber(curveRewardsAPRs['3crv'])
 		let threeCrvApyPercent = threeCrvAprPercent
 			.div(100)
 			.div(12)

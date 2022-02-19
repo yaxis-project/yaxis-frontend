@@ -104,7 +104,7 @@ export interface WalletInfo {
 	description: string
 	href?: string
 	icon: string
-	iconStyle?: object
+	iconStyle?: React.CSSProperties
 	mobile?: true
 	descriptionMobile?: string
 	mobileOnly?: true

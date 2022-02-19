@@ -9,9 +9,10 @@ const useSwapData = () => {
 
 	// Claim
 	const config = useMemo(() => currentConfig(chainId), [chainId])
-	const uniYaxEthLP = useMemo(() => config?.pools['Uniswap YAX/ETH'], [
-		config,
-	])
+	const uniYaxEthLP = useMemo(
+		() => config?.pools['Uniswap YAX/ETH'],
+		[config],
+	)
 	const {
 		loading,
 		lp: { pendingYax: earnings, staked: stakedUniLP },

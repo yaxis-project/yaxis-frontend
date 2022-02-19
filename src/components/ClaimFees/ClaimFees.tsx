@@ -19,8 +19,7 @@ const ClaimFees: React.FC = () => {
 	const { contracts, loading: loadingContracts } = useContracts()
 
 	const yaxis = useMemo(
-		() =>
-		contracts?.currencies?.ERC677.yaxis.contract.address,
+		() => contracts?.currencies?.ERC677.yaxis.contract.address,
 		[contracts],
 	)
 
@@ -32,12 +31,17 @@ const ClaimFees: React.FC = () => {
 		})
 
 	const { loading: loadingRewardAmount, result: rewardAmount } =
-		useSingleCallResultByName(`internal.feeDistributor`, 'getRewardAmount', [yaxis, account])
-
+		useSingleCallResultByName(
+			`internal.feeDistributor`,
+			'getRewardAmount',
+			[yaxis, account],
+		)
 
 	const rewardsClaimable = useMemo(
 		() =>
-			new BigNumber(rewardAmount?.[0]?.toString() || 0).dividedBy(10**18),
+			new BigNumber(rewardAmount?.[0]?.toString() || 0).dividedBy(
+				10 ** 18,
+			),
 		[rewardAmount],
 	)
 
@@ -58,8 +62,7 @@ const ClaimFees: React.FC = () => {
 							disabled={
 								loadingContracts ||
 								loadingRewardAmount ||
-								rewardsClaimable
-									.isZero()
+								rewardsClaimable.isZero()
 							}
 							onClick={() => {
 								if (rewardsClaimable.gt(0)) {
@@ -68,9 +71,7 @@ const ClaimFees: React.FC = () => {
 									})
 								}
 							}}
-							loading={
-								loadingClaimFees 
-							}
+							loading={loadingClaimFees}
 							height={'40px'}
 						>
 							{translate('Claim')}

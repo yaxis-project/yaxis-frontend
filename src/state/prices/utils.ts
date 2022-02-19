@@ -32,14 +32,14 @@ const tokenCgkIdMap: { [key in Ticker]: CoinGeckoID } = {
 }
 
 export async function getCoinGeckoPrices() {
-	let cgkIds = Object.values(tokenCgkIdMap)
+	const cgkIds = Object.values(tokenCgkIdMap)
 		.filter((id) => !!id)
 		.join(',')
-	let prices = await (
+	const prices = await (
 		await fetch(`${COINGECKO_API}?vs_currencies=usd&ids=${cgkIds}`)
 	).json()
-	let priceMap = {}
-	for (let [symbol, cgkId] of Object.entries(tokenCgkIdMap)) {
+	const priceMap = {}
+	for (const [symbol, cgkId] of Object.entries(tokenCgkIdMap)) {
 		const cgkPrice = prices[cgkId]?.usd
 		if (cgkPrice) priceMap[symbol] = cgkPrice
 	}

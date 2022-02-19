@@ -21,7 +21,7 @@ interface Params {
 
 interface CallOptions {
 	amount?: string
-	cb?: Function
+	cb?: (...args) => unknown
 	args?: any[]
 	descriptionExtra?: string
 }

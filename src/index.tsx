@@ -15,7 +15,7 @@ import { updater as OnChainUpdater } from './state/onchain'
 import { updater as PricesUpdater } from './state/prices'
 import ContractsProvider from './contexts/Contracts'
 
-if (!!(window as any).ethereum) {
+if ((window as any).ethereum) {
 	;(window as any).ethereum.autoRefreshOnNetworkChange = false
 }
 

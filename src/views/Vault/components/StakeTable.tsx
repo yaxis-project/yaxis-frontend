@@ -39,7 +39,7 @@ const makeColumns = (
 	loading: boolean,
 	translate: any,
 	onChange: ReturnType<typeof handleFormInputChange>,
-	contracts: Contracts
+	contracts: Contracts,
 ) => {
 	return [
 		{
@@ -78,7 +78,6 @@ const makeColumns = (
 			render: (text, record) => {
 				const key = record.key
 
-
 				return (
 					<ApprovalCover
 						contractName={`vaults.${key}.vaultToken.contract`}
@@ -105,12 +104,14 @@ const makeColumns = (
 								disabled={loading || record.balance.isZero()}
 								suffix={record.name}
 								onClickMax={() =>
-									onChange(record.tokenId, record.balance || '0')
+									onChange(
+										record.tokenId,
+										record.balance || '0',
+									)
 								}
 							/>
 						</Form.Item>
 					</ApprovalCover>
-
 				)
 			},
 		},
@@ -125,8 +126,8 @@ const makeColumns = (
 							{record.apr.totalAPR.isNaN()
 								? 0
 								: record.apr.totalAPR
-									.multipliedBy(100)
-									.toFormat(2)}
+										.multipliedBy(100)
+										.toFormat(2)}
 							%
 							<Tooltip
 								style={{ minWidth: '350px' }}
@@ -258,14 +259,12 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 			description: `staked in YAXIS Gauge`,
 		})
 
-
 	const { call: handleStakeFRAX, loading: isSubmittingFRAX } =
 		useContractWrite({
 			contractName: 'vaults.frax.gauge',
 			method: 'deposit(uint256)',
 			description: `staked in FRAX Gauge`,
 		})
-
 
 	const { call: handleStakeTRICRYPTO, loading: isSubmittingTRICRYPTO } =
 		useContractWrite({
@@ -274,13 +273,13 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 			description: `staked in TRICRYPTO Gauge`,
 		})
 
-
-	const { call: handleStakeCVX, loading: isSubmittingCVX } =
-		useContractWrite({
+	const { call: handleStakeCVX, loading: isSubmittingCVX } = useContractWrite(
+		{
 			contractName: 'vaults.cvx.gauge',
 			method: 'deposit(uint256)',
 			description: `staked in CVX Gauge`,
-		})
+		},
+	)
 
 	const callsLookup = useMemo(() => {
 		return {
@@ -366,7 +365,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 					callsLookup[`handleStake${token}`]({
 						args: [amount],
 						descriptionExtra: totalDepositing,
-					})
+					}),
 				),
 			)
 			setCurrencyValues(
@@ -417,11 +416,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 
 	return (
 		<>
-			<Table
-				columns={columns}
-				dataSource={data}
-				pagination={false}
-			/>
+			<Table columns={columns} dataSource={data} pagination={false} />
 			<div
 				style={
 					md

@@ -172,9 +172,7 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 					([lpToken]) => tokenId === lpToken,
 				)
 				const currency = balances.balances[vault]
-				return (
-					!!!currency || value.gt(currency?.gaugeToken?.amount || 0)
-				)
+				return !currency || value.gt(currency?.gaugeToken?.amount || 0)
 			},
 		)
 		return noValue || insufficientBalance
@@ -248,8 +246,8 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 					balanceUSD: balance?.usd || new BigNumber(0),
 					value: currencyValues
 						? new BigNumber(
-							currencyValues[c.name.toLowerCase()] || 0,
-						)
+								currencyValues[c.name.toLowerCase()] || 0,
+						  )
 						: new BigNumber(0),
 					inputValue: currencyValues[c.name.toLowerCase()],
 					key: vault,

@@ -11,7 +11,7 @@ const StyledMenu = styled(BaseMenu)`
 	}
 `
 
-export interface MenuProps extends BaseMenuProps {}
+export type MenuProps = BaseMenuProps
 
 const Menu: React.FC<MenuProps> = (props) => <StyledMenu {...props} />
 

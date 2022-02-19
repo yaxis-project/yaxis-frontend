@@ -13,62 +13,64 @@ const { Text } = Typography
 type Props = {}
 
 const Button: React.FC<Props> = () => {
-    const chainId = useChain()
-    const setChainId = useSetChain()
-    const translate = useTranslation()
-    const blockchain = CHAIN_INFO[chainId]
+	const chainId = useChain()
+	const setChainId = useSetChain()
+	const translate = useTranslation()
+	const blockchain = CHAIN_INFO[chainId]
 
-    return (
-        <Row>
-            <StyledMenu mode="horizontal">
-                <StyledSubMenu
-                    key="language-select"
-                    title={
-                        <NetworkSelector align="middle">
-                            <Col>
-                                {blockchain.label}
-                            </Col>
-                            {/* <Col>
+	return (
+		<Row>
+			<StyledMenu mode="horizontal">
+				<StyledSubMenu
+					key="language-select"
+					title={
+						<NetworkSelector align="middle">
+							<Col>{blockchain.label}</Col>
+							{/* <Col>
                                 <CaretDownOutlined
                                     style={{ paddingLeft: '1px' }}
                                 />
                             </Col> */}
-                        </NetworkSelector>
-                    }
-                    popupOffset={[-50, 5]}
-                >
-
-                    <Menu.Item
-                        key={SupportedChainId.ETHEREUM_MAINNET}
-                        onClick={() => {
-                            // setChainId(key.toUpperCase())
-                            // switchToNetwork()
-                        }
-                        }
-                    >
-                        <Row align="middle" gutter={10}>
-                            <Col
-                                style={{
-                                    fontSize: '26px',
-                                }}
-                            >
-                                {/* {flag} */}
-                            </Col>
-                            <Col>
-                                <Text>{CHAIN_INFO[SupportedChainId.ETHEREUM_MAINNET].label}</Text>
-                            </Col>
-                        </Row>
-                    </Menu.Item>
-                </StyledSubMenu>
-            </StyledMenu>
-        </Row>
-    )
+						</NetworkSelector>
+					}
+					popupOffset={[-50, 5]}
+				>
+					<Menu.Item
+						key={SupportedChainId.ETHEREUM_MAINNET}
+						onClick={() => {
+							// setChainId(key.toUpperCase())
+							// switchToNetwork()
+						}}
+					>
+						<Row align="middle" gutter={10}>
+							<Col
+								style={{
+									fontSize: '26px',
+								}}
+							>
+								{/* {flag} */}
+							</Col>
+							<Col>
+								<Text>
+									{
+										CHAIN_INFO[
+											SupportedChainId.ETHEREUM_MAINNET
+										].label
+									}
+								</Text>
+							</Col>
+						</Row>
+					</Menu.Item>
+				</StyledSubMenu>
+			</StyledMenu>
+		</Row>
+	)
 }
 
 export default Button
 
 const StyledMenu = styled(Menu)`
-width: 100px;
+	width: 100px;
 	border-bottom: none;
 	background: none;
 	color: ${(props) => props.theme.colors.white} !important;

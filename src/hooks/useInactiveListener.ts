@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { injected } from '../connectors'
 
-export function useInactiveListener(suppress: boolean = false) {
+export function useInactiveListener(suppress = false) {
 	const { active, error, activate } = useWeb3React()
 
 	useEffect((): any => {

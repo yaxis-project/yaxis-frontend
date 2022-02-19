@@ -6,9 +6,6 @@ import Card from '../../../components/Card'
 // import BigNumber from 'bignumber.js'
 import useTranslation from '../../../hooks/useTranslation'
 
-
-
-
 type Props = { totalUSDBalance: string; balanceLoading: boolean }
 
 const InvestmentDetailOverview: React.FC<Props> = ({
@@ -107,4 +104,3 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 }
 
 export default InvestmentDetailOverview
-

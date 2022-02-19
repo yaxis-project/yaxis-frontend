@@ -27,7 +27,7 @@ export function getApy(
 	tvl: number,
 	price: number,
 	rewardPerBlock: number,
-	poolWeight: number = 1,
+	poolWeight = 1,
 ): number {
 	const BLOCKS_PER_YEAR = new BigNumber(2336000)
 

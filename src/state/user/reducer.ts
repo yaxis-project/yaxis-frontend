@@ -5,7 +5,7 @@ import {
 	updateFutureBalanceCalc,
 	updateLanguage,
 	updateVaultAutoStake,
-	updateChain
+	updateChain,
 } from './actions'
 import { TLanguages } from '../../constants/translations'
 import { SupportedChainId } from '../../constants/chains'
