@@ -49,9 +49,10 @@ export default createReducer(initialState, (builder) =>
 					},
 				},
 			) => {
-				const listeners: MulticallState['callListeners'] = state.callListeners
-					? state.callListeners
-					: (state.callListeners = {})
+				const listeners: MulticallState['callListeners'] =
+					state.callListeners
+						? state.callListeners
+						: (state.callListeners = {})
 				listeners[chainId] = listeners[chainId] ?? {}
 				calls.forEach((call) => {
 					const callKey = toCallKey(call)
@@ -74,9 +75,10 @@ export default createReducer(initialState, (builder) =>
 					},
 				},
 			) => {
-				const listeners: MulticallState['callListeners'] = state.callListeners
-					? state.callListeners
-					: (state.callListeners = {})
+				const listeners: MulticallState['callListeners'] =
+					state.callListeners
+						? state.callListeners
+						: (state.callListeners = {})
 
 				if (!listeners[chainId]) return
 				calls.forEach((call) => {

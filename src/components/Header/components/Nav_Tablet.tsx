@@ -21,9 +21,7 @@ import Typography from '../../Typography'
 
 const { Text } = Typography
 
-interface NavTabletProps {}
-
-const NavTablet: React.FC<NavTabletProps> = () => {
+const NavTablet: React.FC = () => {
 	const translate = useTranslation()
 
 	const { account, chainId, deactivate } = useWeb3Provider()

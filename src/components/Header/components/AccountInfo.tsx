@@ -27,7 +27,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 	mobile,
 }) => {
 	const translate = useTranslation()
-	const {ensName} = useENS(account)
+	const { ensName } = useENS(account)
 	return (
 		<>
 			<Menu.ItemGroup
@@ -41,7 +41,10 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 						>
 							<AccountText>{translate('Account')}:</AccountText>
 							<AccountIdText>
-								{ensName || `${account.slice(0, 4)} ... ${account.slice(-2)}`}
+								{ensName ||
+									`${account.slice(0, 4)} ... ${account.slice(
+										-2,
+									)}`}
 							</AccountIdText>
 						</StyledRow>
 						<StyledRow>
@@ -56,7 +59,9 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 												<CopyOutlined key="copy-icon" />
 											</Col>
 											<Col>
-												<StyledText mobile={`${mobile}`}>
+												<StyledText
+													mobile={`${mobile}`}
+												>
 													{translate('Copy Address')}
 												</StyledText>
 											</Col>
@@ -69,7 +74,9 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 												/>
 											</Col>
 											<Col>
-												<StyledText mobile={`${mobile}`}>
+												<StyledText
+													mobile={`${mobile}`}
+												>
 													{translate(
 														'Address Copied',
 													)}
@@ -119,7 +126,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
 export default AccountInfo
 
-const StyledRow = styled(Row) <{ mobile?: string }>`
+const StyledRow = styled(Row)<{ mobile?: string }>`
 	display: flex;
 	align-items: center;
 	margin-bottom: ${(props) => (props.mobile === 'true' ? '10' : '10')}px;

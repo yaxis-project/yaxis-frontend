@@ -12,7 +12,7 @@ export enum ApplicationModal {
 	WALLET,
 	UNSUPPORTED_NETWORK,
 	MERKLE_DROP,
-	UPDATE
+	UPDATE,
 }
 
 export const updateBlockNumber = createAction<{

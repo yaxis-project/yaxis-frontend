@@ -6,6 +6,7 @@ import { WalletInfo } from '../../../../../connectors'
 import { setRecentProvider } from '../../../../../connectors/utils'
 import styled from 'styled-components'
 import useTranslation from '../../../../../hooks/useTranslation'
+import useImage from '../../../../../hooks/useImage'
 
 interface WalletCardProps {
 	config: WalletInfo
@@ -13,16 +14,14 @@ interface WalletCardProps {
 
 const WalletCard: React.FC<WalletCardProps> = ({ config }) => {
 	const translate = useTranslation()
+	const { image } = useImage(`img/${config.icon}`)
 
 	const { activate } = useWeb3React()
 	return (
 		<>
 			<CardIcon>
 				<img
-					src={
-						require('../../../../../assets/img/' + config.icon)
-							.default
-					}
+					src={image}
 					style={{ height: 32 }}
 					alt={`${config.name} logo`}
 				/>

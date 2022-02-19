@@ -1,28 +1,28 @@
 name: CI
 
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
 
 jobs:
-  ci:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+    ci:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
 
-      - name: Setup
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14.x'
-          cache: 'yarn'
+            - name: Setup
+              uses: actions/setup-node@v2
+              with:
+                  node-version: '14.x'
+                  cache: 'yarn'
 
-      - name: Install Dependencies
-        run: yarn
-        
-      - name: Lint
-        run: yarn lint
+            - name: Install Dependencies
+              run: yarn
 
-      - name: Build
-        run: yarn build
+            - name: Lint
+              run: yarn lint
+
+            - name: Build
+              run: yarn build

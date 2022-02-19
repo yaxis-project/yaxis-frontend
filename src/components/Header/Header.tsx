@@ -5,19 +5,17 @@ import AccountButton from './components/AccountButton'
 import Nav from './components/Nav'
 import NavTablet from './components/Nav_Tablet'
 // import LanguageSelect from './components/LanguageSelect'
-import NetworkSelect from './components/NetworkSelect'
+// import NetworkSelect from './components/NetworkSelect'
 import ThemeToggle from '../ThemeToggle'
+
+import logo from '../../assets/img/yaxisLogoFull.svg'
 
 const { Header: BaseHeader } = Layout
 const { useBreakpoint } = Grid
 
 const Logo = () => (
 	<a href="https://yaxis.io">
-		<img
-			src={require('../../assets/img/yaxisLogoFull.svg').default}
-			height={42}
-			alt={`yAxis logo`}
-		/>
+		<img src={logo} height={42} alt={`yAxis logo`} />
 	</a>
 )
 
@@ -31,10 +29,8 @@ const Header = () => {
 					<Col flex="auto" style={{ color: 'white' }}>
 						<Nav />
 					</Col>
-					<Col>
-						<NetworkSelect />
-					</Col>
-							{/* <Col>
+					<Col>{/* <NetworkSelect /> */}</Col>
+					{/* <Col>
 						<LanguageSelect />
 					</Col> */}
 					<Col>

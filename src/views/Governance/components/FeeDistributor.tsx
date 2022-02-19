@@ -4,9 +4,7 @@ import ClaimFees from '../../../components/ClaimFees'
 import Card from '../../../components/Card'
 import useTranslation from '../../../hooks/useTranslation'
 
-type Props = {}
-
-const FeeDistributor: React.FC<Props> = () => {
+const FeeDistributor: React.FC = () => {
 	const translate = useTranslation()
 	return (
 		<Card title={translate('Fee Distribution')} icon="yaxis">

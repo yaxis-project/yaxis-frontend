@@ -15,7 +15,8 @@ export interface CurrencyValues {
  * @param value
  */
 export const handleFormInputChange =
-	(setCurrencyValues: Function) => (key: string, value: string | number) => {
+	(setCurrencyValues: React.Dispatch<React.SetStateAction<CurrencyValues>>) =>
+	(key: string, value: string | number) => {
 		setCurrencyValues((prev: any) => ({
 			...prev,
 			[key]: value,
@@ -39,7 +40,7 @@ export const computeInsufficientBalance = (
 		([tokenId, v]) => {
 			const value = new BigNumber(v || 0)
 			const currency = currenciesData[tokenId]
-			return !!!currency || value.gt(currency?.amount || 0)
+			return !currency || value.gt(currency?.amount || 0)
 		},
 	)
 	return noValue || insufficientBalance

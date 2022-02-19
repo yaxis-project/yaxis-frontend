@@ -34,7 +34,7 @@ export const dayOptions: SelectableDay[] = [
  */
 export async function getYAXPriceData(
 	selectedDay: SelectableDay,
-	setYaxData: Function,
+	setYaxData: any,
 ) {
 	const start = moment().subtract(1, selectedDay.unit).format('X')
 	const end = moment().format('X')
@@ -52,5 +52,7 @@ export async function getYAXPriceData(
 			max: max(values) * 1.2,
 			min: min(values) * 0.8,
 		})
-	} catch { }
+	} catch {
+		//
+	}
 }

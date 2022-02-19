@@ -1,52 +1,60 @@
 import { useCallback } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
-import { updateLanguage, updateUserDarkMode, updateFutureBalanceCalc, updateVaultAutoStake, updateChain } from './actions'
+import {
+	updateLanguage,
+	updateUserDarkMode,
+	updateFutureBalanceCalc,
+	updateVaultAutoStake,
+	updateChain,
+} from './actions'
 import { TLanguages } from '../../constants/translations'
 import { SupportedChainId } from '../../constants/chains'
 import { CalcPages, FutureBalanceCalculator } from './reducer'
 
 export function useVaultAutoStake(): boolean {
-	return useSelector((state: AppState) =>
-		state.user.vaultAutoStake
-	)
+	return useSelector((state: AppState) => state.user.vaultAutoStake)
 }
 
 export function useSetVaultAutoStake() {
 	const dispatch = useDispatch<AppDispatch>()
 
-	return useCallback((vaultAutoStake: boolean) => {
-		dispatch(updateVaultAutoStake({ vaultAutoStake }))
-	}, [dispatch])
+	return useCallback(
+		(vaultAutoStake: boolean) => {
+			dispatch(updateVaultAutoStake({ vaultAutoStake }))
+		},
+		[dispatch],
+	)
 }
 
 export function useLanguage(): string {
-	return useSelector((state: AppState) =>
-		state.user.language
-	)
+	return useSelector((state: AppState) => state.user.language)
 }
 
 export function useSetLanguage() {
 	const dispatch = useDispatch<AppDispatch>()
 
-	return useCallback((language: TLanguages) => {
-		dispatch(updateLanguage({ language }))
-	}, [dispatch])
+	return useCallback(
+		(language: TLanguages) => {
+			dispatch(updateLanguage({ language }))
+		},
+		[dispatch],
+	)
 }
 
-
 export function useChain(): SupportedChainId {
-	return useSelector((state: AppState) =>
-		state.user.chainId
-	)
+	return useSelector((state: AppState) => state.user.chainId)
 }
 
 export function useSetChain() {
 	const dispatch = useDispatch<AppDispatch>()
 
-	return useCallback((chainId: SupportedChainId) => {
-		dispatch(updateChain({ chainId }))
-	}, [dispatch])
+	return useCallback(
+		(chainId: SupportedChainId) => {
+			dispatch(updateChain({ chainId }))
+		},
+		[dispatch],
+	)
 }
 
 export function useIsDarkMode(): boolean {

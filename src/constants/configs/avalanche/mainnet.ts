@@ -20,7 +20,7 @@ const currencies: CurrenciesConfig = {
 		weth: '',
 		mvlt: '',
 		spell: '',
-		frax: ''
+		frax: '',
 	},
 	ERC677: {
 		yaxis: '0x55853edc67aa68ec2e3903ac00f2bc5bf2ca8db0',

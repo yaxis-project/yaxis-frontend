@@ -239,7 +239,7 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, currencies }) => {
 			const gaugeToken = `${vaultToken}-gauge`
 			const value = new BigNumber(currencyValues[gaugeToken] || 0)
 			const currency = balances.balances[vault].gaugeToken
-			return !!!currency || value.gt(currency?.amount || 0)
+			return !currency || value.gt(currency?.amount || 0)
 		})
 		return noValue || insufficientBalance
 	}, [currencyValues, balances])

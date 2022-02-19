@@ -9,9 +9,7 @@ import { initialState as initialUserState } from './user/reducer'
 import { reducer as onchain } from './onchain'
 import { reducer as prices } from './prices'
 
-const PERSISTED_KEYS: string[] = [
-	'user',
-	'transactions']
+const PERSISTED_KEYS: string[] = ['user', 'transactions']
 
 const store = configureStore({
 	reducer: {
@@ -28,8 +26,8 @@ const store = configureStore({
 	preloadedState: load({
 		states: PERSISTED_KEYS,
 		preloadedState: {
-			user: JSON.parse(JSON.stringify(initialUserState))
-		}
+			user: JSON.parse(JSON.stringify(initialUserState)),
+		},
 	}),
 })
 

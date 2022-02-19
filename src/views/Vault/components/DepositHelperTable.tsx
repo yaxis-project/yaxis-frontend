@@ -40,7 +40,7 @@ const makeColumns = (
 	loading: boolean,
 	translate: any,
 	onChange: ReturnType<typeof handleFormInputChange>,
-	contracts: Contracts
+	contracts: Contracts,
 ) => {
 	return [
 		{
@@ -85,40 +85,46 @@ const makeColumns = (
 			key: 'amount',
 			render: (text, record) => {
 				const key = record.key
-				if (key === 'yaxis') return <ApprovalCover
-					contractName={`currencies.ERC677.${key}.contract`}
-					approvee={
-						contracts?.vaults[key].gauge.address
-					}
-					noWrapper
-					// Note: We display "Vault" to the user,
-					// but it is really interacting with the Gauge
-					buttonText={'Deposit'}
-				>
-					<Form.Item
-						validateStatus={
-							new BigNumber(record.value).gt(
-								new BigNumber(record.balance),
-							) && 'error'
-						}
-						style={{ marginBottom: 0 }}
-					>
-						<Input
-							onChange={(e) =>
-								onChange(record.tokenId, e.target.value)
-							}
-							value={record.inputValue}
-							min={'0'}
-							max={`${record.balance}`}
-							placeholder="0"
-							disabled={loading || record.balance.isZero()}
-							suffix={record.name}
-							onClickMax={() =>
-								onChange(record.tokenId, record.balance || '0')
-							}
-						/>
-					</Form.Item>
-				</ApprovalCover>
+				if (key === 'yaxis')
+					return (
+						<ApprovalCover
+							contractName={`currencies.ERC677.${key}.contract`}
+							approvee={contracts?.vaults[key].gauge.address}
+							noWrapper
+							// Note: We display "Vault" to the user,
+							// but it is really interacting with the Gauge
+							buttonText={'Deposit'}
+						>
+							<Form.Item
+								validateStatus={
+									new BigNumber(record.value).gt(
+										new BigNumber(record.balance),
+									) && 'error'
+								}
+								style={{ marginBottom: 0 }}
+							>
+								<Input
+									onChange={(e) =>
+										onChange(record.tokenId, e.target.value)
+									}
+									value={record.inputValue}
+									min={'0'}
+									max={`${record.balance}`}
+									placeholder="0"
+									disabled={
+										loading || record.balance.isZero()
+									}
+									suffix={record.name}
+									onClickMax={() =>
+										onChange(
+											record.tokenId,
+											record.balance || '0',
+										)
+									}
+								/>
+							</Form.Item>
+						</ApprovalCover>
+					)
 
 				return (
 					<DoubleApprovalCover
@@ -127,9 +133,7 @@ const makeColumns = (
 						approvee1={contracts?.vaults[key].vault.address}
 						buttonText1={'Deposit'}
 						contractName2={`vaults.${key}.token.contract`}
-						approvee2={
-							contracts?.internal.vaultHelper.address
-						}
+						approvee2={contracts?.internal.vaultHelper.address}
 						buttonText2={'Automatic Staking'}
 					>
 						<Form.Item
@@ -151,12 +155,14 @@ const makeColumns = (
 								disabled={loading || record.balance.isZero()}
 								suffix={record.name}
 								onClickMax={() =>
-									onChange(record.tokenId, record.balance || '0')
+									onChange(
+										record.tokenId,
+										record.balance || '0',
+									)
 								}
 							/>
 						</Form.Item>
 					</DoubleApprovalCover>
-
 				)
 			},
 		},
@@ -171,8 +177,8 @@ const makeColumns = (
 							{record.apr.totalAPR.isNaN()
 								? 0
 								: record.apr.totalAPR
-									.multipliedBy(100)
-									.toFormat(2)}
+										.multipliedBy(100)
+										.toFormat(2)}
 							%
 							<Tooltip
 								style={{ minWidth: '350px' }}
@@ -391,11 +397,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 
 	return (
 		<>
-			<Table
-				columns={columns}
-				dataSource={data}
-				pagination={false}
-			/>
+			<Table columns={columns} dataSource={data} pagination={false} />
 			<div
 				style={
 					md

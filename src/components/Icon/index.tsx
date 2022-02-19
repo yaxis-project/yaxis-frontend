@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import useImage from '../../hooks/useImage'
 
 export type IconType =
 	| 'vault'
@@ -19,13 +20,13 @@ export interface Props {
 }
 
 const Icon: React.FC<Props> = ({ type }) => {
+	const { error, image } = useImage(`img/icons/${type}.svg`)
+
+	if (error) return <div></div>
+
 	return (
 		<Background>
-			<img
-				src={require(`../../assets/img/icons/${type}.svg`).default}
-				height={20}
-				alt={`${type} logo`}
-			/>
+			<img src={image} height={20} alt={`${type} logo`} />
 		</Background>
 	)
 }

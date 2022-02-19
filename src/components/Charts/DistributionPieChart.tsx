@@ -1,11 +1,9 @@
 import React, { useMemo } from 'react'
 import { Row, Col } from 'antd'
-import { Chart, Pie } from 'react-chartjs-2'
+import { Pie } from 'react-chartjs-2'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { useGauges, useRewardRate } from '../../state/internal/hooks'
 import { LoadingOutlined } from '@ant-design/icons'
-
-Chart.register(ChartDataLabels)
 
 const Colors: { [vault: string]: [number, number, number] } = {
 	usd: [0, 150, 0],
@@ -24,14 +22,14 @@ const Colors: { [vault: string]: [number, number, number] } = {
 // 		'rgba(75, 192, 192, 1)',
 // 		'rgba(153, 102, 255, 1)',
 
-const randomBetween = (min, max) => min + Math.floor(Math.random() * (max - min + 1))
+const randomBetween = (min, max) =>
+	min + Math.floor(Math.random() * (max - min + 1))
 const generateRGBA = (
 	r = randomBetween(0, 255),
 	g = randomBetween(0, 255),
 	b = randomBetween(0, 255),
-	a = randomBetween(0, 1)
-) =>
-	`rgba(${r},${g},${b},${a})`
+	a = randomBetween(0, 1),
+) => `rgba(${r},${g},${b},${a})`
 
 interface Props {
 	type: 'relativeWeight' | 'nextRelativeWeight'
@@ -42,17 +40,31 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 
 	const rate = useRewardRate()
 
-	const gaugeData = useMemo(() => Object.entries(gauges)
-		// YAXIS gauge removed in YIP-14
-		.filter(([name, data]) => name !== 'yaxis' && data[type].gt(0)), [gauges, type])
+	const gaugeData = useMemo(
+		() =>
+			Object.entries(gauges)
+				// YAXIS gauge removed in YIP-14
+				.filter(([name, data]) => name !== 'yaxis' && data[type].gt(0)),
+		[gauges, type],
+	)
 
-	const colors = useMemo(() =>
-		gaugeData.reduce((acc, [name]) => {
-			const [r, g, b] = Colors[name] || [randomBetween(0, 255), randomBetween(0, 255), randomBetween(0, 255)]
-			acc.background.push(generateRGBA(r, g, b, 0.2))
-			acc.border.push(generateRGBA(r, g, b, 1))
-			return acc
-		}, { background: [], border: [] }), [gaugeData])
+	const colors = useMemo(
+		() =>
+			gaugeData.reduce(
+				(acc, [name]) => {
+					const [r, g, b] = Colors[name] || [
+						randomBetween(0, 255),
+						randomBetween(0, 255),
+						randomBetween(0, 255),
+					]
+					acc.background.push(generateRGBA(r, g, b, 0.2))
+					acc.border.push(generateRGBA(r, g, b, 1))
+					return acc
+				},
+				{ background: [], border: [] },
+			),
+		[gaugeData],
+	)
 
 	const data = useMemo(() => {
 		if (loading)
@@ -78,8 +90,7 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 					datalabels: {
 						anchor: 'end' as const,
 					},
-					backgroundColor: colors.background
-					,
+					backgroundColor: colors.background,
 					borderColor: colors.border,
 					borderWidth: 2,
 				},
@@ -171,7 +182,7 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 								},
 								formatter: (value, context) =>
 									(context.dataset as any).labels[
-									context.dataIndex
+										context.dataIndex
 									],
 							},
 						},

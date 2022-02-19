@@ -53,8 +53,7 @@ const GaugeWeight: React.FC = () => {
 			const nextWeights = Vaults.reduce((acc, vault) => {
 				acc.push(votedWeights[vault].power.div(100).toNumber())
 				return acc
-			}
-				, [])
+			}, [])
 			setInitialWeights(nextWeights.reduce((acc, curr) => acc + curr, 0))
 			setWeights(nextWeights)
 		}
@@ -71,12 +70,13 @@ const GaugeWeight: React.FC = () => {
 			const userShare = boost[name].workingSupply.isZero()
 				? new BigNumber(0)
 				: boost[name].workingBalance.dividedBy(
-					boost[name].workingSupply,
-				)
+						boost[name].workingSupply,
+				  )
 
 			// YAXIS vault has been deprecated.
-			// Filter it out if the user has redistributed out. 
-			if ((name === 'yaxis' && votedWeights[name].power.toNumber() === 0)) return acc
+			// Filter it out if the user has redistributed out.
+			if (name === 'yaxis' && votedWeights[name].power.toNumber() === 0)
+				return acc
 
 			acc.push({
 				key: i,
@@ -97,20 +97,15 @@ const GaugeWeight: React.FC = () => {
 		[lock.end, lock.loading],
 	)
 
+	const hasChange = useMemo(() => {
+		if (loadingVotedWeights || initialWeights === -1) return false
 
-	const hasChange = useMemo(
-		() => {
-			if (loadingVotedWeights || initialWeights === -1)
-				return false
-
-			const nextWeights = Vaults.reduce((acc, vault) => {
-				acc.push(votedWeights[vault].power.div(100).toNumber())
-				return acc
-			}, [])
-			return JSON.stringify(nextWeights) !== JSON.stringify(weights)
-		},
-		[loadingVotedWeights, initialWeights, votedWeights, weights],
-	)
+		const nextWeights = Vaults.reduce((acc, vault) => {
+			acc.push(votedWeights[vault].power.div(100).toNumber())
+			return acc
+		}, [])
+		return JSON.stringify(nextWeights) !== JSON.stringify(weights)
+	}, [loadingVotedWeights, initialWeights, votedWeights, weights])
 
 	const columns = useMemo(
 		() => [
@@ -138,21 +133,31 @@ const GaugeWeight: React.FC = () => {
 				key: 'action',
 				width: '60%',
 				render: (record) => {
-					const cooldown = moment(record.lastVote.toNumber() * 1000).add(
-						WEIGHT_VOTE_DELAY * 1000,
-					)
+					const cooldown = moment(
+						record.lastVote.toNumber() * 1000,
+					).add(WEIGHT_VOTE_DELAY * 1000)
 					return (
 						<div style={{ position: 'relative' }}>
-							{record.name === 'YAXIS' && <div>*YAXIS vault deprecated in {" "}
-								<TextLink
-									rel="noopener noreferrer"
-									target="_blank"
-									href="https://discord.com/channels/754774398304649308/916162568509333554/919013222550482976">
-									YIP-14
-								</TextLink>
-								.</div>}
+							{record.name === 'YAXIS' && (
+								<div>
+									*YAXIS vault deprecated in{' '}
+									<TextLink
+										rel="noopener noreferrer"
+										target="_blank"
+										href="https://discord.com/channels/754774398304649308/916162568509333554/919013222550482976"
+									>
+										YIP-14
+									</TextLink>
+									.
+								</div>
+							)}
 
-							{record.name === 'YAXIS' && <div>Set the slider to 0 and redistribute elsewhere.</div>}
+							{record.name === 'YAXIS' && (
+								<div>
+									Set the slider to 0 and redistribute
+									elsewhere.
+								</div>
+							)}
 							{cooldown.isAfter(Date.now()) && (
 								<div
 									style={{
@@ -164,7 +169,10 @@ const GaugeWeight: React.FC = () => {
 									Unlocks {cooldown.fromNow()}
 								</div>
 							)}
-							{console.log(record.lastVote.toString(), record.lastVote.gt(Date.now()))}
+							{console.log(
+								record.lastVote.toString(),
+								record.lastVote.gt(Date.now()),
+							)}
 							<Slider
 								value={weights[record.key]}
 								tipFormatter={(value) => `${value}%`}
@@ -264,7 +272,9 @@ const GaugeWeight: React.FC = () => {
 						disabled={disabled || !hasChange}
 						onClick={() => {
 							weights.forEach((weight, i) => {
-								const hasChange = weight * 100 !== votedWeights[Vaults[i]].power.toNumber()
+								const hasChange =
+									weight * 100 !==
+									votedWeights[Vaults[i]].power.toNumber()
 								if (hasChange)
 									call({
 										args: [
@@ -285,7 +295,6 @@ const GaugeWeight: React.FC = () => {
 }
 
 export { GaugeWeight }
-
 
 const TextLink = styled.a`
 	color: ${(props) => props.theme.primary.main};
