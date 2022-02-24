@@ -3,7 +3,7 @@ import * as currencies from '../../../constants/currencies'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { useContracts } from '../../../contexts/Contracts'
-import { useAccountLP } from '../../../state/wallet/hooks'
+import { useWalletLP } from '../../../state/wallet/hooks'
 import Value from '../../../components/Value'
 import Button from '../../../components/Button'
 import Input from '../../../components/Input'
@@ -49,7 +49,7 @@ function Stake({ pool }) {
 		description: `unstake ${pool.name}`,
 	})
 
-	const { walletBalance, stakedBalance } = useAccountLP(pool)
+	const { walletBalance, stakedBalance } = useWalletLP(pool.name)
 
 	const [depositAmount, setDeposit] = useState<string>('')
 	const updateDeposit = (value: string) =>

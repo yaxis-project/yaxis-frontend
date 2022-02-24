@@ -17,6 +17,7 @@ import ApprovalCover from '../../../components/ApprovalCover'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import useTranslation from '../../../hooks/useTranslation'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
 
 const { Text } = Typography
 
@@ -24,6 +25,7 @@ const WEEK_TIME = 60 * 60 * 24 * 7
 const MAX_TIME = 1 * 365 * 24 * 60 * 60
 
 const CreateLock: React.FC = () => {
+	const { account } = useWeb3Provider()
 	const translate = useTranslation()
 
 	const nextWeekStart =
@@ -56,10 +58,12 @@ const CreateLock: React.FC = () => {
 	}, [amount, length])
 
 	const vpPercentage = useMemo(
-		() => vp.dividedBy(votingEscrow.totalSupply.plus(vp)),
+		() =>
+			vp.isZero()
+				? new BigNumber(0)
+				: vp.dividedBy(votingEscrow.totalSupply.plus(vp)),
 		[vp, votingEscrow],
 	)
-
 	return (
 		<StyledDiv>
 			<Row style={{ marginBottom: '20px' }}>
@@ -122,6 +126,7 @@ const CreateLock: React.FC = () => {
 							onChange={(value) => {
 								setLength(WEEK_TIME * value)
 							}}
+							disabled={!account}
 						/>
 					</Row>
 					<Row justify="center">

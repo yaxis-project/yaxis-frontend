@@ -1,6 +1,6 @@
 import { Contract } from '@ethersproject/contracts'
 import BigNumber from 'bignumber.js'
-import { Ticker } from './type/ethereum'
+import { Ticker } from './type'
 import crv3 from '../assets/img/currencies/3crv.svg'
 import dai from '../assets/img/currencies/dai.svg'
 import eth from '../assets/img/currencies/eth.svg'
@@ -13,6 +13,7 @@ import usdt from '../assets/img/currencies/usdt.svg'
 import link from '../assets/img/currencies/link.svg'
 import wbtc from '../assets/img/currencies/wbtc.svg'
 import usd from '../assets/img/currencies/usd.svg'
+import avax from '../assets/img/currencies/avax.svg'
 import tricrypto from '../assets/img/currencies/tricrypto.svg'
 import linkswap from '../assets/img/icons/pool-token.svg'
 import yax from '../assets/img/logo-ui.svg'
@@ -183,6 +184,54 @@ export const CVTRICRYPTOgauge: Currency = {
 	decimals: 18,
 }
 
+export const AV3CRV: Currency = {
+	name: 'AV3CRV',
+	tokenId: 'av3crv',
+	icon: crv3,
+	childIcons: [usdt, usdc, dai],
+	decimals: 18,
+}
+
+export const CVAV3CRV: Currency = {
+	name: 'CV:AV3CRV',
+	tokenId: 'cv:av3crv',
+	icon: crv3,
+	childIcons: [usdt, usdc, dai],
+	decimals: 18,
+}
+
+export const CVAV3CRVgauge: Currency = {
+	name: 'CV:AV3CRV-GAUGE',
+	tokenId: 'cv:av3crv-gauge',
+	icon: crv3,
+	childIcons: [usdt, usdc, dai],
+	decimals: 18,
+}
+
+export const ATRICRYPTO: Currency = {
+	name: 'ATRICRYPTO',
+	tokenId: 'atricrypto',
+	icon: tricrypto,
+	childIcons: [usdt, wbtc, eth],
+	decimals: 18,
+}
+
+export const CVATRICRYPTO: Currency = {
+	name: 'CV:ATRICRYPTO',
+	tokenId: 'cv:atricrypto',
+	icon: tricrypto,
+	childIcons: [usdt, wbtc, eth],
+	decimals: 18,
+}
+
+export const CVATRICRYPTOgauge: Currency = {
+	name: 'CV:ATRICRYPTO-GAUGE',
+	tokenId: 'cv:atricrypto-gauge',
+	icon: tricrypto,
+	childIcons: [usdt, wbtc, eth],
+	decimals: 18,
+}
+
 export const CVFRAX: Currency = {
 	name: 'CV:FRAX',
 	tokenId: 'cv:frax',
@@ -238,6 +287,33 @@ export const SPELL: Currency = {
 	decimals: 18,
 	priceMapKey: 'spell',
 }
+
+// TODO
+export const JOE: Currency = {
+	name: 'JOE',
+	tokenId: 'joe',
+	icon: eth,
+	decimals: 18,
+	priceMapKey: 'spell',
+}
+
+export const AVAX: Currency = {
+	name: 'AVAX',
+	tokenId: 'avax',
+	icon: avax,
+	decimals: 18,
+	priceMapKey: 'avax',
+}
+
+export const WAVAX: Currency = {
+	name: 'wAVAX',
+	tokenId: 'wavax',
+	icon: avax,
+	decimals: 18,
+	priceMapKey: 'wavax',
+}
+
+//
 
 export const WBTC: Currency = {
 	name: 'wBTC',
@@ -410,6 +486,8 @@ export const Currencies = {
 	BTC,
 	ETH,
 	WETH,
+	AVAX,
+	WAVAX,
 	YAX,
 	YAXIS,
 	'YAXIS-GAUGE': YAXISgauge,
@@ -428,12 +506,19 @@ export const Currencies = {
 	'CV:TRICRYPTO-GAUGE': CVTRICRYPTOgauge,
 	'CV:FRAX': CVFRAX,
 	'CV:FRAX-GAUGE': CVFRAXgauge,
+	ATRICRYPTO,
+	'CV:ATRICRYPTO': CVATRICRYPTO,
+	'CV:ATRICRYPTO-GAUGE': CVATRICRYPTOgauge,
+	AV3CRV,
+	'CV:AV3CRV': CVAV3CRV,
+	'CV:AV3CRV-GAUGE': CVAV3CRVgauge,
 	FRAX,
 	TRICRYPTO,
 	MIM,
 	SPELL,
 	CVX,
 	CRV,
+	JOE,
 	WBTC,
 	LINK,
 	DAI,

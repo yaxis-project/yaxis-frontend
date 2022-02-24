@@ -44,6 +44,7 @@ const ApprovalCover: React.FC<Props> = ({
 
 	const visible = useMemo(
 		() =>
+			account &&
 			!hidden &&
 			approvee &&
 			!loadingAllowance &&

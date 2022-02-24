@@ -1,5 +1,6 @@
 import { Currency, CurrencyValue } from '../../../constants/currencies'
 import { BigNumber } from 'bignumber.js'
+import { TPrices } from '../../../state/prices/reducer'
 
 /**
  * Object to store the list of depositing values by currency.
@@ -48,14 +49,36 @@ export const computeInsufficientBalance = (
 
 /**
  * Computes the total USD value of stored deposit values.
- * @param currencies List of currencies to iterate over.
+ * @param vaults List of vaults to iterate over.
  * @param currencyValues Stored deposit values.
  * @param priceMap Current prices object.
  */
 export const computeTotalDepositing = (
+	vaults: [Currency, string][],
+	currencyValues: CurrencyValues,
+	priceMap: TPrices,
+) =>
+	vaults
+		.map(([{ tokenId, priceMapKey }]) => {
+			const inputValue = currencyValues[tokenId]
+			const inputNumber = Number(inputValue)
+			return new BigNumber(isNaN(inputNumber) ? 0 : inputNumber).times(
+				new BigNumber(priceMap[priceMapKey] || 0),
+			)
+		})
+		.reduce((total, current) => total.plus(current), new BigNumber(0))
+		.toFormat(2)
+
+/**
+ * Computes the total USD value of stored deposit values.
+ * @param vaults List of vaults to iterate over.
+ * @param currencyValues Stored deposit values.
+ * @param priceMap Current prices object.
+ */
+export const computeTotalDepositingCurrency = (
 	currencies: Currency[],
 	currencyValues: CurrencyValues,
-	priceMap: any,
+	priceMap: TPrices,
 ) =>
 	currencies
 		.map(({ tokenId, priceMapKey }) => {

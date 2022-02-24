@@ -2,7 +2,6 @@ import { useState, useMemo, useCallback } from 'react'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-import { Vaults, LPVaults } from '../../../constants/type/ethereum'
 import { Row, Grid, Form } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
@@ -104,8 +103,6 @@ const makeColumns = (
 
 const { useBreakpoint } = Grid
 
-const VaultsNoYAXIS = Vaults.filter((vault) => vault !== 'yaxis')
-
 interface TableDataEntry extends Currency {
 	balance: BigNumber
 	balanceUSD: string
@@ -115,13 +112,15 @@ interface TableDataEntry extends Currency {
 
 interface WithdrawTableProps {
 	fees: TYaxisManagerData
-	currencies: Currency[]
+	vaults: [Currency, string][]
 }
 
 /**
  * Creates a deposit table for the savings account.
  */
-const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, currencies }) => {
+const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, vaults }) => {
+	const VaultsNoYAXIS = vaults.filter(([, vault]) => vault !== 'yaxis')
+
 	const translate = useTranslation()
 
 	const [balances, loading] = useAllTokenBalances()
@@ -213,10 +212,10 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, currencies }) => {
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
-		currencies.reduce(
-			(prev, curr) => ({
+		vaults.reduce(
+			(prev, [currency]) => ({
 				...prev,
-				[curr.tokenId]: '',
+				[currency.tokenId]: '',
 			}),
 			{},
 		),
@@ -227,13 +226,13 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, currencies }) => {
 	}, [currencyValues, balances])
 
 	const totalWithdrawing = useMemo(
-		() => computeTotalDepositing(currencies, currencyValues, prices),
-		[currencies, currencyValues, prices],
+		() => computeTotalDepositing(vaults, currencyValues, prices),
+		[vaults, currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
 		const transactions = VaultsNoYAXIS.reduce<[string, string][]>(
-			(previous, vault) => {
+			(previous, [, vault]) => {
 				const vaultToken = `cv:${vault}`
 				const _v = currencyValues[vaultToken]
 				if (_v)
@@ -259,26 +258,20 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, currencies }) => {
 				),
 			)
 			setCurrencyValues(
-				currencies.reduce(
-					(prev, curr) => ({
+				vaults.reduce(
+					(prev, [currency]) => ({
 						...prev,
-						[curr.tokenId]: '',
+						[currency.tokenId]: '',
 					}),
 					{},
 				),
 			)
 		}
-	}, [currencies, currencyValues, callsLookup, totalWithdrawing])
+	}, [vaults, currencyValues, callsLookup, totalWithdrawing])
 
 	const data = useMemo(() => {
-		return currencies.map<TableDataEntry>((c) => {
-			const vault =
-				c.tokenId !== 'yaxis'
-					? c.tokenId.slice(3).toLowerCase()
-					: c.tokenId
-			const [lpToken] = LPVaults.find(([, v]) => {
-				return vault === v
-			})
+		return vaults.map<TableDataEntry>(([lpTokenCurrency, vault]) => {
+			const lpToken = lpTokenCurrency.tokenId
 			const vaultToken = `cv:${vault}`
 			const currency = Currencies[vaultToken.toUpperCase()]
 			const balance = balances[vaultToken]?.amount || new BigNumber(0)
@@ -296,7 +289,7 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, currencies }) => {
 				key: vault,
 			}
 		})
-	}, [currencies, prices, balances, currencyValues])
+	}, [vaults, prices, balances, currencyValues])
 
 	const columns = useMemo(
 		() =>

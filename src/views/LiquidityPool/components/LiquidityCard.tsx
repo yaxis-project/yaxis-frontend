@@ -5,11 +5,11 @@ import Divider from '../../../components/Divider'
 import { Row, Col } from 'antd'
 import Button from '../../../components/Button'
 import Value from '../../../components/Value'
-import { LiquidityPool } from '../../../constants/type/ethereum'
+import { LiquidityPool } from '../../../constants/type'
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
 import { Currencies } from '../../../constants/currencies'
 import { getFullDisplayBalance } from '../../../utils/formatBalance'
-import { useAccountLP } from '../../../state/wallet/hooks'
+import { useWalletLP } from '../../../state/wallet/hooks'
 import { useLP } from '../../../state/external/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 
@@ -71,7 +71,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 	const translate = useTranslation()
 
 	const { lpUrl, reserves } = useLP(pool.name)
-	const { walletBalance, poolShare, stakedBalance } = useAccountLP(pool)
+	const { walletBalance, poolShare, stakedBalance } = useWalletLP(pool.name)
 
 	const accountBalances = useMemo(
 		() =>

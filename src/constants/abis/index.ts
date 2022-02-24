@@ -1,5 +1,12 @@
-import { abis as mainnet } from './ethereum/mainnet'
-import { abis as kovan } from './ethereum/kovan'
+import { JsonFragment } from '@ethersproject/abi'
+import { ChainId } from '../chains'
 
-const networks = { ethereum: { 1: mainnet, 42: kovan } }
-export default networks
+import ethereum from './ethereum'
+import avalanche from './avalanche'
+
+const abis: Record<ChainId, Record<string, JsonFragment[]>> = {
+	...ethereum,
+	...avalanche,
+}
+
+export default abis

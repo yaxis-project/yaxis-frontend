@@ -14,7 +14,7 @@ import {
 	CurrencyValues,
 	handleFormInputChange,
 	computeInsufficientBalance,
-	computeTotalDepositing,
+	computeTotalDepositingCurrency,
 } from '../../../Vault/utils'
 import BigNumber from 'bignumber.js'
 
@@ -51,7 +51,12 @@ export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
 	)
 
 	const totalDepositing = useMemo(
-		() => computeTotalDepositing(Currencies3Pool, currencyValues, prices),
+		() =>
+			computeTotalDepositingCurrency(
+				Currencies3Pool,
+				currencyValues,
+				prices,
+			),
 		[currencyValues, prices],
 	)
 
@@ -80,7 +85,9 @@ export default function Stable3PoolDeposit({ set3crvValue, value3crv }) {
 			})
 			setCurrencyValues(initialCurrencyValues)
 			set3crvValue('3CRV', value3crv['3CRV'])
-		} catch {}
+		} catch {
+			//
+		}
 	}, [currencyValues, handleDeposit3Pool, contracts, value3crv, set3crvValue])
 
 	return (

@@ -8,7 +8,7 @@ import {
 	updateChain,
 } from './actions'
 import { TLanguages } from '../../constants/translations'
-import { SupportedChainId } from '../../constants/chains'
+import { ChainId } from '../../constants/chains'
 
 const currentTimestamp = () => new Date().getTime()
 
@@ -18,7 +18,7 @@ export interface FutureBalanceCalculator {
 	yearlyCompounds: number
 }
 export interface UserState {
-	chainId: SupportedChainId
+	chainId: ChainId
 	vaultAutoStake: boolean
 	language: TLanguages
 	userDarkMode: boolean | null // the user's choice for dark mode or light mode

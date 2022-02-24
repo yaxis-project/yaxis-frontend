@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import { currentConfig } from '../../../constants/configs'
 import { Currencies } from '../../../constants/currencies'
 import { CaretDownFilled } from '@ant-design/icons'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useTranslation from '../../../hooks/useTranslation'
 
 const { Text } = Typography
@@ -20,7 +20,7 @@ const { Text } = Typography
 const Nav: React.FC = () => {
 	const translate = useTranslation()
 
-	const { chainId } = useWeb3React()
+	const { chainId } = useWeb3Provider()
 	const vaults = useMemo(
 		() => Object.keys(currentConfig(chainId).vaults),
 		[chainId],

@@ -2,28 +2,18 @@
  * Avalanche
  */
 
-import { Contract } from '@ethersproject/contracts'
-
 export const RewardsContracts = <const>[
-	'MetaVault',
-	'Yaxis',
-	'Uniswap YAXIS/ETH',
+	// 'MetaVault',
+	// 'Yaxis',
+	'TraderJoe JOE/AVAX',
 ]
 export type TRewardsContracts = typeof RewardsContracts[number]
 
-export const UniswapLiquidityPools = <const>[
-	'Uniswap YAXIS/ETH',
-	'Uniswap YAX/ETH',
-]
-export type TUniswapLiquidityPools = typeof UniswapLiquidityPools[number]
-export const LinkswapLiquidityPools = <const>['Linkswap YAX/ETH']
-export type TLinkswapLiquidityPools = typeof LinkswapLiquidityPools[number]
-export const LiquidityPools = <const>[
-	...UniswapLiquidityPools,
-	...LinkswapLiquidityPools,
-]
+export const TraderJoeLiquidityPools = <const>['TraderJoe JOE/AVAX']
+export type TTraderJoeLiquidityPools = typeof TraderJoeLiquidityPools[number]
+export const LiquidityPools = <const>[...TraderJoeLiquidityPools]
 export type TLiquidityPools = typeof LiquidityPools[number]
-export type LiquidityPoolsTypes = 'linkswap' | 'uniswap'
+export type LiquidityPoolsTypes = 'traderjoe'
 export type lpToken = {
 	tokenId: Ticker
 	weight?: number
@@ -34,8 +24,6 @@ export interface LiquidityPool {
 	type: LiquidityPoolsTypes
 	liquidId: string
 	lpAddress: string
-	lpContract?: Contract
-	tokenContract?: Contract
 	lpTokens: lpToken[]
 	tokenAddress: string
 	name: TLiquidityPools
@@ -49,37 +37,31 @@ export interface LiquidityPool {
 
 export const CurrenciesERC20 = <const>[
 	'crv',
-	'wbtc',
-	'link',
-	'mim',
-	'cvx',
-	'yax',
-	'usdc',
-	'dai',
-	'usdt',
-	'3crv',
-	'weth',
-	'mvlt',
-	'spell',
-	'frax',
+	// 'wbtc',
+	// 'link',
+	// 'mim',
+	// 'cvx',
+	// 'yax',
+	// 'usdc',
+	// 'dai',
+	// 'usdt',
+	// '3crv',
+	// 'weth',
+	// 'mvlt',
+	// 'spell',
+	// 'frax',
+	'wavax',
+	'joe',
 ]
 export type TCurrenciesERC20 = typeof CurrenciesERC20[number]
 
 export const CurrenciesERC677 = <const>['yaxis']
 export type TCurrenciesERC677 = typeof CurrenciesERC677[number]
 
-export const additionalCurrencies = <const>['eth', 'btc', 'aleth']
+export const additionalCurrencies = <const>['avax', 'btc']
 export type TAdditionalCurrencies = typeof additionalCurrencies[number]
 
-export const crvLPCurrencies = <const>[
-	'mim3crv',
-	'rencrv',
-	'alethcrv',
-	'linkcrv',
-	'crvcvxeth',
-	'crv3crypto',
-	'frax3crv',
-]
+export const crvLPCurrencies = <const>['av3crv', 'atricrypto']
 export type TCrvLPCurrencies = typeof crvLPCurrencies[number]
 
 export type Ticker =
@@ -92,12 +74,12 @@ export const InternalContracts = <const>[
 	'vaultHelper',
 	'minter',
 	'minterWrapper',
-	'swap',
-	'yaxisChef',
-	'xYaxStaking',
-	'yAxisMetaVault',
+	// 'swap',
+	// 'yaxisChef',
+	// 'xYaxStaking',
+	// 'yAxisMetaVault',
 	'stableSwap3PoolConverter',
-	'merkleDistributor',
+	// 'merkleDistributor',
 	'votingEscrow',
 	'gaugeController',
 	'controller',
@@ -106,17 +88,10 @@ export const InternalContracts = <const>[
 ]
 export type TInternalContracts = typeof InternalContracts[number]
 
-export const CurveLPContracts = <const>[
-	'mim3crv',
-	'rencrv',
-	'alethcrv',
-	'linkcrv',
-	'3pool',
-	'crvcvxeth',
-	'crv3crypto',
-	'frax3crv',
-]
+export const CurveLPContracts = <const>['av3crv', 'atricrypto']
 export type TCurveLPContracts = typeof CurveLPContracts[number]
+export const AaveLPContracts = <const>['avax']
+export type TAaveLPContracts = typeof AaveLPContracts[number]
 
 export interface ExternalLP {
 	pool: string
@@ -132,14 +107,17 @@ export interface ExternalLP {
 	currency: string
 }
 
-export const ExternalLPContracts = <const>[...CurveLPContracts]
+export const ExternalLPContracts = <const>[
+	...CurveLPContracts,
+	// ...AaveLPContracts,
+]
 export type TExternalLPContracts = typeof ExternalLPContracts[number]
 
 export const ExternalContracts = <const>[
 	'multicall',
-	'pickleChef',
-	'pickleJar',
-	'uniswapRouter',
+	// 'pickleChef',
+	// 'pickleJar',s
+	// 'uniswapRouter',
 	'gaugeController',
 ]
 export type TExternalContracts = typeof ExternalContracts[number]
@@ -147,26 +125,16 @@ export type TExternalContracts = typeof ExternalContracts[number]
 /*
 [symbol , vault name]
 */
-export const LPVaults = <const>[
-	['mim3crv', 'usd'],
-	['rencrv', 'btc'],
-	['alethcrv', 'eth'],
-	['linkcrv', 'link'],
-	['yaxis', 'yaxis'],
-	['crvcvxeth', 'cvx'],
-	['crv3crypto', 'tricrypto'],
-	['frax3crv', 'frax'],
+export const LPVaults: [string, string][] = [
+	['av3crv', 'usd'],
+	['atricrypto', 'tricrypto'],
+	// ['avax', 'avax'],
 ]
 
 export const Vaults = <const>[
 	'usd',
-	'btc',
-	'eth',
-	'link',
-	'yaxis',
-	'cvx',
 	'tricrypto',
-	'frax',
+	//  'avax'
 ]
 export type TVaults = typeof Vaults[number]
 export interface Vault {
@@ -180,21 +148,24 @@ export interface Vault {
 	gauge: string
 }
 
-export type InternalConfig = {
+export type AvalancheInternalConfig = {
 	[key in TInternalContracts]: string
 }
 
-export type ExternalConfig = {
+export type AvalancheExternalConfig = {
 	[key in TExternalContracts]: string
 }
 
-export type ExternalPoolsConfig = {
+export type AvalancheExternalPoolsConfig = {
 	curve: {
 		[key in TCurveLPContracts]: ExternalLP
 	}
+	// aave: {
+	// 	[key in TAaveLPContracts]: ExternalLP
+	// }
 }
 
-export type CurrenciesConfig = {
+export type AvalancheCurrenciesConfig = {
 	ERC20: {
 		[key in TCurrenciesERC20]: string
 	}
@@ -203,24 +174,24 @@ export type CurrenciesConfig = {
 	}
 }
 
-export type RewardsConfig = {
+export type AvalancheRewardsConfig = {
 	[key in TRewardsContracts]: string
 }
 
-export type PoolsConfig = {
+export type AvalanchePoolsConfig = {
 	[key in TLiquidityPools]: LiquidityPool
 }
 
-export type VaultsConfig = {
+export type AvalancheVaultsConfig = {
 	[key in TVaults]: Vault
 }
 
-export interface Config {
-	internal: InternalConfig
-	external: ExternalConfig
-	externalPools: ExternalPoolsConfig
-	currencies: CurrenciesConfig
-	rewards: RewardsConfig
-	pools: PoolsConfig
-	vaults: VaultsConfig
+export interface AvalancheConfig {
+	internal: AvalancheInternalConfig
+	external: AvalancheExternalConfig
+	externalPools: AvalancheExternalPoolsConfig
+	currencies: AvalancheCurrenciesConfig
+	rewards: AvalancheRewardsConfig
+	pools: AvalanchePoolsConfig
+	vaults: AvalancheVaultsConfig
 }

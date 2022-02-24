@@ -17,11 +17,12 @@ import CurvePool from './components/CurvePool'
 // import { Converter } from './components/Converter'
 import { useVaultsBalances } from '../../state/wallet/hooks'
 import { useYaxisManager } from '../../state/internal/hooks'
-import { TVaults } from '../../constants/type/ethereum'
-import { LPVaults } from '../../constants/type/ethereum'
-
+import { TVaults } from '../../constants/type'
+import { LPVaults as LPVaultsEthereum } from '../../constants/type/ethereum'
+import { LPVaults as LPVaultsAvalanche } from '../../constants/type/avalanche'
 import { Currencies } from '../../constants/currencies'
 import VaultActionsCard from '../Vault/components/VaultActionsCard'
+import { useChainInfo } from '../../state/user'
 
 const { Text } = Typography
 
@@ -38,6 +39,11 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 	const address = currentConfig(chainId).vaults[vault].vault
 
 	const fees = useYaxisManager()
+
+	const { blockchain } = useChainInfo()
+
+	const vaults =
+		blockchain === 'ethereum' ? LPVaultsEthereum : LPVaultsAvalanche
 
 	return (
 		<Page
@@ -88,11 +94,16 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 						<VaultActionsCard
 							type="details"
 							fees={fees}
-							currencies={[
-								Currencies[
-									LPVaults.find(
-										([, name]) => name === vault,
-									)[0].toUpperCase()
+							vaults={[
+								[
+									Currencies[
+										vaults
+											.find(
+												([, name]) => name === vault,
+											)[0]
+											.toUpperCase()
+									],
+									vault,
 								],
 							]}
 						/>

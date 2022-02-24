@@ -10,9 +10,10 @@ import useImage from '../../../../../hooks/useImage'
 
 interface WalletCardProps {
 	config: WalletInfo
+	error: boolean
 }
 
-const WalletCard: React.FC<WalletCardProps> = ({ config }) => {
+const WalletCard: React.FC<WalletCardProps> = ({ config, error }) => {
 	const translate = useTranslation()
 	const { image } = useImage(`img/${config.icon}`)
 
@@ -29,18 +30,21 @@ const WalletCard: React.FC<WalletCardProps> = ({ config }) => {
 			<Row justify={'center'}>
 				<StyledCardTitle>{config.name}</StyledCardTitle>
 			</Row>
-			<Button
-				height={'50px'}
-				onClick={async () => {
-					if (!config.connector)
-						return window.open(config.href, '_blank')
-					localStorage.removeItem('signOut')
-					await activate(config.connector)
-					setRecentProvider(config.name.toUpperCase())
-				}}
-			>
-				{translate(config.connector ? 'Connect' : 'Install')}
-			</Button>
+			<Row justify={'center'}>
+				<Button
+					height={'50px'}
+					onClick={async () => {
+						if (error) return
+						if (!config.connector)
+							return window.open(config.href, '_blank')
+						localStorage.removeItem('signOut')
+						await activate(config.connector)
+						setRecentProvider(config.name.toUpperCase())
+					}}
+				>
+					{translate(config.connector ? 'Connect' : 'Install')}
+				</Button>
+			</Row>
 		</>
 	)
 }

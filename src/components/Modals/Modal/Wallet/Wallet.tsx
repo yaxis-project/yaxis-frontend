@@ -1,10 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import useWeb3Provider from '../../../../hooks/useWeb3Provider'
 import { Pagination } from 'antd'
 import WalletCard from './components/WalletCard'
 import { Modal, Col, Row } from 'antd'
-import { SUPPORTED_WALLETS } from '../../../../connectors'
+import { SUPPORTED_NETWORKS, SUPPORTED_WALLETS } from '../../../../connectors'
 import { getErrorMessage } from '../../../../connectors/errors'
 import { handleInjected, filterByDevice } from './utils'
 import { ApplicationModal } from '../../../../state/application/actions'
@@ -13,6 +12,7 @@ import {
 	useCloseModal,
 } from '../../../../state/application/hooks'
 import useTranslation from '../../../../hooks/useTranslation'
+import { useWeb3React } from '@web3-react/core'
 
 export const Wallet: React.FC<any> = () => {
 	const translate = useTranslation()
@@ -22,11 +22,24 @@ export const Wallet: React.FC<any> = () => {
 
 	const [page, setPage] = useState(1)
 
-	const { account, error } = useWeb3Provider()
+	const { account, error: walletError, chainId } = useWeb3React()
+
+	const [error, setError] = useState(getErrorMessage(walletError))
+
+	const unsupportedNetwork = useMemo(
+		() => chainId && !SUPPORTED_NETWORKS.includes(chainId),
+		[chainId],
+	)
 
 	useEffect(() => {
 		if (account && visible) closeModal()
 	}, [account, visible, closeModal])
+
+	useEffect(() => {
+		if (unsupportedNetwork)
+			setError('Your wallet is connected to an unsupported network.')
+		else if (walletError) setError(getErrorMessage(walletError))
+	}, [setError, walletError, unsupportedNetwork])
 
 	const wallets = useMemo(() => {
 		const options = Object.values(SUPPORTED_WALLETS)
@@ -41,7 +54,7 @@ export const Wallet: React.FC<any> = () => {
 			footer={null}
 			onCancel={closeModal}
 		>
-			{error && <ErrorText>{getErrorMessage(error)}</ErrorText>}
+			{error && <ErrorText>{error}</ErrorText>}
 			<ModalContent>
 				<Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
 					{wallets
@@ -53,7 +66,10 @@ export const Wallet: React.FC<any> = () => {
 									className="gutter-row"
 									span={wallets.length ? 8 : 24}
 								>
-									<WalletCard config={config} />
+									<WalletCard
+										config={config}
+										error={!!unsupportedNetwork}
+									/>
 								</Col>
 							)
 						})}

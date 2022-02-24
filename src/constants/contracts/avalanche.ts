@@ -1,9 +1,9 @@
 import { Contract } from '@ethersproject/contracts'
-import { configs } from './configs'
-import networks from './abis'
-import { Currency, CurrencyContract, Currencies } from './currencies'
+import { configs } from '../configs'
+import networks from '../abis'
+import { Currency, CurrencyContract, Currencies } from '../currencies'
 import {
-	Config,
+	AvalancheConfig,
 	InternalContracts,
 	TInternalContracts,
 	ExternalContracts,
@@ -22,29 +22,39 @@ import {
 	lpToken,
 	Vaults,
 	TVaults,
-} from './type/ethereum'
+	// ExternalLP,
+} from '../type/avalanche'
+import { ChainId } from '../../constants/chains'
 
 type InternalC = {
 	[key in TInternalContracts]: Contract
 }
-type ExternalLpC = {
-	[key in TExternalLPContracts]: {
-		gauge?: Contract
-		pool: Contract
-		token: Contract
-		convexRewards: Contract
-		extraRewards?: {
-			[token: string]: { contract: Contract; token: Contract }
-		}
-		currency: string
-	}
+
+type ExternalLpContractExtras = {
+	[token: string]: { contract: Contract; token: Contract }
 }
+
+type ExternalLpContract = {
+	gauge?: Contract
+	pool: Contract
+	token: Contract
+	convexRewards: Contract
+	extraRewards?: ExternalLpContractExtras
+	currency: string
+}
+
+type ExternalLpC = {
+	[key in TExternalLPContracts]: ExternalLpContract
+}
+
 type ExternalC = {
 	[key in TExternalContracts]: Contract
 }
+
 type RewardsC = {
 	[key in TRewardsContracts]: Contract
 }
+
 type CurrenciesC = {
 	ERC20: {
 		[key in TCurrenciesERC20]: CurrencyContract
@@ -53,15 +63,19 @@ type CurrenciesC = {
 		[key in TCurrenciesERC677]: CurrencyContract
 	}
 }
-type lpTokenContracts = lpToken & Currency
-type LiquidityPoolWithContract = LiquidityPool & {
+
+type lpTokenCurrencies = lpToken & Currency
+
+export interface LiquidityPoolWithContract extends LiquidityPool {
 	lpContract: Contract
 	tokenContract: CurrencyContract
-	lpTokens: lpTokenContracts[]
+	lpTokens: lpTokenCurrencies[]
 }
+
 type LiquidityPoolC = {
 	[key in TLiquidityPools]: LiquidityPoolWithContract
 }
+
 interface VaultC {
 	token: CurrencyContract
 	vault: Contract
@@ -70,12 +84,13 @@ interface VaultC {
 	gaugeToken: CurrencyContract
 	tokenPool: Contract
 }
+
 type VaultsC = {
 	[key in TVaults]: VaultC
 }
 
-export class Contracts {
-	private config: Config
+export class AvalancheContracts {
+	private config: AvalancheConfig
 	public internal: InternalC
 	public external: ExternalC
 	public externalLP: ExternalLpC
@@ -84,9 +99,9 @@ export class Contracts {
 	public rewards: RewardsC
 	public vaults: VaultsC
 
-	constructor(provider: any, blockchain: string, networkId: number) {
-		const abis = networks[blockchain][networkId]
-		this.config = configs[blockchain][networkId]
+	constructor(provider: any, networkId: ChainId) {
+		const abis = networks[networkId]
+		this.config = configs[networkId] as AvalancheConfig
 
 		this.internal = {} as InternalC
 		for (const title of InternalContracts) {
@@ -108,43 +123,36 @@ export class Contracts {
 
 		this.externalLP = {} as ExternalLpC
 		for (const title of CurveLPContracts) {
+			const curvePool = this.config.externalPools.curve[title]
 			this.externalLP[title] = {
 				pool: new Contract(
-					this.config.externalPools.curve[title].pool,
+					curvePool.pool,
 					abis[`CurvePoolABI`],
 					provider,
 				),
-				gauge: new Contract(
-					this.config.externalPools.curve[title].gauge,
-					abis.GaugeABI,
-					provider,
-				),
-				token: new Contract(
-					this.config.externalPools.curve[title].token,
-					abis.ERC20Abi,
-					provider,
-				),
+				gauge: new Contract(curvePool.gauge, abis.GaugeABI, provider),
+				token: new Contract(curvePool.token, abis.ERC20Abi, provider),
 				convexRewards: new Contract(
-					this.config.externalPools.curve[title].convexRewards,
+					curvePool.convexRewards,
 					abis.ConvexRewardPoolABI,
 					provider,
 				),
-				currency: this.config.externalPools.curve[title].currency,
+				currency: curvePool.currency,
 			}
-			if (this.config.externalPools.curve[title].extraRewards) {
+			if (curvePool.extraRewards) {
 				this.externalLP[title].extraRewards = {}
 
 				for (const [name, config] of Object.entries(
-					this.config.externalPools.curve[title].extraRewards,
+					curvePool.extraRewards,
 				)) {
 					this.externalLP[title].extraRewards[name] = {
 						contract: new Contract(
-							config.contract,
+							config['contract'],
 							abis.RewardsABI,
 							provider,
 						),
 						token: new Contract(
-							config.token,
+							config['token'],
 							abis.ERC20Abi,
 							provider,
 						),
@@ -170,18 +178,10 @@ export class Contracts {
 		for (const title of CurrenciesERC20) {
 			const Currency = Currencies[title.toUpperCase()]
 			if (!Currency)
-				console.error(`Currency not found: ${title.toUpperCase()}`)
-
-			if (title === 'cvx') {
-				this.currencies.ERC20[title] = {
-					...Currency,
-					contract: new Contract(
-						this.config.currencies.ERC20[title],
-						abis.CVXABI,
-						provider,
-					),
-				}
-			} else if (title === 'crv') {
+				console.error(
+					`[ERC20] Currency not found: ${title.toUpperCase()}`,
+				)
+			if (title === 'crv') {
 				this.currencies.ERC20[title] = {
 					...Currency,
 					contract: new Contract(
@@ -205,7 +205,9 @@ export class Contracts {
 		for (const title of CurrenciesERC677) {
 			const Currency = Currencies[title.toUpperCase()]
 			if (!Currency)
-				console.error(`Currency not found: ${title.toUpperCase()}`)
+				console.error(
+					`[ERC677] Currency not found: ${title.toUpperCase()}`,
+				)
 			this.currencies.ERC677[title] = {
 				...Currency,
 				contract: new Contract(
@@ -217,11 +219,14 @@ export class Contracts {
 		}
 
 		this.pools = {} as LiquidityPoolC
+
 		for (const title of LiquidityPools) {
 			const poolConfig = this.config.pools[title]
 			const Currency = Currencies[poolConfig.tokenSymbol]
 			if (!Currency)
-				console.error(`Currency not found: ${title.toUpperCase()}`)
+				console.error(
+					`[Liquidity Pool] Currency not found: ${title.toUpperCase()}`,
+				)
 			const LP_ABI = abis.UNIV2PairAbi
 
 			this.pools[title] = {
@@ -241,31 +246,35 @@ export class Contracts {
 				},
 				lpTokens: poolConfig.lpTokens.map((t) => {
 					const currency = Currencies[t.tokenId.toUpperCase()]
-					if (!currency) console.error('LP token currency not found')
+					if (!currency)
+						console.error(
+							`[LP Token] Currency not found: ${t.tokenId}`,
+						)
 					return { ...t, ...currency }
 				}),
 			}
 		}
 
 		this.vaults = {} as VaultsC
+
 		for (const vault of Vaults) {
 			const vaultConfig = this.config.vaults[vault]
 			const VaultCurrency = Currencies[vaultConfig.token.toUpperCase()]
 			if (!VaultCurrency)
 				console.error(
-					`Currency not found: ${vaultConfig.token.toUpperCase()}`,
+					`[Vault] Currency not found: ${vaultConfig.token.toUpperCase()}`,
 				)
 			const VaultTokenCurrency =
 				Currencies[vaultConfig.vaultToken.toUpperCase()]
 			if (!VaultTokenCurrency)
 				console.error(
-					`Currency not found: ${vaultConfig.token.toUpperCase()}`,
+					`[Vault Token] Currency not found: ${vaultConfig.token.toUpperCase()}`,
 				)
 			const GaugeCurrency =
 				Currencies[vaultConfig.vaultToken.toUpperCase() + '-GAUGE']
 			if (!GaugeCurrency)
 				console.error(
-					`Currency not found: ${vaultConfig.vaultToken.toUpperCase()}-GAUGE`,
+					`[Vault Gauge Token] Currency not found: ${vaultConfig.vaultToken.toUpperCase()}-GAUGE`,
 				)
 			this.vaults[vault] = {
 				token: {

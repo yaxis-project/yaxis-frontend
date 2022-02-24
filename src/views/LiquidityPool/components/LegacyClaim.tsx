@@ -8,7 +8,7 @@ import RewardAPYTooltip from '../../../components/Tooltip/Tooltips/RewardAPYTool
 import { useLegacyReturns } from '../../../state/wallet/hooks'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { getBalanceNumber } from '../../../utils/formatBalance'
-import { LiquidityPool } from '../../../constants/type/ethereum'
+import { LiquidityPool } from '../../../constants/type'
 import useTranslation from '../../../hooks/useTranslation'
 
 interface LegacyClaimProps {

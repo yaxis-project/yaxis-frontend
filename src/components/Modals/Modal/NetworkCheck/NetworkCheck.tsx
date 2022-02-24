@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { Modal } from 'antd'
-import { SUPPORTED_NETWORKS, NETWORK_NAMES } from '../../../../connectors'
+import { Modal, Row, Col } from 'antd'
+import { SUPPORTED_NETWORKS } from '../../../../connectors'
 import { ApplicationModal } from '../../../../state/application/actions'
 import {
 	useOpenModal,
@@ -9,10 +9,18 @@ import {
 	useIsModalOpen,
 } from '../../../../state/application/hooks'
 import useTranslation from '../../../../hooks/useTranslation'
+import Typography from '../../../Typography'
+import Button from '../../../Button'
+import { switchToNetwork } from '../../../../utils/switchToNetwork'
+import { CHAIN_INFO } from '../../../../constants/chains'
+import { useSetChain } from '../../../../state/user'
+
+const { Text } = Typography
 
 export const NetworkCheck: React.FC = () => {
 	const translate = useTranslation()
-	const { chainId, active } = useWeb3React()
+	const { chainId, active, library } = useWeb3React()
+	const setChainId = useSetChain()
 
 	const visible = useIsModalOpen(ApplicationModal['UNSUPPORTED_NETWORK'])
 	const openModal = useOpenModal(ApplicationModal['UNSUPPORTED_NETWORK'])
@@ -34,19 +42,41 @@ export const NetworkCheck: React.FC = () => {
 			footer={null}
 		>
 			<>
-				<div>
+				<Text>
 					{translate(
-						'Please switch to one of the following Ethereum networks',
+						'Please switch to one of the following networks',
 					)}
-				</div>
-				{SUPPORTED_NETWORKS.map((n) => {
-					const name = NETWORK_NAMES[n]
-					return (
-						<div key={n}>
-							{name && name[0].toUpperCase() + name.slice(1)}
-						</div>
-					)
-				})}
+					:
+				</Text>
+				<Row>
+					{SUPPORTED_NETWORKS.map((chainId) => {
+						return (
+							<Col key={chainId}>
+								<Button
+									onClick={() => {
+										try {
+											switchToNetwork({
+												library,
+												chainId,
+											})
+											setChainId(chainId)
+										} catch {
+											//
+										}
+									}}
+								>
+									<img
+										src={CHAIN_INFO[chainId].logoUrl}
+										height="30"
+										width="30"
+										alt={`${CHAIN_INFO[chainId].label} logo`}
+									/>{' '}
+									{CHAIN_INFO[chainId].label}
+								</Button>
+							</Col>
+						)
+					})}
+				</Row>
 			</>
 		</Modal>
 	)

@@ -10,11 +10,16 @@ import {
 import {
 	TRewardsContracts,
 	RewardsContracts,
-	LiquidityPool,
-	Vaults,
-	TVaults,
+	Vaults as VaultsEthereum,
+	TVaults as TVaultsEthereum,
 	LPVaults,
 } from '../../constants/type/ethereum'
+import {
+	TVaults as TVaultsAvalanche,
+	Vaults as VaultsAvalanche,
+} from '../../constants/type/avalanche'
+import { TVaults } from '../../constants/type'
+import { TLiquidityPools } from '../../constants/type'
 import { usePrices } from '../prices/hooks'
 import {
 	useSingleContractMultipleData,
@@ -30,7 +35,13 @@ import { Interface } from '@ethersproject/abi'
 import { useBlockNumber } from '../application/hooks'
 import ERC20Abi from '../../constants/abis/ethereum/mainnet/erc20.json'
 import GaugeAbi from '../../constants/abis/ethereum/mainnet/gauge.json'
-import { useVaults, useLiquidityPools, useVaultsAPR } from '../internal/hooks'
+import {
+	useVaults,
+	useLiquidityPools,
+	useVaultsAPR,
+	VaultAPR,
+} from '../internal/hooks'
+import { L1_CHAIN, L2_CHAIN } from '../../constants/chains'
 
 const ERC20_INTERFACE = new Interface(ERC20Abi)
 const GAUGE_INTERFACE = new Interface(GaugeAbi)
@@ -210,8 +221,10 @@ export function useStakedBalances(): StakedBalanceReturn {
 	)
 
 	const balances = useMultipleContractSingleData(
-		rewardsContracts.map(([name, contract]) => contract.address),
-		contracts && contracts.rewards.MetaVault.interface,
+		rewardsContracts.map(([, contract]) => contract.address),
+		contracts?.rewards && 'MetaVault' in contracts.rewards
+			? contracts?.rewards.MetaVault.interface
+			: null,
 		'balanceOf',
 		[account],
 	)
@@ -244,6 +257,7 @@ export function useApprovedAmounts(
 	owner?: string,
 	spender?: string,
 	tokens?: (CurrencyContract | undefined)[],
+	active?: boolean,
 ): [ApprovedAmounts, boolean] {
 	const validatedTokens: CurrencyContract[] = useMemo(
 		() =>
@@ -255,8 +269,8 @@ export function useApprovedAmounts(
 	)
 
 	const validatedTokenAddresses = useMemo(
-		() => validatedTokens.map((vt) => vt.contract.address),
-		[validatedTokens],
+		() => (active ? validatedTokens.map((vt) => vt.contract.address) : []),
+		[validatedTokens, active],
 	)
 
 	const balances = useMultipleContractSingleData(
@@ -316,27 +330,34 @@ export function useApprovals() {
 	const [{ mvlt: mvRewardsStaking }, loadingMvRewardsStaking] =
 		useApprovedAmounts(
 			account,
-			contracts?.rewards.MetaVault.address,
-			contracts?.currencies.ERC20.mvlt
+			contracts?.rewards && 'MetaVault' in contracts.rewards
+				? contracts?.rewards.MetaVault.address
+				: null,
+			contracts?.currencies.ERC20 && 'mvlt' in contracts?.currencies.ERC20
 				? [contracts?.currencies.ERC20.mvlt]
 				: [],
+			false,
 		)
 
 	const [mvDepositCurrencies, loadingMvDeposit] = useApprovedAmounts(
 		account,
-		contracts?.internal.yAxisMetaVault.address,
+		contracts?.internal && 'yAxisMetaVault' in contracts?.internal
+			? contracts?.internal.yAxisMetaVault.address
+			: null,
 		contracts?.currencies.ERC20['3crv']
 			? [contracts?.currencies.ERC20['3crv']]
 			: [],
+		false,
 	)
 
 	const [converter3PoolCurrencies, loadingConverter3Pool] =
 		useApprovedAmounts(
 			account,
-			contracts?.externalLP['3pool'].pool.address,
+			contracts?.externalLP['3pool']?.pool.address,
 			['dai', 'usdc', 'usdt']
 				.map((c) => contracts?.currencies.ERC20[c])
 				.filter((c) => c),
+			false,
 		)
 
 	const [
@@ -344,10 +365,11 @@ export function useApprovals() {
 		loadingUniYaxisEthRewardsStaking,
 	] = useApprovedAmounts(
 		account,
-		contracts?.rewards['Uniswap YAXIS/ETH'].address,
-		contracts?.pools['Uniswap YAXIS/ETH'].tokenContract
+		contracts?.rewards['Uniswap YAXIS/ETH']?.address,
+		contracts?.pools['Uniswap YAXIS/ETH']?.tokenContract
 			? [contracts?.pools['Uniswap YAXIS/ETH'].tokenContract]
 			: [],
+		false,
 	)
 
 	return useMemo(() => {
@@ -394,17 +416,29 @@ export function useSwapApprovals() {
 
 	const [{ yax: allowanceYAX }, loadingAllowanceYAX] = useApprovedAmounts(
 		account,
-		contracts?.internal.swap.address,
-		contracts?.currencies.ERC20.yax
+		contracts?.internal && 'swap' in contracts?.internal
+			? contracts?.internal.swap.address
+			: null,
+		contracts?.currencies.ERC20 &&
+			'yax' in contracts?.currencies.ERC20 &&
+			contracts?.currencies.ERC20.yax
 			? [contracts?.currencies.ERC20.yax]
 			: [],
 	)
 
 	const { result: allowanceSYAX, loading: loadingAllowanceSYAX } =
-		useSingleCallResult(contracts?.internal.xYaxStaking, 'allowance', [
-			account,
-			contracts?.internal.swap.address,
-		])
+		useSingleCallResult(
+			contracts?.internal && 'xYaxStaking' in contracts?.internal
+				? contracts?.internal.xYaxStaking
+				: null,
+			'allowance',
+			[
+				account,
+				contracts?.internal && 'swap' in contracts?.internal
+					? contracts?.internal.swap.address
+					: null,
+			],
+		)
 
 	return useMemo(() => {
 		return {
@@ -523,7 +557,9 @@ export const useReturns = () => {
 	const earned = useMultipleContractSingleData(
 		contracts &&
 			Object.values(contracts?.rewards || {}).map((c) => c.address),
-		contracts && contracts.rewards.MetaVault.interface,
+		contracts?.rewards && 'MetaVault' in contracts?.rewards
+			? contracts?.rewards.MetaVault.interface
+			: null,
 		'earned',
 		[account],
 	)
@@ -584,7 +620,9 @@ export function useLegacyReturns(pid: number) {
 	const { contracts } = useContracts()
 
 	const mvResults = useSingleContractMultipleMethods(
-		contracts?.internal.yAxisMetaVault,
+		contracts?.internal && 'yAxisMetaVault' in contracts?.internal
+			? contracts?.internal.yAxisMetaVault
+			: null,
 		[
 			['pendingYax', [account]],
 			['userInfo', [account]],
@@ -592,7 +630,9 @@ export function useLegacyReturns(pid: number) {
 	)
 
 	const lpResults = useSingleContractMultipleMethods(
-		contracts?.internal.yaxisChef,
+		contracts?.internal && 'yaxisChef' in contracts?.internal
+			? contracts?.internal.yaxisChef
+			: null,
 		[
 			['pendingYaxis', [pid, account]],
 			['userInfo', [pid, account]],
@@ -600,9 +640,13 @@ export function useLegacyReturns(pid: number) {
 	)
 
 	const { result: governanceStaked, loading: loadingGovernanceStaked } =
-		useSingleCallResult(contracts?.internal.xYaxStaking, 'balanceOf', [
-			account,
-		])
+		useSingleCallResult(
+			contracts?.internal && 'xYaxStaking' in contracts?.internal
+				? contracts?.internal.xYaxStaking
+				: null,
+			'balanceOf',
+			[account],
+		)
 
 	return useMemo(() => {
 		let isLoading = false
@@ -656,14 +700,19 @@ export function useLegacyReturns(pid: number) {
 
 /**
  * Returns details about the logged in user's liquidity pool stats.
- * @param lp The name of the LiquidityPool.
+ * @param name The name of the LiquidityPool.
  */
-export function useAccountLP(lp: LiquidityPool) {
+export function useWalletLP(name: TLiquidityPools) {
+	const { contracts } = useContracts()
+
+	const lp = useMemo(() => contracts?.pools[name], [name])
+
 	const { totalSupply } = useLP(lp?.name)
 
 	const [{ [lp?.tokenSymbol]: walletBalance }] = useAllTokenBalances()
 
-	const { [lp?.rewards]: stakedBalance } = useStakedBalances()
+	const stakedBalances = useStakedBalances()
+	const stakedBalance: CurrencyValue = stakedBalances[lp?.rewards]
 
 	return useMemo(() => {
 		const userBalance = new BigNumber(
@@ -678,19 +727,19 @@ export function useAccountLP(lp: LiquidityPool) {
 	}, [walletBalance, stakedBalance, totalSupply])
 }
 
-export function useAccountLPs() {
-	const { contracts } = useContracts()
-
-	const linkswapYaxEth = useAccountLP(contracts?.pools['Linkswap YAX/ETH'])
-	const uniswapYaxEth = useAccountLP(contracts?.pools['Uniswap YAX/ETH'])
-	const uniswapYaxisEth = useAccountLP(contracts?.pools['Uniswap YAXIS/ETH'])
+export function useWalletLPs(): Record<
+	TLiquidityPools,
+	ReturnType<typeof useWalletLP>
+> {
+	const linkswapYaxEth = useWalletLP('Linkswap YAX/ETH')
+	const uniswapYaxEth = useWalletLP('Uniswap YAX/ETH')
+	const uniswapYaxisEth = useWalletLP('Uniswap YAXIS/ETH')
 
 	return {
-		pools: {
-			'Uniswap YAX/ETH': uniswapYaxEth,
-			'Uniswap YAXIS/ETH': uniswapYaxisEth,
-			'Linkswap YAX/ETH': linkswapYaxEth,
-		},
+		'Uniswap YAX/ETH': uniswapYaxEth,
+		'Uniswap YAXIS/ETH': uniswapYaxisEth,
+		'Linkswap YAX/ETH': linkswapYaxEth,
+		'TraderJoe JOE/AVAX': {} as any, //TODO,
 	}
 }
 
@@ -808,9 +857,14 @@ export function useVaultsBalances() {
 	}, [vaults, balances, prices, loading])
 }
 
-export function useLPsBalance() {
-	const { pools } = useLiquidityPools()
-	const { pools: poolAccounts } = useAccountLPs()
+type LPsBalance = {
+	[key in TLiquidityPools]: { usd: BigNumber }
+} & {
+	total: { usd: BigNumber }
+}
+export function useLPsBalance(): LPsBalance {
+	const pools = useLiquidityPools()
+	const poolAccounts = useWalletLPs()
 
 	const {
 		prices: { yaxis, eth },
@@ -866,6 +920,9 @@ export function useLPsBalance() {
 					usd: new BigNumber(0),
 				},
 				'Linkswap YAX/ETH': {
+					usd: new BigNumber(0),
+				},
+				'TraderJoe JOE/AVAX': {
 					usd: new BigNumber(0),
 				},
 				total: {
@@ -926,21 +983,22 @@ export function useLock() {
 			if (!result) return ethers.BigNumber.from(0)
 			return result
 		})
-
 		return {
 			loading,
 			hasLock: !new BigNumber(locked_end.toString()).isZero(),
 			end: new BigNumber(locked_end.toString()),
-			locked: new BigNumber(locked.toString().split(',')[0]).div(
+			locked: new BigNumber(locked.toString()?.split(',')?.[0] || 0).div(
 				10 ** 18,
 			),
 		}
 	}, [results, loading])
 }
 
-export function useUserGaugeWeights() {
+export function useUserGaugeWeights(blockchain: L1_CHAIN | L2_CHAIN) {
 	const { account } = useWeb3Provider()
 	const { contracts, loading: loadingContracts } = useContracts()
+
+	const Vaults = blockchain === 'ethereum' ? VaultsEthereum : VaultsAvalanche
 
 	const [loading, setLoading] = useState(true)
 
@@ -1135,6 +1193,28 @@ export function useBoosts() {
 	}, [usd, btc, eth, link, cvx, tricrypto, frax, yaxis])
 }
 
+type VaultsAPRWithBoost = VaultAPR & {
+	boost: BigNumber
+	yaxisAPR: BigNumber
+	totalAPR: BigNumber
+	maxYaxisAPR: BigNumber
+}
+
+type BaseVaultsAPRWithBoost = {
+	[chain in L1_CHAIN]: {
+		[vault: string]: VaultsAPRWithBoost
+	}
+}
+
+type ReturnVaultsAPRWithBoost = BaseVaultsAPRWithBoost & {
+	avalanche: {
+		[vault in TVaultsAvalanche]: VaultAPR
+	}
+	ethereum: {
+		[vault in TVaultsEthereum]: VaultAPR
+	}
+}
+
 export function useVaultsAPRWithBoost() {
 	const apr = useVaultsAPR()
 	const boosts = useBoosts()
@@ -1142,23 +1222,34 @@ export function useVaultsAPRWithBoost() {
 	return useMemo(
 		() =>
 			Object.fromEntries(
-				Object.entries(apr).map(([vault, data]) => {
-					const boost = boosts[vault].boost
-					const yaxisAPRWithBoost =
-						data.yaxisAPR.min.multipliedBy(boost)
-					const totalAPRWithBoost = yaxisAPRWithBoost.plus(
-						data.strategy.totalAPR || 0,
-					)
-					const dataWithBoost = {
-						...data,
-						boost,
-						yaxisAPR: yaxisAPRWithBoost,
-						totalAPR: totalAPRWithBoost,
-						maxYaxisAPR: data.yaxisAPR.max,
-					}
-					return [vault, dataWithBoost]
+				Object.entries(apr).map(([chain, data]) => {
+					return [
+						chain,
+						Object.fromEntries(
+							Object.entries(data).map(([vault, data]) => {
+								const boost = boosts[vault].boost
+								const yaxisAPRWithBoost =
+									data.yaxisAPR.min.multipliedBy(boost)
+								const totalAPRWithBoost =
+									yaxisAPRWithBoost.plus(
+										(data.strategy &&
+											data.strategy.totalAPR) ||
+											0,
+									)
+
+								const dataWithBoost = {
+									...data,
+									boost,
+									yaxisAPR: yaxisAPRWithBoost,
+									totalAPR: totalAPRWithBoost,
+									maxYaxisAPR: data.yaxisAPR.max,
+								}
+								return [vault, dataWithBoost]
+							}),
+						),
+					]
 				}),
-			),
+			) as ReturnVaultsAPRWithBoost,
 		[apr, boosts],
 	)
 }

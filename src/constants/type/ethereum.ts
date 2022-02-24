@@ -2,8 +2,6 @@
  * Ethereum
  */
 
-import { Contract } from '@ethersproject/contracts'
-
 export const RewardsContracts = <const>[
 	'MetaVault',
 	'Yaxis',
@@ -24,7 +22,7 @@ export const LiquidityPools = <const>[
 ]
 export type TLiquidityPools = typeof LiquidityPools[number]
 export type LiquidityPoolsTypes = 'linkswap' | 'uniswap'
-export type lpToken = {
+export interface lpToken {
 	tokenId: Ticker
 	weight?: number
 }
@@ -34,8 +32,6 @@ export interface LiquidityPool {
 	type: LiquidityPoolsTypes
 	liquidId: string
 	lpAddress: string
-	lpContract?: Contract
-	tokenContract?: Contract
 	lpTokens: lpToken[]
 	tokenAddress: string
 	name: TLiquidityPools
@@ -147,7 +143,7 @@ export type TExternalContracts = typeof ExternalContracts[number]
 /*
 [symbol , vault name]
 */
-export const LPVaults = <const>[
+export const LPVaults: [string, string][] = [
 	['mim3crv', 'usd'],
 	['rencrv', 'btc'],
 	['alethcrv', 'eth'],
@@ -180,21 +176,21 @@ export interface Vault {
 	gauge: string
 }
 
-export type InternalConfig = {
+export type EthereumInternalConfig = {
 	[key in TInternalContracts]: string
 }
 
-export type ExternalConfig = {
+export type EthereumExternalConfig = {
 	[key in TExternalContracts]: string
 }
 
-export type ExternalPoolsConfig = {
+export type EthereumExternalPoolsConfig = {
 	curve: {
 		[key in TCurveLPContracts]: ExternalLP
 	}
 }
 
-export type CurrenciesConfig = {
+export type EthereumCurrenciesConfig = {
 	ERC20: {
 		[key in TCurrenciesERC20]: string
 	}
@@ -203,24 +199,24 @@ export type CurrenciesConfig = {
 	}
 }
 
-export type RewardsConfig = {
+export type EthereumRewardsConfig = {
 	[key in TRewardsContracts]: string
 }
 
-export type PoolsConfig = {
+export type EthereumPoolsConfig = {
 	[key in TLiquidityPools]: LiquidityPool
 }
 
-export type VaultsConfig = {
+export type EthereumVaultsConfig = {
 	[key in TVaults]: Vault
 }
 
-export interface Config {
-	internal: InternalConfig
-	external: ExternalConfig
-	externalPools: ExternalPoolsConfig
-	currencies: CurrenciesConfig
-	rewards: RewardsConfig
-	pools: PoolsConfig
-	vaults: VaultsConfig
+export interface EthereumConfig {
+	internal: EthereumInternalConfig
+	external: EthereumExternalConfig
+	externalPools: EthereumExternalPoolsConfig
+	currencies: EthereumCurrenciesConfig
+	rewards: EthereumRewardsConfig
+	pools: EthereumPoolsConfig
+	vaults: EthereumVaultsConfig
 }

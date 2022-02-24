@@ -2,7 +2,6 @@ import { useState, useMemo, useCallback } from 'react'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useVaultsBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
-import { LPVaults } from '../../../constants/type/ethereum'
 import { Row, Grid, Form } from 'antd'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
@@ -115,7 +114,7 @@ interface TableDataEntry extends Currency {
 
 interface WithdrawHelperTableProps {
 	fees: TYaxisManagerData
-	currencies: Currency[]
+	vaults: [Currency, string][]
 }
 
 /**
@@ -123,7 +122,7 @@ interface WithdrawHelperTableProps {
  */
 const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 	fees,
-	currencies,
+	vaults,
 }) => {
 	const translate = useTranslation()
 
@@ -147,18 +146,18 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
-		currencies.reduce(
-			(prev, curr) => ({
+		vaults.reduce(
+			(prev, [currency]) => ({
 				...prev,
-				[curr.tokenId]: '',
+				[currency.tokenId]: '',
 			}),
 			{},
 		),
 	)
 
 	const totalWithdrawing = useMemo(
-		() => computeTotalDepositing(currencies, currencyValues, prices),
-		[currencies, currencyValues, prices],
+		() => computeTotalDepositing(vaults, currencyValues, prices),
+		[vaults, currencyValues, prices],
 	)
 
 	const disabled = useMemo(() => {
@@ -168,8 +167,8 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 		const insufficientBalance = !!Object.entries(currencyValues).find(
 			([tokenId, v]) => {
 				const value = new BigNumber(v || 0)
-				const [, vault] = LPVaults.find(
-					([lpToken]) => tokenId === lpToken,
+				const [, vault] = vaults.find(
+					([lpToken]) => tokenId === lpToken.tokenId,
 				)
 				const currency = balances.balances[vault]
 				return !currency || value.gt(currency?.gaugeToken?.amount || 0)
@@ -179,9 +178,9 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 	}, [currencyValues, balances])
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = LPVaults.reduce<[string, [string, string]][]>(
+		const transactions = vaults.reduce<[string, [string, string]][]>(
 			(previous, [lpToken, vault]) => {
-				const _v = currencyValues[lpToken]
+				const _v = currencyValues[lpToken.tokenId]
 				if (_v)
 					previous.push([
 						vault,
@@ -189,7 +188,8 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 							contracts.vaults[vault].vault.address,
 							numberToDecimal(
 								_v,
-								Currencies[lpToken.toUpperCase()].decimals,
+								Currencies[lpToken.tokenId.toUpperCase()]
+									.decimals,
 							),
 						],
 					])
@@ -213,17 +213,17 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 				}),
 			)
 			setCurrencyValues(
-				currencies.reduce(
-					(prev, curr) => ({
+				vaults.reduce(
+					(prev, [currency]) => ({
 						...prev,
-						[curr.tokenId]: '',
+						[currency.tokenId]: '',
 					}),
 					{},
 				),
 			)
 		}
 	}, [
-		currencies,
+		vaults,
 		contracts,
 		currencyValues,
 		handleWithdraw,
@@ -233,27 +233,23 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 
 	const data = useMemo(
 		() =>
-			currencies.map<TableDataEntry>((c) => {
-				const [, vault] = LPVaults.find(
-					([lpToken]) => lpToken === c.tokenId,
-				)
+			vaults.map<TableDataEntry>(([lpTokenCurrency, vault]) => {
+				const lpToken = lpTokenCurrency.tokenId.toLowerCase()
 				const balance = balances.balances[vault]
 				return {
-					...c,
+					...lpTokenCurrency,
 					vault,
-					vaultCurrency: c.name,
+					vaultCurrency: lpTokenCurrency.name,
 					balance: balance?.gaugeToken?.amount || new BigNumber(0),
 					balanceUSD: balance?.usd || new BigNumber(0),
 					value: currencyValues
-						? new BigNumber(
-								currencyValues[c.name.toLowerCase()] || 0,
-						  )
+						? new BigNumber(currencyValues[lpToken] || 0)
 						: new BigNumber(0),
-					inputValue: currencyValues[c.name.toLowerCase()],
+					inputValue: currencyValues[lpToken],
 					key: vault,
 				}
 			}),
-		[currencies, balances, currencyValues],
+		[vaults, balances, currencyValues],
 	)
 
 	const columns = useMemo(

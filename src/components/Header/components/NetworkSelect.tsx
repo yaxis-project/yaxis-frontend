@@ -1,45 +1,62 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { Menu, Row, Col } from 'antd'
-import { CaretDownOutlined } from '@ant-design/icons'
 import { useChain, useSetChain } from '../../../state/user/hooks'
-import { SupportedChainId, CHAIN_INFO } from '../../../constants/chains'
-import useTranslation from '../../../hooks/useTranslation'
+import { CHAIN_INFO, ALL_SUPPORTED_CHAIN_IDS } from '../../../constants/chains'
+// import useTranslation from '../../../hooks/useTranslation'
 import { switchToNetwork } from '../../../utils/switchToNetwork'
 import Typography from '../../Typography'
+import useWeb3Provider from '../../../hooks/useWeb3Provider'
+import { useWeb3React } from '@web3-react/core'
+import { networkConnectorFactory } from '../../../connectors'
 
 const { Text } = Typography
 
-type Props = {}
-
-const Button: React.FC<Props> = () => {
+const NetworkSelect: React.FC = () => {
+	const { activate } = useWeb3React('fallback')
+	const { library } = useWeb3React()
 	const chainId = useChain()
 	const setChainId = useSetChain()
-	const translate = useTranslation()
-	const blockchain = CHAIN_INFO[chainId]
+	// const translate = useTranslation()
+	const blockchain = useMemo(() => CHAIN_INFO[chainId], [chainId])
 
 	return (
-		<Row>
-			<StyledMenu mode="horizontal">
-				<StyledSubMenu
-					key="language-select"
-					title={
-						<NetworkSelector align="middle">
-							<Col>{blockchain.label}</Col>
-							{/* <Col>
-                                <CaretDownOutlined
-                                    style={{ paddingLeft: '1px' }}
-                                />
-                            </Col> */}
-						</NetworkSelector>
-					}
-					popupOffset={[-50, 5]}
-				>
+		<StyledMenu mode="horizontal" selectedKeys={[`${chainId}`]}>
+			<StyledSubMenu
+				key="network-select"
+				title={
+					<NetworkSelector align="middle" justify="center">
+						<img
+							src={blockchain.logoUrl}
+							height="36"
+							width="36"
+							alt={`${blockchain.label} logo`}
+						/>
+					</NetworkSelector>
+				}
+				popupOffset={[-50, 5]}
+			>
+				{ALL_SUPPORTED_CHAIN_IDS.map((id) => (
 					<Menu.Item
-						key={SupportedChainId.ETHEREUM_MAINNET}
-						onClick={() => {
-							// setChainId(key.toUpperCase())
-							// switchToNetwork()
+						key={id}
+						onClick={async () => {
+							if (chainId === id) return
+							try {
+								await switchToNetwork({
+									library,
+									chainId: id,
+								})
+								const connector = networkConnectorFactory(id)
+								await activate(connector)
+								setChainId(id)
+							} catch {
+								if (!library) {
+									const connector =
+										networkConnectorFactory(id)
+									await activate(connector)
+									setChainId(id)
+								}
+							}
 						}}
 					>
 						<Row align="middle" gutter={10}>
@@ -48,29 +65,29 @@ const Button: React.FC<Props> = () => {
 									fontSize: '26px',
 								}}
 							>
-								{/* {flag} */}
+								<Row>
+									<img
+										src={CHAIN_INFO[id].logoUrl}
+										height="30"
+										width="30"
+										alt={`${CHAIN_INFO[id].label} logo`}
+									/>
+								</Row>
 							</Col>
 							<Col>
-								<Text>
-									{
-										CHAIN_INFO[
-											SupportedChainId.ETHEREUM_MAINNET
-										].label
-									}
-								</Text>
+								<Text>{CHAIN_INFO[id].label}</Text>
 							</Col>
 						</Row>
 					</Menu.Item>
-				</StyledSubMenu>
-			</StyledMenu>
-		</Row>
+				))}
+			</StyledSubMenu>
+		</StyledMenu>
 	)
 }
 
-export default Button
+export default NetworkSelect
 
 const StyledMenu = styled(Menu)`
-	width: 100px;
 	border-bottom: none;
 	background: none;
 	color: ${(props) => props.theme.colors.white} !important;
@@ -81,7 +98,6 @@ const StyledMenu = styled(Menu)`
 
 const StyledSubMenu = styled(Menu.SubMenu)`
 	padding: 0 !important;
-	width: 40px;
 `
 
 const NetworkSelector = styled(Row)`

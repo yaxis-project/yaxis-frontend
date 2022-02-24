@@ -4,7 +4,7 @@ import { useTVL, useVaultStrategies } from '../../../state/internal/hooks'
 import Value from '../../../components/Value'
 import CardRow from '../../../components/CardRow'
 import useTranslation from '../../../hooks/useTranslation'
-import { TVaults } from '../../../constants/type/ethereum'
+import { TVaults } from '../../../constants/type'
 
 interface UserVaultDetailsProps {
 	vault: TVaults
@@ -19,7 +19,9 @@ const VaultStatsCard: React.FC<UserVaultDetailsProps> = ({ vault }) => {
 	const strategy = useMemo(() => {
 		const names = strategies[vault]
 		if (!names || !names.length) return t('None')
-		return names.map((strategy) => <div key={strategy}>{strategy}</div>)
+		return names.map((strategy, i) => (
+			<div key={`${strategy}-${i}`}>{strategy}</div>
+		))
 	}, [strategies, t, vault])
 
 	return (

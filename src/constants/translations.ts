@@ -115,7 +115,7 @@ export type Phrases =
 	| 'Vault safe opens and fills with money animation'
 	| 'Install'
 	| 'Select a wallet provider.'
-	| 'Please switch to one of the following Ethereum networks'
+	| 'Please switch to one of the following networks'
 	| 'Active Liquidity Pools'
 	| 'Legacy Liquidity Pools'
 	| 'Legacy Liquidity Pools info'
@@ -329,8 +329,8 @@ const EN: Translations = {
 		'Vault safe opens and fills with money animation',
 	Install: 'Install',
 	'Select a wallet provider.': 'Select a wallet provider.',
-	'Please switch to one of the following Ethereum networks':
-		'Please switch to one of the following Ethereum networks',
+	'Please switch to one of the following networks':
+		'Please switch to one of the following networks',
 	'Active Liquidity Pools': 'Active Liquidity Pools',
 	'Legacy Liquidity Pools': 'Legacy Liquidity Pools',
 	'Legacy Liquidity Pools info': 'Legacy Liquidity Pools info',
@@ -540,7 +540,7 @@ const ES: Translations = {
 	'Vault safe opens and fills with money animation': '',
 	Install: '',
 	'Select a wallet provider.': '',
-	'Please switch to one of the following Ethereum networks': '',
+	'Please switch to one of the following networks': '',
 	'Active Liquidity Pools': '',
 	'Legacy Liquidity Pools': '',
 	'Legacy Liquidity Pools info': '',
@@ -741,7 +741,7 @@ const KO: Translations = {
 	'Vault safe opens and fills with money animation': '',
 	Install: '',
 	'Select a wallet provider.': '',
-	'Please switch to one of the following Ethereum networks': '',
+	'Please switch to one of the following networks': '',
 	'Active Liquidity Pools': '',
 	'Legacy Liquidity Pools': '',
 	'Legacy Liquidity Pools info': '',
@@ -942,7 +942,7 @@ const ZH: Translations = {
 	'Vault safe opens and fills with money animation': '',
 	Install: '',
 	'Select a wallet provider.': '',
-	'Please switch to one of the following Ethereum networks': '',
+	'Please switch to one of the following networks': '',
 	'Active Liquidity Pools': '',
 	'Legacy Liquidity Pools': '',
 	'Legacy Liquidity Pools info': '',
@@ -1145,7 +1145,7 @@ const RU: Translations = {
 	'Vault safe opens and fills with money animation': '',
 	Install: '',
 	'Select a wallet provider.': '',
-	'Please switch to one of the following Ethereum networks': '',
+	'Please switch to one of the following networks': '',
 	'Active Liquidity Pools': '',
 	'Legacy Liquidity Pools': '',
 	'Legacy Liquidity Pools info': '',
@@ -1347,7 +1347,7 @@ const JA: Translations = {
 	'Vault safe opens and fills with money animation': '',
 	Install: '',
 	'Select a wallet provider.': '',
-	'Please switch to one of the following Ethereum networks': '',
+	'Please switch to one of the following networks': '',
 	'Active Liquidity Pools': '',
 	'Legacy Liquidity Pools': '',
 	'Legacy Liquidity Pools info': '',
