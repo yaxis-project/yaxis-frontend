@@ -76,7 +76,9 @@ export function useUserHasAvailableClaim(
 	const { contracts } = useContracts()
 
 	const isClaimedResult = useSingleCallResult(
-		contracts?.internal?.merkleDistributor,
+		contracts?.internal && 'merkleDistributor' in contracts?.internal
+			? contracts?.internal?.merkleDistributor
+			: null,
 		'isClaimed',
 		[userClaimData?.index],
 	)

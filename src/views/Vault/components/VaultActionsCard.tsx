@@ -11,7 +11,6 @@ import WithdrawHelperTable from './WithdrawHelperTable'
 import Card from '../../../components/Card'
 import Icon from '../../../components/Icon'
 import Tooltip from '../../../components/Tooltip'
-import { LPVaults } from '../../../constants/type/ethereum'
 import { Dropdown, Menu, Button, Checkbox, Row, Col } from 'antd'
 import { useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { QuestionCircleOutlined } from '@ant-design/icons'
@@ -103,15 +102,15 @@ const Operations = () => (
 )
 
 interface VaultActionsCardProps {
-	fees: TYaxisManagerData
-	currencies: Currency[]
 	type: 'overview' | 'details'
+	fees: TYaxisManagerData
+	vaults: [Currency, string][]
 }
 
 const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
-	fees,
-	currencies,
 	type,
+	fees,
+	vaults,
 }) => {
 	const translate = useTranslation()
 
@@ -119,8 +118,8 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 	const location = useLocation()
 
 	const autoStake = useVaultAutoStake()
-	const isYaxisDetails = currencies.every(
-		(currency) => currency.tokenId === 'yaxis',
+	const isYaxisDetails = vaults.every(
+		([currency]) => currency.tokenId === 'yaxis',
 	)
 
 	const showDepositTab = useMemo(() => !isYaxisDetails, [isYaxisDetails])
@@ -161,10 +160,10 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 						{autoStake ? (
 							<DepositHelperTable
 								fees={fees}
-								currencies={
+								vaults={
 									// NOTE: YAXIS vault deprecated in YIP-14
-									currencies.filter(
-										(currency) =>
+									vaults.filter(
+										([currency]) =>
 											currency.tokenId !== 'yaxis',
 									)
 								}
@@ -172,10 +171,10 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 						) : (
 							<DepositTable
 								fees={fees}
-								currencies={currencies
+								vaults={vaults
 									// YAXIS only has a gauge, so we filter it out
 									.filter(
-										(currency) =>
+										([currency]) =>
 											currency.tokenId !== 'yaxis',
 									)}
 							/>
@@ -186,10 +185,11 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 					<TabPane tab={translate('Stake')} key="#stake">
 						<StakeTable
 							fees={fees}
-							currencies={
+							vaults={
 								// NOTE: YAXIS vault deprecated in YIP-14
-								currencies.filter(
-									(currency) => currency.tokenId !== 'yaxis',
+								vaults.filter(
+									([currency]) =>
+										currency.tokenId !== 'yaxis',
 								)
 							}
 						/>
@@ -199,14 +199,14 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 					<TabPane tab={translate('Unstake')} key="#unstake">
 						<UnstakeTable
 							fees={fees}
-							currencies={currencies.map((currency) => {
-								const [, vault] = LPVaults.find(
-									([lpToken]) => lpToken === currency.tokenId,
-								)
+							vaults={vaults.map(([, vault]) => {
 								const vaultToken =
 									vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
 								const gaugeToken = `${vaultToken}-gauge`
-								return Currencies[gaugeToken.toUpperCase()]
+								return [
+									Currencies[gaugeToken.toUpperCase()],
+									vault,
+								]
 							})}
 						/>
 					</TabPane>
@@ -214,28 +214,20 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 				{showWithdrawTab && (
 					<TabPane tab={translate('Withdraw')} key="#withdraw">
 						{autoStake ? (
-							<WithdrawHelperTable
-								fees={fees}
-								currencies={currencies}
-							/>
+							<WithdrawHelperTable fees={fees} vaults={vaults} />
 						) : (
 							<WithdrawTable
 								fees={fees}
-								currencies={currencies
+								vaults={vaults
 									// YAXIS only has a gauge, so we filter it out
 									.filter(
-										(currency) =>
+										([currency]) =>
 											currency.tokenId !== 'yaxis',
 									)
-									.map((currency) => {
-										const [, vault] = LPVaults.find(
-											([lpToken]) =>
-												lpToken === currency.tokenId,
-										)
-										return Currencies[
-											`CV:${vault.toUpperCase()}`
-										]
-									})}
+									.map(([currency, vault]) => [
+										Currencies[`CV:${vault.toUpperCase()}`],
+										vault,
+									])}
 							/>
 						)}
 					</TabPane>

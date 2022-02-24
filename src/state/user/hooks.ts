@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
 import {
@@ -9,7 +9,12 @@ import {
 	updateChain,
 } from './actions'
 import { TLanguages } from '../../constants/translations'
-import { SupportedChainId } from '../../constants/chains'
+import {
+	ChainId,
+	CHAIN_INFO,
+	L1ChainInfo,
+	L2ChainInfo,
+} from '../../constants/chains'
 import { CalcPages, FutureBalanceCalculator } from './reducer'
 
 export function useVaultAutoStake(): boolean {
@@ -42,15 +47,20 @@ export function useSetLanguage() {
 	)
 }
 
-export function useChain(): SupportedChainId {
+export function useChain(): ChainId {
 	return useSelector((state: AppState) => state.user.chainId)
+}
+
+export function useChainInfo(): L1ChainInfo | L2ChainInfo {
+	const chainId = useChain()
+	return useMemo(() => CHAIN_INFO[chainId], [chainId])
 }
 
 export function useSetChain() {
 	const dispatch = useDispatch<AppDispatch>()
 
 	return useCallback(
-		(chainId: SupportedChainId) => {
+		(chainId: ChainId) => {
 			dispatch(updateChain({ chainId }))
 		},
 		[dispatch],

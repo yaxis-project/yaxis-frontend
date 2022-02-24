@@ -10,7 +10,7 @@ import Card from '../../../components/Card'
 import Value from '../../../components/Value'
 import CardRow from '../../../components/CardRow'
 import Claim from '../../../components/Claim'
-import { TVaults } from '../../../constants/type/ethereum'
+import { TVaults } from '../../../constants/type'
 
 const { Text } = Typography
 

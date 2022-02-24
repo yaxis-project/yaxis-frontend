@@ -7,7 +7,7 @@ import Value from '../../../components/Value'
 import useTranslation from '../../../hooks/useTranslation'
 import { DetailOverviewCard } from '../../../components/DetailOverviewCard'
 import { Row, Col } from 'antd'
-import { TVaults } from '../../../constants/type/ethereum'
+import { TVaults } from '../../../constants/type'
 
 interface UserVaultDetailsProps {
 	vault: TVaults
@@ -16,7 +16,7 @@ interface UserVaultDetailsProps {
 const UserVaultDetails: React.FC<UserVaultDetailsProps> = ({ vault }) => {
 	const t = useTranslation()
 
-	const { loading, boost } = useUserBoost(vault)
+	const { boost } = useUserBoost(vault)
 
 	const apr = useVaultsAPRWithBoost()
 

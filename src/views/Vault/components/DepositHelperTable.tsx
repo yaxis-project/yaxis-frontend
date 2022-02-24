@@ -1,5 +1,4 @@
 import { useState, useMemo, useCallback } from 'react'
-import { LPVaults } from '../../../constants/type/ethereum'
 import { Currencies, Currency } from '../../../constants/currencies'
 import {
 	useAllTokenBalances,
@@ -28,9 +27,10 @@ import BigNumber from 'bignumber.js'
 import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
 import { DoubleApprovalCover } from '../../../components/ApprovalCover/DoubleApprovalCover'
-import { TYaxisManagerData } from '../../../state/internal/hooks'
+import { TYaxisManagerData, VaultAPR } from '../../../state/internal/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { Contracts } from '../../../constants/contracts'
+import { useChainInfo } from '../../../state/user'
 
 const { Text, Title } = Typography
 
@@ -174,9 +174,10 @@ const makeColumns = (
 				<>
 					<Row style={{ fontWeight: 'bolder' }}>
 						<Text type="secondary">
-							{record.apr.totalAPR.isNaN()
+							{record.apr && record.apr.totalAPR.isNaN()
 								? 0
-								: record.apr.totalAPR
+								: record.apr &&
+								  record.apr.totalAPR
 										.multipliedBy(100)
 										.toFormat(2)}
 							%
@@ -185,20 +186,24 @@ const makeColumns = (
 								placement="topLeft"
 								title={
 									<div style={{ padding: '5px' }}>
-										{record.apr.strategy.totalAPR && (
-											<TooltipRow
-												main={'Strategy APR'}
-												value={record.apr.strategy.totalAPR
-													.multipliedBy(100)
-													.toNumber()}
-											/>
-										)}
+										{record.apr &&
+											record.apr?.strategy?.totalAPR && (
+												<TooltipRow
+													main={'Strategy APR'}
+													value={
+														record.apr.strategy &&
+														record.apr.strategy.totalAPR
+															.multipliedBy(100)
+															.toNumber()
+													}
+												/>
+											)}
 										<TooltipRow
 											main={'Rewards APR'}
-											value={record.apr.yaxisAPR
+											value={record.apr?.yaxisAPR
 												.multipliedBy(100)
 												.toNumber()}
-											boost={record.apr.boost}
+											boost={record.apr?.boost}
 										/>
 										<Divider
 											style={{
@@ -206,7 +211,7 @@ const makeColumns = (
 												margin: '10px 0',
 											}}
 										/>
-										{record.apr.boost.lt(2.5) && (
+										{record.apr?.boost.lt(2.5) && (
 											<>
 												<Row justify="center">
 													<Button height="30px">
@@ -248,15 +253,18 @@ const makeColumns = (
 const { useBreakpoint } = Grid
 
 interface TableDataEntry extends Currency {
+	key: string
+	vault: string
+	inputValue: string
 	balance: BigNumber
 	balanceUSD: string
 	value: BigNumber
-	vault: string
+	apr: VaultAPR
 }
 
 interface DepositHelperTableProps {
 	fees: TYaxisManagerData
-	currencies: Currency[]
+	vaults: [Currency, string][]
 }
 
 /**
@@ -264,8 +272,9 @@ interface DepositHelperTableProps {
  */
 const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 	fees,
-	currencies,
+	vaults,
 }) => {
+	const { blockchain } = useChainInfo()
 	const translate = useTranslation()
 
 	const [balances, loading] = useAllTokenBalances()
@@ -290,10 +299,10 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
-		currencies.reduce(
-			(prev, curr) => ({
+		vaults.reduce(
+			(prev, [currency]) => ({
 				...prev,
-				[curr.tokenId]: '',
+				[currency.tokenId]: '',
 			}),
 			{},
 		),
@@ -305,14 +314,14 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 	)
 
 	const totalDepositing = useMemo(
-		() => computeTotalDepositing(currencies, currencyValues, prices),
-		[currencies, currencyValues, prices],
+		() => computeTotalDepositing(vaults, currencyValues, prices),
+		[vaults, currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = LPVaults.reduce<[string, [string, string]][]>(
+		const transactions = vaults.reduce<[string, [string, string]][]>(
 			(previous, [lpToken, vault]) => {
-				const _v = currencyValues[lpToken]
+				const _v = currencyValues[lpToken.tokenId]
 				if (_v)
 					previous.push([
 						vault,
@@ -320,7 +329,8 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 							contracts.vaults[vault].vault.address,
 							numberToDecimal(
 								_v,
-								Currencies[lpToken.toUpperCase()].decimals,
+								Currencies[lpToken.tokenId.toUpperCase()]
+									.decimals,
 							),
 						],
 					])
@@ -344,30 +354,27 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 				}),
 			)
 			setCurrencyValues(
-				currencies.reduce(
-					(prev, curr) => ({
+				vaults.reduce(
+					(prev, [currency]) => ({
 						...prev,
-						[curr.tokenId]: '',
+						[currency.tokenId]: '',
 					}),
 					{},
 				),
 			)
 		}
 	}, [
-		currencies,
+		vaults,
 		currencyValues,
 		handleDeposit,
 		totalDepositing,
 		contracts,
 		handleStakeYAXIS,
 	])
-
 	const data = useMemo(
 		() =>
-			currencies.map<TableDataEntry>((c) => {
-				const [lpToken, vault] = LPVaults.find(
-					([lpToken]) => lpToken === c.tokenId,
-				)
+			vaults.map<TableDataEntry>(([lpTokenCurrency, vault]) => {
+				const lpToken = lpTokenCurrency.tokenId
 				const currency = Currencies[lpToken.toUpperCase()]
 				const balance = balances[lpToken]?.amount || new BigNumber(0)
 				return {
@@ -382,10 +389,10 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 					value: currencyValues
 						? new BigNumber(currencyValues[lpToken] || 0)
 						: new BigNumber(0),
-					apr: apr[vault],
+					apr: apr[blockchain][vault],
 				}
 			}),
-		[currencies, prices, balances, currencyValues, apr],
+		[vaults, prices, balances, currencyValues, apr, blockchain],
 	)
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])

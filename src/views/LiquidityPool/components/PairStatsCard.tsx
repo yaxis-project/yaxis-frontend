@@ -2,7 +2,7 @@ import React from 'react'
 import Card from '../../../components/Card'
 import Value from '../../../components/Value'
 import CardRow from '../../../components/CardRow'
-import { LiquidityPool } from '../../../constants/type/ethereum'
+import { LiquidityPool } from '../../../constants/type'
 import { useLP } from '../../../state/external/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 

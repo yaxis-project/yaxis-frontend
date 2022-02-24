@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { currentConfig } from '../../../constants/configs'
-import { LiquidityPool } from '../../../constants/type/ethereum'
+import { LiquidityPool } from '../../../constants/type'
 import { Row, Col, Collapse, Grid } from 'antd'
 import { Currencies } from '../../../constants/currencies'
 import { brandBlue } from '../../../theme/colors'
@@ -111,7 +111,12 @@ export default function LPAccountOverview() {
 		<StyledCollapse expandIconPosition="right">
 			<Panel
 				header={
-					<Row gutter={16} align="middle" justify={'space-between'}>
+					<Row
+						gutter={16}
+						align="middle"
+						justify={'space-between'}
+						style={{ width: '110%' }}
+					>
 						<Col xs={24} sm={13}>
 							<Row
 								align="middle"
@@ -146,7 +151,6 @@ export default function LPAccountOverview() {
 							</Row>
 						</Col>
 					</Row>
-					///
 				}
 				key="1"
 			>

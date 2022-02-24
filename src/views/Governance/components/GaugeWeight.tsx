@@ -6,7 +6,7 @@ import Table from '../../../components/Table'
 import Button from '../../../components/Button'
 import Slider from '../../../components/Slider'
 import Typography from '../../../components/Typography'
-import { Vaults } from '../../../constants/type/ethereum'
+import { Vaults } from '../../../constants/type'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { useContracts } from '../../../contexts/Contracts'
 import useTranslation from '../../../hooks/useTranslation'
@@ -19,28 +19,30 @@ import { useRewardRate } from '../../../state/internal/hooks'
 import moment from 'moment'
 import { Currencies } from '../../../constants/currencies'
 import BigNumber from 'bignumber.js'
+import { useChainInfo } from '../../../state/user'
 
 const WEIGHT_VOTE_DELAY = 10 * 86400
 
 const { Text } = Typography
 
-const defaultWeights = Vaults.map(() => 0)
-
-const GaugeWeight: React.FC = () => {
+const GaugeWeight: React.FC<{ vaults: readonly string[] }> = ({ vaults }) => {
 	const translate = useTranslation()
 	const lock = useLock()
 	const rate = useRewardRate()
 	const boost = useBoosts()
 
-	const [weights, setWeights] = useState(defaultWeights)
+	const [weights, setWeights] = useState(vaults.map(() => 0))
 	const totalWeight = useMemo(
 		() => weights.reduce((acc, curr) => acc + curr, 0),
 		[weights],
 	)
 	const [initialWeights, setInitialWeights] = useState(-1)
 	const { contracts } = useContracts()
+	const chainInfo = useChainInfo()
 
-	const [loadingVotedWeights, votedWeights] = useUserGaugeWeights()
+	const [loadingVotedWeights, votedWeights] = useUserGaugeWeights(
+		chainInfo.blockchain,
+	)
 
 	const { call, loading } = useContractWrite({
 		contractName: 'internal.gaugeController',
@@ -50,8 +52,8 @@ const GaugeWeight: React.FC = () => {
 
 	useEffect(() => {
 		if (!loadingVotedWeights && initialWeights === -1) {
-			const nextWeights = Vaults.reduce((acc, vault) => {
-				acc.push(votedWeights[vault].power.div(100).toNumber())
+			const nextWeights = vaults.reduce((acc, vault) => {
+				acc.push(votedWeights[vault]?.power.div(100).toNumber())
 				return acc
 			}, [])
 			setInitialWeights(nextWeights.reduce((acc, curr) => acc + curr, 0))
@@ -66,7 +68,7 @@ const GaugeWeight: React.FC = () => {
 	])
 
 	const data = useMemo(() => {
-		return Vaults.reduce((acc, name, i) => {
+		return vaults.reduce((acc, name, i) => {
 			const userShare = boost[name].workingSupply.isZero()
 				? new BigNumber(0)
 				: boost[name].workingBalance.dividedBy(
@@ -75,7 +77,7 @@ const GaugeWeight: React.FC = () => {
 
 			// YAXIS vault has been deprecated.
 			// Filter it out if the user has redistributed out.
-			if (name === 'yaxis' && votedWeights[name].power.toNumber() === 0)
+			if (name === 'yaxis' && votedWeights[name]?.power.toNumber() === 0)
 				return acc
 
 			acc.push({
@@ -100,8 +102,8 @@ const GaugeWeight: React.FC = () => {
 	const hasChange = useMemo(() => {
 		if (loadingVotedWeights || initialWeights === -1) return false
 
-		const nextWeights = Vaults.reduce((acc, vault) => {
-			acc.push(votedWeights[vault].power.div(100).toNumber())
+		const nextWeights = vaults.reduce((acc, vault) => {
+			acc.push(votedWeights[vault]?.power.div(100).toNumber())
 			return acc
 		}, [])
 		return JSON.stringify(nextWeights) !== JSON.stringify(weights)
@@ -133,9 +135,10 @@ const GaugeWeight: React.FC = () => {
 				key: 'action',
 				width: '60%',
 				render: (record) => {
-					const cooldown = moment(
-						record.lastVote.toNumber() * 1000,
-					).add(WEIGHT_VOTE_DELAY * 1000)
+					const lastVote = record.lastVote?.toNumber() ?? 0
+					const cooldown = moment(lastVote * 1000).add(
+						WEIGHT_VOTE_DELAY * 1000,
+					)
 					return (
 						<div style={{ position: 'relative' }}>
 							{record.name === 'YAXIS' && (
@@ -169,10 +172,7 @@ const GaugeWeight: React.FC = () => {
 									Unlocks {cooldown.fromNow()}
 								</div>
 							)}
-							{console.log(
-								record.lastVote.toString(),
-								record.lastVote.gt(Date.now()),
-							)}
+
 							<Slider
 								value={weights[record.key]}
 								tipFormatter={(value) => `${value}%`}
@@ -274,11 +274,11 @@ const GaugeWeight: React.FC = () => {
 							weights.forEach((weight, i) => {
 								const hasChange =
 									weight * 100 !==
-									votedWeights[Vaults[i]].power.toNumber()
+									votedWeights[vaults[i]].power.toNumber()
 								if (hasChange)
 									call({
 										args: [
-											contracts.vaults[Vaults[i]].gauge
+											contracts.vaults[vaults[i]].gauge
 												.address,
 											weight * 100,
 										],

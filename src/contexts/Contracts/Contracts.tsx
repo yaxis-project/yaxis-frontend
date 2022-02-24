@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
-import { Contracts } from '../../constants/contracts'
+import { Contracts, initializeContracts } from '../../constants/contracts'
+import { ChainId } from '../../constants/chains'
 
 export interface ContractContext {
 	contracts?: Contracts
@@ -19,7 +20,8 @@ const ContractProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (library) {
-			setContracts(new Contracts(library, 'ethereum', chainId))
+			const contracts = initializeContracts(library, chainId as ChainId)
+			setContracts(contracts)
 			setLoading(false)
 		}
 	}, [library, account, chainId])

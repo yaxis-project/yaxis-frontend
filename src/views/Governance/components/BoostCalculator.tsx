@@ -8,7 +8,7 @@ import Divider from '../../../components/Divider'
 import Typography from '../../../components/Typography'
 import { Currencies } from '../../../constants/currencies'
 import { currentConfig } from '../../../constants/configs'
-import { Vaults, TVaults } from '../../../constants/type/ethereum'
+import { TVaults } from '../../../constants/type'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import useTranslation from '../../../hooks/useTranslation'
 import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
@@ -75,9 +75,13 @@ const BoostCalculator: React.FC = () => {
 
 	const vpPercentage = useMemo(
 		() =>
-			vp.dividedBy(
-				votingEscrow.totalSupply.minus(votingEscrow.balance).plus(vp),
-			),
+			vp.isZero()
+				? new BigNumber(0)
+				: vp.dividedBy(
+						votingEscrow.totalSupply
+							.minus(votingEscrow.balance)
+							.plus(vp),
+				  ),
 		[vp, votingEscrow],
 	)
 
@@ -138,19 +142,22 @@ const BoostCalculator: React.FC = () => {
 					value={selectedVault}
 					onChange={(value) => setSelectedVault(value)}
 				>
-					{Vaults.filter((v) => v !== 'yaxis').map((vault) => (
-						<Option value={vault} key={vault}>
-							<img
-								src={Currencies[vault.toUpperCase()].icon}
-								height="30"
-								width="30"
-								alt="logo"
-							/>
-							<span style={{ marginLeft: '10px' }}>
-								{vault.toUpperCase()}
-							</span>
-						</Option>
-					))}
+					{/* // TODO CHECK */}
+					{Object.keys(vaults)
+						.filter((v) => v !== 'yaxis')
+						.map((vault) => (
+							<Option value={vault} key={vault}>
+								<img
+									src={Currencies[vault.toUpperCase()].icon}
+									height="30"
+									width="30"
+									alt="logo"
+								/>
+								<span style={{ marginLeft: '10px' }}>
+									{vault.toUpperCase()}
+								</span>
+							</Option>
+						))}
 				</Select>
 				<Row style={{ marginTop: '15px' }}>
 					<Title level={5}>Amount Deposited:</Title>

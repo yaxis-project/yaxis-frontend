@@ -13,6 +13,7 @@ import { MagicConnector } from '@web3-react/magic-connector'
 import { LatticeConnector } from '@web3-react/lattice-connector'
 import { FrameConnector } from '@web3-react/frame-connector'
 import { AuthereumConnector } from '@web3-react/authereum-connector'
+import { ChainId, NETWORK_URLS } from '../constants/chains'
 
 export function getLibrary(provider: any) {
 	const library = new Web3Provider(provider, 'any')
@@ -20,13 +21,8 @@ export function getLibrary(provider: any) {
 	return library
 }
 
-export const SUPPORTED_NETWORKS = [1, 42]
-export const RPC_URLS: { [chainId: number]: string } = Object.fromEntries(
-	SUPPORTED_NETWORKS.map((networkId: number) => [
-		networkId,
-		process.env[`REACT_APP_RPC_URL_${networkId}`],
-	]),
-)
+export const SUPPORTED_NETWORKS = [1, 42, 43114]
+
 export const POLLING_INTERVAL = 12000
 export const NETWORK_NAMES = { 1: 'mainnet', 42: 'kovan' }
 export const FRIENDLY_NETWORK_NAMES = {
@@ -34,8 +30,14 @@ export const FRIENDLY_NETWORK_NAMES = {
 	42: 'Kovan Test Network',
 }
 
+export const networkConnectorFactory = (chainId: ChainId) =>
+	new NetworkConnector({
+		urls: NETWORK_URLS,
+		defaultChainId: chainId,
+	})
+
 export const network = new NetworkConnector({
-	urls: RPC_URLS,
+	urls: NETWORK_URLS,
 	defaultChainId: 1,
 })
 
@@ -44,13 +46,13 @@ export const injected = new InjectedConnector({
 })
 
 export const walletconnect = new WalletConnectConnector({
-	rpc: RPC_URLS, // Wallet Connect only supports network 1
+	rpc: { 1: NETWORK_URLS[1], 42: NETWORK_URLS[42] }, // Wallet Connect only supports network 1
 	bridge: 'https://bridge.walletconnect.org',
 	qrcode: true,
 })
 
 export const walletlink = new WalletLinkConnector({
-	url: RPC_URLS[1], // Wallet Link only supports network 1
+	url: NETWORK_URLS[1], // Wallet Link only supports network 1
 	appName: 'yAxis',
 	appLogoUrl: '%PUBLIC_URL%/favicon.png',
 })
@@ -62,13 +64,13 @@ export const fortmatic = new FortmaticConnector({
 
 export const ledger = new LedgerConnector({
 	chainId: 1,
-	url: RPC_URLS[1],
+	url: NETWORK_URLS[1],
 	pollingInterval: POLLING_INTERVAL,
 })
 
 export const trezor = new TrezorConnector({
 	chainId: 1,
-	url: RPC_URLS[1],
+	url: NETWORK_URLS[1],
 	pollingInterval: POLLING_INTERVAL,
 	manifestEmail: 'hello@yaxis.io',
 	manifestAppUrl: 'https://app.yaxis.io/',
@@ -82,7 +84,7 @@ export const portis = new PortisConnector({
 export const lattice = new LatticeConnector({
 	chainId: 4,
 	appName: 'web3-react',
-	url: RPC_URLS[4],
+	url: NETWORK_URLS[4],
 })
 
 export const frame = new FrameConnector({ supportedChainIds: [1] })

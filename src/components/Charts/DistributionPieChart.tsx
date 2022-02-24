@@ -1,9 +1,13 @@
 import React, { useMemo } from 'react'
 import { Row, Col } from 'antd'
 import { Pie } from 'react-chartjs-2'
+import 'chart.js/auto'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { useGauges, useRewardRate } from '../../state/internal/hooks'
 import { LoadingOutlined } from '@ant-design/icons'
+import Typography from '../Typography'
+
+const { Title } = Typography
 
 const Colors: { [vault: string]: [number, number, number] } = {
 	usd: [0, 150, 0],
@@ -67,19 +71,6 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 	)
 
 	const data = useMemo(() => {
-		if (loading)
-			return {
-				labels: [],
-				datasets: [
-					{
-						data: [],
-						backgroundColor: [],
-						borderColor: [],
-						borderWidth: 2,
-					},
-				],
-			}
-
 		return {
 			labels: [],
 			datasets: [
@@ -125,71 +116,75 @@ const DistributionPieChart: React.FC<Props> = ({ type }) => {
 				// },
 			],
 		}
-	}, [loading, gaugeData, type, colors])
+	}, [gaugeData, type, colors])
+
+	if (loading)
+		return (
+			<Row justify="center" align="middle">
+				<Col>
+					<LoadingOutlined style={{ fontSize: 270 }} spin />
+				</Col>
+			</Row>
+		)
+
+	if (gaugeData.length === 0)
+		return (
+			<Row justify="center" align="middle">
+				<Title level={3} style={{ marginTop: '10px' }}>
+					None
+				</Title>
+			</Row>
+		)
 
 	return (
-		<>
-			{loading ? (
-				<Row justify="center" align="middle">
-					<Col>
-						<LoadingOutlined style={{ fontSize: 270 }} spin />
-					</Col>
-				</Row>
-			) : (
-				<Pie
-					data={data}
-					options={{
-						layout: {
-							padding: {
-								top: 10,
-								bottom: 20,
+		<Pie
+			data={data}
+			plugins={[ChartDataLabels]}
+			options={{
+				layout: {
+					padding: {
+						top: 22,
+						bottom: 30,
+					},
+				},
+				plugins: {
+					tooltip: {
+						callbacks: {
+							label: function (context) {
+								return (
+									' ' +
+									rate
+										.multipliedBy(60 * 60 * 24)
+										.multipliedBy(context.formattedValue)
+										.toFixed(3) +
+									' YAXIS / day'
+								)
 							},
 						},
-						plugins: {
-							tooltip: {
-								callbacks: {
-									label: function (context) {
-										return (
-											' ' +
-											rate
-												.multipliedBy(60 * 60 * 24)
-												.multipliedBy(
-													context.formattedValue,
-												)
-												.toFixed(3) +
-											' YAXIS / day'
-										)
-									},
-								},
-							},
-							datalabels: {
-								display: (context) =>
-									context.datasetIndex === 0,
-								padding: {
-									left: 10,
-									right: 10,
-									top: 6,
-									bottom: 6,
-								},
-								backgroundColor: (context) =>
-									context.dataset.borderColor as string,
-								borderColor: 'white',
-								borderRadius: 25,
-								borderWidth: 2,
-								color: 'white',
-								font: {
-									weight: 'bold',
-								},
-								formatter: (value, context) =>
-									(context.dataset as any).labels[
-										context.dataIndex
-									],
-							},
+					},
+					datalabels: {
+						display: (context) => context.datasetIndex === 0,
+						padding: {
+							left: 10,
+							right: 10,
+							top: 6,
+							bottom: 6,
 						},
-					}}
-				/>
-			)}
-		</>
+						backgroundColor: (context) =>
+							context.dataset.borderColor as string,
+						borderColor: 'white',
+						borderRadius: 25,
+						borderWidth: 2,
+						color: 'white',
+						font: {
+							weight: 'bold',
+						},
+						formatter: (value, context) =>
+							(context.dataset as any).labels[context.dataIndex],
+					},
+				},
+			}}
+		/>
 	)
 }
 

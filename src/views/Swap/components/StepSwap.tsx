@@ -11,6 +11,7 @@ import { ArrowRightOutlined, ArrowDownOutlined } from '@ant-design/icons'
 import { formatBN, MAX_UINT } from '../../../utils/number'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
+import { EthereumContracts } from '../../../constants/contracts'
 
 const { Text } = Typography
 
@@ -40,7 +41,7 @@ interface StepSwapProps extends StepProps {
 const StepSwap: React.FC<StepSwapProps> = ({
 	balances: { stakedBalance, yaxBalance },
 }) => {
-	const { contracts } = useContracts()
+	const contracts = useContracts().contracts as EthereumContracts | null
 
 	const {
 		YAX: allowanceYAX,

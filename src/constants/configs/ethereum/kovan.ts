@@ -1,11 +1,11 @@
 import {
-	Config,
-	CurrenciesConfig,
-	ExternalConfig,
-	ExternalPoolsConfig,
+	EthereumConfig,
+	EthereumCurrenciesConfig,
+	EthereumExternalConfig,
+	EthereumExternalPoolsConfig,
 } from '../../type/ethereum'
 
-const currencies: CurrenciesConfig = {
+const currencies: EthereumCurrenciesConfig = {
 	ERC20: {
 		crv: '0xDB0E1fe102Be9c0fD355100271283dF18bA4797F',
 		wbtc: '0xf9Bba2B6CD5ABA1F8023AA9B8C5b50Ef4666157c',
@@ -27,7 +27,7 @@ const currencies: CurrenciesConfig = {
 	},
 }
 
-const external: ExternalConfig = {
+const external: EthereumExternalConfig = {
 	multicall: '0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A',
 	pickleChef: '0x76f4A0CE3753F745e97e588F8423230B83f4a2F4',
 	pickleJar: '0x13F4cc6C239aBaD03EbD2deAA6A7107E9c6c9BEB',
@@ -35,7 +35,7 @@ const external: ExternalConfig = {
 	gaugeController: '0xff363bdCfbc52C0d0fA93F23416Ae9A5e015d10f', // needs mock
 }
 
-const externalPools: ExternalPoolsConfig = {
+const externalPools: EthereumExternalPoolsConfig = {
 	curve: {
 		mim3crv: {
 			currency: 'usd',
@@ -96,7 +96,7 @@ const externalPools: ExternalPoolsConfig = {
 	},
 }
 
-const kovan: Config = {
+const kovan: EthereumConfig = {
 	vaults: {
 		usd: {
 			url: 'https://curve.fi/mim/deposit',

@@ -5,10 +5,14 @@ import BigNumber from 'bignumber.js'
 import { useContracts } from '../../contexts/Contracts'
 import { abis } from '../../constants/abis/ethereum/mainnet'
 import {
-	TLiquidityPools,
-	TRewardsContracts,
-	TVaults,
+	TLiquidityPools as TLiquidityPoolsE,
+	TVaults as TVaultsEthereum,
 } from '../../constants/type/ethereum'
+import {
+	TVaults as TVaultsAvalanche,
+	TLiquidityPools as TLiquidityPoolsA,
+} from '../../constants/type/avalanche'
+import { TRewardsContracts } from '../../constants/type'
 import { numberToFloat } from '../../utils/number'
 import {
 	useSingleContractMultipleMethods,
@@ -22,6 +26,9 @@ import {
 	useConvexAPY,
 } from '../external/hooks'
 import { usePrices } from '../prices/hooks'
+import { L1_CHAIN, L2_CHAIN } from '../../constants/chains'
+import { TVaults } from '../../constants/type'
+import { useChainInfo } from '../user'
 
 const STRATEGY_INTERFACE = new ethers.utils.Interface(abis.StrategyABI)
 
@@ -72,7 +79,9 @@ export function useYaxisGauge() {
 	const { contracts } = useContracts()
 
 	const gaugeData = useSingleContractMultipleMethods(
-		contracts?.vaults.yaxis.gauge,
+		contracts?.vaults && 'yaxis' in contracts?.vaults
+			? contracts?.vaults.yaxis.gauge
+			: null,
 		[['working_supply'], ['totalSupply']],
 	)
 
@@ -93,21 +102,30 @@ export function useYaxisGauge() {
 	}, [gaugeData])
 }
 
-export function useVaultRewards(name: TVaults) {
+export function useVaultRewards(name: TVaults, blockchain: L1_CHAIN) {
 	const { contracts } = useContracts()
+	const chainInfo = useChainInfo()
 
-	const rate = useSingleCallResult(contracts?.internal.minterWrapper, 'rate')
+	const active = useMemo(
+		() => blockchain === chainInfo.blockchain,
+		[blockchain, chainInfo],
+	)
+
+	const rate = useSingleCallResult(
+		active && contracts?.internal.minterWrapper,
+		'rate',
+	)
 
 	const { prices } = usePrices()
 
 	const relativeWeight = useSingleCallResult(
-		contracts?.internal.gaugeController,
+		active && contracts?.internal.gaugeController,
 		'gauge_relative_weight(address)',
-		[contracts?.vaults[name].gauge.address],
+		[contracts?.vaults[name]?.gauge.address],
 	)
 
 	const balance = useSingleCallResult(
-		contracts?.vaults[name].gauge,
+		active && contracts?.vaults[name].gauge,
 		'working_supply',
 	)
 
@@ -117,7 +135,7 @@ export function useVaultRewards(name: TVaults) {
 		).dividedBy(10 ** 18)
 
 		const virtualPrice = new BigNumber(
-			prices[contracts?.vaults[name].token.name.toLowerCase()],
+			prices[contracts?.vaults[name]?.token.name.toLowerCase()],
 		)
 
 		const virtualSupply = virtualPrice.multipliedBy(
@@ -145,15 +163,43 @@ export function useVaultRewards(name: TVaults) {
 	}, [name, contracts?.vaults, prices, relativeWeight, balance, rate])
 }
 
+export interface VaultAPR {
+	yaxisAPR: {
+		min: BigNumber
+		max: BigNumber
+	}
+	strategy?: {
+		extraAPR: any
+		crvAPR: BigNumber
+		cvxAPR: BigNumber
+		totalAPR: BigNumber
+	}
+}
+
+type BaseVaultsAPR = {
+	[chain in L1_CHAIN]: {
+		[vault: string]: VaultAPR
+	}
+}
+type ReturnVaultsAPR = BaseVaultsAPR & {
+	avalanche: {
+		[vault in TVaultsAvalanche]: VaultAPR
+	}
+	ethereum: {
+		[vault in TVaultsEthereum]: VaultAPR
+	}
+}
+
 export function useVaultsAPR() {
-	const usd = useVaultRewards('usd')
-	const btc = useVaultRewards('btc')
-	const eth = useVaultRewards('eth')
-	const link = useVaultRewards('link')
-	const frax = useVaultRewards('frax')
-	const tricrypto = useVaultRewards('tricrypto')
-	const cvx = useVaultRewards('cvx')
-	const yaxis = useVaultRewards('yaxis')
+	/* ETHEREUM */
+	const usd = useVaultRewards('usd', 'ethereum')
+	const btc = useVaultRewards('btc', 'ethereum')
+	const eth = useVaultRewards('eth', 'ethereum')
+	const link = useVaultRewards('link', 'ethereum')
+	const frax = useVaultRewards('frax', 'ethereum')
+	const tricrypto = useVaultRewards('tricrypto', 'ethereum')
+	const cvx = useVaultRewards('cvx', 'ethereum')
+	const yaxis = useVaultRewards('yaxis', 'ethereum')
 
 	const mim3crv = useConvexAPY('mim3crv')
 	const rencrv = useConvexAPY('rencrv')
@@ -163,67 +209,88 @@ export function useVaultsAPR() {
 	const crv3crypto = useConvexAPY('crv3crypto', true)
 	const frax3crv = useConvexAPY('frax3crv')
 
+	/* AVALANCHE */
+	const usdAvalanche = useVaultRewards('usd', 'avalanche')
+	const tricryptoAvalanche = useVaultRewards('tricrypto', 'avalanche')
+
 	return useMemo(() => {
-		return {
-			usd: {
-				yaxisAPR: {
-					min: usd.minAPR,
-					max: usd.maxAPR,
+		const output: ReturnVaultsAPR = {
+			avalanche: {
+				usd: {
+					yaxisAPR: {
+						min: usdAvalanche.minAPR,
+						max: usdAvalanche.maxAPR,
+					},
+					strategy: null,
 				},
-				strategy: mim3crv,
+				tricrypto: {
+					yaxisAPR: {
+						min: tricryptoAvalanche.minAPR,
+						max: tricryptoAvalanche.maxAPR,
+					},
+					strategy: null,
+				},
 			},
-			btc: {
-				yaxisAPR: {
-					min: btc.minAPR,
-					max: btc.maxAPR,
+			ethereum: {
+				usd: {
+					yaxisAPR: {
+						min: usd.minAPR,
+						max: usd.maxAPR,
+					},
+					strategy: mim3crv,
 				},
-				strategy: rencrv,
-			},
-			eth: {
-				yaxisAPR: {
-					min: eth.minAPR,
-					max: eth.maxAPR,
+				btc: {
+					yaxisAPR: {
+						min: btc.minAPR,
+						max: btc.maxAPR,
+					},
+					strategy: rencrv,
 				},
-				strategy: alethcrv,
-			},
-			link: {
-				yaxisAPR: {
-					min: link.minAPR,
-					max: link.maxAPR,
+				eth: {
+					yaxisAPR: {
+						min: eth.minAPR,
+						max: eth.maxAPR,
+					},
+					strategy: alethcrv,
 				},
-				strategy: linkcrv,
-			},
-			cvx: {
-				yaxisAPR: {
-					min: cvx.minAPR,
-					max: cvx.maxAPR,
+				link: {
+					yaxisAPR: {
+						min: link.minAPR,
+						max: link.maxAPR,
+					},
+					strategy: linkcrv,
 				},
-				strategy: crvcvxeth,
-			},
-			tricrypto: {
-				yaxisAPR: {
-					min: tricrypto.minAPR,
-					max: tricrypto.maxAPR,
+				cvx: {
+					yaxisAPR: {
+						min: cvx.minAPR,
+						max: cvx.maxAPR,
+					},
+					strategy: crvcvxeth,
 				},
-				strategy: crv3crypto,
-			},
-			frax: {
-				yaxisAPR: {
-					min: frax.minAPR,
-					max: frax.maxAPR,
+				tricrypto: {
+					yaxisAPR: {
+						min: tricrypto.minAPR,
+						max: tricrypto.maxAPR,
+					},
+					strategy: crv3crypto,
 				},
-				strategy: frax3crv,
-			},
-			yaxis: {
-				yaxisAPR: {
-					min: yaxis.minAPR,
-					max: yaxis.maxAPR,
+				frax: {
+					yaxisAPR: {
+						min: frax.minAPR,
+						max: frax.maxAPR,
+					},
+					strategy: frax3crv,
 				},
-				strategy: {
-					totalAPR: null,
+				yaxis: {
+					yaxisAPR: {
+						min: yaxis.minAPR,
+						max: yaxis.maxAPR,
+					},
+					strategy: null,
 				},
 			},
 		}
+		return output
 	}, [
 		usd,
 		btc,
@@ -272,36 +339,45 @@ const TEAM_FUND_ADDRESS = '0xEcD3aD054199ced282F0608C4f0cea4eb0B139bb'
 const TREASURY_ADDRESS = '0xC1d40e197563dF727a4d3134E8BD1DeF4B498C6f'
 
 export function useYaxisSupply() {
+	// TODO: make this work multi-chain
 	const { contracts } = useContracts()
 
 	const totalSupply = useSingleCallResult(
-		contracts?.currencies.ERC677.yaxis?.contract,
+		contracts?.currencies.ERC677?.yaxis?.contract,
 		'totalSupply',
 	)
 
 	const balances = useSingleContractMultipleData(
-		contracts?.currencies.ERC677.yaxis.contract,
+		contracts?.currencies.ERC677.yaxis?.contract,
 		'balanceOf',
 		[
-			[contracts?.internal.swap.address],
 			[DEV_FUND_ADDRESS],
 			[TEAM_FUND_ADDRESS],
 			[TREASURY_ADDRESS],
-			[contracts?.rewards['Uniswap YAXIS/ETH'].address],
 			[contracts?.internal.minterWrapper.address],
 		],
+	)
+
+	const ethereumBalances = useSingleContractMultipleData(
+		contracts?.currencies.ERC677.yaxis?.contract,
+		'balanceOf',
+		contracts?.currencies.ERC677.yaxis?.contract &&
+			'swap' in contracts?.internal
+			? [
+					[contracts?.internal.swap.address],
+					[contracts?.rewards['Uniswap YAXIS/ETH']?.address],
+			  ]
+			: [],
 	)
 
 	return useMemo(() => {
 		const { result: stakedSupply } = totalSupply
 
 		const [
-			unswapped,
 			devFund,
 			teamFund,
 			treasury,
 			metavaultRewards,
-			uniswapLPRewards,
 			yaxisRewards,
 			gauges,
 		] = balances.map(({ result, loading }) => {
@@ -309,6 +385,14 @@ export function useYaxisSupply() {
 			if (!result) return new BigNumber(0)
 			return new BigNumber(result.toString())
 		})
+
+		const [unswapped, uniswapLPRewards] = ethereumBalances.map(
+			({ result, loading }) => {
+				if (loading) return new BigNumber(0)
+				if (!result) return new BigNumber(0)
+				return new BigNumber(result.toString())
+			},
+		)
 
 		const notCirculating = (unswapped || new BigNumber(0))
 			.plus(devFund || 0)
@@ -332,18 +416,18 @@ export function useYaxisSupply() {
 			yaxisRewards: yaxisRewards || new BigNumber(0),
 			gauges: gauges || new BigNumber(0),
 		}
-	}, [totalSupply, balances])
+	}, [totalSupply, balances, ethereumBalances])
 }
 
-const useRewardAPR = (rewardsContract: TRewardsContracts) => {
+const useRewardAPR = (rewardsContract: TRewardsContracts, active: boolean) => {
 	const { contracts } = useContracts()
 
 	const rewardData = useSingleContractMultipleMethods(
-		contracts?.rewards[rewardsContract],
+		active ? contracts?.rewards[rewardsContract] : null,
 		[['duration'], ['totalSupply']],
 	)
 	const balance = useSingleCallResult(
-		contracts?.currencies.ERC677.yaxis.contract,
+		active && contracts?.currencies.ERC677.yaxis.contract,
 		'balanceOf',
 		[contracts?.rewards[rewardsContract]?.address],
 	)
@@ -435,7 +519,106 @@ const useRewardAPR = (rewardsContract: TRewardsContracts) => {
 	])
 }
 
-export function useLiquidityPool(name: TLiquidityPools) {
+const useAvalancheRewardAPR = (
+	rewardsContract: TRewardsContracts,
+	active: boolean,
+) => {
+	const { contracts } = useContracts()
+
+	const { result: emission } = useSingleCallResult(
+		active ? contracts?.rewards[rewardsContract] : null,
+		'emission',
+	)
+	const balance = useSingleCallResult(
+		active && contracts?.currencies.ERC677.yaxis.contract,
+		'balanceOf',
+		[contracts?.rewards[rewardsContract]?.address],
+	)
+
+	const {
+		prices: { yaxis },
+	} = usePrices()
+
+	// TODO
+	const { tvl: metaVaultTVL } = { tvl: 0 }
+
+	const pool = useMemo(
+		() =>
+			Object.values(contracts?.pools || {}).find(
+				(p) => p.rewards === rewardsContract,
+			)?.lpContract,
+		[contracts, rewardsContract],
+	)
+
+	const reserves = useSingleCallResult(pool, 'getReserves')
+
+	return useMemo(() => {
+		let tvl = new BigNumber(0)
+		if (pool)
+			tvl = new BigNumber(
+				reserves?.result?.['_reserve0']?.toString() || 0,
+			).plus(
+				new BigNumber(
+					reserves?.result?.['_reserve1']?.toString() || 0,
+				).multipliedBy(
+					new BigNumber(
+						reserves?.result?.['_reserve0']?.toString() || 0,
+					).dividedBy(
+						new BigNumber(
+							reserves?.result?.['_reserve1']?.toString(),
+						) || 0,
+					),
+				),
+			)
+		// else if (rewardsContract === 'Yaxis' || rewardsContract === 'MetaVault')
+		// 	tvl = new BigNumber(totalSupply.toString() || 0)
+		// else if (metaVaultTVL && yaxis)
+		// 	tvl = new BigNumber(metaVaultTVL)
+		// 		.dividedBy(yaxis)
+		// 		.multipliedBy(10 ** 18)
+
+		// const balanceBN = new BigNumber(balance?.result?.toString() || 0)
+		let funding = new BigNumber(0)
+		if (rewardsContract === 'Yaxis') funding = new BigNumber(0)
+		else if (rewardsContract === 'MetaVault') funding = new BigNumber(0)
+		// else funding = balanceBN
+		// const period = new BigNumber(duration.toString() || 0).dividedBy(86400)
+		// const AVERAGE_BLOCKS_PER_DAY = 6450
+		const rewardsPerBlock =
+			// funding.isZero()
+			// ?
+			new BigNumber(0)
+		// : funding
+		// 		.dividedBy(period)
+		// 		.dividedBy(AVERAGE_BLOCKS_PER_DAY)
+		// 		.dividedBy(10 ** 18)
+
+		const rewardPerToken =
+			// tvl.isZero()
+			// ?
+			new BigNumber(0)
+		// : funding.dividedBy(tvl)
+
+		const apr = rewardPerToken
+		// .dividedBy(period)
+		// .multipliedBy(365)
+		// .multipliedBy(100)
+		return {
+			rewardsPerBlock: new BigNumber(rewardsPerBlock.toString() || 0),
+			apr: new BigNumber(apr.toString() || 0),
+		}
+	}, [
+		yaxis,
+		emission,
+		pool,
+		balance,
+		metaVaultTVL,
+		reserves.result,
+		rewardsContract,
+	])
+}
+
+export function useLiquidityPool(name: TLiquidityPoolsE) {
 	const { contracts } = useContracts()
 
 	const { prices } = usePrices()
@@ -445,7 +628,7 @@ export function useLiquidityPool(name: TLiquidityPools) {
 	const data = useSingleContractMultipleMethods(LP?.lpContract, [
 		['getReserves'],
 		['totalSupply'],
-		['balanceOf', [contracts?.rewards['Uniswap YAXIS/ETH'].address]],
+		['balanceOf', [contracts?.rewards?.['Uniswap YAXIS/ETH']?.address]],
 	])
 
 	return useMemo(() => {
@@ -498,17 +681,20 @@ export function useLiquidityPool(name: TLiquidityPools) {
 	}, [prices, data, LP?.lpTokens, contracts?.pools, name])
 }
 
-export function useLiquidityPools() {
+export function useLiquidityPools(): Record<
+	TLiquidityPoolsE | TLiquidityPoolsA,
+	any
+> {
 	const linkswapYaxEth = useLiquidityPool('Linkswap YAX/ETH')
 	const uniswapYaxEth = useLiquidityPool('Uniswap YAX/ETH')
 	const uniswapYaxisEth = useLiquidityPool('Uniswap YAXIS/ETH')
+	const traderjoeJoeAvax = {} // TODO
 
 	return {
-		pools: {
-			'Uniswap YAX/ETH': uniswapYaxEth,
-			'Uniswap YAXIS/ETH': uniswapYaxisEth,
-			'Linkswap YAX/ETH': linkswapYaxEth,
-		},
+		'Uniswap YAX/ETH': uniswapYaxEth,
+		'Uniswap YAXIS/ETH': uniswapYaxisEth,
+		'Linkswap YAX/ETH': linkswapYaxEth,
+		'TraderJoe JOE/AVAX': traderjoeJoeAvax,
 	}
 }
 
@@ -519,7 +705,7 @@ export function useTVL() {
 
 	const { prices } = usePrices()
 
-	const { pools } = useLiquidityPools()
+	const pools = useLiquidityPools()
 
 	const veSupply = useSingleCallResult(
 		contracts?.internal.votingEscrow,
@@ -527,12 +713,16 @@ export function useTVL() {
 	)
 
 	const totalSupply = useSingleCallResult(
-		contracts?.rewards.Yaxis,
+		contracts?.rewards && 'Yaxis' in contracts?.rewards
+			? contracts?.rewards.Yaxis
+			: null,
 		'totalSupply',
 	)
 
 	const metavaultTotalSupply = useSingleCallResult(
-		contracts?.internal.yAxisMetaVault,
+		contracts?.internal && 'yAxisMetaVault' in contracts?.internal
+			? contracts?.internal.yAxisMetaVault
+			: null,
 		'totalSupply',
 	)
 
@@ -555,7 +745,8 @@ export function useTVL() {
 
 		const vaultTvl = Object.fromEntries(
 			Object.entries(vaults).map(([vault, data]) => {
-				const token = contracts?.vaults[vault].token.name?.toLowerCase()
+				const token =
+					contracts?.vaults[vault]?.token.name?.toLowerCase()
 				return [
 					vault,
 					new BigNumber(
@@ -569,7 +760,8 @@ export function useTVL() {
 
 		const vaultsTvl = Object.entries(vaults).reduce(
 			(total, [vault, data]) => {
-				const token = contracts?.vaults[vault].token.name?.toLowerCase()
+				const token =
+					contracts?.vaults[vault]?.token.name?.toLowerCase()
 				return total.plus(
 					data.pricePerFullShare
 						.multipliedBy(data.totalSupply.dividedBy(10 ** 18))
@@ -613,9 +805,27 @@ export function useAPY(
 	rewardsContract: TRewardsContracts,
 	strategyPercentage = 1,
 ) {
-	const curveRewardsAPRs = useCurvePoolRewards('3pool')
-	const curveBaseAPR = useFetchCurvePoolBaseAPR()
-	const { rewardsPerBlock, apr: rewardsAPR } = useRewardAPR(rewardsContract)
+	// const curveRewardsAPRs = useCurvePoolRewards('3pool')
+	// const curveBaseAPR = useFetchCurvePoolBaseAPR()
+	const {
+		rewardsPerBlock: rewardsPerBlockEthereum,
+		apr: rewardsAPREthereum,
+	} = useRewardAPR(rewardsContract, false)
+
+	const {
+		rewardsPerBlock: rewardsPerBlockAvalanche,
+		apr: rewardsAPRAvalanche,
+	} = useAvalancheRewardAPR(rewardsContract, false)
+
+	const rewardsAPR = useMemo(
+		() => rewardsAPREthereum || rewardsAPRAvalanche,
+		[rewardsPerBlockEthereum, rewardsPerBlockAvalanche],
+	)
+
+	const rewardsPerBlock = useMemo(
+		() => rewardsPerBlockEthereum || rewardsPerBlockAvalanche,
+		[rewardsPerBlockEthereum, rewardsPerBlockAvalanche],
+	)
 
 	return useMemo(() => {
 		const yaxisAprPercent = rewardsAPR
@@ -628,7 +838,8 @@ export function useAPY(
 			.multipliedBy(100)
 
 		const lpAprPercent = new BigNumber(
-			curveBaseAPR.apy.day['3pool'] || 0,
+			// curveBaseAPR.apy.day['3pool'] ||
+			0,
 		).times(100)
 		let lpApyPercent = lpAprPercent
 			.div(100)
@@ -640,7 +851,10 @@ export function useAPY(
 			.decimalPlaces(18)
 		lpApyPercent = lpApyPercent.multipliedBy(strategyPercentage)
 
-		const threeCrvAprPercent = new BigNumber(curveRewardsAPRs['3crv'])
+		const threeCrvAprPercent = new BigNumber(
+			0,
+			// curveRewardsAPRs['3crv']
+		)
 		let threeCrvApyPercent = threeCrvAprPercent
 			.div(100)
 			.div(12)
@@ -667,8 +881,8 @@ export function useAPY(
 			rewardsPerBlock,
 		}
 	}, [
-		curveRewardsAPRs,
-		curveBaseAPR,
+		// curveRewardsAPRs,
+		// curveBaseAPR,
 		rewardsAPR,
 		strategyPercentage,
 		rewardsPerBlock,

@@ -7,12 +7,7 @@ import Davatar from '@davatar/react'
 import { useOpenModal } from '../../../state/application/hooks'
 import { ApplicationModal } from '../../../state/application/actions'
 import AccountInfo from '../components/AccountInfo'
-import {
-	network,
-	NETWORK_NAMES,
-	FRIENDLY_NETWORK_NAMES,
-} from '../../../connectors'
-import { useWeb3React } from '@web3-react/core'
+import { NETWORK_NAMES, FRIENDLY_NETWORK_NAMES } from '../../../connectors'
 import { useClearPendingTransactions } from '../../../state/transactions/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 
@@ -20,7 +15,6 @@ const AccountButton: React.FC = () => {
 	const translate = useTranslation()
 
 	const { account, deactivate, chainId } = useWeb3Provider()
-	const { activate } = useWeb3React('fallback')
 
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 	const friendlyNetworkName = useMemo(
@@ -33,8 +27,7 @@ const AccountButton: React.FC = () => {
 	const handleSignOutClick = useCallback(() => {
 		localStorage.setItem('signOut', account)
 		deactivate()
-		activate(network)
-	}, [activate, deactivate, account])
+	}, [deactivate, account])
 
 	const handleClearPending = useClearPendingTransactions()
 
@@ -109,6 +102,22 @@ const StyledButton = styled(Button)`
 	font-weight: bold;
 	font-size: 1em;
 	height: 38px;
+	border-radius: 7px;
+
+	&:hover {
+		border-color: ${(props) => props.theme.colors.brandBlue};
+		color: ${(props) => props.theme.colors.brandBlue};
+	}
+
+	&:active {
+		border-color: ${(props) => props.theme.colors.brandBlue};
+		color: ${(props) => props.theme.colors.brandBlue};
+	}
+
+	&:focus {
+		border-color: ${(props) => props.theme.colors.brandBlue};
+		color: ${(props) => props.theme.colors.brandBlue};
+	}
 
 	@media only screen and (max-width: 1100px) {
 		height: 32px;

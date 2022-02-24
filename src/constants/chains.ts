@@ -4,7 +4,7 @@ import avalancheLogo from '../assets/img/currencies/avax.svg'
 /**
  * List of all of the supported blockchains
  */
-export enum SupportedChainId {
+export enum ChainId {
 	ETHEREUM_MAINNET = 1,
 	ETHEREUM_KOVAN = 42,
 
@@ -26,19 +26,21 @@ if (
 
 /**
  * Array of all the supported chain IDs
+ * Only mainnet is publicly switch-able
  */
-export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = Object.values(
-	SupportedChainId,
-).filter((id) => typeof id === 'number') as SupportedChainId[]
+export const ALL_SUPPORTED_CHAIN_IDS: ChainId[] = Object.entries(ChainId)
+	.filter(
+		([name, id]) =>
+			typeof id === 'number' && name.split('_')?.[1] === 'MAINNET',
+	)
+	.map(([, id]) => id) as ChainId[]
 
-/**
- * All the chain IDs that are running the Ethereum protocol.
- */
+export type L1_CHAIN = 'avalanche' | 'ethereum'
 export const L1_CHAIN_IDS = [
-	SupportedChainId.ETHEREUM_MAINNET,
-	SupportedChainId.ETHEREUM_KOVAN,
-	SupportedChainId.AVALANCHE_MAINNET,
-	SupportedChainId.AVALANCHE_FUJI,
+	ChainId.ETHEREUM_MAINNET,
+	ChainId.ETHEREUM_KOVAN,
+	ChainId.AVALANCHE_MAINNET,
+	ChainId.AVALANCHE_FUJI,
 ] as const
 
 export type SupportedL1ChainId = typeof L1_CHAIN_IDS[number]
@@ -47,6 +49,7 @@ export type SupportedL1ChainId = typeof L1_CHAIN_IDS[number]
  * Controls some L2 specific behavior, e.g. slippage tolerance, special UI behavior.
  * The expectation is that all of these networks have immediate transaction confirmation.
  */
+export type L2_CHAIN = ''
 export const L2_CHAIN_IDS = [] as const
 
 export type SupportedL2ChainId = typeof L2_CHAIN_IDS[number]
@@ -54,15 +57,13 @@ export type SupportedL2ChainId = typeof L2_CHAIN_IDS[number]
 /**
  * These are the network URLs used by the interface when there is not another available source of chain data
  */
-export const INFURA_NETWORK_URLS: { [key in SupportedChainId]: string } = {
-	[SupportedChainId.ETHEREUM_MAINNET]:
+export const NETWORK_URLS: { [key in ChainId]: string } = {
+	[ChainId.ETHEREUM_MAINNET]:
 		RPC_URL_1 || `https://mainnet.infura.io/v3/${INFURA_KEY}`,
-	[SupportedChainId.ETHEREUM_KOVAN]:
+	[ChainId.ETHEREUM_KOVAN]:
 		RPC_URL_42 || `https://kovan.infura.io/v3/${INFURA_KEY}`,
-	[SupportedChainId.AVALANCHE_MAINNET]:
-		'https://api.avax.network/ext/bc/C/rpc',
-	[SupportedChainId.AVALANCHE_FUJI]:
-		'https://api.avax-test.network/ext/bc/C/rpc',
+	[ChainId.AVALANCHE_MAINNET]: 'https://api.avax.network/ext/bc/C/rpc',
+	[ChainId.AVALANCHE_FUJI]: 'https://api.avax-test.network/ext/bc/C/rpc',
 }
 
 /**
@@ -83,6 +84,8 @@ export enum NetworkType {
 }
 
 interface BaseChainInfo {
+	readonly chainId: ChainId
+	readonly blockchain: L1_CHAIN | L2_CHAIN
 	readonly networkType: NetworkType
 	readonly blockWaitMsBeforeWarning?: number
 	readonly docs: string
@@ -113,7 +116,9 @@ export type ChainInfoMap = {
 } & { readonly [chainId in SupportedL1ChainId]: L1ChainInfo }
 
 export const CHAIN_INFO: ChainInfoMap = {
-	[SupportedChainId.ETHEREUM_MAINNET]: {
+	[ChainId.ETHEREUM_MAINNET]: {
+		chainId: ChainId.ETHEREUM_MAINNET,
+		blockchain: 'ethereum',
 		networkType: NetworkType.L1,
 		docs: '',
 		explorer: 'https://etherscan.io/',
@@ -122,10 +127,12 @@ export const CHAIN_INFO: ChainInfoMap = {
 		logoUrl: ethereumLogoUrl,
 		addNetworkInfo: {
 			nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-			rpcUrl: INFURA_NETWORK_URLS[SupportedChainId.ETHEREUM_MAINNET],
+			rpcUrl: NETWORK_URLS[ChainId.ETHEREUM_MAINNET],
 		},
 	},
-	[SupportedChainId.ETHEREUM_KOVAN]: {
+	[ChainId.ETHEREUM_KOVAN]: {
+		chainId: ChainId.ETHEREUM_KOVAN,
+		blockchain: 'ethereum',
 		networkType: NetworkType.L1,
 		docs: '',
 		explorer: 'https://kovan.etherscan.io/',
@@ -138,10 +145,12 @@ export const CHAIN_INFO: ChainInfoMap = {
 				symbol: 'kETH',
 				decimals: 18,
 			},
-			rpcUrl: INFURA_NETWORK_URLS[SupportedChainId.ETHEREUM_KOVAN],
+			rpcUrl: NETWORK_URLS[ChainId.ETHEREUM_KOVAN],
 		},
 	},
-	[SupportedChainId.AVALANCHE_MAINNET]: {
+	[ChainId.AVALANCHE_MAINNET]: {
+		chainId: ChainId.AVALANCHE_MAINNET,
+		blockchain: 'avalanche',
 		networkType: NetworkType.L1,
 		docs: '',
 		explorer: 'https://explorer.avax.network/',
@@ -150,10 +159,12 @@ export const CHAIN_INFO: ChainInfoMap = {
 		logoUrl: avalancheLogo,
 		addNetworkInfo: {
 			nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: 18 },
-			rpcUrl: INFURA_NETWORK_URLS[SupportedChainId.AVALANCHE_MAINNET],
+			rpcUrl: NETWORK_URLS[ChainId.AVALANCHE_MAINNET],
 		},
 	},
-	[SupportedChainId.AVALANCHE_FUJI]: {
+	[ChainId.AVALANCHE_FUJI]: {
+		chainId: ChainId.AVALANCHE_FUJI,
+		blockchain: 'avalanche',
 		networkType: NetworkType.L1,
 		docs: '',
 		explorer: 'https://explorer.avax-test.network/',
@@ -166,7 +177,7 @@ export const CHAIN_INFO: ChainInfoMap = {
 				symbol: 'kAVAX',
 				decimals: 18,
 			},
-			rpcUrl: INFURA_NETWORK_URLS[SupportedChainId.AVALANCHE_FUJI],
+			rpcUrl: NETWORK_URLS[ChainId.AVALANCHE_FUJI],
 		},
 	},
 }

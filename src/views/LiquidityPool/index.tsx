@@ -6,9 +6,9 @@ import LiquidityCard from './components/LiquidityCard'
 import LiquidityOverviewCard from './components/LiquidityOverviewCard'
 import PairStatsCard from './components/PairStatsCard'
 import './index.less'
-import { useAccountLP } from '../../state/wallet/hooks'
+import { useWalletLP } from '../../state/wallet/hooks'
 import { usePrices } from '../../state/prices/hooks'
-import { LiquidityPool } from '../../constants/type/ethereum'
+import { LiquidityPool } from '../../constants/type'
 import Stake from './components/Stake'
 import LegacyStake from './components/LegacyStake'
 import { red } from '../../theme/colors'
@@ -30,7 +30,7 @@ const StyledCol = styled(Col)`
 const Liquidity: React.FC<Props> = ({ pool }) => {
 	const translate = useTranslation()
 
-	const { stakedBalance, walletBalance } = useAccountLP(pool)
+	const { stakedBalance, walletBalance } = useWalletLP(pool.name)
 	const { reserves, totalSupply } = useLP(pool.name)
 
 	const {

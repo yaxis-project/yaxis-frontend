@@ -1,9 +1,10 @@
-import { Ticker } from '../../constants/type/ethereum'
+import { Ticker } from '../../constants/type'
 
 const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price'
 
 type CoinGeckoID = string
 const tokenCgkIdMap: { [key in Ticker]: CoinGeckoID } = {
+	// Ethereum
 	link: 'chainlink',
 	wbtc: 'wrapped-bitcoin',
 	mim: 'magic-internet-money',
@@ -29,6 +30,12 @@ const tokenCgkIdMap: { [key in Ticker]: CoinGeckoID } = {
 	crvcvxeth: '',
 	crv3crypto: '',
 	frax3crv: '',
+	// Avalanche
+	joe: 'joe',
+	wavax: 'wrapped-avax',
+	av3crv: '',
+	atricrypto: '',
+	avax: 'avalanche-2',
 }
 
 export async function getCoinGeckoPrices() {

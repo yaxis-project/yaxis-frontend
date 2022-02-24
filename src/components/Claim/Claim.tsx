@@ -7,9 +7,10 @@ import { useSingleCallResultByName } from '../../state/onchain/hooks'
 import { getBalanceNumber } from '../../utils/formatBalance'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import BigNumber from 'bignumber.js'
-import { TVaults, TRewardsContracts } from '../../constants/type/ethereum'
+import { TVaults, TRewardsContracts } from '../../constants/type'
 import useTranslation from '../../hooks/useTranslation'
 import { useContracts } from '../../contexts/Contracts'
+import { useChainInfo } from '../../state/user'
 
 type Props = {
 	vault?: TVaults
@@ -21,6 +22,7 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract, last }) => {
 	const translate = useTranslation()
 
 	const { account } = useWeb3Provider()
+	const chainInfo = useChainInfo()
 
 	if (!vault && !rewardsContract)
 		throw new Error(
@@ -46,7 +48,11 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract, last }) => {
 	const { loading: loadingClaimable, result: claimable } =
 		useSingleCallResultByName(
 			vault ? `vaults.${vault}.gauge` : `rewards.${rewardsContract}`,
-			vault ? 'claimable_tokens' : 'earned',
+			vault
+				? 'claimable_tokens'
+				: chainInfo.blockchain === 'avalanche'
+				? 'pending(address)'
+				: 'earned',
 			[account],
 		)
 

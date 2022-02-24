@@ -5,7 +5,7 @@ import Typography from '../../../components/Typography'
 import { Row } from 'antd'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { currentConfig } from '../../../constants/configs'
-import { TVaults } from '../../../constants/type/ethereum'
+import { TVaults } from '../../../constants/type'
 import styled from 'styled-components'
 
 const { Text } = Typography

@@ -54,6 +54,7 @@ const DoubleApprovalCover: React.FC<Props> = ({
 
 	const visible1 = useMemo(
 		() =>
+			account &&
 			!hidden1 &&
 			approvee1 &&
 			!loadingAllowance1 &&
@@ -102,6 +103,7 @@ const DoubleApprovalCover: React.FC<Props> = ({
 
 	const visible2 = useMemo(
 		() =>
+			account &&
 			!hidden2 &&
 			approvee2 &&
 			!loadingAllowance2 &&

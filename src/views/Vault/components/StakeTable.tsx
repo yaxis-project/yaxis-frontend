@@ -1,5 +1,4 @@
 import { useState, useMemo, useCallback } from 'react'
-import { Vaults, LPVaults } from '../../../constants/type/ethereum'
 import { Currencies, Currency } from '../../../constants/currencies'
 import {
 	useAllTokenBalances,
@@ -30,6 +29,7 @@ import ApprovalCover from '../../../components/ApprovalCover'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { Contracts } from '../../../constants/contracts'
+import { useChainInfo } from '../../../state/user'
 
 const { Text, Title } = Typography
 
@@ -134,14 +134,18 @@ const makeColumns = (
 								placement="topLeft"
 								title={
 									<div style={{ padding: '5px' }}>
-										{record.apr.strategy.totalAPR && (
-											<TooltipRow
-												main={'Strategy APR'}
-												value={record.apr.strategy.totalAPR
-													.multipliedBy(100)
-													.toNumber()}
-											/>
-										)}
+										{record.apr.strategy &&
+											record.apr.strategy.totalAPR && (
+												<TooltipRow
+													main={'Strategy APR'}
+													value={
+														record.apr.strategy &&
+														record.apr.strategy.totalAPR
+															.multipliedBy(100)
+															.toNumber()
+													}
+												/>
+											)}
 										<TooltipRow
 											main={'Rewards APR'}
 											value={record.apr.yaxisAPR
@@ -205,13 +209,13 @@ interface TableDataEntry extends Currency {
 
 interface StakeTableProps {
 	fees: TYaxisManagerData
-	currencies: Currency[]
+	vaults: [Currency, string][]
 }
 
 /**
  * Creates a stake table for the Vault account.
  */
-const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
+const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 	const translate = useTranslation()
 
 	const [balances, loading] = useAllTokenBalances()
@@ -220,6 +224,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 	const { md } = useBreakpoint()
 
 	const apr = useVaultsAPRWithBoost()
+	const { blockchain } = useChainInfo()
 
 	const { call: handleStakeETH, loading: isSubmittingETH } = useContractWrite(
 		{
@@ -321,10 +326,10 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
-		currencies.reduce(
-			(prev, curr) => ({
+		vaults.reduce(
+			(prev, [currency]) => ({
 				...prev,
-				[curr.tokenId]: '',
+				[currency.tokenId]: '',
 			}),
 			{},
 		),
@@ -335,13 +340,13 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 	}, [currencyValues, balances])
 
 	const totalDepositing = useMemo(
-		() => computeTotalDepositing(currencies, currencyValues, prices),
-		[currencies, currencyValues, prices],
+		() => computeTotalDepositing(vaults, currencyValues, prices),
+		[vaults, currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = Vaults.reduce<[string, string][]>(
-			(previous, vault) => {
+		const transactions = vaults.reduce<[string, string][]>(
+			(previous, [, vault]) => {
 				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
 				const _v = currencyValues[vaultToken]
 
@@ -369,23 +374,21 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 				),
 			)
 			setCurrencyValues(
-				currencies.reduce(
-					(prev, curr) => ({
+				vaults.reduce(
+					(prev, [currency]) => ({
 						...prev,
-						[curr.tokenId]: '',
+						[currency.tokenId]: '',
 					}),
 					{},
 				),
 			)
 		}
-	}, [currencies, currencyValues, callsLookup, totalDepositing])
+	}, [vaults, currencyValues, callsLookup, totalDepositing])
 
 	const data = useMemo(
 		() =>
-			currencies.map<TableDataEntry>((c) => {
-				const [lpToken, vault] = LPVaults.find(
-					([lpToken]) => c.tokenId === lpToken,
-				)
+			vaults.map<TableDataEntry>(([lpTokenCurrency, vault]) => {
+				const lpToken = lpTokenCurrency.tokenId
 				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
 				const currency = Currencies[vaultToken.toUpperCase()]
 				const balance = balances[vaultToken]?.amount || new BigNumber(0)
@@ -401,10 +404,10 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, currencies }) => {
 						: new BigNumber(0),
 					inputValue: currencyValues[vaultToken],
 					key: vault,
-					apr: apr[vault],
+					apr: apr[blockchain][vault],
 				}
 			}),
-		[currencies, prices, balances, currencyValues, apr],
+		[vaults, prices, balances, currencyValues, apr, blockchain],
 	)
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])

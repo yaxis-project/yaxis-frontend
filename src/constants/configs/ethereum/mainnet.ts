@@ -1,11 +1,11 @@
 import {
-	Config,
-	CurrenciesConfig,
-	ExternalConfig,
-	ExternalPoolsConfig,
+	EthereumConfig,
+	EthereumCurrenciesConfig,
+	EthereumExternalConfig,
+	EthereumExternalPoolsConfig,
 } from '../../type/ethereum'
 
-const currencies: CurrenciesConfig = {
+const currencies: EthereumCurrenciesConfig = {
 	ERC20: {
 		crv: '0xd533a949740bb3306d119cc777fa900ba034cd52',
 		wbtc: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
@@ -27,7 +27,7 @@ const currencies: CurrenciesConfig = {
 	},
 }
 
-const external: ExternalConfig = {
+const external: EthereumExternalConfig = {
 	multicall: '0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441',
 	pickleChef: '0xbD17B1ce622d73bD438b9E658acA5996dc394b0d',
 	pickleJar: '0x1BB74b5DdC1f4fC91D6f9E7906cf68bc93538e33',
@@ -35,7 +35,7 @@ const external: ExternalConfig = {
 	gaugeController: '0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB',
 }
 
-const externalPools: ExternalPoolsConfig = {
+const externalPools: EthereumExternalPoolsConfig = {
 	curve: {
 		mim3crv: {
 			currency: 'usd',
@@ -108,7 +108,7 @@ const externalPools: ExternalPoolsConfig = {
 	},
 }
 
-const mainnet: Config = {
+const mainnet: EthereumConfig = {
 	internal: {
 		// Current
 		manager: '0xAB72cC293B63f6477BAf9d514Da735Cf6caADC2d',

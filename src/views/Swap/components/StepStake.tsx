@@ -15,6 +15,7 @@ import { useContracts } from '../../../contexts/Contracts'
 import useContractWrite from '../../../hooks/useContractWrite'
 import { MAX_UINT } from '../../../utils/number'
 import { ethers } from 'ethers'
+import { EthereumContracts } from '../../../constants/contracts'
 
 const { Step } = Steps
 const { useBreakpoint } = Grid
@@ -34,7 +35,7 @@ interface StepStakeProps extends StepProps {
 const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 	const { xl } = useBreakpoint()
 	const { eth } = useETHBalances()
-	const { contracts } = useContracts()
+	const contracts = useContracts().contracts as EthereumContracts | null
 	const {
 		metavault: { staking: allowance },
 		uniYaxisEth: { staking: allowanceLP },

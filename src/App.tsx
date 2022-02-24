@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import Home from './views/Home'
 import Vault from './views/Vault'
@@ -11,13 +11,16 @@ import Faucet from './views/Faucet'
 import Governance from './views/Governance'
 import { notification } from 'antd'
 import { currentConfig } from './constants/configs'
-import { useWeb3React } from '@web3-react/core'
+import useWeb3Provider from './hooks/useWeb3Provider'
 import { useEagerConnect } from './hooks/useEagerConnect'
 import { useInactiveListener } from './hooks/useInactiveListener'
 
 import SwapBanner from './components/Banner/Banners/SwapBanner'
 import Modals from './components/Modals'
-import { TVaults } from './constants/type/ethereum'
+import { useChainInfo } from './state/user'
+import { TVaults } from './constants/type'
+import { LiquidityPool as LiquidityPoolEthereum } from './constants/type/ethereum'
+import { LiquidityPool as LiquidityPoolAvalanche } from './constants/type/avalanche'
 
 notification.config({
 	placement: 'topRight',
@@ -28,7 +31,9 @@ const App: React.FC = () => {
 	const triedEager = useEagerConnect()
 	useInactiveListener(!triedEager)
 
-	const { chainId } = useWeb3React()
+	const { chainId } = useWeb3Provider()
+
+	const chainInfo = useChainInfo()
 
 	const vaults = useMemo(
 		() => Object.keys(currentConfig(chainId).vaults) as TVaults[],
@@ -37,17 +42,21 @@ const App: React.FC = () => {
 
 	const activePools = useMemo(
 		() =>
-			Object.values(currentConfig(chainId).pools).filter(
-				(pool) => pool.active,
-			),
+			Object.values<LiquidityPoolEthereum | LiquidityPoolAvalanche>(
+				currentConfig(chainId).pools,
+			).filter((pool) => pool.active),
 		[chainId],
 	)
 
+	if (!chainId) return null
+
 	return (
-		<Suspense fallback={null}>
-			<SwapBanner />
+		<>
+			{chainInfo.blockchain === 'ethereum' && <SwapBanner />}
 			<Routes>
 				<Route path="/" element={<Home />} />
+
+				<Route path="/vault" element={<Vault />} />
 
 				{vaults.map((vault) => {
 					const key = `/vault/${vault}`
@@ -59,8 +68,6 @@ const App: React.FC = () => {
 						/>
 					)
 				})}
-
-				<Route path="/vault" element={<Vault />} />
 
 				<Route path="/liquidity" element={<Liquidity />} />
 
@@ -77,16 +84,18 @@ const App: React.FC = () => {
 
 				<Route path="/governance" element={<Governance />} />
 
-				<Route path="/swap" element={<Swap />} />
-
-				<Route path="/v3" element={<V3 />} />
-
-				<Route path="/faucet" element={<Faucet />} />
+				{chainInfo.blockchain === 'ethereum' && (
+					<>
+						<Route path="/swap" element={<Swap />} />
+						<Route path="/v3" element={<V3 />} />
+						<Route path="/faucet" element={<Faucet />} />
+					</>
+				)}
 
 				<Route path="*" element={<Navigate to="/" replace={true} />} />
 			</Routes>
 			<Modals />
-		</Suspense>
+		</>
 	)
 }
 

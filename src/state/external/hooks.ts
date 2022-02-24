@@ -2,9 +2,13 @@ import { useMemo, useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useContracts } from '../../contexts/Contracts'
 import {
-	TLiquidityPools,
-	TCurveLPContracts,
+	TLiquidityPools as TLiquidityPoolsE,
+	TCurveLPContracts as TCurveLPContractsE,
 } from '../../constants/type/ethereum'
+import {
+	TLiquidityPools as TLiquidityPoolsA,
+	TCurveLPContracts as TCurveLPContractsA,
+} from '../../constants/type/avalanche'
 import { usePrices } from '../prices/hooks'
 import {
 	useSingleCallResult,
@@ -13,6 +17,10 @@ import {
 } from '../onchain/hooks'
 import BigNumber from 'bignumber.js'
 import { abis } from '../../constants/abis/ethereum/mainnet'
+import {
+	AvalancheLiquidityPoolC,
+	EthereumLiquidityPoolC,
+} from '../../constants/contracts'
 
 const REWARD_INTERFACE = new ethers.utils.Interface(abis.RewardsABI)
 
@@ -48,17 +56,17 @@ const emptyReserves = {
 	_reserves0: ethers.BigNumber.from(0),
 	_reserves1: ethers.BigNumber.from(0),
 }
-export function useLP(name: TLiquidityPools) {
+export function useLP(name: TLiquidityPoolsE | TLiquidityPoolsA) {
 	const { contracts } = useContracts()
 
-	const contract = useMemo(() => contracts?.pools[name], [contracts, name])
+	const contract: AvalancheLiquidityPoolC | EthereumLiquidityPoolC = useMemo(
+		() => contracts?.pools[name],
+		[contracts, name],
+	)
 
-	const {
-		prices: {
-			[contract?.lpTokens?.[0]?.tokenId]: t0p,
-			[contract?.lpTokens?.[1]?.tokenId]: t1p,
-		},
-	} = usePrices()
+	const { prices } = usePrices()
+	const t0p: number = prices[contract?.lpTokens?.[0]?.tokenId]
+	const t1p: number = prices[contract?.lpTokens?.[1]?.tokenId]
 
 	const data = useSingleContractMultipleMethods(contract?.lpContract, [
 		['getReserves'],
@@ -106,7 +114,9 @@ export function useLP(name: TLiquidityPools) {
 	}, [contract, data, t0p, t1p])
 }
 
-export function useCurvePoolRewards(name: TCurveLPContracts) {
+export function useCurvePoolRewards(
+	name: TCurveLPContractsE | TCurveLPContractsA,
+) {
 	const { contracts } = useContracts()
 
 	const rate = useSingleCallResult(
@@ -180,50 +190,56 @@ function getCVXMintAmount(crvEarned: BigNumber, cvxSupply: BigNumber) {
 	return new BigNumber(0)
 }
 
-export function useConvexAPY(name: TCurveLPContracts, curvePoolv2 = false) {
+export function useConvexAPY(name: TCurveLPContractsE, curvePoolv2 = false) {
 	const { contracts } = useContracts()
 
 	const currency = useMemo(
-		() => contracts?.externalLP[name].currency,
+		() => contracts?.externalLP[name]?.currency,
 		[contracts, name],
 	)
 
 	const rate = useSingleCallResult(
-		contracts?.externalLP[name].convexRewards,
+		contracts?.externalLP[name]?.convexRewards,
 		'rewardRate()',
 	)
 
 	const { prices } = usePrices()
 
 	const virtualPriceV1 = useSingleCallResult(
-		contracts?.externalLP[name].pool,
+		contracts?.externalLP[name]?.pool,
 		'get_virtual_price()',
 	)
 	const virtualPrice = useMemo(
 		() =>
 			curvePoolv2
-				? { result: new BigNumber(prices[name]).multipliedBy(10 ** 18) }
+				? {
+						result: new BigNumber(prices[name] || 0).multipliedBy(
+							10 ** 18,
+						),
+				  }
 				: virtualPriceV1,
 		[name, curvePoolv2, prices, virtualPriceV1],
 	)
 
 	const cvxTotalSupply = useSingleCallResult(
-		contracts?.currencies.ERC20.cvx.contract,
+		contracts?.currencies.ERC20 && 'cvx' in contracts?.currencies.ERC20
+			? contracts?.currencies.ERC20.cvx.contract
+			: null,
 		'totalSupply()',
 	)
 
 	const rewardsTotalSupply = useSingleCallResult(
-		contracts?.externalLP[name].convexRewards,
+		contracts?.externalLP[name]?.convexRewards,
 		'totalSupply()',
 	)
 
 	const extras = useMemo(
-		() => Object.entries(contracts?.externalLP[name].extraRewards || {}),
+		() => Object.entries(contracts?.externalLP[name]?.extraRewards || {}),
 		[contracts, name],
 	)
 
 	const extrasData = useMultipleContractSingleData(
-		extras.map(([, config]) => config.contract.address),
+		extras.map(([, config]) => (config as any).contract.address),
 		REWARD_INTERFACE,
 		'rewardRate()',
 	)

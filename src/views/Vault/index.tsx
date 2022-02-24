@@ -8,7 +8,8 @@ import VaultStatsCard from './components/VaultStatsCard'
 // import RecentTransactionsCard from './components/RecentTransactionsCard'
 import './index.less'
 import { currentConfig } from '../../constants/configs'
-import { LPVaults } from '../../constants/type/ethereum'
+import { LPVaults as LPVaultsEthereum } from '../../constants/type/ethereum'
+import { LPVaults as LPVaultsAvalanche } from '../../constants/type/avalanche'
 import { Currencies } from '../../constants/currencies'
 import { etherscanUrl } from '../../utils'
 import { formatBN } from '../../utils/number'
@@ -17,6 +18,7 @@ import { NETWORK_NAMES } from '../../connectors'
 import { useVaultsBalances } from '../../state/wallet/hooks'
 import { useYaxisManager } from '../../state/internal/hooks'
 import useTranslation from '../../hooks/useTranslation'
+import { useChainInfo } from '../../state/user'
 
 const Vault: React.FC = () => {
 	const translate = useTranslation()
@@ -31,6 +33,11 @@ const Vault: React.FC = () => {
 	const address = currentConfig(chainId).internal.controller
 
 	const fees = useYaxisManager()
+
+	const { blockchain } = useChainInfo()
+
+	const vaults =
+		blockchain === 'ethereum' ? LPVaultsEthereum : LPVaultsAvalanche
 
 	return (
 		<div className="investing-view">
@@ -50,10 +57,10 @@ const Vault: React.FC = () => {
 						<VaultActionsCard
 							type="overview"
 							fees={fees}
-							currencies={LPVaults.map(
-								([lpToken]) =>
-									Currencies[lpToken.toUpperCase()],
-							)}
+							vaults={vaults.map(([lpToken, vault]) => [
+								Currencies[lpToken.toUpperCase()],
+								vault,
+							])}
 						/>
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>

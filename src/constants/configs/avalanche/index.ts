@@ -1,9 +1,11 @@
-import { Config } from '../../type/ethereum'
+import { ChainId } from '../../chains'
 
 import mainnet from './mainnet'
+import fuji from './fuji'
 
-const avalanche: Record<number, Config> = {
-	1: mainnet,
+const avalanche = {
+	[ChainId.AVALANCHE_FUJI]: fuji,
+	[ChainId.AVALANCHE_MAINNET]: mainnet,
 }
 
 export default avalanche
