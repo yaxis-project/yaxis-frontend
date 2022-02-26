@@ -48,6 +48,8 @@ const useERC20Transactions = () => {
 							// DEPOSIT MV
 							mvCurrs.forEach((c) => {
 								if (
+									'stableSwap3PoolConverter' in
+										config.internal &&
 									curr.tokenSymbol === c &&
 									curr.from === account.toLowerCase() &&
 									curr.to ===

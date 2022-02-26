@@ -68,15 +68,14 @@ const externalPools: AvalancheExternalPoolsConfig = {
 const fuji: AvalancheConfig = {
 	internal: {
 		// Current
-		manager: '0x16Fe974Ac6E594C54971abC3D52642A7f25Eb2d9',
-		controller: '0xF25bB60Ae2b8af55091Da5DfDB4d3Ded65692168',
-		vaultHelper: '0xE41492B7cA12D3f8a453cd027096B1a3D1D256B0',
-		minter: '0x5eeE22c1C3C8F7816989c370a18ccF38206e11a3',
-		minterWrapper: '0xeB690B7c96eA5f803fc0a68B6709F558dc78862C',
-		stableSwap3PoolConverter: '',
-		votingEscrow: '0xfCC55AEadf4547cC599f4AaC35Ba29DE446ED90F',
-		gaugeController: '0x451F3A4685f418Abcb6Ba94c7a7b45aEcDfd4Df3',
-		feeDistributor: '0x181cB46c9E189bE76429aB18DEA5f8332Ce4Baf7',
+		manager: '',
+		controller: '',
+		vaultHelper: '',
+		minter: '',
+		minterWrapper: '',
+		votingEscrow: '',
+		gaugeController: '',
+		feeDistributor: '',
 	},
 	rewards: {
 		'TraderJoe JOE/AVAX': '',
@@ -89,8 +88,8 @@ const fuji: AvalancheConfig = {
 			tokenContract: externalPools.curve.av3crv.token,
 			vault: '0x9261528CedDC2454dF4A240396724baE19EF0977',
 			vaultToken: 'CV:AV3CRV',
-			vaultTokenContract: '0x9E8173d0c832515D73619E03c21BD72ad0ab6E97',
-			gauge: '0xAC8787a100B22e989f16de2f7a220BeAE39D6B45',
+			vaultTokenContract: '',
+			gauge: '',
 		},
 		tricrypto: {
 			url: 'https://avax.curve.fi/atricrypto',
