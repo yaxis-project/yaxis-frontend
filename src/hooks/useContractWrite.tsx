@@ -11,7 +11,7 @@ import {
 import { calculateGasMargin } from '../utils/number'
 import { LoadingOutlined } from '@ant-design/icons'
 import { NETWORK_NAMES } from '../connectors'
-import { etherscanUrl } from '../utils'
+import { getExplorerUrl } from '../utils'
 
 interface Params {
 	contractName: string
@@ -74,7 +74,7 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				)
 				config.gasLimit = calculateGasMargin(gasCost)
 
-				c.callStatic[method](...(args || []), config)
+				await c.callStatic[method](...(args || []), config)
 
 				if (amount) config.value = amount
 				const m = c[method]
@@ -104,7 +104,7 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 					icon: <LoadingOutlined />,
 					onClick: () =>
 						window.open(
-							etherscanUrl(`/tx/${receipt?.hash}`, networkName),
+							getExplorerUrl(`/tx/${receipt?.hash}`),
 							'_blank',
 						),
 				})

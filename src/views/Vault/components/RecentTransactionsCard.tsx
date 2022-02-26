@@ -10,7 +10,7 @@ import { TransactionDetails } from '../../../state/transactions/reducer'
 import { useAllTransactions } from '../../../state/transactions/hooks'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { NETWORK_NAMES } from '../../../connectors'
-import { etherscanUrl } from '../../../utils'
+import { getExplorerUrl } from '../../../utils'
 import styled from 'styled-components'
 import moment from 'moment'
 
@@ -72,7 +72,7 @@ const RecentTransactionRow = ({
 
 	return (
 		<a
-			href={etherscanUrl(`/tx/${transaction.hash}`, networkName)}
+			href={getExplorerUrl(`/tx/${transaction.hash}`)}
 			target="_blank"
 			rel="noopener noreferrer"
 		>

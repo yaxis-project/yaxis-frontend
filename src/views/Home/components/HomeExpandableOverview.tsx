@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
-import { useContracts } from '../../../contexts/Contracts'
 import { useTVL } from '../../../state/internal/hooks'
 import { useYaxisSupply } from '../../../state/internal/hooks'
 import { usePrices } from '../../../state/prices/hooks'
@@ -14,6 +13,7 @@ import CardRow from '../../../components/CardRow'
 import Divider from '../../../components/Divider'
 import Typography from '../../../components/Typography'
 import useTranslation from '../../../hooks/useTranslation'
+import { getYaxisUrl } from '../../../utils'
 
 const { SecondaryText } = Typography
 
@@ -46,7 +46,6 @@ const TooltipRow = ({ main, value }: TooltipRowProps) => (
 export default function HomeExpandableOverview() {
 	const translate = useTranslation()
 
-	const { contracts } = useContracts()
 	const { prices } = usePrices()
 
 	const {
@@ -118,7 +117,7 @@ export default function HomeExpandableOverview() {
 				rightContent={
 					<Col lg={18} md={12} sm={12} xs={12}>
 						<a
-							href={`https://app.uniswap.org/#/swap?outputCurrency=${contracts?.currencies.ERC677.yaxis?.contract.address}`}
+							href={getYaxisUrl()}
 							target="_blank"
 							rel="noopener noreferrer"
 						>

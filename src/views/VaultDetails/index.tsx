@@ -6,7 +6,7 @@ import Typography from '../../components/Typography'
 import { NavLink } from 'react-router-dom'
 import { Row, Col } from 'antd'
 import { currentConfig } from '../../constants/configs'
-import { etherscanUrl } from '../../utils'
+import { getExplorerUrl } from '../../utils'
 import { formatBN } from '../../utils/number'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { NETWORK_NAMES } from '../../connectors'
@@ -51,7 +51,7 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 			mainTitle={`${vault.toUpperCase()} Vault`}
 			secondaryText={'Vault Contract'}
 			secondaryTextLink={
-				address && etherscanUrl(`/address/${address}#code`, networkName)
+				address && getExplorerUrl(`/address/${address}#code`)
 			}
 			value={'$' + formatBN(balances.balances[vault].usd)}
 			valueInfo="Balance"

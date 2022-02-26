@@ -11,7 +11,7 @@ import { currentConfig } from '../../constants/configs'
 import { LPVaults as LPVaultsEthereum } from '../../constants/type/ethereum'
 import { LPVaults as LPVaultsAvalanche } from '../../constants/type/avalanche'
 import { Currencies } from '../../constants/currencies'
-import { etherscanUrl } from '../../utils'
+import { getExplorerUrl } from '../../utils'
 import { formatBN } from '../../utils/number'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { NETWORK_NAMES } from '../../connectors'
@@ -46,8 +46,7 @@ const Vault: React.FC = () => {
 				mainTitle={translate('Vault Account')}
 				secondaryText={translate('Canonical Vaults')}
 				secondaryTextLink={
-					address &&
-					etherscanUrl(`/address/${address}#code`, networkName)
+					address && getExplorerUrl(`/address/${address}#code`)
 				}
 				value={'$' + formatBN(total)}
 				valueInfo={translate('Balance')}
