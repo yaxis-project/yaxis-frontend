@@ -7,7 +7,7 @@ import {
 	BlockOutlined,
 	CheckCircleTwoTone,
 } from '@ant-design/icons'
-import { etherscanUrl } from '../../../utils'
+import { getExplorerUrl } from '../../../utils'
 import useTranslation from '../../../hooks/useTranslation'
 import { useENS } from '../../../hooks/useENS'
 
@@ -94,10 +94,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 							<StyledBlockOutlined />
 							<StyledText mobile={`${mobile}`}>
 								<a
-									href={etherscanUrl(
-										`/address/${account}`,
-										networkName,
-									)}
+									href={getExplorerUrl(`/address/${account}`)}
 									rel="noopener noreferrer"
 									target="_blank"
 								>

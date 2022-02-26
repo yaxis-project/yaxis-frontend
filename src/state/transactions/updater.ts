@@ -5,7 +5,7 @@ import { useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
 import { checkedTransaction, finalizeTransaction } from './actions'
 import { notification } from 'antd'
-import { etherscanUrl } from '../../utils'
+import { getExplorerUrl } from '../../utils'
 import { NETWORK_NAMES } from '../../connectors'
 import { SerializableTransactionReceipt } from '.'
 
@@ -92,10 +92,7 @@ export default function Updater(): null {
 									style: clickableStyle,
 									onClick: () =>
 										window.open(
-											etherscanUrl(
-												`/tx/${tx?.hash}`,
-												networkName,
-											),
+											getExplorerUrl(`/tx/${tx?.hash}`),
 											'_blank',
 										),
 								})
@@ -107,10 +104,7 @@ export default function Updater(): null {
 									style: clickableStyle,
 									onClick: () =>
 										window.open(
-											etherscanUrl(
-												`/tx/${tx?.hash}`,
-												networkName,
-											),
+											getExplorerUrl(`/tx/${tx?.hash}`),
 											'_blank',
 										),
 								})

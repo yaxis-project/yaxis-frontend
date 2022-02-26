@@ -91,6 +91,7 @@ interface BaseChainInfo {
 	readonly docs: string
 	readonly bridge?: string
 	readonly explorer: string
+	readonly yaxisUrl: string
 	readonly infoLink: string
 	readonly logoUrl: string
 	readonly label: string
@@ -129,6 +130,8 @@ export const CHAIN_INFO: ChainInfoMap = {
 			nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
 			rpcUrl: NETWORK_URLS[ChainId.ETHEREUM_MAINNET],
 		},
+		yaxisUrl:
+			'https://app.uniswap.org/#/swap?outputCurrency=0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73',
 	},
 	[ChainId.ETHEREUM_KOVAN]: {
 		chainId: ChainId.ETHEREUM_KOVAN,
@@ -147,13 +150,14 @@ export const CHAIN_INFO: ChainInfoMap = {
 			},
 			rpcUrl: NETWORK_URLS[ChainId.ETHEREUM_KOVAN],
 		},
+		yaxisUrl: '',
 	},
 	[ChainId.AVALANCHE_MAINNET]: {
 		chainId: ChainId.AVALANCHE_MAINNET,
 		blockchain: 'avalanche',
 		networkType: NetworkType.L1,
 		docs: '',
-		explorer: 'https://explorer.avax.network/',
+		explorer: 'https://snowtrace.io/',
 		infoLink: '',
 		label: 'Avalanche',
 		logoUrl: avalancheLogo,
@@ -161,13 +165,15 @@ export const CHAIN_INFO: ChainInfoMap = {
 			nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: 18 },
 			rpcUrl: NETWORK_URLS[ChainId.AVALANCHE_MAINNET],
 		},
+		yaxisUrl:
+			'https://traderjoexyz.com/trade?inputCurrency=0x55853edc67aa68ec2e3903ac00f2bc5bf2ca8db0&outputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7#/',
 	},
 	[ChainId.AVALANCHE_FUJI]: {
 		chainId: ChainId.AVALANCHE_FUJI,
 		blockchain: 'avalanche',
 		networkType: NetworkType.L1,
 		docs: '',
-		explorer: 'https://explorer.avax-test.network/',
+		explorer: 'https://testnet.snowtrace.io/',
 		infoLink: '',
 		label: 'Fuji',
 		logoUrl: avalancheLogo,
@@ -179,5 +185,6 @@ export const CHAIN_INFO: ChainInfoMap = {
 			},
 			rpcUrl: NETWORK_URLS[ChainId.AVALANCHE_FUJI],
 		},
+		yaxisUrl: '',
 	},
 }

@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { useChainInfo } from '../state/user'
 
 export { default as formatAddress } from './formatAddress'
 
@@ -23,8 +24,12 @@ export function chunkArray<T>(items: T[], maxChunkSize: number): T[][] {
 	)
 }
 
-export function etherscanUrl(url: string, networkName: string) {
-	const baseUrl = 'etherscan.io'
-	const network = networkName === 'mainnet' ? '' : `${networkName}.`
-	return `https://${network}${baseUrl}${url}`
+export function getExplorerUrl(url: string) {
+	const chainInfo = useChainInfo()
+	return `https://${chainInfo.explorer}${url}`
+}
+
+export function getYaxisUrl() {
+	const chainInfo = useChainInfo()
+	return chainInfo.yaxisUrl
 }
