@@ -31,11 +31,13 @@ const tokenCgkIdMap: { [key in Ticker]: CoinGeckoID } = {
 	crv3crypto: '',
 	frax3crv: '',
 	// Avalanche
-	joe: 'joe',
+	avax: 'avalanche-2',
 	wavax: 'wrapped-avax',
+	joe: 'joe',
 	av3crv: '',
 	atricrypto: '',
-	avax: 'avalanche-2',
+	avwavax: '',
+	joewavax: '',
 }
 
 export async function getCoinGeckoPrices() {

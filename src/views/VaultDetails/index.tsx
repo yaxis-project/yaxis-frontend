@@ -9,7 +9,6 @@ import { currentConfig } from '../../constants/configs'
 import { getExplorerUrl } from '../../utils'
 import { formatBN } from '../../utils/number'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
-import { NETWORK_NAMES } from '../../connectors'
 import AccountOverview from './components/AccountOverview'
 import VaultStatsCard from './components/VaultStatsCard'
 // import UsersVaultDetails from './components/UsersVaultDetails'
@@ -18,11 +17,8 @@ import CurvePool from './components/CurvePool'
 import { useVaultsBalances } from '../../state/wallet/hooks'
 import { useYaxisManager } from '../../state/internal/hooks'
 import { TVaults } from '../../constants/type'
-import { LPVaults as LPVaultsEthereum } from '../../constants/type/ethereum'
-import { LPVaults as LPVaultsAvalanche } from '../../constants/type/avalanche'
-import { Currencies } from '../../constants/currencies'
 import VaultActionsCard from '../Vault/components/VaultActionsCard'
-import { useChainInfo } from '../../state/user'
+import { useContracts } from '../../contexts/Contracts'
 
 const { Text } = Typography
 
@@ -35,15 +31,20 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 
 	const { loading, ...balances } = useVaultsBalances()
 
-	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 	const address = currentConfig(chainId).vaults[vault].vault
 
 	const fees = useYaxisManager()
 
-	const { blockchain } = useChainInfo()
-
-	const vaults =
-		blockchain === 'ethereum' ? LPVaultsEthereum : LPVaultsAvalanche
+	const { contracts } = useContracts()
+	const vaults = useMemo(
+		() =>
+			contracts?.vaults
+				? Object.entries(contracts.vaults).filter(
+						([vaultName]) => vaultName === vault,
+				  )
+				: [],
+		[contracts, vault],
+	)
 
 	return (
 		<Page
@@ -94,18 +95,7 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 						<VaultActionsCard
 							type="details"
 							fees={fees}
-							vaults={[
-								[
-									Currencies[
-										vaults
-											.find(
-												([, name]) => name === vault,
-											)[0]
-											.toUpperCase()
-									],
-									vault,
-								],
-							]}
+							vaults={vaults}
 						/>
 						{/* <UsersVaultDetails vault={vault} /> */}
 						{/* <Converter vault={vault} /> */}

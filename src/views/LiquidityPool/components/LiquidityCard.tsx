@@ -102,7 +102,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 				icon={currency?.icon}
 				name={translate('Pool Tokens')}
 				balance={getFullDisplayBalance(
-					walletBalance?.value.plus(stakedBalance?.value),
+					walletBalance.value.plus(stakedBalance?.value),
 				)}
 				symbol={pool.symbol}
 			/>
@@ -127,7 +127,7 @@ const LiquidityCard: React.FC<Props> = ({ pool }) => {
 				<Col span={12}>
 					<Button
 						style={{ width: '100%' }}
-						disabled={!lpUrl || !walletBalance?.amount.toNumber()}
+						disabled={!lpUrl || !walletBalance.amount.toNumber()}
 						icon={<MinusOutlined />}
 						onClick={() =>
 							window.open(

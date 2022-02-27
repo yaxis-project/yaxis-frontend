@@ -14,9 +14,12 @@ import link from '../assets/img/currencies/link.svg'
 import wbtc from '../assets/img/currencies/wbtc.svg'
 import usd from '../assets/img/currencies/usd.svg'
 import avax from '../assets/img/currencies/avax.svg'
+import joe from '../assets/img/currencies/joe.svg'
+import aave from '../assets/img/currencies/aave.svg'
 import tricrypto from '../assets/img/currencies/tricrypto.svg'
 import linkswap from '../assets/img/icons/pool-token.svg'
 import yax from '../assets/img/logo-ui.svg'
+import { ethers } from 'ethers'
 
 export interface Currency {
 	name: string
@@ -40,6 +43,16 @@ export interface CurrencyApproved extends CurrencyContract {
 	approved: BigNumber // The raw value read from on-chain
 	owner: string
 	spender: string
+}
+
+export const DEFAULT_TOKEN_BALANCE: CurrencyValue = {
+	value: new BigNumber(0),
+	amount: new BigNumber(0),
+	contract: new Contract(ethers.constants.AddressZero, '[]'),
+	name: '',
+	tokenId: '',
+	icon: '',
+	decimals: 18,
 }
 
 /**
@@ -254,6 +267,48 @@ export const YAXISgauge: Currency = {
 	priceMapKey: 'yaxis',
 }
 
+export const AVWAVAX: Currency = {
+	name: 'AVWAVAX',
+	tokenId: 'avwavax',
+	icon: aave,
+	decimals: 18,
+}
+
+export const CVAVAX: Currency = {
+	name: 'CV:AVAX',
+	tokenId: 'cv:avax',
+	icon: avax,
+	decimals: 18,
+}
+
+export const CVAVAXgauge: Currency = {
+	name: 'CV:AVAX-GAUGE',
+	tokenId: 'cv:avax-gauge',
+	icon: avax,
+	decimals: 18,
+}
+
+export const JOEWAVAX: Currency = {
+	name: 'JOEWAVAX',
+	tokenId: 'joewavax',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVJOEWAVAX: Currency = {
+	name: 'CV:JOEWAVAX',
+	tokenId: 'cv:joewavax',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVJOEWAVAXgauge: Currency = {
+	name: 'CV:JOEWAVAX-GAUGE',
+	tokenId: 'cv:joewavax-gauge',
+	icon: joe,
+	decimals: 18,
+}
+
 // External
 
 export const DAI: Currency = {
@@ -288,11 +343,10 @@ export const SPELL: Currency = {
 	priceMapKey: 'spell',
 }
 
-// TODO
 export const JOE: Currency = {
 	name: 'JOE',
 	tokenId: 'joe',
-	icon: eth,
+	icon: joe,
 	decimals: 18,
 	priceMapKey: 'spell',
 }
@@ -354,6 +408,7 @@ export const USDT: Currency = {
 	decimals: 6,
 	priceMapKey: 'usdt',
 }
+
 export const USDC: Currency = {
 	name: 'USDC',
 	tokenId: 'usdc',
@@ -481,6 +536,12 @@ export const YAX_ETH_LINKSWAP_LP = {
 	tokenId: 'YAX_ETH_LINKSWAP_LP',
 }
 
+export const TRADERJOE_LP = {
+	name: 'TraderJoe LP token',
+	tokenId: 'YAXIS_WAVAX_TRADERJOE_LP',
+	icon: joe,
+}
+
 export const Currencies = {
 	USD,
 	BTC,
@@ -512,6 +573,12 @@ export const Currencies = {
 	AV3CRV,
 	'CV:AV3CRV': CVAV3CRV,
 	'CV:AV3CRV-GAUGE': CVAV3CRVgauge,
+	AVWAVAX,
+	'CV:AVAX': CVAVAX,
+	'CV:AVAX-GAUGE': CVAVAXgauge,
+	JOEWAVAX,
+	'CV:JOEWAVAX': CVJOEWAVAX,
+	'CV:JOEWAVAX-GAUGE': CVJOEWAVAXgauge,
 	FRAX,
 	TRICRYPTO,
 	MIM,
@@ -538,4 +605,5 @@ export const Currencies = {
 	YAXIS_ETH_UNISWAP_LP,
 	LINKSWAP_LP,
 	YAX_ETH_LINKSWAP_LP,
+	TRADERJOE_LP,
 }

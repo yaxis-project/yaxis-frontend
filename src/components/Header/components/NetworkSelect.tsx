@@ -1,14 +1,15 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import { Menu, Row, Col } from 'antd'
+import { Row, Col } from 'antd'
 import { useChain, useSetChain } from '../../../state/user/hooks'
 import { CHAIN_INFO, ALL_SUPPORTED_CHAIN_IDS } from '../../../constants/chains'
 // import useTranslation from '../../../hooks/useTranslation'
 import { switchToNetwork } from '../../../utils/switchToNetwork'
 import Typography from '../../Typography'
-import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { useWeb3React } from '@web3-react/core'
 import { networkConnectorFactory } from '../../../connectors'
+import Button from '../../Button'
+import Menu from '../../Menu'
 
 const { Text } = Typography
 
@@ -36,6 +37,25 @@ const NetworkSelect: React.FC = () => {
 				}
 				popupOffset={[-50, 5]}
 			>
+				<Menu.ItemGroup
+					key={'network-select-title'}
+					title={
+						<Row
+							align="middle"
+							justify="center"
+							style={{
+								fontSize: '16px',
+								paddingTop: '5px',
+							}}
+						>
+							<Text style={{ fontWeight: 800 }}>
+								Blockchain
+								{/* TODO: translation */}
+							</Text>
+						</Row>
+					}
+				/>
+
 				{ALL_SUPPORTED_CHAIN_IDS.map((id) => (
 					<Menu.Item
 						key={id}
@@ -80,6 +100,31 @@ const NetworkSelect: React.FC = () => {
 						</Row>
 					</Menu.Item>
 				))}
+
+				<Menu.ItemGroup
+					key={'network-select-bridge'}
+					title={
+						<Row
+							align="middle"
+							justify="center"
+							style={{
+								height: '40px',
+								fontSize: '16px',
+							}}
+						>
+							<Button height={'40px'}>
+								<a
+									href="https://app.multichain.org/#/router"
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									Bridge YAXIS
+									{/* TODO: translation */}
+								</a>
+							</Button>
+						</Row>
+					}
+				/>
 			</StyledSubMenu>
 		</StyledMenu>
 	)
@@ -87,7 +132,7 @@ const NetworkSelect: React.FC = () => {
 
 export default NetworkSelect
 
-const StyledMenu = styled(Menu)`
+const StyledMenu = styled(Menu.Menu)`
 	border-bottom: none;
 	background: none;
 	color: ${(props) => props.theme.colors.white} !important;

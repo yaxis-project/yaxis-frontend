@@ -12,7 +12,9 @@ import {
 	CurrenciesERC20 as CurrenciesERC20A,
 	CurrenciesERC677 as CurrenciesERC677A,
 	additionalCurrencies as additionalCurrenciesA,
-	crvLPCurrencies as crvLPCurrenciesA,
+	curveLPCurrencies as curveLPCurrenciesA,
+	aaveLPCurrencies as aaveLPCurrenciesA,
+	traderjoeLPCurrencies as traderjoeLPCurrenciesA,
 } from '../../constants/type/avalanche'
 
 const currentTimestamp = () => new Date().getTime()
@@ -29,14 +31,18 @@ export interface PriceState {
 
 export const initialState: PriceState = {
 	prices: Object.fromEntries([
+		// Ethereum
 		...CurrenciesERC20E.map((c) => [c, 0]),
 		...CurrenciesERC677E.map((c) => [c, 0]),
 		...additionalCurrenciesE.map((c) => [c, 0]),
 		...crvLPCurrenciesE.map((c) => [c, 0]),
+		// Avalanche
 		...CurrenciesERC20A.map((c) => [c, 0]),
 		...CurrenciesERC677A.map((c) => [c, 0]),
 		...additionalCurrenciesA.map((c) => [c, 0]),
-		...crvLPCurrenciesA.map((c) => [c, 0]),
+		...curveLPCurrenciesA.map((c) => [c, 0]),
+		...aaveLPCurrenciesA.map((c) => [c, 0]),
+		...traderjoeLPCurrenciesA.map((c) => [c, 0]),
 	]) as TPrices,
 	timestamp: currentTimestamp(),
 }

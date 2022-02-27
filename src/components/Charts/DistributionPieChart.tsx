@@ -6,10 +6,11 @@ import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { useGauges, useRewardRate } from '../../state/internal/hooks'
 import { LoadingOutlined } from '@ant-design/icons'
 import Typography from '../Typography'
+import { TVaults } from '../../constants/type'
 
 const { Title } = Typography
 
-const Colors: { [vault: string]: [number, number, number] } = {
+const Colors: { [vault in TVaults]: [number, number, number] } = {
 	usd: [0, 150, 0],
 	btc: [255, 159, 64],
 	eth: [77, 97, 233],
@@ -18,13 +19,11 @@ const Colors: { [vault: string]: [number, number, number] } = {
 	frax: [54, 162, 235],
 	tricrypto: [255, 99, 132],
 	cvx: [153, 102, 255],
+	av3crv: [54, 162, 235],
+	atricrypto: [255, 206, 86],
+	avax: [75, 192, 192],
+	joewavax: [153, 102, 255],
 }
-
-// 		'rgba(255, 99, 132, 1)',
-// 		'rgba(54, 162, 235, 1)',
-// 		'rgba(255, 206, 86, 1)',
-// 		'rgba(75, 192, 192, 1)',
-// 		'rgba(153, 102, 255, 1)',
 
 const randomBetween = (min, max) =>
 	min + Math.floor(Math.random() * (max - min + 1))

@@ -6,13 +6,13 @@ import {
 	CurrencyApproved,
 	ETH,
 	YAXIS,
+	DEFAULT_TOKEN_BALANCE,
 } from '../../constants/currencies'
 import {
 	TRewardsContracts,
 	RewardsContracts,
 	Vaults as VaultsEthereum,
 	TVaults as TVaultsEthereum,
-	LPVaults,
 } from '../../constants/type/ethereum'
 import {
 	TVaults as TVaultsAvalanche,
@@ -703,28 +703,34 @@ export function useLegacyReturns(pid: number) {
  * @param name The name of the LiquidityPool.
  */
 export function useWalletLP(name: TLiquidityPools) {
-	const { contracts } = useContracts()
+	const { contracts, loading } = useContracts()
 
-	const lp = useMemo(() => contracts?.pools[name], [name])
+	const liquidityPool = useMemo(() => contracts?.pools[name], [name])
 
-	const { totalSupply } = useLP(lp?.name)
+	const { totalSupply } = useLP(liquidityPool?.name)
 
-	const [{ [lp?.tokenSymbol]: walletBalance }] = useAllTokenBalances()
+	const [tokenBalances] = useAllTokenBalances()
+	const walletBalance = useMemo(
+		() =>
+			tokenBalances[liquidityPool?.tokenSymbol] ?? DEFAULT_TOKEN_BALANCE,
+		[tokenBalances, liquidityPool?.tokenSymbol],
+	)
 
 	const stakedBalances = useStakedBalances()
-	const stakedBalance: CurrencyValue = stakedBalances[lp?.rewards]
+	const stakedBalance = useMemo(
+		() => stakedBalances[liquidityPool?.rewards] ?? DEFAULT_TOKEN_BALANCE,
+		[stakedBalances, liquidityPool?.rewards],
+	)
 
 	return useMemo(() => {
-		const userBalance = new BigNumber(
-			walletBalance?.amount.toString() || 0,
-		).plus(stakedBalance?.amount.toString() || 0)
+		const userBalance = walletBalance.amount.plus(stakedBalance.amount)
 
 		const poolShare = totalSupply.isZero()
 			? new BigNumber(0)
 			: userBalance.dividedBy(totalSupply)
 
-		return { poolShare, walletBalance, stakedBalance }
-	}, [walletBalance, stakedBalance, totalSupply])
+		return { loading, poolShare, walletBalance, stakedBalance }
+	}, [loading, walletBalance, stakedBalance, totalSupply])
 }
 
 export function useWalletLPs(): Record<
@@ -734,12 +740,13 @@ export function useWalletLPs(): Record<
 	const linkswapYaxEth = useWalletLP('Linkswap YAX/ETH')
 	const uniswapYaxEth = useWalletLP('Uniswap YAX/ETH')
 	const uniswapYaxisEth = useWalletLP('Uniswap YAXIS/ETH')
+	const traderjoeYaxisWavax = useWalletLP('TraderJoe YAXIS/WAVAX')
 
 	return {
 		'Uniswap YAX/ETH': uniswapYaxEth,
 		'Uniswap YAXIS/ETH': uniswapYaxisEth,
 		'Linkswap YAX/ETH': linkswapYaxEth,
-		'TraderJoe JOE/AVAX': {} as any, //TODO,
+		'TraderJoe YAXIS/WAVAX': traderjoeYaxisWavax,
 	}
 }
 
@@ -780,9 +787,11 @@ interface TVaultsBalances {
 }
 
 export function useVaultsBalances() {
+	const { contracts } = useContracts()
 	const vaults = useVaults()
 	const [balances, loading] = useAllTokenBalances()
 	const { prices } = usePrices()
+
 	return useMemo(() => {
 		const defaultState = {
 			loading,
@@ -808,31 +817,34 @@ export function useVaultsBalances() {
 				]),
 			) as VaultBalance,
 		}
-		const withData = Object.entries(vaults).reduce<TVaultsBalances>(
-			(accumulator, [vault, data]) => {
-				const [lpToken] = LPVaults.find(
-					([, vaultName]) => vault === vaultName,
-				)
-				const vaultToken = balances[`cv:${vault}`]
-				const gaugeToken = balances[`cv:${vault}-gauge`]
-				const totalToken = (
-					vaultToken?.amount || new BigNumber(0)
-				).plus(gaugeToken?.amount || new BigNumber(0))
-				const usd = totalToken
-					.multipliedBy(data.pricePerFullShare)
-					.multipliedBy(prices[lpToken])
-				accumulator.balances[vault] = {
-					...data,
-					vaultToken,
-					gaugeToken,
-					totalToken,
-					usd,
-				}
-				accumulator.total.usd = accumulator.total.usd.plus(usd)
-				return accumulator
-			},
-			defaultState,
-		)
+
+		if (!contracts?.vaults) return defaultState
+
+		const withData = Object.entries(
+			contracts?.vaults,
+		).reduce<TVaultsBalances>((accumulator, [vault, config]) => {
+			const data = vaults[vault]
+			const vaultToken = balances[`cv:${vault}`]
+			const gaugeToken = balances[`cv:${vault}-gauge`]
+			const totalToken = (vaultToken?.amount || new BigNumber(0)).plus(
+				gaugeToken?.amount || new BigNumber(0),
+			)
+			const lpTokenPrice = prices[config.token.name.toLowerCase()]
+
+			const usd = totalToken
+				.multipliedBy(data.pricePerFullShare)
+				.multipliedBy(lpTokenPrice)
+
+			accumulator.balances[vault] = {
+				...data,
+				vaultToken,
+				gaugeToken,
+				totalToken,
+				usd,
+			}
+			accumulator.total.usd = accumulator.total.usd.plus(usd)
+			return accumulator
+		}, defaultState)
 
 		// Add YAXIS Gauge data
 		const yaxisGauge = vaults.yaxis
@@ -922,7 +934,7 @@ export function useLPsBalance(): LPsBalance {
 				'Linkswap YAX/ETH': {
 					usd: new BigNumber(0),
 				},
-				'TraderJoe JOE/AVAX': {
+				'TraderJoe YAXIS/WAVAX': {
 					usd: new BigNumber(0),
 				},
 				total: {
@@ -1169,7 +1181,11 @@ export function useUserBoost(vault: TVaults) {
 	}, [results])
 }
 
-export function useBoosts() {
+type useUserBoostReturn = {
+	[vault in TVaults]: ReturnType<typeof useUserBoost>
+}
+export function useBoosts(): useUserBoostReturn {
+	/** Ethereum */
 	const usd = useUserBoost('usd')
 	const btc = useUserBoost('btc')
 	const eth = useUserBoost('eth')
@@ -1178,6 +1194,12 @@ export function useBoosts() {
 	const tricrypto = useUserBoost('tricrypto')
 	const frax = useUserBoost('frax')
 	const yaxis = useUserBoost('yaxis')
+
+	/** Avalanche */
+	const av3crv = useUserBoost('av3crv')
+	const atricrypto = useUserBoost('atricrypto')
+	const avax = useUserBoost('avax')
+	const joewavax = useUserBoost('joewavax')
 
 	return useMemo(() => {
 		return {
@@ -1189,8 +1211,12 @@ export function useBoosts() {
 			tricrypto,
 			frax,
 			yaxis,
+			av3crv,
+			atricrypto,
+			avax,
+			joewavax,
 		}
-	}, [usd, btc, eth, link, cvx, tricrypto, frax, yaxis])
+	}, [usd, btc, eth, link, cvx, tricrypto, frax, yaxis, avax, joewavax])
 }
 
 type VaultsAPRWithBoost = VaultAPR & {

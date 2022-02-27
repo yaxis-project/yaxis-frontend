@@ -65,18 +65,23 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				)
 
 				const config: any = {
-					gasLimit: 1_000_000,
+					// gasLimit: 1_000_000,
 				}
 
-				const gasCost = await c.estimateGas[method](
-					...(args || []),
-					config,
-				)
-				config.gasLimit = calculateGasMargin(gasCost)
+				// const mEstimate = c.estimateGas[method]
+				// if (!mEstimate)
+				// 	throw new Error(`${method} not found on ${contractName}`)
 
-				await c.callStatic[method](...(args || []), config)
+				// const gasCost = await c.estimateGas[method](
+				// 	...(args || []),
+				// 	config,
+				// )
+				// config.gasLimit = calculateGasMargin(gasCost)
 
-				if (amount) config.value = amount
+				// await c.callStatic[method](...(args || []), config)
+
+				// if (amount) config.value = amount
+
 				const m = c[method]
 				if (!m)
 					throw new Error(`${method} not found on ${contractName}`)

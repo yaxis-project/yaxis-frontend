@@ -43,6 +43,8 @@ const CurvePool: React.FC<Props> = ({ vault }) => {
 					<TextLink
 						style={{ marginLeft: '4px' }}
 						href={vaultData.url}
+						target="_blank"
+						rel="noopener noreferrer"
 					>
 						depositing your{' '}
 						{vault === 'usd' ? 'USD coins' : vault.toUpperCase()}

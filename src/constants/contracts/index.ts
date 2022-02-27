@@ -1,9 +1,11 @@
-import { AvalancheContracts } from './avalanche'
-import { EthereumContracts } from './ethereum'
+import { EthereumContracts, VaultC as VaultCEthereum } from './ethereum'
+import { AvalancheContracts, VaultC as VaultCAvalanche } from './avalanche'
 
 import { ChainId, CHAIN_INFO } from '../chains'
 
 export type Contracts = AvalancheContracts | EthereumContracts
+
+export type VaultC = VaultCEthereum | VaultCAvalanche
 
 export const initializeContracts = (library: any, networkId: ChainId) => {
 	const chainInfo = CHAIN_INFO[networkId]

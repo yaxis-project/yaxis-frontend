@@ -24,7 +24,12 @@ import {
 	TVaults,
 	// ExternalLP,
 } from '../type/avalanche'
-import { ChainId } from '../../constants/chains'
+import {
+	ChainId,
+	CHAIN_INFO,
+	L1ChainInfo,
+	L2ChainInfo,
+} from '../../constants/chains'
 
 type InternalC = {
 	[key in TInternalContracts]: Contract
@@ -76,7 +81,7 @@ type LiquidityPoolC = {
 	[key in TLiquidityPools]: LiquidityPoolWithContract
 }
 
-interface VaultC {
+export interface VaultC {
 	token: CurrencyContract
 	vault: Contract
 	vaultToken: CurrencyContract
@@ -91,6 +96,9 @@ type VaultsC = {
 
 export class AvalancheContracts {
 	private config: AvalancheConfig
+
+	public chainInfo: L1ChainInfo | L2ChainInfo
+
 	public internal: InternalC
 	public external: ExternalC
 	public externalLP: ExternalLpC
@@ -102,6 +110,8 @@ export class AvalancheContracts {
 	constructor(provider: any, networkId: ChainId) {
 		const abis = networks[networkId]
 		this.config = configs[networkId] as AvalancheConfig
+
+		this.chainInfo = CHAIN_INFO[networkId]
 
 		this.internal = {} as InternalC
 		for (const title of InternalContracts) {
