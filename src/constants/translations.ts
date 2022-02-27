@@ -209,6 +209,7 @@ export type Phrases =
 	| 'Approve Deposit'
 	| 'Approve Withdraw'
 	| 'Current APR'
+	| 'Avalanche network support'
 	// | 'Add to Lock'
 	// TODO: Might need tweaks
 	| 'claim YAXIS'
@@ -435,6 +436,7 @@ const EN: Translations = {
 	'Approve Withdraw': 'Approve Withdraw',
 	Duration: 'Duration',
 	None: 'None',
+	'Avalanche network support': 'Avalanche network support',
 	English: 'English',
 	Korean: 'Korean',
 	Japanese: 'Japanese',
@@ -629,6 +631,7 @@ const ES: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Avalanche network support': '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
 	'Lock & Boost': '',
@@ -830,6 +833,7 @@ const KO: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Avalanche network support': '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
 	'Lock & Boost': '',
@@ -1032,6 +1036,7 @@ const ZH: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Avalanche network support': '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
 	'Lock & Boost': '',
@@ -1235,6 +1240,7 @@ const RU: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Avalanche network support': '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
 	'Lock & Boost': '',
@@ -1436,6 +1442,7 @@ const JA: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Avalanche network support': '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
 	'Lock & Boost': '',

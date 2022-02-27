@@ -1,9 +1,10 @@
-import { Title as V3_0_0title, Body as V3_0_0body } from './V3_0_0'
+import * as V3_0_0 from './V3_0_0'
+import * as V3_1_0 from './V3_1_0'
 
-export type UpdateVersion = 'V3_0_0'
+export type UpdateVersion = 'V3_0_0' | 'V3_1_0'
 
 interface TUpdate {
-	title: string
+	Title: string
 	Body: React.FC
 }
 
@@ -12,10 +13,8 @@ type TUpdates = {
 }
 
 const Updates: TUpdates = {
-	V3_0_0: {
-		title: V3_0_0title,
-		Body: V3_0_0body,
-	},
+	V3_0_0,
+	V3_1_0,
 }
 
 export { Updates }

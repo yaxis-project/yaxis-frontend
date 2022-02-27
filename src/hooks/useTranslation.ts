@@ -10,7 +10,8 @@ const useTranslation = () => {
 			if (!translations)
 				throw new Error(`Language ${language} is not supported`)
 			const translation = translations[text]
-			// if (!translation) throw new Error(`${language} Translation not found for '${text}''`)
+			if (!translation)
+				console.warn(`${language} Translation not found for '${text}''`)
 			return translation
 		},
 		[language],

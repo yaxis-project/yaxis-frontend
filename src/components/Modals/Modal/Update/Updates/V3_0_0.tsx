@@ -1,7 +1,6 @@
 import React from 'react'
 import { Row, Col, Carousel } from 'antd'
 import Button from '../../../../Button'
-import Typography from '../../../../Typography'
 import useTranslation from '../../../../../hooks/useTranslation'
 import { useNavigate } from 'react-router-dom'
 import { setLastSeenUpdate } from '../util'
@@ -10,8 +9,6 @@ import distribute from '../../../../../assets/img/distribute.gif'
 import lightdark from '../../../../../assets/img/light-dark.gif'
 import lock from '../../../../../assets/img/lock.gif'
 import vaults from '../../../../../assets/img/vaults.png'
-
-const { Title: AntTitle } = Typography
 
 export const Title = 'Welcome to yAxis 3.0'
 
@@ -24,13 +21,6 @@ export const Body: React.FC = () => {
 
 	return (
 		<>
-			<Row justify="center" style={{ marginBottom: '10px' }}>
-				<Col>
-					<AntTitle level={5}>
-						{translate("What's new") + ':'}
-					</AntTitle>
-				</Col>
-			</Row>
 			<Row justify="center">
 				<Col>
 					<Carousel autoplay>
