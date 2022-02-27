@@ -26,7 +26,7 @@ export function chunkArray<T>(items: T[], maxChunkSize: number): T[][] {
 
 export function getExplorerUrl(url: string) {
 	const chainInfo = useChainInfo()
-	return `https://${chainInfo.explorer}${url}`
+	return `${chainInfo.explorer}${url}`
 }
 
 export function getYaxisUrl() {

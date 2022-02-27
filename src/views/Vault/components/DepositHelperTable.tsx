@@ -29,7 +29,7 @@ import ApprovalCover from '../../../components/ApprovalCover'
 import { DoubleApprovalCover } from '../../../components/ApprovalCover/DoubleApprovalCover'
 import { TYaxisManagerData, VaultAPR } from '../../../state/internal/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
-import { Contracts } from '../../../constants/contracts'
+import { Contracts, VaultC } from '../../../constants/contracts'
 import { useChainInfo } from '../../../state/user'
 
 const { Text, Title } = Typography
@@ -49,8 +49,8 @@ const makeColumns = (
 			width: '135px',
 			sorter: (a, b) => a.vault.localeCompare(b.vault),
 			render: (text, record) => (
-				<Row align="middle">
-					<NavLink to={`/vault/${record.vault}`}>
+				<NavLink to={`/vault/${record.vault}`}>
+					<Row align="middle">
 						<img
 							src={record.icon}
 							height="36"
@@ -58,8 +58,8 @@ const makeColumns = (
 							alt="logo"
 						/>
 						<StyledText>{record.vault.toUpperCase()}</StyledText>
-					</NavLink>
-				</Row>
+					</Row>
+				</NavLink>
 			),
 		},
 		{
@@ -264,7 +264,7 @@ interface TableDataEntry extends Currency {
 
 interface DepositHelperTableProps {
 	fees: TYaxisManagerData
-	vaults: [Currency, string][]
+	vaults: [string, VaultC][]
 }
 
 /**
@@ -300,9 +300,9 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		vaults.reduce(
-			(prev, [currency]) => ({
+			(prev, [, contracts]) => ({
 				...prev,
-				[currency.tokenId]: '',
+				[contracts.token.tokenId]: '',
 			}),
 			{},
 		),
@@ -314,23 +314,28 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 	)
 
 	const totalDepositing = useMemo(
-		() => computeTotalDepositing(vaults, currencyValues, prices),
+		() =>
+			computeTotalDepositing(
+				vaults.map(([, contracts]) => contracts.token),
+				currencyValues,
+				prices,
+			),
 		[vaults, currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
 		const transactions = vaults.reduce<[string, [string, string]][]>(
-			(previous, [lpToken, vault]) => {
-				const _v = currencyValues[lpToken.tokenId]
+			(previous, [vault, contracts]) => {
+				const token = contracts.token
+				const _v = currencyValues[token.tokenId]
 				if (_v)
 					previous.push([
 						vault,
 						[
-							contracts.vaults[vault].vault.address,
+							contracts.vault.address,
 							numberToDecimal(
 								_v,
-								Currencies[lpToken.tokenId.toUpperCase()]
-									.decimals,
+								Currencies[token.name].decimals,
 							),
 						],
 					])
@@ -355,9 +360,9 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 			)
 			setCurrencyValues(
 				vaults.reduce(
-					(prev, [currency]) => ({
+					(prev, [, contracts]) => ({
 						...prev,
-						[currency.tokenId]: '',
+						[contracts.token.tokenId]: '',
 					}),
 					{},
 				),
@@ -373,8 +378,8 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 	])
 	const data = useMemo(
 		() =>
-			vaults.map<TableDataEntry>(([lpTokenCurrency, vault]) => {
-				const lpToken = lpTokenCurrency.tokenId
+			vaults.map<TableDataEntry>(([vault, contracts]) => {
+				const lpToken = contracts.token.tokenId
 				const currency = Currencies[lpToken.toUpperCase()]
 				const balance = balances[lpToken]?.amount || new BigNumber(0)
 				return {

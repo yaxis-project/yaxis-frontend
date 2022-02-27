@@ -2,14 +2,10 @@
  * Avalanche
  */
 
-export const RewardsContracts = <const>[
-	// 'MetaVault',
-	// 'Yaxis',
-	'TraderJoe JOE/AVAX',
-]
+export const RewardsContracts = <const>['TraderJoe YAXIS/WAVAX']
 export type TRewardsContracts = typeof RewardsContracts[number]
 
-export const TraderJoeLiquidityPools = <const>['TraderJoe JOE/AVAX']
+export const TraderJoeLiquidityPools = <const>['TraderJoe YAXIS/WAVAX']
 export type TTraderJoeLiquidityPools = typeof TraderJoeLiquidityPools[number]
 export const LiquidityPools = <const>[...TraderJoeLiquidityPools]
 export type TLiquidityPools = typeof LiquidityPools[number]
@@ -37,19 +33,11 @@ export interface LiquidityPool {
 
 export const CurrenciesERC20 = <const>[
 	'crv',
-	// 'wbtc',
-	// 'link',
-	// 'mim',
-	// 'cvx',
-	// 'yax',
-	// 'usdc',
-	// 'dai',
-	// 'usdt',
-	// '3crv',
-	// 'weth',
-	// 'mvlt',
-	// 'spell',
-	// 'frax',
+	'wbtc',
+	'usdc',
+	'dai',
+	'usdt',
+	'weth',
 	'wavax',
 	'joe',
 ]
@@ -61,13 +49,21 @@ export type TCurrenciesERC677 = typeof CurrenciesERC677[number]
 export const additionalCurrencies = <const>['avax', 'btc']
 export type TAdditionalCurrencies = typeof additionalCurrencies[number]
 
-export const crvLPCurrencies = <const>['av3crv', 'atricrypto']
-export type TCrvLPCurrencies = typeof crvLPCurrencies[number]
+export const curveLPCurrencies = <const>['av3crv', 'atricrypto']
+export type TCurveLPCurrencies = typeof curveLPCurrencies[number]
+
+export const aaveLPCurrencies = <const>['avwavax']
+export type TAaveLPCurrencies = typeof aaveLPCurrencies[number]
+
+export const traderjoeLPCurrencies = <const>['joewavax']
+export type TTraderJoeLPCurrencies = typeof traderjoeLPCurrencies[number]
 
 export type Ticker =
 	| TCurrenciesERC20
 	| TCurrenciesERC677
-	| TCrvLPCurrencies
+	| TCurveLPCurrencies
+	| TAaveLPCurrencies
+	| TTraderJoeLPCurrencies
 	| TAdditionalCurrencies
 
 export const InternalContracts = <const>[
@@ -82,10 +78,12 @@ export const InternalContracts = <const>[
 ]
 export type TInternalContracts = typeof InternalContracts[number]
 
-export const CurveLPContracts = <const>['av3crv', 'atricrypto']
+export const CurveLPContracts = <const>['av3crv', 'atricrypto', 'aawbtcrencrv']
 export type TCurveLPContracts = typeof CurveLPContracts[number]
 export const AaveLPContracts = <const>['avax']
 export type TAaveLPContracts = typeof AaveLPContracts[number]
+export const TraderJoeLPContracts = <const>['joewavax']
+export type TTraderJoeLPContracts = typeof TraderJoeLPContracts[number]
 
 export interface ExternalLP {
 	pool: string
@@ -103,7 +101,8 @@ export interface ExternalLP {
 
 export const ExternalLPContracts = <const>[
 	...CurveLPContracts,
-	// ...AaveLPContracts,
+	...AaveLPContracts,
+	...TraderJoeLPContracts,
 ]
 export type TExternalLPContracts = typeof ExternalLPContracts[number]
 
@@ -122,14 +121,11 @@ export type TExternalContracts = typeof ExternalContracts[number]
 export const LPVaults: [string, string][] = [
 	['av3crv', 'usd'],
 	['atricrypto', 'tricrypto'],
-	// ['avax', 'avax'],
+	['avax', 'avax'],
+	['joewavax', 'joewavax'],
 ]
 
-export const Vaults = <const>[
-	'usd',
-	'tricrypto',
-	//  'avax'
-]
+export const Vaults = <const>['av3crv', 'atricrypto', 'avax', 'joewavax']
 export type TVaults = typeof Vaults[number]
 export interface Vault {
 	url: string
@@ -154,9 +150,12 @@ export type AvalancheExternalPoolsConfig = {
 	curve: {
 		[key in TCurveLPContracts]: ExternalLP
 	}
-	// aave: {
-	// 	[key in TAaveLPContracts]: ExternalLP
-	// }
+	aave: {
+		[key in TAaveLPContracts]: ExternalLP
+	}
+	traderjoe: {
+		[key in TTraderJoeLPContracts]: ExternalLP
+	}
 }
 
 export type AvalancheCurrenciesConfig = {

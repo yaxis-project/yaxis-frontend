@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
-import { Currencies, Currency } from '../../../constants/currencies'
+import { Currencies } from '../../../constants/currencies'
 import Tabs from '../../../components/Tabs'
 import DepositTable from './DepositTable'
 import DepositHelperTable from './DepositHelperTable'
@@ -20,6 +20,7 @@ import {
 } from '../../../state/user/hooks'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
+import { VaultC } from '../../../constants/contracts'
 
 const { TabPane } = Tabs
 
@@ -104,7 +105,7 @@ const Operations = () => (
 interface VaultActionsCardProps {
 	type: 'overview' | 'details'
 	fees: TYaxisManagerData
-	vaults: [Currency, string][]
+	vaults: [string, VaultC][]
 }
 
 const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
@@ -118,9 +119,7 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 	const location = useLocation()
 
 	const autoStake = useVaultAutoStake()
-	const isYaxisDetails = vaults.every(
-		([currency]) => currency.tokenId === 'yaxis',
-	)
+	const isYaxisDetails = vaults.every(([vault]) => vault === 'yaxis')
 
 	const showDepositTab = useMemo(() => !isYaxisDetails, [isYaxisDetails])
 	const showStakeTab = useMemo(
@@ -163,8 +162,7 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 								vaults={
 									// NOTE: YAXIS vault deprecated in YIP-14
 									vaults.filter(
-										([currency]) =>
-											currency.tokenId !== 'yaxis',
+										([vault]) => vault !== 'yaxis',
 									)
 								}
 							/>
@@ -173,10 +171,7 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 								fees={fees}
 								vaults={vaults
 									// YAXIS only has a gauge, so we filter it out
-									.filter(
-										([currency]) =>
-											currency.tokenId !== 'yaxis',
-									)}
+									.filter(([vault]) => vault !== 'yaxis')}
 							/>
 						)}
 					</TabPane>
@@ -187,28 +182,14 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 							fees={fees}
 							vaults={
 								// NOTE: YAXIS vault deprecated in YIP-14
-								vaults.filter(
-									([currency]) =>
-										currency.tokenId !== 'yaxis',
-								)
+								vaults.filter(([vault]) => vault !== 'yaxis')
 							}
 						/>
 					</TabPane>
 				)}
 				{showUnstakeTab && (
 					<TabPane tab={translate('Unstake')} key="#unstake">
-						<UnstakeTable
-							fees={fees}
-							vaults={vaults.map(([, vault]) => {
-								const vaultToken =
-									vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
-								const gaugeToken = `${vaultToken}-gauge`
-								return [
-									Currencies[gaugeToken.toUpperCase()],
-									vault,
-								]
-							})}
-						/>
+						<UnstakeTable fees={fees} vaults={vaults} />
 					</TabPane>
 				)}
 				{showWithdrawTab && (
@@ -220,14 +201,7 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 								fees={fees}
 								vaults={vaults
 									// YAXIS only has a gauge, so we filter it out
-									.filter(
-										([currency]) =>
-											currency.tokenId !== 'yaxis',
-									)
-									.map(([currency, vault]) => [
-										Currencies[`CV:${vault.toUpperCase()}`],
-										vault,
-									])}
+									.filter(([vault]) => vault !== 'yaxis')}
 							/>
 						)}
 					</TabPane>

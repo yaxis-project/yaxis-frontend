@@ -14,6 +14,7 @@ import {
 	CurrencyValues,
 	handleFormInputChange,
 	computeTotalDepositing,
+	computeInsufficientBalance,
 } from '../utils'
 import BigNumber from 'bignumber.js'
 import Value from '../../../components/Value'
@@ -22,6 +23,7 @@ import ApprovalCover from '../../../components/ApprovalCover'
 import { DoubleApprovalCover } from '../../../components/ApprovalCover/DoubleApprovalCover'
 import useTranslation from '../../../hooks/useTranslation'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
+import { VaultC } from '../../../constants/contracts'
 
 const { Text, Title } = Typography
 
@@ -114,7 +116,7 @@ interface TableDataEntry extends Currency {
 
 interface WithdrawHelperTableProps {
 	fees: TYaxisManagerData
-	vaults: [Currency, string][]
+	vaults: [string, VaultC][]
 }
 
 /**
@@ -126,7 +128,7 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 }) => {
 	const translate = useTranslation()
 
-	const { loading: loadingBalances, ...balances } = useVaultsBalances()
+	const { loading: loadingBalances, balances } = useVaultsBalances()
 
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
@@ -147,45 +149,48 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		vaults.reduce(
-			(prev, [currency]) => ({
+			(prev, [, contracts]) => ({
 				...prev,
-				[currency.tokenId]: '',
+				[contracts.gaugeToken.tokenId]: '',
 			}),
 			{},
 		),
 	)
 
 	const totalWithdrawing = useMemo(
-		() => computeTotalDepositing(vaults, currencyValues, prices),
+		() =>
+			computeTotalDepositing(
+				vaults.map(([, contracts]) => contracts.gaugeToken),
+				currencyValues,
+				prices,
+			),
 		[vaults, currencyValues, prices],
 	)
 
-	const disabled = useMemo(() => {
-		const noValue = !Object.values(currencyValues).find(
-			(v) => parseFloat(v) > 0,
-		)
-		const insufficientBalance = !!Object.entries(currencyValues).find(
-			([tokenId, v]) => {
-				const value = new BigNumber(v || 0)
-				const [, vault] = vaults.find(
-					([lpToken]) => tokenId === lpToken.tokenId,
-				)
-				const currency = balances.balances[vault]
-				return !currency || value.gt(currency?.gaugeToken?.amount || 0)
-			},
-		)
-		return noValue || insufficientBalance
-	}, [currencyValues, balances])
+	const disabled = useMemo(
+		() =>
+			computeInsufficientBalance(
+				currencyValues,
+				Object.fromEntries(
+					vaults.map(([vault, { gaugeToken }]) => [
+						gaugeToken.tokenId,
+						balances[vault.toLowerCase()].gaugeToken,
+					]),
+				),
+			),
+		[vaults, currencyValues, balances],
+	)
 
 	const handleSubmit = useCallback(async () => {
 		const transactions = vaults.reduce<[string, [string, string]][]>(
-			(previous, [lpToken, vault]) => {
+			(previous, [vault, contracts]) => {
+				const lpToken = contracts.gaugeToken
 				const _v = currencyValues[lpToken.tokenId]
 				if (_v)
 					previous.push([
 						vault,
 						[
-							contracts.vaults[vault].vault.address,
+							contracts.vault.address,
 							numberToDecimal(
 								_v,
 								Currencies[lpToken.tokenId.toUpperCase()]
@@ -214,9 +219,9 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 			)
 			setCurrencyValues(
 				vaults.reduce(
-					(prev, [currency]) => ({
+					(prev, [, contracts]) => ({
 						...prev,
-						[currency.tokenId]: '',
+						[contracts.gaugeToken.tokenId]: '',
 					}),
 					{},
 				),
@@ -233,19 +238,19 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 
 	const data = useMemo(
 		() =>
-			vaults.map<TableDataEntry>(([lpTokenCurrency, vault]) => {
-				const lpToken = lpTokenCurrency.tokenId.toLowerCase()
-				const balance = balances.balances[vault]
+			vaults.map<TableDataEntry>(([vault, contracts]) => {
+				const gaugeToken = contracts.gaugeToken
+				const balance = balances[vault]
 				return {
-					...lpTokenCurrency,
+					...gaugeToken,
 					vault,
-					vaultCurrency: lpTokenCurrency.name,
-					balance: balance?.gaugeToken?.amount || new BigNumber(0),
-					balanceUSD: balance?.usd || new BigNumber(0),
+					vaultCurrency: contracts.token.name,
+					balance: balance?.gaugeToken.amount || new BigNumber(0),
+					balanceUSD: balance?.usd,
 					value: currencyValues
-						? new BigNumber(currencyValues[lpToken] || 0)
+						? new BigNumber(currencyValues[gaugeToken.tokenId] || 0)
 						: new BigNumber(0),
-					inputValue: currencyValues[lpToken],
+					inputValue: currencyValues[gaugeToken.tokenId],
 					key: vault,
 				}
 			}),

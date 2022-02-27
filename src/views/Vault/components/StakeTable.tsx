@@ -28,7 +28,7 @@ import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
-import { Contracts } from '../../../constants/contracts'
+import { Contracts, VaultC } from '../../../constants/contracts'
 import { useChainInfo } from '../../../state/user'
 
 const { Text, Title } = Typography
@@ -209,7 +209,7 @@ interface TableDataEntry extends Currency {
 
 interface StakeTableProps {
 	fees: TYaxisManagerData
-	vaults: [Currency, string][]
+	vaults: [string, VaultC][]
 }
 
 /**
@@ -286,6 +286,34 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 		},
 	)
 
+	const { call: handleStakeAV3CRV, loading: isSubmittingAV3CRV } =
+		useContractWrite({
+			contractName: 'vaults.av3crv.gauge',
+			method: 'deposit(uint256)',
+			description: `AV3CRV Vault stake`,
+		})
+
+	const { call: handleStakeATRICRYPTO, loading: isSubmittingATRICRYPTO } =
+		useContractWrite({
+			contractName: 'vaults.atricrypto.gauge',
+			method: 'deposit(uint256)',
+			description: `ATRICRYPTO Vault stake`,
+		})
+
+	const { call: handleStakeAVAX, loading: isSubmittingAVAX } =
+		useContractWrite({
+			contractName: 'vaults.avax.gauge',
+			method: 'deposit(uint256)',
+			description: `AVAX Vault stake`,
+		})
+
+	const { call: handleStakeJOEWAVAX, loading: isSubmittingJOEWAVAX } =
+		useContractWrite({
+			contractName: 'vaults.joewavax.gauge',
+			method: 'deposit(uint256)',
+			description: `JOEWAVAX Vault stake`,
+		})
+
 	const callsLookup = useMemo(() => {
 		return {
 			handleStakeETH,
@@ -304,6 +332,14 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 			isSubmittingTRICRYPTO,
 			handleStakeCVX,
 			isSubmittingCVX,
+			handleStakeAV3CRV,
+			isSubmittingATRICRYPTO,
+			handleStakeATRICRYPTO,
+			isSubmittingAV3CRV,
+			handleStakeAVAX,
+			isSubmittingAVAX,
+			handleStakeJOEWAVAX,
+			isSubmittingJOEWAVAX,
 		}
 	}, [
 		handleStakeETH,
@@ -322,14 +358,22 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 		isSubmittingTRICRYPTO,
 		handleStakeCVX,
 		isSubmittingCVX,
+		handleStakeAV3CRV,
+		isSubmittingATRICRYPTO,
+		handleStakeATRICRYPTO,
+		isSubmittingAV3CRV,
+		handleStakeAVAX,
+		isSubmittingAVAX,
+		handleStakeJOEWAVAX,
+		isSubmittingJOEWAVAX,
 	])
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		vaults.reduce(
-			(prev, [currency]) => ({
+			(prev, [, contracts]) => ({
 				...prev,
-				[currency.tokenId]: '',
+				[contracts.token.tokenId]: '',
 			}),
 			{},
 		),
@@ -340,13 +384,18 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 	}, [currencyValues, balances])
 
 	const totalDepositing = useMemo(
-		() => computeTotalDepositing(vaults, currencyValues, prices),
+		() =>
+			computeTotalDepositing(
+				vaults.map(([, contracts]) => contracts.token),
+				currencyValues,
+				prices,
+			),
 		[vaults, currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
 		const transactions = vaults.reduce<[string, string][]>(
-			(previous, [, vault]) => {
+			(previous, [vault]) => {
 				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
 				const _v = currencyValues[vaultToken]
 
@@ -375,9 +424,9 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 			)
 			setCurrencyValues(
 				vaults.reduce(
-					(prev, [currency]) => ({
+					(prev, [, contracts]) => ({
 						...prev,
-						[currency.tokenId]: '',
+						[contracts.token.tokenId]: '',
 					}),
 					{},
 				),
@@ -387,7 +436,8 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 
 	const data = useMemo(
 		() =>
-			vaults.map<TableDataEntry>(([lpTokenCurrency, vault]) => {
+			vaults.map<TableDataEntry>(([vault, contracts]) => {
+				const lpTokenCurrency = contracts.token
 				const lpToken = lpTokenCurrency.tokenId
 				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
 				const currency = Currencies[vaultToken.toUpperCase()]

@@ -10,18 +10,19 @@ import Input from '../../../components/Input'
 import Card from '../../../components/Card'
 import Result from '../../../components/Result'
 import Typography from '../../../components/Typography'
-import { Row, Col, Form } from 'antd'
+import { Row, Col, Form, Spin } from 'antd'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '../../../utils/formatBalance'
-import { useApprovals } from '../../../state/wallet/hooks'
 import { ethers } from 'ethers'
 import useTranslation from '../../../hooks/useTranslation'
+import { useSingleCallResultByName } from '../../../state/onchain'
+import { LiquidityPool } from '../../../constants/type'
 const { Text } = Typography
 
-/**
- * Construct a simple colomn with secondary text for use in a row.
- * @param props any
- */
+type Props = {
+	pool: LiquidityPool
+}
+
 const TableHeader = (props: any) => (
 	<Col span={props.span}>
 		<Text style={{ float: props.float || 'none' }} type="secondary">
@@ -30,7 +31,7 @@ const TableHeader = (props: any) => (
 	</Col>
 )
 
-function Stake({ pool }) {
+const Stake: React.FC<Props> = ({ pool }) => {
 	const translate = useTranslation()
 
 	const currency = useMemo(
@@ -55,7 +56,7 @@ function Stake({ pool }) {
 	const updateDeposit = (value: string) =>
 		!isNaN(Number(value)) && setDeposit(value)
 	const errorDeposit = useMemo(
-		() => new BigNumber(depositAmount).gt(walletBalance?.value.div(1e18)),
+		() => new BigNumber(depositAmount).gt(walletBalance.amount),
 		[walletBalance, depositAmount],
 	)
 	const depositDisabled = useMemo(
@@ -72,7 +73,7 @@ function Stake({ pool }) {
 	const updateWithdraw = (value: string) =>
 		!isNaN(Number(value)) && setWithdraw(value)
 	const errorWithdraw = useMemo(
-		() => new BigNumber(withdrawAmount).gt(stakedBalance?.amount),
+		() => new BigNumber(withdrawAmount).gt(stakedBalance),
 		[stakedBalance?.amount, withdrawAmount],
 	)
 	const withdrawDisabled = useMemo(
@@ -184,16 +185,23 @@ function Stake({ pool }) {
 	)
 }
 
-export default function ApprovalWrapper({ pool }) {
+const ApprovalWrapper: React.FC<Props> = ({ pool }) => {
 	const translate = useTranslation()
 
 	const { account } = useWeb3Provider()
 
 	const { contracts } = useContracts()
 
-	const {
-		uniYaxisEth: { staking },
-	} = useApprovals()
+	const { loading: loadingAllowance, result } = useSingleCallResultByName(
+		`pools.${pool.name}.lpContract`,
+		'allowance',
+		[account, contracts?.rewards[pool.rewards].address],
+	)
+
+	const allowance = useMemo(
+		() => new BigNumber(result?.[0]?.toString() ?? 0),
+		[result],
+	)
 
 	const { call: onApprove, loading } = useContractWrite({
 		contractName: `pools.${pool.name}.lpContract`,
@@ -213,7 +221,15 @@ export default function ApprovalWrapper({ pool }) {
 					/>
 				</Row>
 			)
-		if (staking.isEqualTo(0))
+
+		if (loadingAllowance)
+			return (
+				<Spin size={'large'}>
+					<Stake pool={pool} />
+				</Spin>
+			)
+
+		if (allowance?.isEqualTo(0))
 			return (
 				<>
 					<Row justify="center" style={{ padding: '20px 0' }}>
@@ -247,8 +263,9 @@ export default function ApprovalWrapper({ pool }) {
 					</Row>
 				</>
 			)
+
 		return <Stake pool={pool} />
-	}, [account, staking, loading, onApprove, pool, translate, contracts])
+	}, [account, allowance, loading, onApprove, pool, translate, contracts])
 
 	return (
 		<Card
@@ -263,3 +280,5 @@ export default function ApprovalWrapper({ pool }) {
 		</Card>
 	)
 }
+
+export default ApprovalWrapper

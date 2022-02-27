@@ -8,16 +8,16 @@ import {
 const currencies: AvalancheCurrenciesConfig = {
 	ERC20: {
 		crv: '0x249848beca43ac405b8102ec90dd5f22ca513c06',
-		// wbtc: '',
+		wbtc: '',
 		// link: '',
 		// mim: '',
 		// cvx: '',
 		// yax: '',
-		// usdc: '',
-		// dai: '',
-		// usdt: '',
+		usdc: '',
+		dai: '',
+		usdt: '',
 		// '3crv': '',
-		// weth: '',
+		weth: '',
 		// mvlt: '',
 		// spell: '',
 		// frax: '',
@@ -53,16 +53,32 @@ const externalPools: AvalancheExternalPoolsConfig = {
 			gauge: '0x445FE580eF8d70FF569aB36e80c647af338db351',
 			convexRewards: '',
 		},
+		aawbtcrencrv: {
+			currency: 'usd',
+			pool: '0x16a7DA911A4DD1d83F3fF066fE28F3C792C50d90',
+			token: '0xC2b1DF84112619D190193E48148000e3990Bf627',
+			gauge: '0x0f9cb53Ebe405d49A0bbdBD291A65Ff571bC83e1',
+			convexRewards: '',
+		},
 	},
-	// aave: {
-	// 	avax: {
-	// 		currency: '',
-	// 		pool: '',
-	// 		token: '',
-	// 		gauge: '',
-	// 		convexRewards: '',
-	// 	},
-	// },
+	aave: {
+		avax: {
+			currency: '',
+			pool: '',
+			token: '0xDFE521292EcE2A4f44242efBcD66Bc594CA9714B',
+			gauge: '',
+			convexRewards: '',
+		},
+	},
+	traderjoe: {
+		joewavax: {
+			currency: '',
+			pool: '',
+			token: '0x454e67025631c065d3cfad6d71e6892f74487a15',
+			gauge: '',
+			convexRewards: '',
+		},
+	},
 }
 
 const fuji: AvalancheConfig = {
@@ -78,10 +94,10 @@ const fuji: AvalancheConfig = {
 		feeDistributor: '',
 	},
 	rewards: {
-		'TraderJoe JOE/AVAX': '',
+		'TraderJoe YAXIS/WAVAX': '',
 	},
 	vaults: {
-		usd: {
+		av3crv: {
 			url: 'https://avax.curve.fi/aave',
 			tokenPoolContract: externalPools.curve.av3crv.pool,
 			token: 'av3CRV',
@@ -91,7 +107,7 @@ const fuji: AvalancheConfig = {
 			vaultTokenContract: '',
 			gauge: '',
 		},
-		tricrypto: {
+		atricrypto: {
 			url: 'https://avax.curve.fi/atricrypto',
 			tokenPoolContract: externalPools.curve.atricrypto.pool,
 			token: '',
@@ -101,40 +117,49 @@ const fuji: AvalancheConfig = {
 			vaultTokenContract: '',
 			gauge: '',
 		},
-		// avax: {
-		// 	url: 'https://app.aave.com/#/deposit',
-		// 	tokenPoolContract: externalPools.aave.avax.pool,
-		// 	token: '',
-		// 	tokenContract: externalPools.aave.avax.token,
-		// 	vault: '',
-		// 	vaultToken: 'CV:',
-		// 	vaultTokenContract: '',
-		// 	gauge: '',
-		// },
+		avax: {
+			url: 'https://app.aave.com/#/deposit',
+			tokenPoolContract: externalPools.aave.avax.pool,
+			token: '',
+			tokenContract: externalPools.aave.avax.token,
+			vault: '',
+			vaultToken: 'CV:',
+			vaultTokenContract: '',
+			gauge: '',
+		},
+		joewavax: {
+			url: 'https://app.aave.com/#/deposit',
+			tokenPoolContract: externalPools.aave.avax.pool,
+			token: 'AVWAVAX',
+			tokenContract: externalPools.aave.avax.token,
+			vault: '',
+			vaultToken: 'CV:AVAX',
+			vaultTokenContract: '',
+			gauge: '',
+		},
 	},
 	pools: {
-		// TODO: rework
-		'TraderJoe JOE/AVAX': {
+		'TraderJoe YAXIS/WAVAX': {
 			active: true,
 			legacy: false,
 			type: 'traderjoe',
-			liquidId: `JOE/${currencies.ERC677.yaxis}`,
+			liquidId: `${currencies.ERC677.yaxis}/WAVAX`,
 			lpAddress: '0x12b6298a70e2ae1b1352e051237703a3acbef8b4',
-			lpUrl: 'https://traderjoexyz.com/farm/0x454E67025631C065d3cFAD6d71E6892f74487a15-0x188bED1968b795d5c9022F6a0bb5931Ac4c18F00',
+			lpUrl: 'https://traderjoexyz.com/trade?inputCurrency=0x55853edc67aa68ec2e3903ac00f2bc5bf2ca8db0&outputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7#/',
 			lpTokens: [
-				{
-					tokenId: 'joe',
-				},
 				{
 					tokenId: 'yaxis',
 				},
+				{
+					tokenId: 'wavax',
+				},
 			],
 			tokenAddress: currencies.ERC677.yaxis,
-			name: 'TraderJoe JOE/AVAX',
-			symbol: 'TraderJoe JOE-AVAX',
+			name: 'TraderJoe YAXIS/WAVAX',
+			symbol: 'TraderJoe YAXIS-WAVAX',
 			tokenSymbol: 'YAXIS_ETH_UNISWAP_LP',
 			icon: '',
-			rewards: 'TraderJoe JOE/AVAX',
+			rewards: 'TraderJoe YAXIS/WAVAX',
 		},
 	},
 	currencies,

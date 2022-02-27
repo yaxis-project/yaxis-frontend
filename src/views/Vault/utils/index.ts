@@ -1,4 +1,8 @@
-import { Currency, CurrencyValue } from '../../../constants/currencies'
+import {
+	Currency,
+	CurrencyContract,
+	CurrencyValue,
+} from '../../../constants/currencies'
 import { BigNumber } from 'bignumber.js'
 import { TPrices } from '../../../state/prices/reducer'
 
@@ -41,6 +45,7 @@ export const computeInsufficientBalance = (
 		([tokenId, v]) => {
 			const value = new BigNumber(v || 0)
 			const currency = currenciesData[tokenId]
+			if (!currency) throw new Error(`Currency not found: ${tokenId}`)
 			return !currency || value.gt(currency?.amount || 0)
 		},
 	)
@@ -54,12 +59,12 @@ export const computeInsufficientBalance = (
  * @param priceMap Current prices object.
  */
 export const computeTotalDepositing = (
-	vaults: [Currency, string][],
+	vaults: CurrencyContract[],
 	currencyValues: CurrencyValues,
 	priceMap: TPrices,
 ) =>
 	vaults
-		.map(([{ tokenId, priceMapKey }]) => {
+		.map(({ tokenId, priceMapKey }) => {
 			const inputValue = currencyValues[tokenId]
 			const inputNumber = Number(inputValue)
 			return new BigNumber(isNaN(inputNumber) ? 0 : inputNumber).times(

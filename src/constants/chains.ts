@@ -97,6 +97,7 @@ interface BaseChainInfo {
 	readonly label: string
 	readonly helpCenterUrl?: string
 	readonly addNetworkInfo: AddNetworkInfo
+	readonly blocktime: number
 }
 
 export interface L1ChainInfo extends BaseChainInfo {
@@ -121,8 +122,9 @@ export const CHAIN_INFO: ChainInfoMap = {
 		chainId: ChainId.ETHEREUM_MAINNET,
 		blockchain: 'ethereum',
 		networkType: NetworkType.L1,
+		blocktime: 15_000,
 		docs: '',
-		explorer: 'https://etherscan.io/',
+		explorer: 'https://etherscan.io',
 		infoLink: '',
 		label: 'Ethereum',
 		logoUrl: ethereumLogoUrl,
@@ -137,8 +139,9 @@ export const CHAIN_INFO: ChainInfoMap = {
 		chainId: ChainId.ETHEREUM_KOVAN,
 		blockchain: 'ethereum',
 		networkType: NetworkType.L1,
+		blocktime: 15_000,
 		docs: '',
-		explorer: 'https://kovan.etherscan.io/',
+		explorer: 'https://kovan.etherscan.io',
 		infoLink: '',
 		label: 'Kovan',
 		logoUrl: ethereumLogoUrl,
@@ -156,8 +159,9 @@ export const CHAIN_INFO: ChainInfoMap = {
 		chainId: ChainId.AVALANCHE_MAINNET,
 		blockchain: 'avalanche',
 		networkType: NetworkType.L1,
+		blocktime: 2_000,
 		docs: '',
-		explorer: 'https://snowtrace.io/',
+		explorer: 'https://snowtrace.io',
 		infoLink: '',
 		label: 'Avalanche',
 		logoUrl: avalancheLogo,
@@ -166,14 +170,15 @@ export const CHAIN_INFO: ChainInfoMap = {
 			rpcUrl: NETWORK_URLS[ChainId.AVALANCHE_MAINNET],
 		},
 		yaxisUrl:
-			'https://traderjoexyz.com/trade?inputCurrency=0x55853edc67aa68ec2e3903ac00f2bc5bf2ca8db0&outputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7#/',
+			'https://traderjoexyz.com/trade?inputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7&outputCurrency=0x55853edc67aa68ec2e3903ac00f2bc5bf2ca8db0#/',
 	},
 	[ChainId.AVALANCHE_FUJI]: {
 		chainId: ChainId.AVALANCHE_FUJI,
 		blockchain: 'avalanche',
 		networkType: NetworkType.L1,
+		blocktime: 2_000,
 		docs: '',
-		explorer: 'https://testnet.snowtrace.io/',
+		explorer: 'https://testnet.snowtrace.io',
 		infoLink: '',
 		label: 'Fuji',
 		logoUrl: avalancheLogo,

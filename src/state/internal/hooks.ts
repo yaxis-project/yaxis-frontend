@@ -102,7 +102,10 @@ export function useYaxisGauge() {
 	}, [gaugeData])
 }
 
-export function useVaultRewards(name: TVaults, blockchain: L1_CHAIN) {
+export function useVaultRewards(
+	name: TVaults,
+	blockchain: L1_CHAIN | L2_CHAIN,
+) {
 	const { contracts } = useContracts()
 	const chainInfo = useChainInfo()
 
@@ -210,23 +213,39 @@ export function useVaultsAPR() {
 	const frax3crv = useConvexAPY('frax3crv')
 
 	/* AVALANCHE */
-	const usdAvalanche = useVaultRewards('usd', 'avalanche')
-	const tricryptoAvalanche = useVaultRewards('tricrypto', 'avalanche')
+	const av3crvAvalanche = useVaultRewards('av3crv', 'avalanche')
+	const atricryptoAvalanche = useVaultRewards('atricrypto', 'avalanche')
+	const avaxAvalanche = useVaultRewards('avax', 'avalanche')
+	const joewavaxAvalanche = useVaultRewards('joewavax', 'avalanche')
 
 	return useMemo(() => {
 		const output: ReturnVaultsAPR = {
 			avalanche: {
-				usd: {
+				av3crv: {
 					yaxisAPR: {
-						min: usdAvalanche.minAPR,
-						max: usdAvalanche.maxAPR,
+						min: av3crvAvalanche.minAPR,
+						max: av3crvAvalanche.maxAPR,
 					},
 					strategy: null,
 				},
-				tricrypto: {
+				atricrypto: {
 					yaxisAPR: {
-						min: tricryptoAvalanche.minAPR,
-						max: tricryptoAvalanche.maxAPR,
+						min: atricryptoAvalanche.minAPR,
+						max: atricryptoAvalanche.maxAPR,
+					},
+					strategy: null,
+				},
+				avax: {
+					yaxisAPR: {
+						min: avaxAvalanche.minAPR,
+						max: avaxAvalanche.maxAPR,
+					},
+					strategy: null,
+				},
+				joewavax: {
+					yaxisAPR: {
+						min: joewavaxAvalanche.minAPR,
+						max: joewavaxAvalanche.maxAPR,
 					},
 					strategy: null,
 				},
@@ -310,7 +329,12 @@ export function useVaultsAPR() {
 	])
 }
 
-export function useVaults() {
+type useVaultsReturn = {
+	[vault in TVaults]: ReturnType<typeof useVault>
+}
+
+export function useVaults(): useVaultsReturn {
+	/** ETHEREUM  */
 	const usd = useVault('usd')
 	const btc = useVault('btc')
 	const eth = useVault('eth')
@@ -319,6 +343,12 @@ export function useVaults() {
 	const tricrypto = useVault('tricrypto')
 	const cvx = useVault('cvx')
 	const yaxis = useYaxisGauge()
+
+	/** AVALANCHE  */
+	const av3crv = useVault('av3crv')
+	const atricrypto = useVault('atricrypto')
+	const avax = useVault('avax')
+	const joewavax = useVault('joewavax')
 
 	return useMemo(() => {
 		return {
@@ -330,8 +360,25 @@ export function useVaults() {
 			tricrypto,
 			cvx,
 			yaxis,
+			av3crv,
+			atricrypto,
+			avax,
+			joewavax,
 		}
-	}, [usd, btc, eth, link, frax, tricrypto, cvx, yaxis])
+	}, [
+		usd,
+		btc,
+		eth,
+		link,
+		frax,
+		tricrypto,
+		cvx,
+		yaxis,
+		av3crv,
+		atricrypto,
+		avax,
+		joewavax,
+	])
 }
 
 const DEV_FUND_ADDRESS = '0x5118Df9210e1b97a4de0df15FBbf438499d6b446'
@@ -694,7 +741,7 @@ export function useLiquidityPools(): Record<
 		'Uniswap YAX/ETH': uniswapYaxEth,
 		'Uniswap YAXIS/ETH': uniswapYaxisEth,
 		'Linkswap YAX/ETH': linkswapYaxEth,
-		'TraderJoe JOE/AVAX': traderjoeJoeAvax,
+		'TraderJoe YAXIS/WAVAX': traderjoeJoeAvax,
 	}
 }
 
@@ -805,6 +852,7 @@ export function useAPY(
 	rewardsContract: TRewardsContracts,
 	strategyPercentage = 1,
 ) {
+	// TODO
 	// const curveRewardsAPRs = useCurvePoolRewards('3pool')
 	// const curveBaseAPR = useFetchCurvePoolBaseAPR()
 	const {

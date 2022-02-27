@@ -19,6 +19,7 @@ import Value from '../../../components/Value'
 import Input from '../../../components/Input'
 import useTranslation from '../../../hooks/useTranslation'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
+import { VaultC } from '../../../constants/contracts'
 
 const { Text, Title } = Typography
 
@@ -111,7 +112,7 @@ interface TableDataEntry extends Currency {
 
 interface UnstakeTableProps {
 	fees: TYaxisManagerData
-	vaults: [Currency, string][]
+	vaults: [string, VaultC][]
 }
 
 /**
@@ -180,6 +181,34 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, vaults }) => {
 			description: `unstaked from CVX Gauge`,
 		})
 
+	const { call: handleUnstakeAV3CRV, loading: isSubmittingAV3CRV } =
+		useContractWrite({
+			contractName: 'vaults.av3crv.gauge',
+			method: 'withdraw(uint256)',
+			description: `AV3CRV Vault unstake`,
+		})
+
+	const { call: handleUnstakeATRICRYPTO, loading: isSubmittingATRICRYPTO } =
+		useContractWrite({
+			contractName: 'vaults.atricrypto.gauge',
+			method: 'withdraw(uint256)',
+			description: `ATRICRYPTO Vault unstake`,
+		})
+
+	const { call: handleUnstakeAVAX, loading: isSubmittingAVAX } =
+		useContractWrite({
+			contractName: 'vaults.avax.gauge',
+			method: 'withdraw(uint256)',
+			description: `AVAX Vault unstake`,
+		})
+
+	const { call: handleUnstakeJOEWAVAX, loading: isSubmittingJOEWAVAX } =
+		useContractWrite({
+			contractName: 'vaults.joewavax.gauge',
+			method: 'withdraw(uint256)',
+			description: `JOEWAVAX Vault unstake`,
+		})
+
 	const callsLookup = useMemo(() => {
 		return {
 			handleUnstakeETH,
@@ -198,6 +227,14 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, vaults }) => {
 			isSubmittingTRICRYPTO,
 			handleUnstakeCVX,
 			isSubmittingCVX,
+			handleUnstakeAV3CRV,
+			isSubmittingATRICRYPTO,
+			handleUnstakeATRICRYPTO,
+			isSubmittingAV3CRV,
+			handleUnstakeAVAX,
+			isSubmittingAVAX,
+			handleUnstakeJOEWAVAX,
+			isSubmittingJOEWAVAX,
 		}
 	}, [
 		handleUnstakeETH,
@@ -216,14 +253,22 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, vaults }) => {
 		isSubmittingTRICRYPTO,
 		handleUnstakeCVX,
 		isSubmittingCVX,
+		handleUnstakeAV3CRV,
+		isSubmittingATRICRYPTO,
+		handleUnstakeATRICRYPTO,
+		isSubmittingAV3CRV,
+		handleUnstakeAVAX,
+		isSubmittingAVAX,
+		handleUnstakeJOEWAVAX,
+		isSubmittingJOEWAVAX,
 	])
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		vaults.reduce(
-			(prev, [currency]) => ({
+			(prev, [, contracts]) => ({
 				...prev,
-				[currency.tokenId]: '',
+				[contracts.token.tokenId]: '',
 			}),
 			{},
 		),
@@ -233,7 +278,7 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, vaults }) => {
 		const noValue = !Object.values(currencyValues).find(
 			(v) => parseFloat(v) > 0,
 		)
-		const insufficientBalance = !!vaults.find(([, vault]) => {
+		const insufficientBalance = !!vaults.find(([vault]) => {
 			const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
 			const gaugeToken = `${vaultToken}-gauge`
 			const value = new BigNumber(currencyValues[gaugeToken] || 0)
@@ -244,13 +289,18 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, vaults }) => {
 	}, [currencyValues, balances])
 
 	const totalWithdrawing = useMemo(
-		() => computeTotalDepositing(vaults, currencyValues, prices),
+		() =>
+			computeTotalDepositing(
+				vaults.map(([, contracts]) => contracts.token),
+				currencyValues,
+				prices,
+			),
 		[vaults, currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
 		const transactions = vaults.reduce<[string, string][]>(
-			(previous, [, vault]) => {
+			(previous, [vault]) => {
 				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
 				const gaugeToken = `${vaultToken}-gauge`
 				const _v = currencyValues[gaugeToken]
@@ -279,9 +329,9 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, vaults }) => {
 			)
 			setCurrencyValues(
 				vaults.reduce(
-					(prev, [currency]) => ({
+					(prev, [, contracts]) => ({
 						...prev,
-						[currency.tokenId]: '',
+						[contracts.token.tokenId]: '',
 					}),
 					{},
 				),
@@ -291,8 +341,7 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, vaults }) => {
 
 	const data = useMemo(
 		() =>
-			vaults.map<TableDataEntry>(([lpTokenCurrency, vault]) => {
-				const lpToken = lpTokenCurrency.tokenId
+			vaults.map<TableDataEntry>(([vault, contracts]) => {
 				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
 				const gaugeToken = `${vaultToken}-gauge`
 				const currency = Currencies[gaugeToken.toUpperCase()]
@@ -303,7 +352,7 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, vaults }) => {
 					...currency,
 					vault,
 					balance,
-					balanceUSD: new BigNumber(prices[lpToken])
+					balanceUSD: new BigNumber(prices[contracts.token.tokenId])
 						.times(balance)
 						.toFixed(2),
 					value: currencyValues

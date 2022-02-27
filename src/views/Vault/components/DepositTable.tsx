@@ -28,7 +28,7 @@ import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
-import { Contracts } from '../../../constants/contracts'
+import { Contracts, VaultC } from '../../../constants/contracts'
 
 const { Text, Title } = Typography
 
@@ -83,7 +83,6 @@ const makeColumns = (
 			key: 'amount',
 			render: (text, record) => {
 				const key = record.key
-
 				return (
 					<ApprovalCover
 						contractName={`vaults.${key}.token.contract`}
@@ -216,7 +215,7 @@ interface TableDataEntry extends Currency {
 
 interface DepositTableProps {
 	fees: TYaxisManagerData
-	vaults: [Currency, string][]
+	vaults: [string, VaultC][]
 }
 
 /**
@@ -224,7 +223,7 @@ interface DepositTableProps {
  */
 const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 	const LPVaultsNoYAXIS = useMemo(
-		() => vaults.filter(([, vault]) => vault !== 'yaxis'),
+		() => vaults.filter(([vault]) => vault !== 'yaxis'),
 		[vaults],
 	)
 
@@ -286,6 +285,34 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 			description: `deposit CVX Vault`,
 		})
 
+	const { call: handleDepositAV3CRV, loading: isSubmittingAV3CRV } =
+		useContractWrite({
+			contractName: 'vaults.av3crv.vault',
+			method: 'deposit',
+			description: `deposit AV3CRV Vault`,
+		})
+
+	const { call: handleDepositATRICRYPTO, loading: isSubmittingATRICRYPTO } =
+		useContractWrite({
+			contractName: 'vaults.atricrypto.vault',
+			method: 'deposit',
+			description: `deposit ATRICRYPTO Vault`,
+		})
+
+	const { call: handleDepositAVAX, loading: isSubmittingAVAX } =
+		useContractWrite({
+			contractName: 'vaults.avax.vault',
+			method: 'deposit',
+			description: `deposit AVAX Vault`,
+		})
+
+	const { call: handleDepositJOEWAVAX, loading: isSubmittingJOEWAVAX } =
+		useContractWrite({
+			contractName: 'vaults.joewavax.vault',
+			method: 'deposit',
+			description: `deposit JOEWAVAX Vault`,
+		})
+
 	const callsLookup = useMemo(() => {
 		return {
 			handleDepositETH,
@@ -302,6 +329,14 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 			isSubmittingTRICRYPTO,
 			handleDepositCVX,
 			isSubmittingCVX,
+			handleDepositAV3CRV,
+			isSubmittingATRICRYPTO,
+			handleDepositATRICRYPTO,
+			isSubmittingAV3CRV,
+			handleDepositAVAX,
+			isSubmittingAVAX,
+			handleDepositJOEWAVAX,
+			isSubmittingJOEWAVAX,
 		}
 	}, [
 		handleDepositETH,
@@ -318,14 +353,22 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 		isSubmittingTRICRYPTO,
 		handleDepositCVX,
 		isSubmittingCVX,
+		handleDepositAV3CRV,
+		isSubmittingATRICRYPTO,
+		handleDepositATRICRYPTO,
+		isSubmittingAV3CRV,
+		handleDepositAVAX,
+		isSubmittingAVAX,
+		handleDepositJOEWAVAX,
+		isSubmittingJOEWAVAX,
 	])
 
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
 		vaults.reduce(
-			(prev, [currency]) => ({
+			(prev, [, contracts]) => ({
 				...prev,
-				[currency.tokenId]: '',
+				[contracts.token.tokenId]: '',
 			}),
 			{},
 		),
@@ -337,13 +380,19 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 	)
 
 	const totalDepositing = useMemo(
-		() => computeTotalDepositing(vaults, currencyValues, prices),
+		() =>
+			computeTotalDepositing(
+				vaults.map(([, contracts]) => contracts.token),
+				currencyValues,
+				prices,
+			),
 		[vaults, currencyValues, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
 		const transactions = LPVaultsNoYAXIS.reduce<[string, string][]>(
-			(previous, [lpToken, vault]) => {
+			(previous, [vault, contracts]) => {
+				const lpToken = contracts.token
 				const _v = currencyValues[lpToken.tokenId]
 				if (_v)
 					previous.push([
@@ -358,7 +407,7 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 			},
 			[],
 		)
-
+		console.log(transactions)
 		if (transactions.length > 0) {
 			await Promise.allSettled(
 				transactions.map(([token, amount]) =>
@@ -370,9 +419,9 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 			)
 			setCurrencyValues(
 				vaults.reduce(
-					(prev, [currency]) => ({
+					(prev, [, contracts]) => ({
 						...prev,
-						[currency.tokenId]: '',
+						[contracts.token.tokenId]: '',
 					}),
 					{},
 				),
@@ -382,7 +431,8 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 
 	const data = useMemo(
 		() =>
-			vaults.map<TableDataEntry>(([lpTokenCurrency, vault]) => {
+			vaults.map<TableDataEntry>(([vault, contracts]) => {
+				const lpTokenCurrency = contracts.token
 				const lpToken = lpTokenCurrency.tokenId
 				const currency = Currencies[lpToken.toUpperCase()]
 				const balance = balances[lpToken]?.amount || new BigNumber(0)

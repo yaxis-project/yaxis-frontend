@@ -54,12 +54,10 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 	totalUSDBalance,
 }) => {
 	const translate = useTranslation()
-	// TODO
-	const { yaxisAprPercent } = useAPY(pool?.rewards)
-	// console.log(yaxisAprPercent)
 
-	// const { poolShare } = useWalletLP(pool.name)
-	// console.log(poolShare)
+	const { yaxisAprPercent } = useAPY(pool?.rewards)
+	const { poolShare } = useWalletLP(pool.name)
+
 	return (
 		<Card title={translate('Overview')} icon="yaxis">
 			{pool?.legacy ? (
@@ -71,10 +69,7 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 				main={translate('Share of Pool')}
 				secondary={
 					<Value
-						value={
-							0
-							// poolShare.times(100).toNumber()
-						}
+						value={poolShare.times(100).toNumber()}
 						numberSuffix="%"
 						decimals={2}
 					/>
@@ -88,10 +83,10 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 								<Row style={{ marginBottom: '5px' }}>
 									{translate('Annual Percentage Rate')}
 								</Row>
-								{/* <TooltipRow
+								<TooltipRow
 									main={translate('YAXIS rewards APR') + ':'}
 									value={yaxisAprPercent.toNumber()}
-								/> */}
+								/>
 							</>
 						}
 					>
@@ -100,12 +95,11 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 					</Tooltip>
 				}
 				secondary={
-					null
-					// <Value
-					// 	value={yaxisAprPercent.toNumber()}
-					// 	numberSuffix="%"
-					// 	decimals={2}
-					// />
+					<Value
+						value={yaxisAprPercent.toNumber()}
+						numberSuffix="%"
+						decimals={2}
+					/>
 				}
 				rightContent={
 					<>
@@ -123,17 +117,14 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 												translate('YAXIS rewards APY') +
 												':'
 											}
-											value={
-												0
-												// yaxisAprPercent
-												// .div(100)
-												// .dividedBy(12)
-												// .plus(1)
-												// .pow(12)
-												// .minus(1)
-												// .multipliedBy(100)
-												// .toNumber()
-											}
+											value={yaxisAprPercent
+												.div(100)
+												.dividedBy(12)
+												.plus(1)
+												.pow(12)
+												.minus(1)
+												.multipliedBy(100)
+												.toNumber()}
 											suffix={
 												'* ' +
 												translate('monthly compound')
@@ -152,17 +143,14 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 						</Row>
 						<Row>
 							<Value
-								value={
-									0
-									// yaxisAprPercent
-									// .div(100)
-									// .dividedBy(12)
-									// .plus(1)
-									// .pow(12)
-									// .minus(1)
-									// .multipliedBy(100)
-									// .toNumber()
-								}
+								value={yaxisAprPercent
+									.div(100)
+									.dividedBy(12)
+									.plus(1)
+									.pow(12)
+									.minus(1)
+									.multipliedBy(100)
+									.toNumber()}
 								numberSuffix={'%'}
 								decimals={2}
 							/>
@@ -171,10 +159,7 @@ const LiquidityOverviewCard: React.FC<LiquidityOverviewCardProps> = ({
 				}
 			/>
 			<APYCalculator
-				APR={
-					0
-					// yaxisAprPercent.toNumber()
-				}
+				APR={yaxisAprPercent.toNumber()}
 				balance={totalUSDBalance}
 				loading={false}
 				page={'lp'}

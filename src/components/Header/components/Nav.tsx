@@ -55,7 +55,7 @@ const Nav: React.FC = () => {
 					<StyledLink to={`/vault`}>
 						<Row gutter={10} align="middle">
 							<Col>
-								<Text>{translate('Overview')}</Text>
+								<Title>{translate('Overview')}</Title>
 							</Col>
 						</Row>
 					</StyledLink>
@@ -64,7 +64,7 @@ const Nav: React.FC = () => {
 					<Menu.Item key={`/vault/${vault}`}>
 						<StyledLink to={`/vault/${vault}`}>
 							<Row gutter={20} align="middle">
-								<Col push={2}>
+								<Col push={1}>
 									<Row align="middle">
 										<img
 											src={
@@ -99,7 +99,7 @@ const Nav: React.FC = () => {
 					<StyledLink to={`/liquidity`}>
 						<Row gutter={10} align="middle">
 							<Col>
-								<Text>{translate('Overview')}</Text>
+								<Title>{translate('Overview')}</Title>
 							</Col>
 						</Row>
 					</StyledLink>
@@ -107,7 +107,11 @@ const Nav: React.FC = () => {
 				{currentPools.map((pool) => (
 					<Menu.Item key={`/liquidity/${pool.lpAddress}`}>
 						<StyledLink to={`/liquidity/${pool.lpAddress}`}>
-							<Text>{pool.name}</Text>
+							<Row gutter={20} align="middle">
+								<Col push={1}>
+									<Text>{pool.name}</Text>
+								</Col>
+							</Row>
 						</StyledLink>
 					</Menu.Item>
 				))}
@@ -140,6 +144,11 @@ const StyledLink = styled(NavLink)`
 	font-weight: 600;
 	font-size: 18px;
 	text-decoration: none;
+`
+
+const Title = styled(Text)`
+	font-weight: 800;
+	font-size: 19px;
 `
 
 export default Nav

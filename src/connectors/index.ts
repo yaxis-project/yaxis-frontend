@@ -13,11 +13,31 @@ import { MagicConnector } from '@web3-react/magic-connector'
 import { LatticeConnector } from '@web3-react/lattice-connector'
 import { FrameConnector } from '@web3-react/frame-connector'
 import { AuthereumConnector } from '@web3-react/authereum-connector'
-import { ChainId, NETWORK_URLS } from '../constants/chains'
+import { ChainId, NETWORK_URLS, CHAIN_INFO } from '../constants/chains'
 
+const DEFAULT_POLL_INTERVAL = 15_000
 export function getLibrary(provider: any) {
-	const library = new Web3Provider(provider, 'any')
-	library.pollingInterval = 15000
+	const library = new Web3Provider(
+		provider,
+		typeof provider.chainId === 'number'
+			? provider.chainId
+			: typeof provider.chainId === 'string'
+			? parseInt(provider.chainId)
+			: 'any',
+	)
+	library.pollingInterval = DEFAULT_POLL_INTERVAL
+	library.detectNetwork().then((network) => {
+		const networkPollingInterval = CHAIN_INFO[network.chainId]?.blocktime
+		console.log(
+			'///////////////////////////////',
+			network,
+			networkPollingInterval,
+		)
+		if (networkPollingInterval) {
+			console.debug('Setting polling interval', networkPollingInterval)
+			library.pollingInterval = networkPollingInterval
+		}
+	})
 	return library
 }
 
