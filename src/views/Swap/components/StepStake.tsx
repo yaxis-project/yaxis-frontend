@@ -7,9 +7,9 @@ import { DetailOverviewCardRow } from '../../../components/DetailOverviewCard'
 import Steps from '../../../components/Steps'
 import Button from '../../../components/Button'
 import {
-	useETHBalances,
 	useApprovals,
 	useAllTokenBalances,
+	useAllBalances,
 } from '../../../state/wallet/hooks'
 import { useContracts } from '../../../contexts/Contracts'
 import useContractWrite from '../../../hooks/useContractWrite'
@@ -34,7 +34,7 @@ interface StepStakeProps extends StepProps {
 
 const StepStake: React.FC<StepStakeProps> = ({ yaxisBalance, mvltBalance }) => {
 	const { xl } = useBreakpoint()
-	const { eth } = useETHBalances()
+	const [{ eth }] = useAllBalances()
 	const contracts = useContracts().contracts as EthereumContracts | null
 	const {
 		metavault: { staking: allowance },

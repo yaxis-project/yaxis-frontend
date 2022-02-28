@@ -7,7 +7,7 @@ import {
 	BlockOutlined,
 	CheckCircleTwoTone,
 } from '@ant-design/icons'
-import { getExplorerUrl } from '../../../utils'
+import { useExplorerUrl } from '../../../utils'
 import useTranslation from '../../../hooks/useTranslation'
 import { useENS } from '../../../hooks/useENS'
 
@@ -28,6 +28,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 }) => {
 	const translate = useTranslation()
 	const { ensName } = useENS(account)
+	const explorerUrl = useExplorerUrl(`/address/${account}`)
 	return (
 		<>
 			<Menu.ItemGroup
@@ -94,7 +95,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 							<StyledBlockOutlined />
 							<StyledText mobile={`${mobile}`}>
 								<a
-									href={getExplorerUrl(`/address/${account}`)}
+									href={explorerUrl}
 									rel="noopener noreferrer"
 									target="_blank"
 								>

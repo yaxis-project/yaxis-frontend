@@ -13,7 +13,7 @@ import CardRow from '../../../components/CardRow'
 import Divider from '../../../components/Divider'
 import Typography from '../../../components/Typography'
 import useTranslation from '../../../hooks/useTranslation'
-import { getYaxisUrl } from '../../../utils'
+import { useYaxisUrl } from '../../../utils'
 
 const { SecondaryText } = Typography
 
@@ -57,6 +57,8 @@ export default function HomeExpandableOverview() {
 		metavaultTvl,
 	} = useTVL()
 	const { circulating, total } = useYaxisSupply()
+
+	const yaxisUrl = useYaxisUrl()
 
 	return (
 		<ExpandableSidePanel header={translate('yAxis Overview')} icon="lineup">
@@ -117,7 +119,7 @@ export default function HomeExpandableOverview() {
 				rightContent={
 					<Col lg={18} md={12} sm={12} xs={12}>
 						<a
-							href={getYaxisUrl()}
+							href={yaxisUrl}
 							target="_blank"
 							rel="noopener noreferrer"
 						>

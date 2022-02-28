@@ -1,10 +1,18 @@
 export const Languages = <const>['EN', 'ES', 'KO', 'JA', 'ZH', 'RU']
 
 export type TLanguages = typeof Languages[number]
+type LanguageNames =
+	| 'English'
+	| 'Korean'
+	| 'Japanese'
+	| 'Chinese'
+	| 'Russian'
+	| 'Spanish'
+	| 'Portuguese'
 
 interface TLanguagesDisplay {
 	flag: string
-	name: string
+	name: LanguageNames
 	key: string
 }
 
@@ -210,17 +218,12 @@ export type Phrases =
 	| 'Approve Withdraw'
 	| 'Current APR'
 	| 'Avalanche network support'
+	| 'Staked'
 	// | 'Add to Lock'
 	// TODO: Might need tweaks
 	| 'claim YAXIS'
-	// Langauges
-	| 'English'
-	| 'Korean'
-	| 'Japanese'
-	| 'Chinese'
-	| 'Russian'
-	| 'Spanish'
-	| 'Portuguese'
+	| 'Unsupported Network'
+	| LanguageNames
 
 export type Translations = {
 	[P in Phrases]: string
@@ -436,6 +439,8 @@ const EN: Translations = {
 	'Approve Withdraw': 'Approve Withdraw',
 	Duration: 'Duration',
 	None: 'None',
+	Staked: 'Staked',
+	'Unsupported Network': 'Unsupported Network',
 	'Avalanche network support': 'Avalanche network support',
 	English: 'English',
 	Korean: 'Korean',
@@ -511,6 +516,7 @@ const ES: Translations = {
 	'YAXIS Staking': '',
 	'YAXIS Rewards': '',
 	Connect: '',
+	Staked: '',
 	'Help Center': '',
 	'Clear Pending': '',
 	'Address Copied': '',
@@ -631,6 +637,7 @@ const ES: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Unsupported Network': '',
 	'Avalanche network support': '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
@@ -713,6 +720,7 @@ const KO: Translations = {
 	'YAXIS Staking': '',
 	'YAXIS Rewards': '',
 	Connect: '',
+	Staked: '',
 	'Help Center': '',
 	'Clear Pending': '',
 	'Address Copied': '',
@@ -833,6 +841,7 @@ const KO: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Unsupported Network': '',
 	'Avalanche network support': '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
@@ -915,6 +924,7 @@ const ZH: Translations = {
 	'YAXIS Staking': '',
 	'YAXIS Rewards': '',
 	Connect: '',
+	Staked: '',
 	'Help Center': '',
 	'Clear Pending': '',
 	'Address Copied': '',
@@ -1036,6 +1046,7 @@ const ZH: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Unsupported Network': '',
 	'Avalanche network support': '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
@@ -1119,6 +1130,7 @@ const RU: Translations = {
 	'YAXIS Staking': '',
 	'YAXIS Rewards': '',
 	Connect: '',
+	Staked: '',
 	'Help Center': '',
 	'Clear Pending': '',
 	'Address Copied': '',
@@ -1240,6 +1252,7 @@ const RU: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Unsupported Network': '',
 	'Avalanche network support': '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',
@@ -1322,6 +1335,7 @@ const JA: Translations = {
 	'YAXIS Staking': '',
 	'YAXIS Rewards': '',
 	Connect: '',
+	Staked: '',
 	'Help Center': '',
 	'Clear Pending': '',
 	'Address Copied': '',
@@ -1442,6 +1456,7 @@ const JA: Translations = {
 	'Total Vaults value': '',
 	'Vault Stats': '',
 	None: '',
+	'Unsupported Network': '',
 	'Avalanche network support': '',
 	'Unstake from the previous Rewards contract': '',
 	'Boost rewards': '',

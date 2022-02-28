@@ -36,7 +36,7 @@ type SortOrder = 'descend' | 'ascend' | null
 
 const makeColumns = (
 	loading: boolean,
-	translate: any,
+	translate: ReturnType<typeof useTranslation>,
 	onChange: ReturnType<typeof handleFormInputChange>,
 	contracts: Contracts,
 ) => {
@@ -88,7 +88,7 @@ const makeColumns = (
 						contractName={`vaults.${key}.token.contract`}
 						approvee={contracts?.vaults[key].vault.address}
 						noWrapper
-						buttonText={'Vault'}
+						buttonText={'Approve Vault'}
 					>
 						<Form.Item
 							validateStatus={
@@ -222,11 +222,6 @@ interface DepositTableProps {
  * Creates a deposit table for the Vault account.
  */
 const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
-	const LPVaultsNoYAXIS = useMemo(
-		() => vaults.filter(([vault]) => vault !== 'yaxis'),
-		[vaults],
-	)
-
 	const translate = useTranslation()
 
 	const [balances, loading] = useAllTokenBalances()
@@ -390,7 +385,7 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 	)
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = LPVaultsNoYAXIS.reduce<[string, string][]>(
+		const transactions = vaults.reduce<[string, string][]>(
 			(previous, [vault, contracts]) => {
 				const lpToken = contracts.token
 				const _v = currencyValues[lpToken.tokenId]
@@ -407,15 +402,14 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 			},
 			[],
 		)
-		console.log(transactions)
 		if (transactions.length > 0) {
 			await Promise.allSettled(
-				transactions.map(([token, amount]) =>
-					callsLookup[`handleDeposit${token}`]({
+				transactions.map(([token, amount]) => {
+					return callsLookup[`handleDeposit${token}`]({
 						args: [amount],
 						descriptionExtra: totalDepositing,
-					}),
-				),
+					})
+				}),
 			)
 			setCurrencyValues(
 				vaults.reduce(

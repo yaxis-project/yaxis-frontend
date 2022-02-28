@@ -1,7 +1,11 @@
 import { useState, useMemo, useCallback } from 'react'
-import { Currencies, Currency } from '../../../constants/currencies'
 import {
-	useAllTokenBalances,
+	Currencies,
+	Currency,
+	DEFAULT_TOKEN_BALANCE,
+} from '../../../constants/currencies'
+import {
+	useAllBalances,
 	useVaultsAPRWithBoost,
 } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
@@ -31,6 +35,7 @@ import { TYaxisManagerData, VaultAPR } from '../../../state/internal/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { Contracts, VaultC } from '../../../constants/contracts'
 import { useChainInfo } from '../../../state/user'
+import { cloneDeep } from 'lodash'
 
 const { Text, Title } = Typography
 
@@ -48,7 +53,7 @@ const makeColumns = (
 			key: 'vault',
 			width: '135px',
 			sorter: (a, b) => a.vault.localeCompare(b.vault),
-			render: (text, record) => (
+			render: (_, record) => (
 				<NavLink to={`/vault/${record.vault}`}>
 					<Row align="middle">
 						<img
@@ -68,7 +73,7 @@ const makeColumns = (
 			defaultSortOrder: 'descend' as SortOrder,
 			sorter: (a, b) =>
 				new BigNumber(a.balanceUSD).minus(b.balanceUSD).toNumber(),
-			render: (text, record) => (
+			render: (_, record) => (
 				<>
 					<Value
 						value={new BigNumber(record.balanceUSD).toFormat(2)}
@@ -83,7 +88,7 @@ const makeColumns = (
 		{
 			title: translate('Amount'),
 			key: 'amount',
-			render: (text, record) => {
+			render: (_, record) => {
 				const key = record.key
 				if (key === 'yaxis')
 					return (
@@ -93,7 +98,7 @@ const makeColumns = (
 							noWrapper
 							// Note: We display "Vault" to the user,
 							// but it is really interacting with the Gauge
-							buttonText={'Deposit'}
+							buttonText={'Approve Deposit'}
 						>
 							<Form.Item
 								validateStatus={
@@ -131,10 +136,10 @@ const makeColumns = (
 						noWrapper
 						contractName1={`vaults.${key}.token.contract`}
 						approvee1={contracts?.vaults[key].vault.address}
-						buttonText1={'Deposit'}
+						buttonText1={'Approve Deposit'}
 						contractName2={`vaults.${key}.token.contract`}
 						approvee2={contracts?.internal.vaultHelper.address}
-						buttonText2={'Automatic Staking'}
+						buttonText2={'Approve Automatic Staking'}
 					>
 						<Form.Item
 							validateStatus={
@@ -277,7 +282,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 	const { blockchain } = useChainInfo()
 	const translate = useTranslation()
 
-	const [balances, loading] = useAllTokenBalances()
+	const [balances, loading] = useAllBalances()
 
 	const apr = useVaultsAPRWithBoost()
 
@@ -289,6 +294,13 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 		method: 'depositVault',
 		description: `Vault deposit`,
 	})
+
+	const { call: handlePayableDeposit, loading: isSubmittingPayable } =
+		useContractWrite({
+			contractName: 'internal.vaultHelper',
+			method: 'depositVaultPayable',
+			description: `Vault deposit`,
+		})
 
 	const { call: handleStakeYAXIS, loading: isSubmittingYAXIS } =
 		useContractWrite({
@@ -313,43 +325,73 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 		[currencyValues, balances],
 	)
 
-	const totalDepositing = useMemo(
-		() =>
-			computeTotalDepositing(
-				vaults.map(([, contracts]) => contracts.token),
-				currencyValues,
-				prices,
-			),
-		[vaults, currencyValues, prices],
-	)
+	const totalDepositing = useMemo(() => {
+		const currencies = vaults.map(([, contracts]) => contracts.token)
+		if (
+			blockchain === 'avalanche' &&
+			(vaults.length > 1 || vaults.every(([vault]) => vault === 'avax'))
+		) {
+			const dummyNative = cloneDeep(DEFAULT_TOKEN_BALANCE)
+			dummyNative.tokenId = 'avax'
+			dummyNative.priceMapKey = 'avax'
+			currencies.push(dummyNative)
+		}
+		return computeTotalDepositing(currencies, currencyValues, prices)
+	}, [vaults, currencyValues, prices])
 
 	const handleSubmit = useCallback(async () => {
-		const transactions = vaults.reduce<[string, [string, string]][]>(
-			(previous, [vault, contracts]) => {
-				const token = contracts.token
-				const _v = currencyValues[token.tokenId]
-				if (_v)
-					previous.push([
-						vault,
-						[
-							contracts.vault.address,
-							numberToDecimal(
-								_v,
-								Currencies[token.name].decimals,
-							),
-						],
-					])
-				return previous
-			},
-			[],
-		)
+		const transactions = vaults.reduce<
+			[string, [string, string], boolean][]
+		>((previous, [vault, contracts]) => {
+			const token = contracts.token
+			const _v = currencyValues[token.tokenId]
+			if (_v)
+				previous.push([
+					vault,
+					[
+						contracts.vault.address,
+						numberToDecimal(_v, Currencies[token.name].decimals),
+					],
+					false,
+				])
+			return previous
+		}, [])
+
+		if (
+			blockchain === 'avalanche' &&
+			(vaults.length > 1 || vaults.every(([vault]) => vault === 'avax'))
+		) {
+			const token = 'avax'
+			const _v = currencyValues[token]
+			if (_v)
+				transactions.push([
+					token,
+					[
+						vaults.find(([vault]) => vault === 'avax')?.[1].vault
+							.address ?? '',
+						numberToDecimal(
+							_v,
+							Currencies[token.toUpperCase()].decimals,
+						),
+					],
+					true,
+				])
+		}
 
 		if (transactions.length > 0) {
 			await Promise.allSettled(
-				transactions.map(([vault, args]) => {
+				transactions.map(([vault, args, isPayable]) => {
 					// Stake YAXIS into gauge
 					if (vault === 'yaxis')
 						return handleStakeYAXIS({ args: [args[1]] })
+
+					// Native currency
+					if (isPayable)
+						return handlePayableDeposit({
+							args: [args[0], false],
+							amount: args[1],
+							descriptionExtra: totalDepositing,
+						})
 
 					// Deposit others using Vault Helper
 					return handleDeposit({
@@ -371,34 +413,56 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 	}, [
 		vaults,
 		currencyValues,
-		handleDeposit,
 		totalDepositing,
 		contracts,
+		handleDeposit,
 		handleStakeYAXIS,
+		handlePayableDeposit,
 	])
-	const data = useMemo(
-		() =>
-			vaults.map<TableDataEntry>(([vault, contracts]) => {
-				const lpToken = contracts.token.tokenId
-				const currency = Currencies[lpToken.toUpperCase()]
-				const balance = balances[lpToken]?.amount || new BigNumber(0)
-				return {
-					...currency,
-					key: vault,
-					vault,
-					inputValue: currencyValues[lpToken],
-					balance,
-					balanceUSD: new BigNumber(prices[lpToken])
-						.times(balance)
-						.toFixed(2),
-					value: currencyValues
-						? new BigNumber(currencyValues[lpToken] || 0)
-						: new BigNumber(0),
-					apr: apr[blockchain][vault],
-				}
-			}),
-		[vaults, prices, balances, currencyValues, apr, blockchain],
-	)
+	const data = useMemo(() => {
+		const output = vaults.map<TableDataEntry>(([vault, contracts]) => {
+			const lpToken = contracts.token.tokenId
+			const currency = Currencies[lpToken.toUpperCase()]
+			const balance = balances[lpToken]?.amount || new BigNumber(0)
+			return {
+				...currency,
+				key: vault,
+				vault,
+				inputValue: currencyValues[lpToken],
+				balance,
+				balanceUSD: new BigNumber(prices[lpToken])
+					.times(balance)
+					.toFixed(2),
+				value: currencyValues
+					? new BigNumber(currencyValues[lpToken] || 0)
+					: new BigNumber(0),
+				apr: apr[blockchain][vault],
+			}
+		})
+		if (
+			blockchain === 'avalanche' &&
+			(vaults.length > 1 || vaults.every(([vault]) => vault === 'avax'))
+		) {
+			const lpToken = 'avax'
+			const currency = Currencies[lpToken.toUpperCase()]
+			const balance = balances[lpToken]?.amount || new BigNumber(0)
+			output.push({
+				...currency,
+				key: 'avax',
+				vault: 'avax',
+				inputValue: currencyValues[lpToken],
+				balance,
+				balanceUSD: new BigNumber(prices[lpToken])
+					.times(balance)
+					.toFixed(2),
+				value: currencyValues
+					? new BigNumber(currencyValues[lpToken] || 0)
+					: new BigNumber(0),
+				apr: apr[blockchain].avax,
+			})
+		}
+		return output
+	}, [vaults, prices, balances, currencyValues, apr, blockchain])
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])
 
@@ -423,7 +487,9 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 				</Title>
 				<Button
 					disabled={disabled}
-					loading={isSubmitting || isSubmittingYAXIS}
+					loading={
+						isSubmitting || isSubmittingYAXIS || isSubmittingPayable
+					}
 					onClick={handleSubmit}
 					style={{ fontSize: '18px', width: '100%' }}
 				>

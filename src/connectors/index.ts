@@ -28,11 +28,6 @@ export function getLibrary(provider: any) {
 	library.pollingInterval = DEFAULT_POLL_INTERVAL
 	library.detectNetwork().then((network) => {
 		const networkPollingInterval = CHAIN_INFO[network.chainId]?.blocktime
-		console.log(
-			'///////////////////////////////',
-			network,
-			networkPollingInterval,
-		)
 		if (networkPollingInterval) {
 			console.debug('Setting polling interval', networkPollingInterval)
 			library.pollingInterval = networkPollingInterval
@@ -43,11 +38,11 @@ export function getLibrary(provider: any) {
 
 export const SUPPORTED_NETWORKS = [1, 42, 43114]
 
-export const POLLING_INTERVAL = 12000
 export const NETWORK_NAMES = { 1: 'mainnet', 42: 'kovan' }
 export const FRIENDLY_NETWORK_NAMES = {
 	1: 'Ethereum Mainnet',
 	42: 'Kovan Test Network',
+	43114: 'Avalanche Mainnet',
 }
 
 export const networkConnectorFactory = (chainId: ChainId) =>
@@ -85,13 +80,13 @@ export const fortmatic = new FortmaticConnector({
 export const ledger = new LedgerConnector({
 	chainId: 1,
 	url: NETWORK_URLS[1],
-	pollingInterval: POLLING_INTERVAL,
+	pollingInterval: DEFAULT_POLL_INTERVAL,
 })
 
 export const trezor = new TrezorConnector({
 	chainId: 1,
 	url: NETWORK_URLS[1],
-	pollingInterval: POLLING_INTERVAL,
+	pollingInterval: DEFAULT_POLL_INTERVAL,
 	manifestEmail: 'hello@yaxis.io',
 	manifestAppUrl: 'https://app.yaxis.io/',
 })

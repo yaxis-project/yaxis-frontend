@@ -287,7 +287,7 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 										contracts?.vaults[key].gauge.address
 									}
 									noWrapper
-									buttonText={'Withdraw'}
+									buttonText={'Approve Withdraw'}
 								>
 									{children}
 								</ApprovalCover>
@@ -305,12 +305,12 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 								noWrapper
 								contractName1={`vaults.${key}.gaugeToken.contract`}
 								approvee1={contracts?.vaults[key].gauge.address}
-								buttonText1={'Withdraw'}
+								buttonText1={'Approve Withdraw'}
 								contractName2={`vaults.${key}.gaugeToken.contract`}
 								approvee2={
 									contracts?.internal.vaultHelper.address
 								}
-								buttonText2={'Automatic Unstaking'}
+								buttonText2={'Approve Automatic Unstaking'}
 							>
 								{children}
 							</DoubleApprovalCover>

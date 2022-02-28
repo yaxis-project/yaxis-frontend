@@ -11,7 +11,7 @@ import {
 import { calculateGasMargin } from '../utils/number'
 import { LoadingOutlined } from '@ant-design/icons'
 import { NETWORK_NAMES } from '../connectors'
-import { getExplorerUrl } from '../utils'
+import { useExplorerUrl } from '../utils'
 
 interface Params {
 	contractName: string
@@ -49,6 +49,8 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 	}, [contracts, contractName])
 
 	const addTransaction = useTransactionAdder()
+
+	const explorerUrl = useExplorerUrl(`/tx/`)
 
 	useEffect(() => notification.close(key), [account, chainId, key])
 
@@ -108,10 +110,7 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 					style: clickableStyle,
 					icon: <LoadingOutlined />,
 					onClick: () =>
-						window.open(
-							getExplorerUrl(`/tx/${receipt?.hash}`),
-							'_blank',
-						),
+						window.open(explorerUrl + `${receipt?.hash}`, '_blank'),
 				})
 			} catch (error) {
 				console.error(error)

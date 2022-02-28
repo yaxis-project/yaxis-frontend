@@ -25,6 +25,24 @@
 				"type": "address"
 			},
 			{
+				"internalType": "bool",
+				"name": "_auto",
+				"type": "bool"
+			}
+		],
+		"name": "depositVaultPayable",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_vault",
+				"type": "address"
+			},
+			{
 				"internalType": "uint256",
 				"name": "_amount",
 				"type": "uint256"

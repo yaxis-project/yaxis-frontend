@@ -9,7 +9,9 @@ import Typography from '../../Typography'
 
 const { Text } = Typography
 
-type Props = {}
+type Props = {
+	//
+}
 
 const Button: React.FC<Props> = () => {
 	const language = useLanguage()
