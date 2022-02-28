@@ -83,7 +83,7 @@ const makeColumns = (
 						contractName={`vaults.${key}.vaultToken.contract`}
 						approvee={contracts?.vaults[key].gauge.address}
 						noWrapper
-						buttonText={'Gauge'}
+						buttonText={'Approve Gauge'}
 					>
 						<Form.Item
 							validateStatus={
@@ -439,7 +439,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 			vaults.map<TableDataEntry>(([vault, contracts]) => {
 				const lpTokenCurrency = contracts.token
 				const lpToken = lpTokenCurrency.tokenId
-				const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
+				const vaultToken = contracts.vaultToken.name.toLowerCase()
 				const currency = Currencies[vaultToken.toUpperCase()]
 				const balance = balances[vaultToken]?.amount || new BigNumber(0)
 				return {

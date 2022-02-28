@@ -106,24 +106,8 @@ export const ExternalLPContracts = <const>[
 ]
 export type TExternalLPContracts = typeof ExternalLPContracts[number]
 
-export const ExternalContracts = <const>[
-	'multicall',
-	// 'pickleChef',
-	// 'pickleJar',s
-	// 'uniswapRouter',
-	'gaugeController',
-]
+export const ExternalContracts = <const>['multicall', 'gaugeController']
 export type TExternalContracts = typeof ExternalContracts[number]
-
-/*
-[symbol , vault name]
-*/
-export const LPVaults: [string, string][] = [
-	['av3crv', 'usd'],
-	['atricrypto', 'tricrypto'],
-	['avax', 'avax'],
-	['joewavax', 'joewavax'],
-]
 
 export const Vaults = <const>['av3crv', 'atricrypto', 'avax', 'joewavax']
 export type TVaults = typeof Vaults[number]
@@ -136,6 +120,7 @@ export interface Vault {
 	vaultToken: string
 	vaultTokenContract: string
 	gauge: string
+	payable?: string
 }
 
 export type AvalancheInternalConfig = {

@@ -8,7 +8,7 @@ import VaultStatsCard from './components/VaultStatsCard'
 // import RecentTransactionsCard from './components/RecentTransactionsCard'
 import './index.less'
 import { currentConfig } from '../../constants/configs'
-import { getExplorerUrl } from '../../utils'
+import { useExplorerUrl } from '../../utils'
 import { formatBN } from '../../utils/number'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { useVaultsBalances } from '../../state/wallet/hooks'
@@ -34,16 +34,14 @@ const Vault: React.FC = () => {
 		() => (contracts?.vaults ? Object.entries(contracts.vaults) : []),
 		[contracts],
 	)
-
+	const explorerUrl = useExplorerUrl(`/address/`)
 	return (
 		<div className="investing-view">
 			<Page
 				loading={false}
 				mainTitle={translate('Vault Account')}
 				secondaryText={translate('Canonical Vaults')}
-				secondaryTextLink={
-					address && getExplorerUrl(`/address/${address}#code`)
-				}
+				secondaryTextLink={address && explorerUrl + `${address}#code`}
 				value={'$' + formatBN(total)}
 				valueInfo={translate('Balance')}
 			>

@@ -49,7 +49,9 @@ const GAUGE_INTERFACE = new Interface(GaugeAbi)
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
  */
-export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
+export function useNativeBalances(
+	uncheckedAddresses?: (string | undefined)[],
+): {
 	[address: string]: CurrencyValue | undefined
 } {
 	const { contracts } = useContracts()
@@ -202,6 +204,26 @@ export function useAllTokenBalances(): [
 		...VAULT,
 		...GAUGE,
 	])
+}
+
+export function useAllBalances(): [
+	{
+		[tokenId: string]: CurrencyValue
+	},
+	boolean,
+] {
+	const { account } = useWeb3Provider()
+
+	const [tokenBalances, loading] = useAllTokenBalances()
+	const { [account]: nativeBalance } = useNativeBalances([account])
+
+	return useMemo(
+		() => [
+			{ ...tokenBalances, avax: nativeBalance, eth: nativeBalance },
+			loading,
+		],
+		[tokenBalances, loading, nativeBalance],
+	)
 }
 
 type StakedBalanceReturn = { [key in TRewardsContracts]: CurrencyValue }
@@ -789,7 +811,7 @@ interface TVaultsBalances {
 export function useVaultsBalances() {
 	const { contracts } = useContracts()
 	const vaults = useVaults()
-	const [balances, loading] = useAllTokenBalances()
+	const [balances, loading] = useAllBalances()
 	const { prices } = usePrices()
 
 	return useMemo(() => {
@@ -1199,6 +1221,7 @@ export function useBoosts(): useUserBoostReturn {
 	const av3crv = useUserBoost('av3crv')
 	const atricrypto = useUserBoost('atricrypto')
 	const avax = useUserBoost('avax')
+	const wavax = useUserBoost('avax')
 	const joewavax = useUserBoost('joewavax')
 
 	return useMemo(() => {
@@ -1214,9 +1237,22 @@ export function useBoosts(): useUserBoostReturn {
 			av3crv,
 			atricrypto,
 			avax,
+			wavax,
 			joewavax,
 		}
-	}, [usd, btc, eth, link, cvx, tricrypto, frax, yaxis, avax, joewavax])
+	}, [
+		usd,
+		btc,
+		eth,
+		link,
+		cvx,
+		tricrypto,
+		frax,
+		yaxis,
+		avax,
+		wavax,
+		joewavax,
+	])
 }
 
 type VaultsAPRWithBoost = VaultAPR & {

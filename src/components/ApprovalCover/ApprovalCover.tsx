@@ -9,13 +9,14 @@ import BigNumber from 'bignumber.js'
 import { MAX_UINT } from '../../utils/number'
 import { ethers } from 'ethers'
 import useTranslation from '../../hooks/useTranslation'
+import { Phrases } from '../../constants/translations'
 
 type Props = {
 	contractName: string
 	approvee: string
 	hidden?: boolean
 	noWrapper?: boolean
-	buttonText?: string
+	buttonText?: Phrases
 }
 
 const ApprovalCover: React.FC<Props> = ({
@@ -68,9 +69,7 @@ const ApprovalCover: React.FC<Props> = ({
 						})
 					}}
 				>
-					{translate(
-						buttonText ? `Approve ${buttonText}` : 'Approve',
-					)}
+					{translate(buttonText ?? 'Approve')}
 				</Button>
 			</Cover>
 		),

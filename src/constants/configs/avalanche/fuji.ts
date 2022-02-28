@@ -30,7 +30,7 @@ const currencies: AvalancheCurrenciesConfig = {
 }
 
 const external: AvalancheExternalConfig = {
-	multicall: '0x98e2060F672FD1656a07bc12D7253b5e41bF3876',
+	multicall: '0xccc75e78Dce6A20bCCa3a30deB23Cb4D23df993a',
 	// pickleChef: '',
 	// pickleJar: '',
 	// uniswapRouter: '',

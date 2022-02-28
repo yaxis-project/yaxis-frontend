@@ -5,7 +5,7 @@ import { useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
 import { checkedTransaction, finalizeTransaction } from './actions'
 import { notification } from 'antd'
-import { getExplorerUrl } from '../../utils'
+import { useExplorerUrl } from '../../utils'
 import { NETWORK_NAMES } from '../../connectors'
 import { SerializableTransactionReceipt } from '.'
 
@@ -53,6 +53,8 @@ export default function Updater(): null {
 		[account, chainId, state],
 	)
 
+	const explorerUrl = useExplorerUrl(`/tx/`)
+
 	useEffect(() => {
 		if (!chainId || !library || !lastBlockNumber) return
 
@@ -92,7 +94,7 @@ export default function Updater(): null {
 									style: clickableStyle,
 									onClick: () =>
 										window.open(
-											getExplorerUrl(`/tx/${tx?.hash}`),
+											explorerUrl + `${tx?.hash}`,
 											'_blank',
 										),
 								})
@@ -104,7 +106,7 @@ export default function Updater(): null {
 									style: clickableStyle,
 									onClick: () =>
 										window.open(
-											getExplorerUrl(`/tx/${tx?.hash}`),
+											explorerUrl + `${tx?.hash}`,
 											'_blank',
 										),
 								})

@@ -8,7 +8,7 @@ const { Panel } = Collapse
 
 interface ExpandableSidePanelProps {
 	children: React.ReactNode
-	header: React.ReactElement
+	header: React.ReactElement | string
 	icon?: IconType
 }
 

@@ -9,16 +9,17 @@ import BigNumber from 'bignumber.js'
 import { MAX_UINT } from '../../utils/number'
 import { ethers } from 'ethers'
 import useTranslation from '../../hooks/useTranslation'
+import { Phrases } from '../../constants/translations'
 
 type Props = {
 	noWrapper?: boolean
 	approvee1: string
 	contractName1: string
-	buttonText1?: string
+	buttonText1?: Phrases
 	hidden1?: boolean
 	approvee2: string
 	contractName2: string
-	buttonText2?: string
+	buttonText2?: Phrases
 	hidden2?: boolean
 }
 
@@ -78,9 +79,7 @@ const DoubleApprovalCover: React.FC<Props> = ({
 						})
 					}}
 				>
-					{translate(
-						buttonText1 ? `Approve ${buttonText1}` : 'Approve',
-					)}
+					{translate(buttonText1 ?? 'Approve')}
 				</Button>
 			</Cover>
 		),
@@ -127,9 +126,7 @@ const DoubleApprovalCover: React.FC<Props> = ({
 						})
 					}}
 				>
-					{translate(
-						buttonText2 ? `Approve ${buttonText2}` : 'Approve',
-					)}
+					{translate(buttonText2 ?? 'Approve')}
 				</Button>
 			</Cover>
 		),

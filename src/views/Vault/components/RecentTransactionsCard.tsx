@@ -10,7 +10,7 @@ import { TransactionDetails } from '../../../state/transactions/reducer'
 import { useAllTransactions } from '../../../state/transactions/hooks'
 import useWeb3Provider from '../../../hooks/useWeb3Provider'
 import { NETWORK_NAMES } from '../../../connectors'
-import { getExplorerUrl } from '../../../utils'
+import { useExplorerUrl } from '../../../utils'
 import styled from 'styled-components'
 import moment from 'moment'
 
@@ -70,9 +70,10 @@ const RecentTransactionRow = ({
 	const transactionImg = main === 'Deposit' ? transactionIn : transactionOut
 	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 
+	const explorerUrl = useExplorerUrl('')
 	return (
 		<a
-			href={getExplorerUrl(`/tx/${transaction.hash}`)}
+			href={explorerUrl + `/tx/${transaction.hash}`}
 			target="_blank"
 			rel="noopener noreferrer"
 		>

@@ -24,12 +24,12 @@ export function chunkArray<T>(items: T[], maxChunkSize: number): T[][] {
 	)
 }
 
-export function getExplorerUrl(url: string) {
+export function useExplorerUrl(url = '') {
 	const chainInfo = useChainInfo()
 	return `${chainInfo.explorer}${url}`
 }
 
-export function getYaxisUrl() {
+export function useYaxisUrl() {
 	const chainInfo = useChainInfo()
 	return chainInfo.yaxisUrl
 }

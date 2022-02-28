@@ -140,20 +140,6 @@ export const ExternalContracts = <const>[
 ]
 export type TExternalContracts = typeof ExternalContracts[number]
 
-/*
-[symbol , vault name]
-*/
-export const LPVaults: [string, string][] = [
-	['mim3crv', 'usd'],
-	['rencrv', 'btc'],
-	['alethcrv', 'eth'],
-	['linkcrv', 'link'],
-	['yaxis', 'yaxis'],
-	['crvcvxeth', 'cvx'],
-	['crv3crypto', 'tricrypto'],
-	['frax3crv', 'frax'],
-]
-
 export const Vaults = <const>[
 	'usd',
 	'btc',
