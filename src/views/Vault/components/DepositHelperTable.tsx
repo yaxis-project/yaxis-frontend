@@ -89,7 +89,7 @@ const makeColumns = (
 			title: translate('Amount'),
 			key: 'amount',
 			render: (_, record) => {
-				const key = record.key
+				const key = record.key === 'avax-native' ? 'avax' : record.key
 				if (key === 'yaxis')
 					return (
 						<ApprovalCover
@@ -448,7 +448,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 			const balance = balances[lpToken]?.amount || new BigNumber(0)
 			output.push({
 				...currency,
-				key: 'avax',
+				key: 'avax-native',
 				vault: 'avax',
 				inputValue: currencyValues[lpToken],
 				balance,

@@ -21,6 +21,7 @@ import RewardsABI from './Rewards.json'
 import StrategyABI from './Strategy.json'
 import StableSwap3PoolConverterABI from './converter.json'
 import SwapABI from './swap.json'
+import TraderJoeTokenABI from './TraderJoeToken.json'
 import UniswapRouterABI from './UniswapRouter.json'
 import UNIV2PairAbi from './uni_v2_lp.json'
 import VaultABI from './vault.json'
@@ -54,6 +55,7 @@ export const abis = {
 	StrategyABI: StrategyABI as JsonFragment[],
 	StableSwap3PoolConverterABI: StableSwap3PoolConverterABI as JsonFragment[],
 	SwapABI: SwapABI as JsonFragment[],
+	TraderJoeTokenABI: TraderJoeTokenABI as JsonFragment[],
 	UniswapRouterABI: UniswapRouterABI as JsonFragment[],
 	UNIV2PairAbi: UNIV2PairAbi as JsonFragment[],
 	VaultABI: VaultABI as JsonFragment[],
