@@ -308,4 +308,168 @@ export default function Updater(): void {
 				}),
 			)
 	}, [dispatch, fraxResult, state.prices.frax])
+
+	/** AVALANCHE */
+
+	const atricryptoLP = useMemo(
+		() => contracts?.vaults['atricrypto'],
+		[contracts],
+	)
+
+	const atricryptoResult = useSingleContractMultipleMethods(
+		atricryptoLP?.tokenPool,
+		[
+			['get_virtual_price()'],
+			['balances', [0]],
+			['balances', [1]],
+			['balances', [2]],
+		],
+	)
+
+	const [
+		atricryptoVP,
+		atricryptoBalance0,
+		atricryptoBalance1,
+		atricryptoBalance2,
+	] = useMemo(
+		() =>
+			atricryptoResult.map(({ result, loading }) => {
+				if (loading) return new BigNumber(0)
+				if (!result) return new BigNumber(0)
+				return result.toString()
+			}),
+		[atricryptoResult],
+	)
+
+	const { result: supplyOfATriCrypto } = useSingleCallResult(
+		atricryptoLP?.token.contract,
+		'totalSupply',
+	)
+
+	useEffect(() => {
+		// Fill curve LP token prices from Curve Liqudiity Pools
+		const supply = new BigNumber(supplyOfATriCrypto?.toString() || 0)
+		const av3crv = new BigNumber(atricryptoBalance0)
+			.dividedBy(10 ** 18)
+			.multipliedBy(state.prices['3crv'])
+		const wbtc = new BigNumber(atricryptoBalance1)
+			.dividedBy(10 ** 8)
+			.multipliedBy(state.prices.wbtc)
+		const weth = new BigNumber(atricryptoBalance2)
+			.dividedBy(10 ** 18)
+			.multipliedBy(state.prices.weth)
+		const total = av3crv.plus(wbtc).plus(weth)
+		// TODO: get avalanche prices
+		if (new BigNumber(atricryptoVP).gt(0))
+			dispatch(
+				updatePrices({
+					prices: {
+						atricrypto: total
+							.dividedBy(supply.dividedBy(10 ** 18))
+							.multipliedBy(
+								new BigNumber(atricryptoVP).dividedBy(10 ** 18),
+							)
+							.toNumber(),
+					},
+				}),
+			)
+	}, [
+		dispatch,
+		supplyOfATriCrypto,
+		atricryptoVP,
+		atricryptoBalance0,
+		atricryptoBalance1,
+		atricryptoBalance2,
+		state.prices.usdt,
+		state.prices.wbtc,
+		state.prices.weth,
+	])
+
+	const av3crvLP = useMemo(() => contracts?.vaults['av3crv'], [contracts])
+
+	const { result: av3crvResult } = useSingleCallResult(
+		av3crvLP?.tokenPool,
+		'get_virtual_price()',
+	)
+
+	useEffect(() => {
+		const av3crvVP = new BigNumber(av3crvResult?.toString() || 0)
+		// Fill curve LP token prices from Curve Liqudiity Pools
+		if (av3crvVP.gt(0))
+			dispatch(
+				updatePrices({
+					prices: {
+						av3crv: av3crvVP
+							.dividedBy(10 ** 18)
+							.multipliedBy(state.prices['3crv'])
+							.toNumber(),
+					},
+				}),
+			)
+	}, [dispatch, av3crvResult, state.prices['3crv']])
+
+	// const joewavaxLP = useMemo(() => contracts?.vaults['joewavax'], [contracts])
+
+	// const joewavaxResult = useSingleContractMultipleMethods(
+	// 	joewavaxLP?.token.contract,
+	// 	[['getReserves']],
+	// )
+
+	// const { result: joewavaxTotalSupplyA } = useSingleCallResult(
+	// 	joewavaxLP?.token.contract,
+	// 	'totalSupply',
+	// )
+
+	// const joewavaxTotalSupply = useMemo(
+	// 	() =>
+	// 		joewavaxTotalSupplyA
+	// 			? joewavaxTotalSupplyA?.[0]?.toString() ?? '0'
+	// 			: '0',
+	// 	[joewavaxTotalSupplyA],
+	// )
+
+	// useEffect(() => {
+	// 	const [{ result: joewavaxReserves }] = joewavaxResult
+
+	// 	const [reserve0, reserve1] = joewavaxReserves ?? [
+	// 		new BigNumber(0),
+	// 		new BigNumber(0),
+	// 	]
+	// 	console.log(joewavaxTotalSupply)
+	// 	// Fill curve LP token prices from Curve Liqudiity Pools
+	// 	const supply = new BigNumber(
+	// 		// joewavaxTotalSupply[0]?.toString()
+	// 		joewavaxTotalSupply,
+	// 		// 0,
+	// 	)
+
+	// 	const supplyA = supply.isZero()
+	// 		? new BigNumber(0)
+	// 		: supply.dividedBy(10 ** 18)
+
+	// 	const joe = new BigNumber(reserve0?.toString() || 0)
+	// 		.dividedBy(10 ** 18)
+	// 		.multipliedBy(state.prices.joe)
+	// 	const wavax = new BigNumber(reserve1?.toString() || 0)
+	// 		.dividedBy(10 ** 18)
+	// 		.multipliedBy(state.prices.wavax)
+	// 	const total = joe.plus(wavax)
+
+	// 	const joewavax = total.dividedBy(supplyA)
+
+	// 	if (joewavax.gt(0))
+	// 		dispatch(
+	// 			updatePrices({
+	// 				prices: {
+	// 					joewavax: joewavax.toNumber(),
+	// 				},
+	// 			}),
+	// 		)
+	// }, [
+	// 	dispatch,
+	// 	state.prices.joe,
+	// 	state.prices.wavax,
+	// 	joewavaxResult,
+	// 	joewavaxTotalSupply,
+	// ])
 }

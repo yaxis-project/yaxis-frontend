@@ -291,7 +291,9 @@ export class AvalancheContracts {
 					...VaultCurrency,
 					contract: new Contract(
 						vaultConfig.tokenContract,
-						abis.ERC20Abi,
+						vault === 'joewavax'
+							? abis.TraderJoeTokenABI
+							: abis.ERC20Abi,
 						provider,
 					),
 				},
@@ -323,6 +325,7 @@ export class AvalancheContracts {
 				},
 				tokenPool: new Contract(
 					this.config.vaults[vault].tokenPoolContract,
+					// TODO when joewavax make chef
 					abis.CurvePoolABI,
 					provider,
 				),
