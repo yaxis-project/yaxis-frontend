@@ -89,7 +89,38 @@ const makeColumns = (
 			title: translate('Amount'),
 			key: 'amount',
 			render: (_, record) => {
-				const key = record.key === 'avax-native' ? 'avax' : record.key
+				const key = record.key
+
+				if (key === 'avax-native')
+					return (
+						<Form.Item
+							validateStatus={
+								new BigNumber(record.value).gt(
+									new BigNumber(record.balance),
+								) && 'error'
+							}
+							style={{ marginBottom: 0 }}
+						>
+							<Input
+								onChange={(e) =>
+									onChange(record.tokenId, e.target.value)
+								}
+								value={record.inputValue}
+								min={'0'}
+								max={`${record.balance}`}
+								placeholder="0"
+								disabled={loading || record.balance.isZero()}
+								suffix={record.name}
+								onClickMax={() =>
+									onChange(
+										record.tokenId,
+										record.balance || '0',
+									)
+								}
+							/>
+						</Form.Item>
+					)
+
 				if (key === 'yaxis')
 					return (
 						<ApprovalCover
