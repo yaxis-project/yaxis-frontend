@@ -7,7 +7,7 @@ import Davatar from '@davatar/react'
 import { useOpenModal } from '../../../state/application/hooks'
 import { ApplicationModal } from '../../../state/application/actions'
 import AccountInfo from '../components/AccountInfo'
-import { NETWORK_NAMES, FRIENDLY_NETWORK_NAMES } from '../../../connectors'
+import { FRIENDLY_NETWORK_NAMES } from '../../../connectors'
 import { useClearPendingTransactions } from '../../../state/transactions/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 
@@ -16,7 +16,6 @@ const AccountButton: React.FC = () => {
 
 	const { account, deactivate, chainId } = useWeb3Provider()
 
-	const networkName = useMemo(() => NETWORK_NAMES[chainId] || '', [chainId])
 	const friendlyNetworkName = useMemo(
 		() => FRIENDLY_NETWORK_NAMES[chainId] || '',
 		[chainId],
@@ -45,7 +44,6 @@ const AccountButton: React.FC = () => {
 							<StyledMenu>
 								<AccountInfo
 									account={account}
-									networkName={networkName}
 									friendlyNetworkName={friendlyNetworkName}
 									mobile={false}
 								/>

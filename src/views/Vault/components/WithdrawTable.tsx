@@ -3,6 +3,7 @@ import { Currencies, Currency } from '../../../constants/currencies'
 import { useAllTokenBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import { Row, Grid, Form } from 'antd'
+import { ColumnsType } from 'antd/es/table'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
 import useContractWrite from '../../../hooks/useContractWrite'
@@ -33,9 +34,9 @@ type SortOrder = 'descend' | 'ascend' | null
 
 const makeColumns = (
 	loading: boolean,
-	translate: any,
+	translate: ReturnType<typeof useTranslation>,
 	onChange: ReturnType<typeof handleFormInputChange>,
-) => {
+): ColumnsType<TableDataEntry> => {
 	return [
 		{
 			title: translate('Asset'),
@@ -92,7 +93,10 @@ const makeColumns = (
 							disabled={loading || record.balance.isZero()}
 							suffix={`${record.name}`}
 							onClickMax={() =>
-								onChange(record.tokenId, record.balance || '0')
+								onChange(
+									record.tokenId,
+									record.balance.toString() || '0',
+								)
 							}
 						/>
 					</Form.Item>
@@ -105,10 +109,12 @@ const makeColumns = (
 const { useBreakpoint } = Grid
 
 interface TableDataEntry extends Currency {
+	vault: string
 	balance: BigNumber
 	balanceUSD: string
 	value: BigNumber
-	vault: string
+	inputValue: string
+	key: string
 }
 
 interface WithdrawTableProps {
@@ -256,15 +262,7 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, vaults }) => {
 	])
 
 	const { prices } = usePrices()
-	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
-		vaults.reduce(
-			(prev, [, contracts]) => ({
-				...prev,
-				[contracts.token.tokenId]: '',
-			}),
-			{},
-		),
-	)
+	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>({})
 
 	const disabled = useMemo(() => {
 		return computeInsufficientBalance(currencyValues, balances)
@@ -354,7 +352,11 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, vaults }) => {
 
 	return (
 		<>
-			<Table columns={columns} dataSource={data} pagination={false} />
+			<Table<TableDataEntry>
+				columns={columns}
+				dataSource={data}
+				pagination={false}
+			/>
 			<div
 				style={
 					md

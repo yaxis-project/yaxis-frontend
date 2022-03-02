@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import {
 	Currencies,
 	Currency,
@@ -7,11 +7,13 @@ import {
 import {
 	useAllBalances,
 	useVaultsAPRWithBoost,
+	VaultsAPRWithBoost,
 } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { NavLink } from 'react-router-dom'
 import { Row, Col, Grid, Form, Tooltip } from 'antd'
+import { ColumnsType } from 'antd/es/table'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
 import useContractWrite from '../../../hooks/useContractWrite'
@@ -31,7 +33,7 @@ import BigNumber from 'bignumber.js'
 import Input from '../../../components/Input'
 import ApprovalCover from '../../../components/ApprovalCover'
 import { DoubleApprovalCover } from '../../../components/ApprovalCover/DoubleApprovalCover'
-import { TYaxisManagerData, VaultAPR } from '../../../state/internal/hooks'
+import { TYaxisManagerData } from '../../../state/internal/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { Contracts, VaultC } from '../../../constants/contracts'
 import { useChainInfo } from '../../../state/user'
@@ -43,10 +45,10 @@ type SortOrder = 'descend' | 'ascend' | null
 
 const makeColumns = (
 	loading: boolean,
-	translate: any,
+	translate: ReturnType<typeof useTranslation>,
 	onChange: ReturnType<typeof handleFormInputChange>,
 	contracts: Contracts,
-) => {
+): ColumnsType<TableDataEntry> => {
 	return [
 		{
 			title: translate('Vault'),
@@ -114,7 +116,7 @@ const makeColumns = (
 								onClickMax={() =>
 									onChange(
 										record.tokenId,
-										record.balance || '0',
+										record.balance.toString() || '0',
 									)
 								}
 							/>
@@ -154,7 +156,7 @@ const makeColumns = (
 									onClickMax={() =>
 										onChange(
 											record.tokenId,
-											record.balance || '0',
+											record.balance.toString() || '0',
 										)
 									}
 								/>
@@ -193,7 +195,7 @@ const makeColumns = (
 								onClickMax={() =>
 									onChange(
 										record.tokenId,
-										record.balance || '0',
+										record.balance.toString() || '0',
 									)
 								}
 							/>
@@ -206,7 +208,7 @@ const makeColumns = (
 			title: translate('Current APR'),
 			key: 'apy',
 			sorter: (a, b) => a.apr.totalAPR.minus(b.apr.totalAPR).toNumber(),
-			render: (text, record) => (
+			render: (_, record) => (
 				<>
 					<Row style={{ fontWeight: 'bolder' }}>
 						<Text type="secondary">
@@ -247,10 +249,10 @@ const makeColumns = (
 												margin: '10px 0',
 											}}
 										/>
-										{record.apr?.boost.lt(2.5) && (
+										{record.apr?.boost.lt(2.5) ? (
 											<>
 												<Row justify="center">
-													<Button height="30px">
+													<Button height="35px">
 														<NavLink to="/governance">
 															Lock & Boost
 														</NavLink>
@@ -272,6 +274,10 @@ const makeColumns = (
 													% extra APR!
 												</Row>
 											</>
+										) : (
+											<Title level={4}>
+												🔥 MAX BOOST 🔥
+											</Title>
 										)}
 									</div>
 								}
@@ -295,7 +301,7 @@ interface TableDataEntry extends Currency {
 	balance: BigNumber
 	balanceUSD: string
 	value: BigNumber
-	apr: VaultAPR
+	apr: VaultsAPRWithBoost
 }
 
 interface DepositHelperTableProps {
@@ -341,15 +347,11 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 		})
 
 	const { prices } = usePrices()
-	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
-		vaults.reduce(
-			(prev, [, contracts]) => ({
-				...prev,
-				[contracts.token.tokenId]: '',
-			}),
-			{},
-		),
-	)
+	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>({})
+
+	useEffect(() => {
+		setCurrencyValues({})
+	}, [vaults])
 
 	const disabled = useMemo(
 		() => computeInsufficientBalance(currencyValues, balances),
@@ -450,6 +452,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 		handleStakeYAXIS,
 		handlePayableDeposit,
 	])
+
 	const data = useMemo(() => {
 		const output = vaults.map<TableDataEntry>(([vault, contracts]) => {
 			const lpToken = contracts.token.tokenId
@@ -504,7 +507,11 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 
 	return (
 		<>
-			<Table columns={columns} dataSource={data} pagination={false} />
+			<Table<TableDataEntry>
+				columns={columns}
+				dataSource={data}
+				pagination={false}
+			/>
 			<div
 				style={
 					md
@@ -577,7 +584,7 @@ const TooltipRow = ({
 					color={'white'}
 				/>
 			</Col>
-			{boost.gt(1) && <Col>[{boost.toFormat(2)} Boost]</Col>}
+			{boost.gt(1) && <Col>[{boost.toFormat(2)}x Boost]</Col>}
 		</Row>
 	</>
 )

@@ -27,7 +27,7 @@ const Nav: React.FC = () => {
 						href="https://trello.com/b/nkcEh9pc/yaxis-bounty-board-community"
 						rel="noopener noreferrer"
 					>
-						{translate("We're Hiring")!}
+						{translate("We're Hiring")}!
 					</StyledLink>
 				</Row>
 			</StyledCol>

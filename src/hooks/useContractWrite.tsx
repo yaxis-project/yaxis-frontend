@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState, useEffect } from 'react'
 import { notification } from 'antd'
 import { useContracts } from '../contexts/Contracts'
 import useWeb3Provider from './useWeb3Provider'
-import { Contract } from '@ethersproject/contracts'
+import { Contract, CallOverrides } from '@ethersproject/contracts'
 import objectPath from 'object-path'
 import {
 	useTransactionAdder,
@@ -66,23 +66,18 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 					library.getSigner(account).connectUnchecked(),
 				)
 
-				const config: any = {
-					// gasLimit: 1_000_000,
+				const config: CallOverrides = {
+					gasLimit: 1_000_000,
 				}
+				if (amount) config.value = amount
 
-				// const mEstimate = c.estimateGas[method]
-				// if (!mEstimate)
-				// 	throw new Error(`${method} not found on ${contractName}`)
+				const mEstimate = await c.estimateGas[method]
+				if (!mEstimate)
+					throw new Error(`${method} not found on ${contractName}`)
+				const gasCost = await mEstimate(...(args || []), config)
+				config.gasLimit = calculateGasMargin(gasCost)
 
-				// const gasCost = await c.estimateGas[method](
-				// 	...(args || []),
-				// 	config,
-				// )
-				// config.gasLimit = calculateGasMargin(gasCost)
-
-				// await c.callStatic[method](...(args || []), config)
-
-				// if (amount) config.value = amount
+				await c.callStatic[method](...(args || []), config)
 
 				const m = c[method]
 				if (!m)
@@ -132,7 +127,7 @@ const useContractWrite = ({ contractName, method, description }: Params) => {
 				notification.close(key)
 				notification.error({
 					message: `Internal Error: Unable to ${description}:`,
-					description: (error as any)?.message,
+					description: (error as Error)?.message,
 				})
 				return false
 			}

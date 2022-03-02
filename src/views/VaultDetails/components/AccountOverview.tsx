@@ -11,6 +11,8 @@ import Value from '../../../components/Value'
 import CardRow from '../../../components/CardRow'
 import Claim from '../../../components/Claim'
 import { TVaults } from '../../../constants/type'
+import APYCalculator from '../../../components/APYCalculator'
+import BigNumber from 'bignumber.js'
 
 const { Text } = Typography
 
@@ -87,13 +89,13 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 			/>
 			<Claim vault={vault} last />
 
-			{/* <APYCalculator
+			<APYCalculator
 				APR={0}
 				balance={new BigNumber(totalUSDBalance)}
 				loading={balanceLoading}
 				page={'metavault'}
 				last
-			/> */}
+			/>
 		</Card>
 	)
 }

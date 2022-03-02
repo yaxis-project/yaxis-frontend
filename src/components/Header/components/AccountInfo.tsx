@@ -15,14 +15,12 @@ const { Text } = Typography
 
 interface AccountInfoProps {
 	account: string
-	networkName: string
 	friendlyNetworkName: string
 	mobile: boolean
 }
 
 const AccountInfo: React.FC<AccountInfoProps> = ({
 	account,
-	networkName,
 	friendlyNetworkName,
 	mobile,
 }) => {

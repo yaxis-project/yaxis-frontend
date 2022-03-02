@@ -14,7 +14,7 @@ import {
 import useTranslation from '../../../../hooks/useTranslation'
 import { useWeb3React } from '@web3-react/core'
 
-export const Wallet: React.FC<any> = () => {
+export const Wallet: React.FC = () => {
 	const translate = useTranslation()
 
 	const visible = useIsModalOpen(ApplicationModal['WALLET'])

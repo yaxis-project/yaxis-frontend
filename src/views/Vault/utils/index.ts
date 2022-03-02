@@ -37,7 +37,6 @@ export const computeInsufficientBalance = (
 	currencyValues: CurrencyValues,
 	currenciesData: { [tokenId: string]: CurrencyValue | undefined },
 ): boolean => {
-	// TODO
 	const noValue = !Object.values(currencyValues).find(
 		(v) => parseFloat(v) > 0,
 	)
@@ -64,14 +63,14 @@ export const computeTotalDepositing = (
 	priceMap: TPrices,
 ) =>
 	vaults
-		.map(({ tokenId, priceMapKey }) => {
+		.reduce((total, { tokenId, priceMapKey }) => {
 			const inputValue = currencyValues[tokenId]
 			const inputNumber = Number(inputValue)
-			return new BigNumber(isNaN(inputNumber) ? 0 : inputNumber).times(
-				new BigNumber(priceMap[priceMapKey] || 0),
-			)
-		})
-		.reduce((total, current) => total.plus(current), new BigNumber(0))
+			const current = new BigNumber(
+				isNaN(inputNumber) ? 0 : inputNumber,
+			).times(new BigNumber(priceMap[priceMapKey] || 0))
+			return total.plus(current)
+		}, new BigNumber(0))
 		.toFormat(2)
 
 /**

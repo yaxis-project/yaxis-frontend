@@ -16,18 +16,18 @@ interface DetailOverviewCardRowProps {
  * @param props DetailOverviewCardProps
  * @see DetailOverviewCard
  */
-export function DetailOverviewCardRow(props: DetailOverviewCardRowProps) {
-	const { children, inline } = props
-	return (
-		<div
-			className="card-row detail-overview-card-row"
-			style={gridStyle}
-			data-inline={!!inline}
-		>
-			{children}
-		</div>
-	)
-}
+export const DetailOverviewCardRow: React.FC<DetailOverviewCardRowProps> = ({
+	children,
+	inline,
+}) => (
+	<div
+		className="card-row detail-overview-card-row"
+		style={gridStyle}
+		data-inline={!!inline}
+	>
+		{children}
+	</div>
+)
 
 interface DetailOverviewCardProps {
 	children: React.ReactNode
@@ -39,23 +39,23 @@ interface DetailOverviewCardProps {
  * @param props DetailOverviewCardProps
  * @see DetailOverviewCardRow
  */
-export function DetailOverviewCard(props: DetailOverviewCardProps) {
-	const { children, title } = props
-	return (
-		<Card
-			className="detail-overview-card"
-			style={{ padding: 0 }}
-			title={
-				<span
-					style={{
-						fontSize: '19px',
-					}}
-				>
-					{title}
-				</span>
-			}
-		>
-			{children}
-		</Card>
-	)
-}
+export const DetailOverviewCard: React.FC<DetailOverviewCardProps> = ({
+	children,
+	title,
+}) => (
+	<Card
+		className="detail-overview-card"
+		style={{ padding: 0 }}
+		title={
+			<span
+				style={{
+					fontSize: '19px',
+				}}
+			>
+				{title}
+			</span>
+		}
+	>
+		{children}
+	</Card>
+)

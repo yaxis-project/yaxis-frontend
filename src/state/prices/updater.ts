@@ -435,7 +435,7 @@ export default function Updater(): void {
 	// 		new BigNumber(0),
 	// 		new BigNumber(0),
 	// 	]
-	// 	console.log(joewavaxTotalSupply)
+
 	// 	// Fill curve LP token prices from Curve Liqudiity Pools
 	// 	const supply = new BigNumber(
 	// 		// joewavaxTotalSupply[0]?.toString()

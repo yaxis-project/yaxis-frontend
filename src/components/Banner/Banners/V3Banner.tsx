@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import Banner from '..'
 import { useRewardsBalances } from '../../../state/wallet/hooks'
 
-const V3Banner = () => {
+const V3Banner: React.FC = () => {
 	const { walletBalance: walletMVLT, stakedBalance: stakedMVLT } =
 		useRewardsBalances('mvlt', 'MetaVault')
 	const { stakedBalance: stakedYAXIS } = useRewardsBalances('yaxis', 'Yaxis')
