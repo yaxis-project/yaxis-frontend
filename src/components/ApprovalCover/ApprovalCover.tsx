@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import { Row } from 'antd'
+import { Row, RowProps } from 'antd'
 import { useSingleCallResultByName } from '../../state/onchain/hooks'
 import useContractWrite from '../../hooks/useContractWrite'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
@@ -94,7 +94,7 @@ const ApprovalCover: React.FC<Props> = ({
 
 export { ApprovalCover }
 
-const Cover = styled(Row)<any>`
+const Cover = styled(Row)<RowProps>`
 	width: 100%;
 	height: 100%;
 	position: absolute;

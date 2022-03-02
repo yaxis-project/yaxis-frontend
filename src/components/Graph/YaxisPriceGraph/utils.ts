@@ -1,5 +1,6 @@
 import { min, max } from 'lodash'
 import moment from 'moment'
+import { State } from './YaxisPriceGraph'
 
 export interface SelectableDay {
 	name: string
@@ -29,23 +30,28 @@ export const dayOptions: SelectableDay[] = [
 	},
 ]
 
+interface PriceResponse {
+	market_caps: [number, number][]
+	prices: [number, number][]
+	total_volumes: [number, number][]
+}
 /**
  * Generate YAX price data for sparklines.
  */
 export async function getYAXPriceData(
 	selectedDay: SelectableDay,
-	setYaxData: any,
-) {
+	setYaxData: React.Dispatch<React.SetStateAction<State>>,
+): Promise<void> {
 	const start = moment().subtract(1, selectedDay.unit).format('X')
 	const end = moment().format('X')
 
 	const api = `https://api.coingecko.com/api/v3/coins/yaxis/market_chart/range?vs_currency=usd&from=${start}&to=${end}`
 	try {
 		const data = await fetch(api)
-		const converted = await data.json()
+		const converted: PriceResponse = await data.json()
 		const prices = converted?.prices
 		const dates = prices.map((p) => p[0])
-		const values = prices.map((p) => p[1]) as any[]
+		const values = prices.map((p) => p[1])
 		setYaxData({
 			values: values,
 			dates: dates,

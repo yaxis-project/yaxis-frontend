@@ -29,7 +29,7 @@ const ClearTransactionsButton = styled(Button)`
 `
 
 interface CardTitleProps {
-	onClearTransactions: Function
+	onClearTransactions: () => void
 	showClear: boolean
 }
 
@@ -153,7 +153,9 @@ export default function RecentTransactionsCard() {
 			title={
 				<CardTitle
 					showClear={false}
-					onClearTransactions={() => {}} // TODO: clear selected
+					onClearTransactions={() => {
+						// TODO: clear selected
+					}}
 				/>
 			}
 			bodyStyle={{ marginTop: 10, padding: 0 }}

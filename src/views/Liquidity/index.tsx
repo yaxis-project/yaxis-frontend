@@ -159,7 +159,7 @@ const StyledTable = styled(Table)`
 			background: ${(props) => props.theme.secondary.backgroundHover};
 		}
 	}
-`
+` as typeof Table
 
 const StyledPanel = styled(Panel)`
 	background: ${(props) => props.theme.secondary.background};

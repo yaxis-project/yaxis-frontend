@@ -23,15 +23,24 @@ import {
 	LineSeries,
 	PointSeries,
 } from '@data-ui/sparkline'
+import { RadioChangeEvent } from 'antd/lib/radio'
 
 /**
  * Generates a sparkline graph card for YAX prices.
  */
-//const PriceGraph = ({className}) => {
+
+export interface State {
+	values: number[]
+	dates: number[]
+	max: number
+	min: number
+}
+const defaultState: State = { values: [], dates: [], max: 0, min: 0 }
+
 const PriceGraph: React.FC = () => {
 	const translate = useTranslation()
 
-	const [data, setData] = useState<any>({ values: [], max: 0, min: 0 })
+	const [data, setData] = useState(defaultState)
 	const [isLoading, setLoading] = useState(true)
 	const [selectedDay, setDate] = useState<SelectableDay>(dayOptions[3])
 
@@ -49,7 +58,7 @@ const PriceGraph: React.FC = () => {
 		return 733
 	}, [windowWidth])
 
-	const handleChange = (e: any) => {
+	const handleChange = (e: RadioChangeEvent) => {
 		const day =
 			dayOptions.find(
 				(day: SelectableDay) => day.name === e.target.value,

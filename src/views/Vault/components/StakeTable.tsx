@@ -3,10 +3,12 @@ import { Currencies, Currency } from '../../../constants/currencies'
 import {
 	useAllTokenBalances,
 	useVaultsAPRWithBoost,
+	VaultsAPRWithBoost,
 } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { Row, Col, Grid, Form, Tooltip } from 'antd'
+import { ColumnsType } from 'antd/es/table'
 import styled from 'styled-components'
 import { numberToDecimal } from '../../../utils/number'
 import useContractWrite from '../../../hooks/useContractWrite'
@@ -37,10 +39,10 @@ type SortOrder = 'descend' | 'ascend' | null
 
 const makeColumns = (
 	loading: boolean,
-	translate: any,
+	translate: ReturnType<typeof useTranslation>,
 	onChange: ReturnType<typeof handleFormInputChange>,
 	contracts: Contracts,
-) => {
+): ColumnsType<TableDataEntry> => {
 	return [
 		{
 			title: translate('Vault'),
@@ -106,7 +108,7 @@ const makeColumns = (
 								onClickMax={() =>
 									onChange(
 										record.tokenId,
-										record.balance || '0',
+										record.balance.toString() || '0',
 									)
 								}
 							/>
@@ -205,6 +207,9 @@ interface TableDataEntry extends Currency {
 	balanceUSD: string
 	value: BigNumber
 	vault: string
+	inputValue: string
+	key: string
+	apr: VaultsAPRWithBoost
 }
 
 interface StakeTableProps {
@@ -369,15 +374,7 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 	])
 
 	const { prices } = usePrices()
-	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>(
-		vaults.reduce(
-			(prev, [, contracts]) => ({
-				...prev,
-				[contracts.token.tokenId]: '',
-			}),
-			{},
-		),
-	)
+	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>({})
 
 	const disabled = useMemo(() => {
 		return computeInsufficientBalance(currencyValues, balances)
@@ -469,7 +466,11 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 
 	return (
 		<>
-			<Table columns={columns} dataSource={data} pagination={false} />
+			<Table<TableDataEntry>
+				columns={columns}
+				dataSource={data}
+				pagination={false}
+			/>
 			<div
 				style={
 					md

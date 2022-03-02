@@ -4,7 +4,7 @@ import useSwapData from '../../../hooks/useSwapData'
 import BigNumber from 'bignumber.js'
 import useTranslation from '../../../hooks/useTranslation'
 
-const SwapBanner = () => {
+const SwapBanner: React.FC = () => {
 	const translate = useTranslation()
 
 	const data = useSwapData()

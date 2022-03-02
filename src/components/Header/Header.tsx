@@ -19,7 +19,7 @@ const Logo = () => (
 	</a>
 )
 
-const Header = () => {
+const Header: React.FC = () => {
 	const { lg } = useBreakpoint()
 
 	const content = useMemo(() => {

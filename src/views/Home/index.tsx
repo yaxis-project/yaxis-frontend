@@ -32,7 +32,6 @@ const Home: React.FC = () => {
 						<GovernanceAccountOverview />
 					</Col>
 					<StyledCol xs={24} sm={24} md={24} lg={8}>
-						{/* TODO */}
 						{/* <HomeOverviewCard /> */}
 						<HomeExpandableOverview />
 					</StyledCol>

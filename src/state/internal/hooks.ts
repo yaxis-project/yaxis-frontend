@@ -114,21 +114,21 @@ export function useVaultRewards(
 		[blockchain, chainInfo],
 	)
 
-	const rate = useSingleCallResult(
+	const { result: rateResult } = useSingleCallResult(
 		active && contracts?.internal.minterWrapper,
 		'rate',
 	)
 
 	const { prices } = usePrices()
 
-	const relativeWeight = useSingleCallResult(
+	const { result: relativeWeightResult } = useSingleCallResult(
 		active && contracts?.internal.gaugeController,
 		'gauge_relative_weight(address)',
 		[contracts?.vaults[name]?.gauge.address],
 	)
 
 	const balance = useSingleCallResult(
-		active && contracts?.vaults[name].gauge,
+		active && contracts?.vaults[name]?.gauge,
 		'working_supply',
 	)
 
@@ -146,14 +146,23 @@ export function useVaultRewards(
 			supply.gt(0) ? supply : 1,
 		)
 
-		const yaxisPerSecond = new BigNumber(rate?.result?.toString() || 0)
-			.dividedBy(10 ** 18)
-			.multipliedBy(relativeWeight?.result?.toString() || 0)
-			.dividedBy(10 ** 18)
-			.dividedBy(virtualSupply)
-		const yaxisPerYear = yaxisPerSecond.isNaN()
+		const rate = new BigNumber(rateResult?.toString() || 0)
+
+		const relativeWeight = new BigNumber(
+			relativeWeightResult?.toString() || 0,
+		)
+
+		const yaxisPerSecond = virtualSupply.isZero()
 			? new BigNumber(0)
-			: yaxisPerSecond.multipliedBy(86400).multipliedBy(365)
+			: rate
+					.dividedBy(10 ** 18)
+					.multipliedBy(relativeWeight)
+					.dividedBy(10 ** 18)
+					.dividedBy(virtualSupply)
+
+		const yaxisPerYear = yaxisPerSecond
+			.multipliedBy(86400)
+			.multipliedBy(365)
 
 		const APR = yaxisPerYear.multipliedBy(prices?.yaxis || 0)
 
@@ -163,7 +172,14 @@ export function useVaultRewards(
 			maxAPR: APR,
 			minAPR: APR.isZero() ? APR : APR.dividedBy(2.5),
 		}
-	}, [name, contracts?.vaults, prices, relativeWeight, balance, rate])
+	}, [
+		name,
+		contracts?.vaults,
+		prices,
+		relativeWeightResult,
+		balance,
+		rateResult,
+	])
 }
 
 export interface VaultAPR {
@@ -852,9 +868,8 @@ export function useAPY(
 	rewardsContract: TRewardsContracts,
 	strategyPercentage = 1,
 ) {
-	// TODO
-	// const curveRewardsAPRs = useCurvePoolRewards('3pool')
-	// const curveBaseAPR = useFetchCurvePoolBaseAPR()
+	const curveRewardsAPRs = useCurvePoolRewards('3pool')
+	const curveBaseAPR = useFetchCurvePoolBaseAPR()
 	const {
 		rewardsPerBlock: rewardsPerBlockEthereum,
 		apr: rewardsAPREthereum,
@@ -886,8 +901,7 @@ export function useAPY(
 			.multipliedBy(100)
 
 		const lpAprPercent = new BigNumber(
-			// curveBaseAPR.apy.day['3pool'] ||
-			0,
+			curveBaseAPR.apy.day['3pool'] || 0,
 		).times(100)
 		let lpApyPercent = lpAprPercent
 			.div(100)
@@ -899,10 +913,7 @@ export function useAPY(
 			.decimalPlaces(18)
 		lpApyPercent = lpApyPercent.multipliedBy(strategyPercentage)
 
-		const threeCrvAprPercent = new BigNumber(
-			0,
-			// curveRewardsAPRs['3crv']
-		)
+		const threeCrvAprPercent = new BigNumber(curveRewardsAPRs['3crv'] || 0)
 		let threeCrvApyPercent = threeCrvAprPercent
 			.div(100)
 			.div(12)
@@ -929,8 +940,8 @@ export function useAPY(
 			rewardsPerBlock,
 		}
 	}, [
-		// curveRewardsAPRs,
-		// curveBaseAPR,
+		curveRewardsAPRs,
+		curveBaseAPR,
 		rewardsAPR,
 		strategyPercentage,
 		rewardsPerBlock,

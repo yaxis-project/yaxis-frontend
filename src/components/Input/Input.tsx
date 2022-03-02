@@ -29,7 +29,6 @@ export interface InputProps extends BaseInputProps {
 }
 
 const Input: React.FC<InputProps> = ({
-	children,
 	onClickMax,
 	suffix,
 	disabled,

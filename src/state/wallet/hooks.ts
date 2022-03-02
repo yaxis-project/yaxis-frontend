@@ -969,7 +969,9 @@ export function useLPsBalance(): LPsBalance {
 
 export function useVotingPower() {
 	const { account } = useWeb3Provider()
+
 	const { contracts } = useContracts()
+
 	const results = useSingleContractMultipleMethods(
 		contracts?.internal.votingEscrow,
 		[['balanceOf(address)', [account]], ['totalSupply()'], ['supply']],
@@ -1255,7 +1257,7 @@ export function useBoosts(): useUserBoostReturn {
 	])
 }
 
-type VaultsAPRWithBoost = VaultAPR & {
+export type VaultsAPRWithBoost = VaultAPR & {
 	boost: BigNumber
 	yaxisAPR: BigNumber
 	totalAPR: BigNumber
@@ -1270,10 +1272,10 @@ type BaseVaultsAPRWithBoost = {
 
 type ReturnVaultsAPRWithBoost = BaseVaultsAPRWithBoost & {
 	avalanche: {
-		[vault in TVaultsAvalanche]: VaultAPR
+		[vault in TVaultsAvalanche]: VaultsAPRWithBoost
 	}
 	ethereum: {
-		[vault in TVaultsEthereum]: VaultAPR
+		[vault in TVaultsEthereum]: VaultsAPRWithBoost
 	}
 }
 

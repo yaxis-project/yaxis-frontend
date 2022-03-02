@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
-import { Currencies } from '../../../constants/currencies'
 import Tabs from '../../../components/Tabs'
 import DepositTable from './DepositTable'
 import DepositHelperTable from './DepositHelperTable'
@@ -119,7 +118,10 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 	const location = useLocation()
 
 	const autoStake = useVaultAutoStake()
-	const isYaxisDetails = vaults.every(([vault]) => vault === 'yaxis')
+	const isYaxisDetails = useMemo(
+		() => vaults.every(([vault]) => vault === 'yaxis'),
+		[vaults],
+	)
 
 	const showDepositTab = useMemo(() => !isYaxisDetails, [isYaxisDetails])
 	const showStakeTab = useMemo(
@@ -144,6 +146,12 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 		return TABS
 	}, [type, isYaxisDetails, autoStake])
 
+	const vaultsWithoutYAXIS = useMemo(
+		// NOTE: YAXIS vault deprecated in YIP-14
+		() => vaults.filter(([vault]) => vault !== 'yaxis'),
+		[vaults],
+	)
+
 	if (location.hash && !allowedRoutes[location.hash])
 		return <Navigate to="/vault" />
 
@@ -159,32 +167,19 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 						{autoStake ? (
 							<DepositHelperTable
 								fees={fees}
-								vaults={
-									// NOTE: YAXIS vault deprecated in YIP-14
-									vaults.filter(
-										([vault]) => vault !== 'yaxis',
-									)
-								}
+								vaults={vaultsWithoutYAXIS}
 							/>
 						) : (
 							<DepositTable
 								fees={fees}
-								vaults={vaults
-									// YAXIS only has a gauge, so we filter it out
-									.filter(([vault]) => vault !== 'yaxis')}
+								vaults={vaultsWithoutYAXIS}
 							/>
 						)}
 					</TabPane>
 				)}
 				{showStakeTab && (
 					<TabPane tab={translate('Stake')} key="#stake">
-						<StakeTable
-							fees={fees}
-							vaults={
-								// NOTE: YAXIS vault deprecated in YIP-14
-								vaults.filter(([vault]) => vault !== 'yaxis')
-							}
-						/>
+						<StakeTable fees={fees} vaults={vaultsWithoutYAXIS} />
 					</TabPane>
 				)}
 				{showUnstakeTab && (
@@ -199,9 +194,7 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 						) : (
 							<WithdrawTable
 								fees={fees}
-								vaults={vaults
-									// YAXIS only has a gauge, so we filter it out
-									.filter(([vault]) => vault !== 'yaxis')}
+								vaults={vaultsWithoutYAXIS}
 							/>
 						)}
 					</TabPane>

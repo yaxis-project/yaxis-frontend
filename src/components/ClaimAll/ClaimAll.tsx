@@ -100,11 +100,7 @@ const ClaimAll: React.FC = () => {
 									const chunks = chunk(gaugeAddresses, 8)
 									chunks.forEach((chunk) => {
 										const addressesToClaim = chunk.reduce(
-											(
-												addresses,
-												[name, claimable],
-												i,
-											) => {
+											(addresses, [name, claimable]) => {
 												if (claimable.gt(0))
 													addresses.push(
 														contracts.vaults[name]

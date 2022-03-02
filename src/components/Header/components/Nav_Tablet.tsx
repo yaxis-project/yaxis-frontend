@@ -75,7 +75,6 @@ const NavTablet: React.FC = () => {
 				) : (
 					<AccountInfo
 						account={account}
-						networkName={networkName}
 						friendlyNetworkName={friendlyNetworkName}
 						mobile={true}
 					/>
