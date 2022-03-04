@@ -383,7 +383,10 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 					vault,
 					[
 						contracts.vault.address,
-						numberToDecimal(_v, Currencies[token.name].decimals),
+						numberToDecimal(
+							_v,
+							Currencies[token.tokenId.toUpperCase()].decimals,
+						),
 					],
 					false,
 				])
