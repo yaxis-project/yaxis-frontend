@@ -19,6 +19,7 @@ import { useYaxisManager } from '../../state/internal/hooks'
 import { TVaults } from '../../constants/type'
 import VaultActionsCard from '../Vault/components/VaultActionsCard'
 import { useContracts } from '../../contexts/Contracts'
+import { VaultC } from '../../constants/contracts'
 
 const { Text } = Typography
 
@@ -39,9 +40,9 @@ const VaultDetails: React.FC<Props> = ({ vault }) => {
 	const vaults = useMemo(
 		() =>
 			contracts?.vaults
-				? Object.entries(contracts.vaults).filter(
+				? (Object.entries(contracts.vaults).filter(
 						([vaultName]) => vaultName === vault,
-				  )
+				  ) as [TVaults, VaultC][])
 				: [],
 		[contracts, vault],
 	)

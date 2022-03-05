@@ -7,6 +7,7 @@ import {
 import {
 	useAllBalances,
 	useVaultsAPRWithBoost,
+	useVaultsBalances,
 	VaultsAPRWithBoost,
 } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
@@ -27,7 +28,6 @@ import {
 	CurrencyValues,
 	handleFormInputChange,
 	computeInsufficientBalance,
-	computeTotalDepositing,
 } from '../utils'
 import BigNumber from 'bignumber.js'
 import Input from '../../../components/Input'
@@ -38,6 +38,7 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 import { Contracts, VaultC } from '../../../constants/contracts'
 import { useChainInfo } from '../../../state/user'
 import { cloneDeep } from 'lodash'
+import { TVaults } from '../../../constants/type'
 
 const { Text, Title } = Typography
 
@@ -306,7 +307,7 @@ interface TableDataEntry extends Currency {
 
 interface DepositHelperTableProps {
 	fees: TYaxisManagerData
-	vaults: [string, VaultC][]
+	vaults: [TVaults, VaultC][]
 }
 
 /**
@@ -353,24 +354,60 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 		setCurrencyValues({})
 	}, [vaults])
 
-	const disabled = useMemo(
-		() => computeInsufficientBalance(currencyValues, balances),
-		[currencyValues, balances],
-	)
+	const disabled = useMemo(() => {
+		const currencyData = vaults.map(([, { token }]) => [
+			token.tokenId,
+			balances[token.tokenId],
+		]) // TODO add avax
+
+		if (
+			blockchain === 'avalanche' &&
+			(vaults.length > 1 || vaults.every(([vault]) => vault === 'avax'))
+		)
+			currencyData.push(['avax', balances['avax']])
+
+		return computeInsufficientBalance(
+			currencyValues,
+			Object.fromEntries(currencyData),
+		)
+	}, [vaults, currencyValues, balances, blockchain])
 
 	const totalDepositing = useMemo(() => {
-		const currencies = vaults.map(([, contracts]) => contracts.token)
+		let total = vaults.reduce(
+			(
+				total,
+				[
+					,
+					{
+						token: { tokenId },
+					},
+				],
+			) => {
+				const inputValue = currencyValues[tokenId]
+				const inputNumber = Number(inputValue)
+				const current = new BigNumber(
+					isNaN(inputNumber) ? 0 : inputNumber,
+				).times(prices[tokenId])
+				return total.plus(current)
+			},
+			new BigNumber(0),
+		)
+
+		// Add native currency payables
 		if (
 			blockchain === 'avalanche' &&
 			(vaults.length > 1 || vaults.every(([vault]) => vault === 'avax'))
 		) {
-			const dummyNative = cloneDeep(DEFAULT_TOKEN_BALANCE)
-			dummyNative.tokenId = 'avax'
-			dummyNative.priceMapKey = 'avax'
-			currencies.push(dummyNative)
+			const inputValue = currencyValues['avax']
+			const inputNumber = Number(inputValue)
+			const current = new BigNumber(
+				isNaN(inputNumber) ? 0 : inputNumber,
+			).times(prices.avax)
+			total = total.plus(current)
 		}
-		return computeTotalDepositing(currencies, currencyValues, prices)
-	}, [vaults, currencyValues, prices])
+
+		return total.toFormat(2)
+	}, [vaults, currencyValues, balances, prices, blockchain])
 
 	const handleSubmit = useCallback(async () => {
 		const transactions = vaults.reduce<

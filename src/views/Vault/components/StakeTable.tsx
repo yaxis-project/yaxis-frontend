@@ -1,8 +1,8 @@
 import { useState, useMemo, useCallback } from 'react'
 import { Currencies, Currency } from '../../../constants/currencies'
 import {
-	useAllTokenBalances,
 	useVaultsAPRWithBoost,
+	useVaultsBalances,
 	VaultsAPRWithBoost,
 } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
@@ -22,7 +22,6 @@ import {
 	CurrencyValues,
 	handleFormInputChange,
 	computeInsufficientBalance,
-	computeTotalDepositing,
 } from '../utils'
 import BigNumber from 'bignumber.js'
 import Value from '../../../components/Value'
@@ -32,6 +31,7 @@ import { TYaxisManagerData } from '../../../state/internal/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { Contracts, VaultC } from '../../../constants/contracts'
 import { useChainInfo } from '../../../state/user'
+import { TVaults } from '../../../constants/type'
 
 const { Text, Title } = Typography
 
@@ -214,7 +214,7 @@ interface TableDataEntry extends Currency {
 
 interface StakeTableProps {
 	fees: TYaxisManagerData
-	vaults: [string, VaultC][]
+	vaults: [TVaults, VaultC][]
 }
 
 /**
@@ -223,7 +223,7 @@ interface StakeTableProps {
 const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 	const translate = useTranslation()
 
-	const [balances, loading] = useAllTokenBalances()
+	const { loading, balances } = useVaultsBalances()
 
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
@@ -377,17 +377,41 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>({})
 
 	const disabled = useMemo(() => {
-		return computeInsufficientBalance(currencyValues, balances)
-	}, [currencyValues, balances])
+		return computeInsufficientBalance(
+			currencyValues,
+			Object.fromEntries(
+				vaults.map(([vault, { vaultToken }]) => [
+					vaultToken.tokenId,
+					balances[vault.toLowerCase()].vaultToken,
+				]),
+			),
+		)
+	}, [vaults, currencyValues, balances])
 
 	const totalDepositing = useMemo(
 		() =>
-			computeTotalDepositing(
-				vaults.map(([, contracts]) => contracts.token),
-				currencyValues,
-				prices,
-			),
-		[vaults, currencyValues, prices],
+			vaults
+				.reduce(
+					(
+						total,
+						[
+							vault,
+							{
+								vaultToken: { tokenId },
+							},
+						],
+					) => {
+						const inputValue = currencyValues[tokenId]
+						const inputNumber = Number(inputValue)
+						const current = new BigNumber(
+							isNaN(inputNumber) ? 0 : inputNumber,
+						).times(balances[vault].vaultTokenPrice)
+						return total.plus(current)
+					},
+					new BigNumber(0),
+				)
+				.toFormat(2),
+		[vaults, currencyValues, balances],
 	)
 
 	const handleSubmit = useCallback(async () => {

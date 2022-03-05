@@ -1,7 +1,6 @@
 import { useState, useMemo, useCallback } from 'react'
 import { Currencies, Currency } from '../../../constants/currencies'
 import { useVaultsBalances } from '../../../state/wallet/hooks'
-import { usePrices } from '../../../state/prices/hooks'
 import { Row, Grid, Form } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import styled from 'styled-components'
@@ -14,7 +13,6 @@ import Typography from '../../../components/Typography'
 import {
 	CurrencyValues,
 	handleFormInputChange,
-	computeTotalDepositing,
 	computeInsufficientBalance,
 } from '../utils'
 import BigNumber from 'bignumber.js'
@@ -25,6 +23,7 @@ import { DoubleApprovalCover } from '../../../components/ApprovalCover/DoubleApp
 import useTranslation from '../../../hooks/useTranslation'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
 import { VaultC } from '../../../constants/contracts'
+import { TVaults } from '../../../constants/type'
 
 const { Text, Title } = Typography
 
@@ -123,7 +122,7 @@ interface TableDataEntry extends Currency {
 
 interface WithdrawHelperTableProps {
 	fees: TYaxisManagerData
-	vaults: [string, VaultC][]
+	vaults: [TVaults, VaultC][]
 }
 
 /**
@@ -153,17 +152,32 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 			description: `unstaked from YAXIS Gauge`,
 		})
 
-	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>({})
 
 	const totalWithdrawing = useMemo(
 		() =>
-			computeTotalDepositing(
-				vaults.map(([, contracts]) => contracts.gaugeToken),
-				currencyValues,
-				prices,
-			),
-		[vaults, currencyValues, prices],
+			vaults
+				.reduce(
+					(
+						total,
+						[
+							vault,
+							{
+								gaugeToken: { tokenId },
+							},
+						],
+					) => {
+						const inputValue = currencyValues[tokenId]
+						const inputNumber = Number(inputValue)
+						const current = new BigNumber(
+							isNaN(inputNumber) ? 0 : inputNumber,
+						).times(balances[vault].vaultTokenPrice)
+						return total.plus(current)
+					},
+					new BigNumber(0),
+				)
+				.toFormat(2),
+		[vaults, currencyValues, balances],
 	)
 
 	const disabled = useMemo(

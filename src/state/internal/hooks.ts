@@ -24,9 +24,12 @@ import {
 	useFetchCurvePoolBaseAPR,
 	useCurvePoolRewards,
 	useConvexAPY,
+	useCurveAPY,
+	useTraderJoeAPY,
+	useAaveAPY,
 } from '../external/hooks'
 import { usePrices } from '../prices/hooks'
-import { L1_CHAIN, L2_CHAIN } from '../../constants/chains'
+import { BaseChainInfo } from '../../constants/chains'
 import { TVaults } from '../../constants/type'
 import { useChainInfo } from '../user'
 
@@ -104,7 +107,7 @@ export function useYaxisGauge() {
 
 export function useVaultRewards(
 	name: TVaults,
-	blockchain: L1_CHAIN | L2_CHAIN,
+	blockchain: BaseChainInfo['blockchain'],
 ) {
 	const { contracts } = useContracts()
 	const chainInfo = useChainInfo()
@@ -182,30 +185,49 @@ export function useVaultRewards(
 	])
 }
 
+export interface YaxisAPR {
+	min: BigNumber
+	max: BigNumber
+}
+export interface ConvexStrategy {
+	extraAPR: any
+	crvAPR: BigNumber
+	cvxAPR: BigNumber
+	totalAPR: BigNumber
+}
+export interface AaveStrategy {
+	extraAPR: any
+	wavaxAPR: BigNumber
+	totalAPR: BigNumber
+}
+export interface TraderJoeStrategy {
+	extraAPR: any
+	crvAPR: BigNumber
+	cvxAPR: BigNumber
+	totalAPR: BigNumber
+}
 export interface VaultAPR {
-	yaxisAPR: {
-		min: BigNumber
-		max: BigNumber
-	}
-	strategy?: {
-		extraAPR: any
-		crvAPR: BigNumber
-		cvxAPR: BigNumber
-		totalAPR: BigNumber
-	}
+	yaxisAPR: YaxisAPR
+	strategy?: ConvexStrategy | AaveStrategy | TraderJoeStrategy
 }
 
 type BaseVaultsAPR = {
-	[chain in L1_CHAIN]: {
+	[chain in BaseChainInfo['blockchain']]: {
 		[vault: string]: VaultAPR
 	}
 }
 type ReturnVaultsAPR = BaseVaultsAPR & {
 	avalanche: {
-		[vault in TVaultsAvalanche]: VaultAPR
+		[vault in TVaultsAvalanche]: {
+			yaxisAPR: YaxisAPR
+			strategy?: AaveStrategy | TraderJoeStrategy
+		}
 	}
 	ethereum: {
-		[vault in TVaultsEthereum]: VaultAPR
+		[vault in TVaultsEthereum]: {
+			yaxisAPR: YaxisAPR
+			strategy?: ConvexStrategy
+		}
 	}
 }
 
@@ -234,6 +256,11 @@ export function useVaultsAPR() {
 	const avaxAvalanche = useVaultRewards('avax', 'avalanche')
 	const joewavaxAvalanche = useVaultRewards('joewavax', 'avalanche')
 
+	// const av3crv = useCurveAPY('av3crv')
+	// const atricrypto = useCurveAPY('atricrypto')
+	// const avax = useAaveAPY('avax')
+	// const joewavax = useTraderJoeAPY('joewavax')
+
 	return useMemo(() => {
 		const output: ReturnVaultsAPR = {
 			avalanche: {
@@ -242,6 +269,7 @@ export function useVaultsAPR() {
 						min: av3crvAvalanche.minAPR,
 						max: av3crvAvalanche.maxAPR,
 					},
+					// strategy: av3crv,
 					strategy: null,
 				},
 				atricrypto: {
@@ -249,6 +277,7 @@ export function useVaultsAPR() {
 						min: atricryptoAvalanche.minAPR,
 						max: atricryptoAvalanche.maxAPR,
 					},
+					// strategy: atricrypto,
 					strategy: null,
 				},
 				avax: {
@@ -256,6 +285,7 @@ export function useVaultsAPR() {
 						min: avaxAvalanche.minAPR,
 						max: avaxAvalanche.maxAPR,
 					},
+					// strategy: avax,
 					strategy: null,
 				},
 				joewavax: {

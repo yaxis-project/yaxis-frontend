@@ -15,6 +15,8 @@ import { useVaultsBalances } from '../../state/wallet/hooks'
 import { useYaxisManager } from '../../state/internal/hooks'
 import useTranslation from '../../hooks/useTranslation'
 import { useContracts } from '../../contexts/Contracts'
+import { TVaults } from '../../constants/type'
+import { VaultC } from '../../constants/contracts'
 
 const Vault: React.FC = () => {
 	const translate = useTranslation()
@@ -31,7 +33,10 @@ const Vault: React.FC = () => {
 
 	const { contracts } = useContracts()
 	const vaults = useMemo(
-		() => (contracts?.vaults ? Object.entries(contracts.vaults) : []),
+		() =>
+			contracts?.vaults
+				? (Object.entries(contracts.vaults) as [TVaults, VaultC][])
+				: [],
 		[contracts],
 	)
 	const explorerUrl = useExplorerUrl(`/address/`)

@@ -15,11 +15,11 @@ const { Text } = Typography
 
 interface DepositAssetRowProps {
 	currency: Currency
-	onChange: Function
+	onChange: (key: string, value: string | number) => void
 	value: string
 	contractName: string
 	approvee: string
-	containerStyle?: any
+	containerStyle?: React.CSSProperties
 }
 
 /**
@@ -108,7 +108,7 @@ const DepositAssetRow: React.FC<DepositAssetRowProps> = ({
 								onClickMax={() =>
 									onChange(
 										currency.tokenId,
-										currencyData?.amount || '0',
+										currencyData?.amount?.toString() || '0',
 									)
 								}
 							/>
