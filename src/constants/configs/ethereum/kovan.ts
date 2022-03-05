@@ -196,6 +196,7 @@ const kovan: EthereumConfig = {
 		yaxisChef: '0xf4aAEd33b7004AE67d3E51eea995E5891Fe5A96c',
 		xYaxStaking: '0xc5598a5FE5aFFb55308ac06593Af31784606de4C',
 		yAxisMetaVault: '0x5cDf227131880CFd6947A47cC903b40207834846',
+		alchemist: '0x44405656aDF43253DB49F4A86D922AD8D2Ef5782',
 	},
 	rewards: {
 		MetaVault: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8',

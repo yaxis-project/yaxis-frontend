@@ -122,6 +122,10 @@ const Nav: React.FC = () => {
 					{translate('Governance')}
 				</StyledLink>
 			</MenuItem>
+
+			<MenuItem key={'/borrow'}>
+				<StyledLink to="/borrow">{translate('Borrow')}</StyledLink>
+			</MenuItem>
 		</StyledMenu>
 	)
 }
