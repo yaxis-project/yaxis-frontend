@@ -1048,6 +1048,52 @@ export function useLock() {
 	}, [results, loading])
 }
 
+export function useAlchemist() {
+	const { account } = useWeb3Provider()
+	const { contracts } = useContracts()
+
+	const [loading, setLoading] = useState(true)
+
+	const results = useSingleContractMultipleMethods(
+		contracts?.internal.alchemist,
+		[
+			['getCdpTotalDeposited(address)', [account]],
+			['getCdpTotalDebt(address)', [account]],
+			['getCdpTotalCredit(address)', [account]],
+		],
+	)
+
+	useEffect(() => {
+		if (results.every(({ valid, loading }) => valid && !loading))
+			setLoading(false)
+	}, [results])
+
+	return useMemo(() => {
+		const [getCdpTotalDeposited, getCdpTotalDebt, getCdpTotalCredit] =
+			results.map(({ result, loading }, i) => {
+				if (loading) return ethers.BigNumber.from(0)
+				if (!result) return ethers.BigNumber.from(0)
+				return result
+			})
+
+		console.log(
+			account,
+			getCdpTotalDeposited,
+			getCdpTotalDebt,
+			getCdpTotalCredit,
+		)
+
+		return {
+			loading,
+			deposited: new BigNumber(getCdpTotalDeposited.toString()).div(
+				10 ** 18,
+			),
+			debt: new BigNumber(getCdpTotalDebt.toString()).div(10 ** 18),
+			credit: new BigNumber(getCdpTotalCredit.toString()).div(10 ** 18),
+		}
+	}, [results, loading])
+}
+
 export function useUserGaugeWeights(blockchain: BaseChainInfo['blockchain']) {
 	const { account } = useWeb3Provider()
 	const { contracts, loading: loadingContracts } = useContracts()

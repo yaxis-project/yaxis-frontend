@@ -99,6 +99,7 @@ export const InternalContracts = <const>[
 	'controller',
 	'manager',
 	'feeDistributor',
+	'alchemist',
 ]
 export type TInternalContracts = typeof InternalContracts[number]
 
