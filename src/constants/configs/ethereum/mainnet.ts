@@ -87,9 +87,9 @@ const externalPools: ExternalPoolsConfig = {
 			extraRewards: {
 				cvx: {
 					contract: '0x834B9147Fd23bF131644aBC6e557Daf99C5cDa15',
-					token: '0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B'
-				}
-			}
+					token: '0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B',
+				},
+			},
 		},
 		crv3crypto: {
 			currency: 'usd',
@@ -126,6 +126,7 @@ const mainnet: Config = {
 		yaxisChef: '0xc330e7e73717cd13fb6ba068ee871584cf8a194f',
 		xYaxStaking: '0xeF31Cb88048416E301Fee1eA13e7664b887BA7e8',
 		yAxisMetaVault: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
+		alchemist: '0x44405656aDF43253DB49F4A86D922AD8D2Ef5782',
 	},
 	rewards: {
 		MetaVault: '0x226f9954A1221cDe805C76CfB312A5d761630E14',

@@ -9,6 +9,7 @@ import Swap from './views/Swap'
 import V3 from './views/V3'
 import Faucet from './views/Faucet'
 import Governance from './views/Governance'
+import Borrow from './views/Borrow'
 import { notification } from 'antd'
 import { currentConfig } from './constants/configs'
 import { useWeb3React } from '@web3-react/core'
@@ -82,6 +83,8 @@ const App: React.FC = () => {
 				<Route path="/v3" element={<V3 />} />
 
 				<Route path="/faucet" element={<Faucet />} />
+
+				<Route path="/borrow" element={<Borrow />} />
 
 				<Route path="*" element={<Navigate to="/" replace={true} />} />
 			</Routes>

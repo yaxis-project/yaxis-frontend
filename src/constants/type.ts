@@ -57,7 +57,7 @@ export const CurrenciesERC20 = <const>[
 	'weth',
 	'mvlt',
 	'spell',
-	'frax'
+	'frax',
 ]
 export type TCurrenciesERC20 = typeof CurrenciesERC20[number]
 
@@ -74,7 +74,7 @@ export const crvLPCurrencies = <const>[
 	'linkcrv',
 	'crvcvxeth',
 	'crv3crypto',
-	'frax3crv'
+	'frax3crv',
 ]
 export type TCrvLPCurrencies = typeof crvLPCurrencies[number]
 
@@ -98,7 +98,8 @@ export const InternalContracts = <const>[
 	'gaugeController',
 	'controller',
 	'manager',
-	'feeDistributor'
+	'feeDistributor',
+	'alchemist',
 ]
 export type TInternalContracts = typeof InternalContracts[number]
 
@@ -110,7 +111,7 @@ export const CurveLPContracts = <const>[
 	'3pool',
 	'crvcvxeth',
 	'crv3crypto',
-	'frax3crv'
+	'frax3crv',
 ]
 export type TCurveLPContracts = typeof CurveLPContracts[number]
 
@@ -154,7 +155,16 @@ export const LPVaults = <const>[
 	['frax3crv', 'frax'],
 ]
 
-export const Vaults = <const>['usd', 'btc', 'eth', 'link', 'yaxis', 'cvx', 'tricrypto', 'frax']
+export const Vaults = <const>[
+	'usd',
+	'btc',
+	'eth',
+	'link',
+	'yaxis',
+	'cvx',
+	'tricrypto',
+	'frax',
+]
 export type TVaults = typeof Vaults[number]
 export interface Vault {
 	url: string

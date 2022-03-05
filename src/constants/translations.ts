@@ -220,6 +220,7 @@ export type Phrases =
 	| 'Russian'
 	| 'Spanish'
 	| 'Portuguese'
+	| 'Borrow'
 
 export type Translations = {
 	[P in Phrases]: string
@@ -442,6 +443,7 @@ const EN: Translations = {
 	Russian: 'Russian',
 	Spanish: 'Spanish',
 	Portuguese: 'Portuguese',
+	Borrow: 'Borrow',
 }
 
 const ES: Translations = {
@@ -643,6 +645,7 @@ const ES: Translations = {
 	Russian: '',
 	Spanish: '',
 	Portuguese: '',
+	Borrow: '',
 }
 
 const KO: Translations = {
@@ -844,6 +847,7 @@ const KO: Translations = {
 	Russian: '',
 	Spanish: '',
 	Portuguese: '',
+	Borrow: '',
 }
 
 const ZH: Translations = {
@@ -1046,6 +1050,7 @@ const ZH: Translations = {
 	Russian: '',
 	Spanish: '',
 	Portuguese: '',
+	Borrow: '',
 }
 
 const RU: Translations = {
@@ -1249,6 +1254,7 @@ const RU: Translations = {
 	Russian: 'Русский',
 	Spanish: '',
 	Portuguese: '',
+	Borrow: '',
 }
 
 const JA: Translations = {
@@ -1450,6 +1456,7 @@ const JA: Translations = {
 	Russian: '',
 	Spanish: '',
 	Portuguese: '',
+	Borrow: '',
 }
 
 const dictionary: Dictionary = {

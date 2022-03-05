@@ -20,7 +20,7 @@ const currencies: CurrenciesConfig = {
 		weth: '0xdC2f70dEd078e3f5F3dC6111978E38a4E38f2370',
 		mvlt: '0x5cDf227131880CFd6947A47cC903b40207834846',
 		spell: '0xc968d40Abc8a0c365769309982D783825510641F', // needs mock
-		frax: '0x64C1d8cd206aF84f54eadb1cbD1E4c3643875Ee8'  // needs mock
+		frax: '0x64C1d8cd206aF84f54eadb1cbD1E4c3643875Ee8', // needs mock
 	},
 	ERC677: {
 		yaxis: '0xDE78295b8a50413f5a6faBd1f4921E8449d2433C',
@@ -196,6 +196,7 @@ const kovan: Config = {
 		yaxisChef: '0xf4aAEd33b7004AE67d3E51eea995E5891Fe5A96c',
 		xYaxStaking: '0xc5598a5FE5aFFb55308ac06593Af31784606de4C',
 		yAxisMetaVault: '0x5cDf227131880CFd6947A47cC903b40207834846',
+		alchemist: '0x44405656aDF43253DB49F4A86D922AD8D2Ef5782',
 	},
 	rewards: {
 		MetaVault: '0xFDAc13A5f54A7f1784FE2d1AA6fA30ee5C92fcb8',
