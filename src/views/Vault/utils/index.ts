@@ -57,28 +57,6 @@ export const computeInsufficientBalance = (
  * @param currencyValues Stored deposit values.
  * @param priceMap Current prices object.
  */
-export const computeTotalDepositing = (
-	vaults: CurrencyContract[],
-	currencyValues: CurrencyValues,
-	priceMap: TPrices,
-) =>
-	vaults
-		.reduce((total, { tokenId, priceMapKey }) => {
-			const inputValue = currencyValues[tokenId]
-			const inputNumber = Number(inputValue)
-			const current = new BigNumber(
-				isNaN(inputNumber) ? 0 : inputNumber,
-			).times(new BigNumber(priceMap[priceMapKey] || 0))
-			return total.plus(current)
-		}, new BigNumber(0))
-		.toFormat(2)
-
-/**
- * Computes the total USD value of stored deposit values.
- * @param vaults List of vaults to iterate over.
- * @param currencyValues Stored deposit values.
- * @param priceMap Current prices object.
- */
 export const computeTotalDepositingCurrency = (
 	currencies: Currency[],
 	currencyValues: CurrencyValues,

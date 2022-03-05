@@ -10,17 +10,14 @@ import useContractWrite from '../../../hooks/useContractWrite'
 import Button from '../../../components/Button'
 import Table from '../../../components/Table'
 import Typography from '../../../components/Typography'
-import {
-	CurrencyValues,
-	handleFormInputChange,
-	computeTotalDepositing,
-} from '../utils'
+import { CurrencyValues, handleFormInputChange } from '../utils'
 import BigNumber from 'bignumber.js'
 import Value from '../../../components/Value'
 import Input from '../../../components/Input'
 import useTranslation from '../../../hooks/useTranslation'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
 import { VaultC } from '../../../constants/contracts'
+import { TVaults } from '../../../constants/type'
 
 const { Text, Title } = Typography
 
@@ -118,7 +115,7 @@ interface TableDataEntry extends Currency {
 
 interface UnstakeTableProps {
 	fees: TYaxisManagerData
-	vaults: [string, VaultC][]
+	vaults: [TVaults, VaultC][]
 }
 
 /**
@@ -127,7 +124,7 @@ interface UnstakeTableProps {
 const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, vaults }) => {
 	const translate = useTranslation()
 
-	const { loading: loadingBalances, ...balances } = useVaultsBalances()
+	const { loading: loadingBalances, balances } = useVaultsBalances()
 
 	const { md } = useBreakpoint()
 
@@ -280,7 +277,7 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, vaults }) => {
 			const vaultToken = vault === 'yaxis' ? 'yaxis' : `cv:${vault}`
 			const gaugeToken = `${vaultToken}-gauge`
 			const value = new BigNumber(currencyValues[gaugeToken] || 0)
-			const currency = balances.balances[vault].gaugeToken
+			const currency = balances[vault].gaugeToken
 			return !currency || value.gt(currency?.amount || 0)
 		})
 		return noValue || insufficientBalance
@@ -288,12 +285,28 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, vaults }) => {
 
 	const totalWithdrawing = useMemo(
 		() =>
-			computeTotalDepositing(
-				vaults.map(([, contracts]) => contracts.token),
-				currencyValues,
-				prices,
-			),
-		[vaults, currencyValues, prices],
+			vaults
+				.reduce(
+					(
+						total,
+						[
+							vault,
+							{
+								gaugeToken: { tokenId },
+							},
+						],
+					) => {
+						const inputValue = currencyValues[tokenId]
+						const inputNumber = Number(inputValue)
+						const current = new BigNumber(
+							isNaN(inputNumber) ? 0 : inputNumber,
+						).times(balances[vault].vaultTokenPrice)
+						return total.plus(current)
+					},
+					new BigNumber(0),
+				)
+				.toFormat(2),
+		[vaults, currencyValues, balances],
 	)
 
 	const handleSubmit = useCallback(async () => {
@@ -344,8 +357,7 @@ const WithdrawTable: React.FC<UnstakeTableProps> = ({ fees, vaults }) => {
 				const gaugeToken = `${vaultToken}-gauge`
 				const currency = Currencies[gaugeToken.toUpperCase()]
 				const balance =
-					balances.balances[vault]?.gaugeToken?.amount ||
-					new BigNumber(0)
+					balances[vault]?.gaugeToken?.amount || new BigNumber(0)
 				return {
 					...currency,
 					vault,

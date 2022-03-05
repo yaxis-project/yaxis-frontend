@@ -408,68 +408,61 @@ export default function Updater(): void {
 			)
 	}, [dispatch, av3crvResult, state.prices['3crv']])
 
-	// const joewavaxLP = useMemo(() => contracts?.vaults['joewavax'], [contracts])
+	const joewavaxLP = useMemo(() => contracts?.vaults['joewavax'], [contracts])
 
-	// const joewavaxResult = useSingleContractMultipleMethods(
-	// 	joewavaxLP?.token.contract,
-	// 	[['getReserves']],
-	// )
+	const joewavaxResult = useSingleContractMultipleMethods(
+		joewavaxLP?.token.contract,
+		[['getReserves'], ['totalSupply']],
+	)
 
-	// const { result: joewavaxTotalSupplyA } = useSingleCallResult(
-	// 	joewavaxLP?.token.contract,
-	// 	'totalSupply',
-	// )
+	const [joewavaxReserve0, joewavaxReserve1] = useMemo(() => {
+		const [{ result: joewavaxReserves }] = joewavaxResult
+		return joewavaxReserves
+			? [
+					joewavaxReserves[0]?.toString() || '0',
+					joewavaxReserves[1]?.toString() || '0',
+			  ]
+			: ['0', '0']
+	}, [joewavaxResult])
 
-	// const joewavaxTotalSupply = useMemo(
-	// 	() =>
-	// 		joewavaxTotalSupplyA
-	// 			? joewavaxTotalSupplyA?.[0]?.toString() ?? '0'
-	// 			: '0',
-	// 	[joewavaxTotalSupplyA],
-	// )
+	const joewavaxTotalSupply = useMemo(() => {
+		const [, { result: joewavaxTotalSupply }] = joewavaxResult
+		return joewavaxTotalSupply
+			? joewavaxTotalSupply[0]?.toString() ?? '0'
+			: '0'
+	}, [joewavaxResult])
 
-	// useEffect(() => {
-	// 	const [{ result: joewavaxReserves }] = joewavaxResult
+	useEffect(() => {
+		// Fill curve LP token prices from Curve Liqudiity Pools
+		const supply = new BigNumber(joewavaxTotalSupply)
+		const supplyA = supply.isZero()
+			? new BigNumber(0)
+			: supply.dividedBy(10 ** 18)
 
-	// 	const [reserve0, reserve1] = joewavaxReserves ?? [
-	// 		new BigNumber(0),
-	// 		new BigNumber(0),
-	// 	]
+		const joe = new BigNumber(joewavaxReserve0)
+			.dividedBy(10 ** 18)
+			.multipliedBy(state.prices.joe)
+		const wavax = new BigNumber(joewavaxReserve1)
+			.dividedBy(10 ** 18)
+			.multipliedBy(state.prices.wavax)
+		const total = joe.plus(wavax)
 
-	// 	// Fill curve LP token prices from Curve Liqudiity Pools
-	// 	const supply = new BigNumber(
-	// 		// joewavaxTotalSupply[0]?.toString()
-	// 		joewavaxTotalSupply,
-	// 		// 0,
-	// 	)
+		const joewavax = total.dividedBy(supplyA)
 
-	// 	const supplyA = supply.isZero()
-	// 		? new BigNumber(0)
-	// 		: supply.dividedBy(10 ** 18)
-
-	// 	const joe = new BigNumber(reserve0?.toString() || 0)
-	// 		.dividedBy(10 ** 18)
-	// 		.multipliedBy(state.prices.joe)
-	// 	const wavax = new BigNumber(reserve1?.toString() || 0)
-	// 		.dividedBy(10 ** 18)
-	// 		.multipliedBy(state.prices.wavax)
-	// 	const total = joe.plus(wavax)
-
-	// 	const joewavax = total.dividedBy(supplyA)
-
-	// 	if (joewavax.gt(0))
-	// 		dispatch(
-	// 			updatePrices({
-	// 				prices: {
-	// 					joewavax: joewavax.toNumber(),
-	// 				},
-	// 			}),
-	// 		)
-	// }, [
-	// 	dispatch,
-	// 	state.prices.joe,
-	// 	state.prices.wavax,
-	// 	joewavaxResult,
-	// 	joewavaxTotalSupply,
-	// ])
+		if (joewavax.gt(0))
+			dispatch(
+				updatePrices({
+					prices: {
+						joewavax: joewavax.toNumber(),
+					},
+				}),
+			)
+	}, [
+		dispatch,
+		state.prices.joe,
+		state.prices.wavax,
+		joewavaxReserve0,
+		joewavaxReserve1,
+		joewavaxTotalSupply,
+	])
 }

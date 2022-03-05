@@ -31,10 +31,10 @@ const currencies: AvalancheCurrenciesConfig = {
 
 const external: AvalancheExternalConfig = {
 	multicall: '0xccc75e78Dce6A20bCCa3a30deB23Cb4D23df993a',
-	// pickleChef: '',
-	// pickleJar: '',
-	// uniswapRouter: '',
 	gaugeController: '0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB',
+	joeRouter: '0x60aE616a2155Ee3d9A68541Ba4544862310933d4',
+	joeMasterChef: '0x188bED1968b795d5c9022F6a0bb5931Ac4c18F00',
+	aaveRewards: '0x01D83Fe6A10D2f2B7AF17034343746188272cAc9',
 }
 
 const externalPools: AvalancheExternalPoolsConfig = {
@@ -44,21 +44,21 @@ const externalPools: AvalancheExternalPoolsConfig = {
 			pool: '0x7f90122BF0700F9E7e1F688fe926940E8839F353',
 			token: '0x1337BedC9D22ecbe766dF105c9623922A27963EC',
 			gauge: '0x5B5CFE992AdAC0C9D48E05854B2d91C73a003858',
-			convexRewards: '',
+			rewards: '',
 		},
 		atricrypto: {
 			currency: '',
 			pool: '0xB755B949C126C04e0348DD881a5cF55d424742B2',
 			token: '0x1daB6560494B04473A0BE3E7D83CF3Fdf3a51828',
 			gauge: '0x445FE580eF8d70FF569aB36e80c647af338db351',
-			convexRewards: '',
+			rewards: '',
 		},
 		aawbtcrencrv: {
 			currency: 'usd',
 			pool: '0x16a7DA911A4DD1d83F3fF066fE28F3C792C50d90',
 			token: '0xC2b1DF84112619D190193E48148000e3990Bf627',
 			gauge: '0x0f9cb53Ebe405d49A0bbdBD291A65Ff571bC83e1',
-			convexRewards: '',
+			rewards: '',
 		},
 	},
 	aave: {
@@ -67,7 +67,7 @@ const externalPools: AvalancheExternalPoolsConfig = {
 			pool: '',
 			token: '0xDFE521292EcE2A4f44242efBcD66Bc594CA9714B',
 			gauge: '',
-			convexRewards: '',
+			rewards: '',
 		},
 	},
 	traderjoe: {
@@ -76,7 +76,7 @@ const externalPools: AvalancheExternalPoolsConfig = {
 			pool: '',
 			token: '0x454e67025631c065d3cfad6d71e6892f74487a15',
 			gauge: '',
-			convexRewards: '',
+			rewards: '',
 		},
 	},
 }

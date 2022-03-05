@@ -41,7 +41,7 @@ import {
 	useVaultsAPR,
 	VaultAPR,
 } from '../internal/hooks'
-import { L1_CHAIN, L2_CHAIN } from '../../constants/chains'
+import { BaseChainInfo } from '../../constants/chains'
 
 const ERC20_INTERFACE = new Interface(ERC20Abi)
 const GAUGE_INTERFACE = new Interface(GaugeAbi)
@@ -797,6 +797,8 @@ type VaultBalance = {
 		balance: BigNumber
 		totalSupply: BigNumber
 		pricePerFullShare: BigNumber
+		lpTokenPrice: BigNumber
+		vaultTokenPrice: BigNumber
 	}
 }
 
@@ -835,6 +837,8 @@ export function useVaultsBalances() {
 						balance: new BigNumber(0),
 						totalSupply: new BigNumber(0),
 						pricePerFullShare: new BigNumber(0),
+						lpTokenPrice: new BigNumber(0),
+						vaultTokenPrice: new BigNumber(0),
 					},
 				]),
 			) as VaultBalance,
@@ -863,6 +867,10 @@ export function useVaultsBalances() {
 				gaugeToken,
 				totalToken,
 				usd,
+				lpTokenPrice,
+				vaultTokenPrice: new BigNumber(
+					data.pricePerFullShare,
+				).multipliedBy(lpTokenPrice),
 			}
 			accumulator.total.usd = accumulator.total.usd.plus(usd)
 			return accumulator
@@ -884,6 +892,8 @@ export function useVaultsBalances() {
 			gaugeToken: yaxisGaugeToken,
 			totalToken: yaxisTotalToken,
 			usd: yaxisUsd,
+			lpTokenPrice: new BigNumber(prices['yaxis']),
+			vaultTokenPrice: new BigNumber(prices['yaxis']),
 		}
 		withData.total.usd = withData.total.usd.plus(yaxisUsd)
 
@@ -1030,7 +1040,7 @@ export function useLock() {
 	}, [results, loading])
 }
 
-export function useUserGaugeWeights(blockchain: L1_CHAIN | L2_CHAIN) {
+export function useUserGaugeWeights(blockchain: BaseChainInfo['blockchain']) {
 	const { account } = useWeb3Provider()
 	const { contracts, loading: loadingContracts } = useContracts()
 
@@ -1265,7 +1275,7 @@ export type VaultsAPRWithBoost = VaultAPR & {
 }
 
 type BaseVaultsAPRWithBoost = {
-	[chain in L1_CHAIN]: {
+	[chain in BaseChainInfo['blockchain']]: {
 		[vault: string]: VaultsAPRWithBoost
 	}
 }

@@ -89,7 +89,7 @@ export interface ExternalLP {
 	pool: string
 	gauge: string
 	token: string
-	convexRewards: string
+	rewards: string
 	extraRewards?: {
 		[token: string]: {
 			contract: string
@@ -106,7 +106,14 @@ export const ExternalLPContracts = <const>[
 ]
 export type TExternalLPContracts = typeof ExternalLPContracts[number]
 
-export const ExternalContracts = <const>['multicall', 'gaugeController']
+export const ExternalContracts = <const>[
+	'multicall',
+	'gaugeController',
+	'joeRouter',
+	'joeMasterChef',
+	'aaveRewards',
+]
+
 export type TExternalContracts = typeof ExternalContracts[number]
 
 export const Vaults = <const>['av3crv', 'atricrypto', 'avax', 'joewavax']

@@ -3,6 +3,7 @@ import { Currencies, Currency } from '../../../constants/currencies'
 import {
 	useAllTokenBalances,
 	useVaultsAPRWithBoost,
+	useVaultsBalances,
 	VaultsAPRWithBoost,
 } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
@@ -21,7 +22,6 @@ import {
 	CurrencyValues,
 	handleFormInputChange,
 	computeInsufficientBalance,
-	computeTotalDepositing,
 } from '../utils'
 import { NavLink } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
@@ -31,6 +31,8 @@ import ApprovalCover from '../../../components/ApprovalCover'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { Contracts, VaultC } from '../../../constants/contracts'
+import { TVaults } from '../../../constants/type'
+import { useChainInfo } from '../../../state/user'
 
 const { Text, Title } = Typography
 
@@ -220,7 +222,7 @@ interface TableDataEntry extends Currency {
 
 interface DepositTableProps {
 	fees: TYaxisManagerData
-	vaults: [string, VaultC][]
+	vaults: [TVaults, VaultC][]
 }
 
 /**
@@ -230,6 +232,7 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 	const translate = useTranslation()
 
 	const [balances, loading] = useAllTokenBalances()
+	const { blockchain } = useChainInfo()
 
 	const { contracts } = useContracts()
 	const { md } = useBreakpoint()
@@ -366,19 +369,42 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 	const { prices } = usePrices()
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>({})
 
-	const disabled = useMemo(
-		() => computeInsufficientBalance(currencyValues, balances),
-		[currencyValues, balances],
-	)
+	const disabled = useMemo(() => {
+		return computeInsufficientBalance(
+			currencyValues,
+			Object.fromEntries(
+				vaults.map(([vault, { token }]) => [
+					token.tokenId,
+					balances[token.tokenId],
+				]),
+			),
+		)
+	}, [vaults, currencyValues, balances])
 
 	const totalDepositing = useMemo(
 		() =>
-			computeTotalDepositing(
-				vaults.map(([, contracts]) => contracts.token),
-				currencyValues,
-				prices,
-			),
-		[vaults, currencyValues, prices],
+			vaults
+				.reduce(
+					(
+						total,
+						[
+							vault,
+							{
+								token: { tokenId },
+							},
+						],
+					) => {
+						const inputValue = currencyValues[tokenId]
+						const inputNumber = Number(inputValue)
+						const current = new BigNumber(
+							isNaN(inputNumber) ? 0 : inputNumber,
+						).times(prices[tokenId])
+						return total.plus(current)
+					},
+					new BigNumber(0),
+				)
+				.toFormat(2),
+		[vaults, currencyValues, balances, prices],
 	)
 
 	const handleSubmit = useCallback(async () => {
@@ -439,10 +465,10 @@ const DepositTable: React.FC<DepositTableProps> = ({ fees, vaults }) => {
 						: new BigNumber(0),
 					inputValue: currencyValues[lpToken],
 					key: vault,
-					apr: apr[vault],
+					apr: apr[blockchain][vault],
 				}
 			}),
-		[vaults, prices, balances, currencyValues, apr],
+		[vaults, prices, balances, currencyValues, apr, blockchain],
 	)
 
 	const onUpdate = useMemo(() => handleFormInputChange(setCurrencyValues), [])

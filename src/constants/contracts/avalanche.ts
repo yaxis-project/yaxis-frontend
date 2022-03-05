@@ -9,6 +9,8 @@ import {
 	ExternalContracts,
 	TExternalContracts,
 	CurveLPContracts,
+	AaveLPContracts,
+	TraderJoeLPContracts,
 	TExternalLPContracts,
 	LiquidityPool,
 	CurrenciesERC20,
@@ -43,7 +45,7 @@ type ExternalLpContract = {
 	gauge?: Contract
 	pool: Contract
 	token: Contract
-	convexRewards: Contract
+	rewards: Contract
 	extraRewards?: ExternalLpContractExtras
 	currency: string
 }
@@ -142,32 +144,56 @@ export class AvalancheContracts {
 				),
 				gauge: new Contract(curvePool.gauge, abis.GaugeABI, provider),
 				token: new Contract(curvePool.token, abis.ERC20Abi, provider),
-				convexRewards: new Contract(
-					curvePool.convexRewards,
+				rewards: new Contract( // unused
+					curvePool.rewards,
 					abis.ConvexRewardPoolABI,
 					provider,
 				),
 				currency: curvePool.currency,
 			}
-			if (curvePool.extraRewards) {
-				this.externalLP[title].extraRewards = {}
-
-				for (const [name, config] of Object.entries(
-					curvePool.extraRewards,
-				)) {
-					this.externalLP[title].extraRewards[name] = {
-						contract: new Contract(
-							config['contract'],
-							abis.RewardsABI,
-							provider,
-						),
-						token: new Contract(
-							config['token'],
-							abis.ERC20Abi,
-							provider,
-						),
-					}
-				}
+		}
+		for (const title of TraderJoeLPContracts) {
+			const traderjoePool = this.config.externalPools.traderjoe[title]
+			this.externalLP[title] = {
+				pool: new Contract( // unused
+					traderjoePool.pool,
+					abis[`CurvePoolABI`],
+					provider,
+				),
+				gauge: new Contract( // unused
+					traderjoePool.gauge,
+					abis.GaugeABI,
+					provider,
+				),
+				token: new Contract(
+					traderjoePool.token,
+					abis.TraderJoeTokenABI,
+					provider,
+				),
+				rewards: new Contract( // unused
+					traderjoePool.rewards,
+					abis.ConvexRewardPoolABI,
+					provider,
+				),
+				currency: traderjoePool.currency,
+			}
+		}
+		for (const title of AaveLPContracts) {
+			const aavePool = this.config.externalPools.aave[title]
+			this.externalLP[title] = {
+				pool: new Contract( // unused
+					aavePool.pool,
+					abis[`CurvePoolABI`],
+					provider,
+				),
+				gauge: new Contract(aavePool.gauge, abis.GaugeABI, provider), // unused
+				token: new Contract(aavePool.token, abis.ERC20Abi, provider),
+				rewards: new Contract(
+					aavePool.rewards,
+					abis.AaveRewardsABI,
+					provider,
+				),
+				currency: aavePool.currency,
 			}
 		}
 

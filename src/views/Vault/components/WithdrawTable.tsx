@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react'
 import { Currencies, Currency } from '../../../constants/currencies'
-import { useAllTokenBalances } from '../../../state/wallet/hooks'
+import { useVaultsBalances } from '../../../state/wallet/hooks'
 import { usePrices } from '../../../state/prices/hooks'
 import { Row, Grid, Form } from 'antd'
 import { ColumnsType } from 'antd/es/table'
@@ -13,7 +13,6 @@ import Typography from '../../../components/Typography'
 import {
 	CurrencyValues,
 	handleFormInputChange,
-	computeTotalDepositing,
 	computeInsufficientBalance,
 } from '../utils'
 import BigNumber from 'bignumber.js'
@@ -22,6 +21,7 @@ import Input from '../../../components/Input'
 import useTranslation from '../../../hooks/useTranslation'
 import { TYaxisManagerData } from '../../../state/internal/hooks'
 import { VaultC } from '../../../constants/contracts'
+import { TVaults } from '../../../constants/type'
 
 const { Text, Title } = Typography
 
@@ -119,18 +119,15 @@ interface TableDataEntry extends Currency {
 
 interface WithdrawTableProps {
 	fees: TYaxisManagerData
-	vaults: [string, VaultC][]
+	vaults: [TVaults, VaultC][]
 }
 
-/**
- * Creates a deposit table for the savings account.
- */
 const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, vaults }) => {
 	const VaultsNoYAXIS = vaults.filter(([vault]) => vault !== 'yaxis')
 
 	const translate = useTranslation()
 
-	const [balances, loading] = useAllTokenBalances()
+	const { loading, balances } = useVaultsBalances()
 
 	const { md } = useBreakpoint()
 
@@ -265,17 +262,41 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, vaults }) => {
 	const [currencyValues, setCurrencyValues] = useState<CurrencyValues>({})
 
 	const disabled = useMemo(() => {
-		return computeInsufficientBalance(currencyValues, balances)
-	}, [currencyValues, balances])
+		return computeInsufficientBalance(
+			currencyValues,
+			Object.fromEntries(
+				vaults.map(([vault, { vaultToken }]) => [
+					vaultToken.tokenId,
+					balances[vault.toLowerCase()].vaultToken,
+				]),
+			),
+		)
+	}, [vaults, currencyValues, balances])
 
 	const totalWithdrawing = useMemo(
 		() =>
-			computeTotalDepositing(
-				vaults.map(([, contracts]) => contracts.token),
-				currencyValues,
-				prices,
-			),
-		[vaults, currencyValues, prices],
+			vaults
+				.reduce(
+					(
+						total,
+						[
+							vault,
+							{
+								vaultToken: { tokenId },
+							},
+						],
+					) => {
+						const inputValue = currencyValues[tokenId]
+						const inputNumber = Number(inputValue)
+						const current = new BigNumber(
+							isNaN(inputNumber) ? 0 : inputNumber,
+						).times(balances[vault].vaultTokenPrice)
+						return total.plus(current)
+					},
+					new BigNumber(0),
+				)
+				.toFormat(2),
+		[vaults, currencyValues, balances],
 	)
 
 	const handleSubmit = useCallback(async () => {
@@ -323,7 +344,8 @@ const WithdrawTable: React.FC<WithdrawTableProps> = ({ fees, vaults }) => {
 			const lpToken = lpTokenCurrency.tokenId
 			const vaultToken = `cv:${vault}`
 			const currency = Currencies[vaultToken.toUpperCase()]
-			const balance = balances[vaultToken]?.amount || new BigNumber(0)
+			const balance =
+				balances[vault]?.vaultToken?.amount || new BigNumber(0)
 			return {
 				...currency,
 				vault,

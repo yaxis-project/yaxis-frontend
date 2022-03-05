@@ -1,4 +1,6 @@
 import { JsonFragment } from '@ethersproject/abi'
+import AaveLendingPoolABI from './AaveLendingPool.json'
+import AaveRewardsABI from './AaveRewards.json'
 import BalancerAbi from './balancer.json'
 import ControllerABI from './Controller.json'
 import ConvexRewardPoolABI from './ConvexRewardPool.json'
@@ -10,6 +12,8 @@ import ERC677Abi from './erc677.json'
 import FeeDistributorABI from './FeeDistributor.json'
 import GaugeABI from './gauge.json'
 import GaugeControllerABI from './GaugeController.json'
+import JoeRouterABI from './JoeRouter.json'
+import JoeMasterChefABI from './JoeMasterChef.json'
 import ManagerABI from './Manager.json'
 import MerkleDistributorABI from './MerkleDistributor.json'
 import MinterABI from './minter.json'
@@ -33,6 +37,8 @@ import YaxisChefABI from './yaxis_chef.json'
 import YAxisMetaVaultABI from './yAxisMetaVault.json'
 
 export const abis = {
+	AaveLendingPoolABI: AaveLendingPoolABI as JsonFragment[],
+	AaveRewardsABI: AaveRewardsABI as JsonFragment[],
 	BalancerAbi: BalancerAbi as JsonFragment[],
 	ControllerABI: ControllerABI as JsonFragment[],
 	ConvexRewardPoolABI: ConvexRewardPoolABI as JsonFragment[],
@@ -44,6 +50,8 @@ export const abis = {
 	FeeDistributorABI: FeeDistributorABI as JsonFragment[],
 	GaugeABI: GaugeABI as JsonFragment[],
 	GaugeControllerABI: GaugeControllerABI as JsonFragment[],
+	JoeRouterABI: JoeRouterABI as JsonFragment[],
+	JoeMasterChefABI: JoeMasterChefABI as JsonFragment[],
 	ManagerABI: ManagerABI as JsonFragment[],
 	MerkleDistributorABI: MerkleDistributorABI as JsonFragment[],
 	MinterABI: MinterABI as JsonFragment[],

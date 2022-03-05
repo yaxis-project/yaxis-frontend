@@ -8,6 +8,8 @@ import {
 import {
 	TLiquidityPools as TLiquidityPoolsA,
 	TCurveLPContracts as TCurveLPContractsA,
+	TTraderJoeLPContracts as TTraderJoeLPContractsA,
+	TAaveLPContracts as TAaveLPContractsA,
 } from '../../constants/type/avalanche'
 import { usePrices } from '../prices/hooks'
 import {
@@ -21,6 +23,7 @@ import {
 	AvalancheLiquidityPoolC,
 	EthereumLiquidityPoolC,
 } from '../../constants/contracts'
+import { useBlockNumber } from '../application'
 
 const REWARD_INTERFACE = new ethers.utils.Interface(abis.RewardsABI)
 
@@ -335,4 +338,195 @@ export function useConvexAPY(name: TCurveLPContractsE, curvePoolv2 = false) {
 		rate,
 		extrasRates,
 	])
+}
+
+export function useCurveAPY(name: TCurveLPContractsA) {
+	const { contracts } = useContracts()
+
+	const rate = useSingleCallResult(
+		contracts?.currencies.ERC20.crv.contract, //todo
+		'rate',
+	)
+
+	const { prices } = usePrices()
+
+	const relativeWeight = useSingleCallResult(
+		contracts?.external?.gaugeController, //todo
+		'gauge_relative_weight(address)',
+		[contracts?.externalLP[name]?.gauge?.address],
+	)
+
+	const virtualPrice = useSingleCallResult(
+		contracts?.externalLP[name]?.pool,
+		'get_virtual_price()',
+	)
+
+	const balance = useSingleCallResult(
+		contracts?.externalLP[name]?.gauge,
+		'working_supply',
+	)
+
+	return useMemo(() => {
+		const yearlyEmissions = new BigNumber(rate?.result?.toString() || 0)
+			.multipliedBy(relativeWeight?.result?.toString() || 0)
+			.multipliedBy(31_536_000)
+			.dividedBy(10 ** 18)
+			.multipliedBy(prices?.crv || 0)
+
+		const totalValue = new BigNumber(balance?.result?.toString() || 0)
+			.multipliedBy(new BigNumber(virtualPrice?.result?.toString() || 0))
+			.dividedBy(10 ** 18)
+
+		const APR = totalValue.isZero()
+			? new BigNumber(0)
+			: yearlyEmissions.dividedBy(totalValue)
+
+		return {
+			extraAPR: null,
+			crvAPR: null,
+			cvxAPR: null,
+			totalAPR: APR,
+		}
+	}, [prices?.crv, relativeWeight, virtualPrice, balance, rate])
+}
+
+export function useAaveAPY(name: TAaveLPContractsA) {
+	const { contracts } = useContracts()
+
+	const currency = useMemo(
+		() => contracts?.externalLP[name]?.currency,
+		[contracts, name],
+	)
+
+	const rate = useSingleCallResult(
+		contracts?.external['aaveRewards'],
+		'assets',
+		[contracts?.externalLP[name]?.token],
+	)
+
+	const { prices } = usePrices()
+
+	const supply = useSingleCallResult(
+		contracts?.currencies.ERC20['wavax'],
+		'balanceOf',
+		[contracts?.externalLP[name]?.token],
+	)
+
+	return useMemo(() => {
+		const totalSupply = new BigNumber(
+			supply?.result?.toString() || 0,
+		).dividedBy(10 ** 18)
+
+		const wavaxPerYear = new BigNumber(rate?.result?.toString() || 0)
+			.multipliedBy(86400)
+			.multipliedBy(365)
+		const wavaxAPR = wavaxPerYear
+			.dividedBy(totalSupply)
+			.multipliedBy(prices.wavax || 0)
+		const totalAPR = wavaxAPR
+		const extraAPR = null
+
+		return {
+			extraAPR,
+			wavaxAPR,
+			totalAPR,
+		}
+	}, [currency, prices, rate, supply])
+}
+
+export function useTraderJoeAPY(name: TTraderJoeLPContractsA) {
+	const { contracts } = useContracts()
+
+	const currency = useMemo(
+		() => contracts?.externalLP[name]?.currency,
+		[contracts, name],
+	)
+
+	const rate = useSingleCallResult(
+		contracts?.externalLP[name]?.convexRewards,
+		'rewardRate()',
+	)
+
+	const { prices } = usePrices()
+
+	const virtualPriceV1 = useSingleCallResult(
+		contracts?.externalLP[name]?.pool,
+		'get_virtual_price()',
+	)
+	const virtualPrice = useMemo(
+		() =>
+			// curvePoolv2
+			// ? {
+			// 		result: new BigNumber(prices[name] || 0).multipliedBy(
+			// 			10 ** 18,
+			// 		),
+			//   }
+			// :
+			virtualPriceV1,
+		[name, prices, virtualPriceV1],
+	)
+
+	const rewardsTotalSupply = useSingleCallResult(
+		contracts?.externalLP[name]?.convexRewards,
+		'totalSupply()',
+	)
+
+	const extras = useMemo(
+		() => Object.entries(contracts?.externalLP[name]?.extraRewards || {}),
+		[contracts, name],
+	)
+
+	const extrasData = useMultipleContractSingleData(
+		extras.map(([, config]) => (config as any).contract.address),
+		REWARD_INTERFACE,
+		'rewardRate()',
+	)
+
+	const extrasRates = useMemo(() => {
+		if (!extras.length) return null
+
+		return Object.fromEntries(
+			extrasData.map(({ loading, result }, i) => {
+				const [name] = extras[i]
+				if (loading) return [name, new BigNumber(0)]
+				if (!result) return [name, new BigNumber(0)]
+				return [name, new BigNumber(result.toString())]
+			}),
+		)
+	}, [extras, extrasData])
+
+	return useMemo(() => {
+		const supply = new BigNumber(
+			rewardsTotalSupply?.result?.toString() || 0,
+		).dividedBy(10 ** 18)
+
+		const virtualSupply = supply.multipliedBy(
+			new BigNumber(virtualPrice?.result?.toString() || 0).dividedBy(
+				10 ** 18,
+			),
+		)
+
+		const crvPerSecond = new BigNumber(rate?.result?.toString() || 0)
+			.dividedBy(10 ** 18)
+			.dividedBy(virtualSupply)
+
+		const crvPerYear = crvPerSecond.multipliedBy(86400).multipliedBy(365)
+		const crvPriceConversion =
+			currency !== 'usd'
+				? new BigNumber(prices?.crv)
+						.dividedBy(prices?.[currency])
+						.toString()
+				: prices?.crv
+		const crvAPR = crvPerYear.multipliedBy(crvPriceConversion || 0)
+		const totalAPR = crvAPR
+		const cvxAPR = null
+		const extraAPR = null
+
+		return {
+			extraAPR,
+			crvAPR,
+			cvxAPR,
+			totalAPR,
+		}
+	}, [currency, prices, rewardsTotalSupply, virtualPrice, rate, extrasRates])
 }

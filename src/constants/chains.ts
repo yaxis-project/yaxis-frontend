@@ -49,7 +49,7 @@ export type SupportedL1ChainId = typeof L1_CHAIN_IDS[number]
  * Controls some L2 specific behavior, e.g. slippage tolerance, special UI behavior.
  * The expectation is that all of these networks have immediate transaction confirmation.
  */
-export type L2_CHAIN = ''
+// export type L2_CHAIN = ''
 export const L2_CHAIN_IDS = [] as const
 
 export type SupportedL2ChainId = typeof L2_CHAIN_IDS[number]
@@ -83,9 +83,10 @@ export enum NetworkType {
 	L2,
 }
 
-interface BaseChainInfo {
+export interface BaseChainInfo {
 	readonly chainId: ChainId
-	readonly blockchain: L1_CHAIN | L2_CHAIN
+	readonly blockchain: L1_CHAIN
+	// | L2_CHAIN
 	readonly networkType: NetworkType
 	readonly blockWaitMsBeforeWarning?: number
 	readonly docs: string

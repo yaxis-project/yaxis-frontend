@@ -20,6 +20,7 @@ import {
 import { TYaxisManagerData } from '../../../state/internal/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 import { VaultC } from '../../../constants/contracts'
+import { TVaults } from '../../../constants/type'
 
 const { TabPane } = Tabs
 
@@ -104,7 +105,7 @@ const Operations = () => (
 interface VaultActionsCardProps {
 	type: 'overview' | 'details'
 	fees: TYaxisManagerData
-	vaults: [string, VaultC][]
+	vaults: [TVaults, VaultC][]
 }
 
 const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
