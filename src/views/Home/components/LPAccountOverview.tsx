@@ -102,7 +102,7 @@ export default function LPAccountOverview() {
 	const { chainId } = useWeb3Provider()
 
 	const balances = useLPsBalance()
-
+	console.log(balances)
 	const currentPools = Object.values(currentConfig(chainId).pools).filter(
 		(pool) => pool.active && !pool.legacy,
 	)

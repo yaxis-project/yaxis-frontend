@@ -144,9 +144,9 @@ export class AvalancheContracts {
 				),
 				gauge: new Contract(curvePool.gauge, abis.GaugeABI, provider),
 				token: new Contract(curvePool.token, abis.ERC20Abi, provider),
-				rewards: new Contract( // unused
+				rewards: new Contract(
 					curvePool.rewards,
-					abis.ConvexRewardPoolABI,
+					abis.CurvePoolRewardsABI,
 					provider,
 				),
 				currency: curvePool.currency,

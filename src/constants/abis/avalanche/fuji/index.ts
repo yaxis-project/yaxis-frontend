@@ -4,6 +4,7 @@ import AaveRewardsABI from './AaveRewards.json'
 import BalancerAbi from './balancer.json'
 import ControllerABI from './Controller.json'
 import ConvexRewardPoolABI from './ConvexRewardPool.json'
+import CurvePoolRewardsABI from './CurvePoolRewards.json'
 import CRVABI from './CRV.json'
 import CurvePoolABI from './CurvePool.json'
 import CVXABI from './CVX.json'
@@ -42,6 +43,7 @@ export const abis = {
 	BalancerAbi: BalancerAbi as JsonFragment[],
 	ControllerABI: ControllerABI as JsonFragment[],
 	ConvexRewardPoolABI: ConvexRewardPoolABI as JsonFragment[],
+	CurvePoolRewardsABI: CurvePoolRewardsABI as JsonFragment[],
 	CRVABI: CRVABI as JsonFragment[],
 	CurvePoolABI: CurvePoolABI as JsonFragment[],
 	CVXABI: CVXABI as JsonFragment[],

@@ -12,8 +12,7 @@ import {
 	TVaults as TVaultsAvalanche,
 	TLiquidityPools as TLiquidityPoolsA,
 } from '../../constants/type/avalanche'
-import { TLiquidityPools, TRewardsContracts } from '../../constants/type'
-import { numberToFloat } from '../../utils/number'
+import { TRewardsContracts } from '../../constants/type'
 import {
 	useSingleContractMultipleMethods,
 	useSingleCallResult,
@@ -24,16 +23,15 @@ import {
 	useFetchCurvePoolBaseAPR,
 	useCurvePoolRewards,
 	useConvexAPY,
-	useCurveAPY,
-	useTraderJoeAPY,
-	useAaveAPY,
+	useCurveAPYAvalanche,
+	useAaveAPYAvalanche,
+	useTraderJoeAPYAvalanche,
 	useLiquidityPool,
 } from '../external/hooks'
 import { usePrices } from '../prices/hooks'
 import { BaseChainInfo } from '../../constants/chains'
 import { TVaults } from '../../constants/type'
 import { useChainInfo } from '../user'
-import { AvalancheContracts, Contracts } from '../../constants/contracts'
 import { LiquidityPoolWithContract } from '../../constants/contracts/avalanche'
 
 const STRATEGY_INTERFACE = new ethers.utils.Interface(abis.StrategyABI)
@@ -205,8 +203,7 @@ export interface AaveStrategy {
 }
 export interface TraderJoeStrategy {
 	extraAPR: any
-	crvAPR: BigNumber
-	cvxAPR: BigNumber
+	joeAPR: BigNumber
 	totalAPR: BigNumber
 }
 export interface VaultAPR {
@@ -259,10 +256,10 @@ export function useVaultsAPR() {
 	const avaxAvalanche = useVaultRewards('avax', 'avalanche')
 	const joewavaxAvalanche = useVaultRewards('joewavax', 'avalanche')
 
-	// const av3crv = useCurveAPY('av3crv')
-	// const atricrypto = useCurveAPY('atricrypto')
-	// const avax = useAaveAPY('avax')
-	// const joewavax = useTraderJoeAPY('joewavax')
+	const av3crv = useCurveAPYAvalanche('av3crv')
+	const atricrypto = useCurveAPYAvalanche('atricrypto')
+	const avax = useAaveAPYAvalanche('avax')
+	const joewavax = useTraderJoeAPYAvalanche('joewavax')
 
 	return useMemo(() => {
 		const output: ReturnVaultsAPR = {
@@ -272,31 +269,28 @@ export function useVaultsAPR() {
 						min: av3crvAvalanche.minAPR,
 						max: av3crvAvalanche.maxAPR,
 					},
-					// strategy: av3crv,
-					strategy: null,
+					strategy: av3crv,
 				},
 				atricrypto: {
 					yaxisAPR: {
 						min: atricryptoAvalanche.minAPR,
 						max: atricryptoAvalanche.maxAPR,
 					},
-					// strategy: atricrypto,
-					strategy: null,
+					strategy: atricrypto,
 				},
 				avax: {
 					yaxisAPR: {
 						min: avaxAvalanche.minAPR,
 						max: avaxAvalanche.maxAPR,
 					},
-					// strategy: avax,
-					strategy: null,
+					strategy: avax,
 				},
 				joewavax: {
 					yaxisAPR: {
 						min: joewavaxAvalanche.minAPR,
 						max: joewavaxAvalanche.maxAPR,
 					},
-					strategy: null,
+					strategy: joewavax,
 				},
 			},
 			ethereum: {
