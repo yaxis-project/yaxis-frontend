@@ -108,7 +108,6 @@ export type TExternalLPContracts = typeof ExternalLPContracts[number]
 
 export const ExternalContracts = <const>[
 	'multicall',
-	'gaugeController',
 	'joeRouter',
 	'joeMasterChef',
 	'aaveRewards',

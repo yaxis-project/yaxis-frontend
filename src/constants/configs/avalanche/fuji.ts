@@ -31,7 +31,6 @@ const currencies: AvalancheCurrenciesConfig = {
 
 const external: AvalancheExternalConfig = {
 	multicall: '0xccc75e78Dce6A20bCCa3a30deB23Cb4D23df993a',
-	gaugeController: '0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB',
 	joeRouter: '0x60aE616a2155Ee3d9A68541Ba4544862310933d4',
 	joeMasterChef: '0x188bED1968b795d5c9022F6a0bb5931Ac4c18F00',
 	aaveRewards: '0x01D83Fe6A10D2f2B7AF17034343746188272cAc9',

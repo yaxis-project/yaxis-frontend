@@ -31,7 +31,6 @@ const currencies: AvalancheCurrenciesConfig = {
 
 const external: AvalancheExternalConfig = {
 	multicall: '0x98e2060F672FD1656a07bc12D7253b5e41bF3876',
-	gaugeController: '0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB',
 	joeRouter: '0x60aE616a2155Ee3d9A68541Ba4544862310933d4',
 	joeMasterChef: '0x188bED1968b795d5c9022F6a0bb5931Ac4c18F00',
 	aaveRewards: '0x01D83Fe6A10D2f2B7AF17034343746188272cAc9',
@@ -44,21 +43,21 @@ const externalPools: AvalancheExternalPoolsConfig = {
 			pool: '0x7f90122BF0700F9E7e1F688fe926940E8839F353',
 			token: '0x1337BedC9D22ecbe766dF105c9623922A27963EC',
 			gauge: '0x5B5CFE992AdAC0C9D48E05854B2d91C73a003858',
-			rewards: '',
+			rewards: '0xb504b6eb06760019801a91b451d3f7bd9f027fc9',
 		},
 		atricrypto: {
 			currency: 'usd',
 			pool: '0xB755B949C126C04e0348DD881a5cF55d424742B2',
 			token: '0x1daB6560494B04473A0BE3E7D83CF3Fdf3a51828',
 			gauge: '0x445FE580eF8d70FF569aB36e80c647af338db351',
-			rewards: '',
+			rewards: '0xa05e565ca0a103fcd999c7a7b8de7bd15d5f6505',
 		},
 		aawbtcrencrv: {
 			currency: 'usd',
 			pool: '0x16a7DA911A4DD1d83F3fF066fE28F3C792C50d90',
 			token: '0xC2b1DF84112619D190193E48148000e3990Bf627',
 			gauge: '0x0f9cb53Ebe405d49A0bbdBD291A65Ff571bC83e1',
-			rewards: '',
+			rewards: '0x75d05190f35567e79012c2f0a02330d3ed8a1f74',
 		},
 	},
 	aave: {
@@ -145,7 +144,7 @@ const mainnet: AvalancheConfig = {
 			legacy: false,
 			type: 'traderjoe',
 			liquidId: `${currencies.ERC677.yaxis}/WAVAX`,
-			lpAddress: '0xa3268e6d1aef5dfb3eb345d35d925cd2a64c5e87',
+			lpAddress: '0x12b6298a70e2ae1b1352e051237703a3acbef8b4',
 			lpUrl: `https://traderjoexyz.com/trade?inputCurrency=${currencies.ERC20.wavax}&outputCurrency=${currencies.ERC677.yaxis}#/`,
 			lpTokens: [
 				{
