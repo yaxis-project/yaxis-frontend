@@ -29,7 +29,7 @@ import {
 } from '../onchain/hooks'
 import useWeb3Provider from '../../hooks/useWeb3Provider'
 import { BigNumber } from 'bignumber.js'
-import { useLP } from '../external/hooks'
+import { useLiquidityPool } from '../external/hooks'
 import { ethers } from 'ethers'
 import { Interface } from '@ethersproject/abi'
 import { useBlockNumber } from '../application/hooks'
@@ -729,7 +729,7 @@ export function useWalletLP(name: TLiquidityPools) {
 
 	const liquidityPool = useMemo(() => contracts?.pools[name], [name])
 
-	const { totalSupply } = useLP(liquidityPool?.name)
+	const { totalSupply } = useLiquidityPool(liquidityPool?.name)
 
 	const [tokenBalances] = useAllTokenBalances()
 	const walletBalance = useMemo(
@@ -934,15 +934,11 @@ export function useLPsBalance(): LPsBalance {
 					: new BigNumber(stakedBalance?.value || 0)
 							.plus(new BigNumber(walletBalance?.value || 0))
 							.div(totalSupply.toString())
-							.dividedBy(10 ** 18)
-				const shareT0 = new BigNumber(
-					reserves?.['_reserve0']?.toString() || 0,
-				)
+
+				const shareT0 = reserves[0]
 					.multipliedBy(share)
 					.dividedBy(10 ** 18)
-				const shareT1 = new BigNumber(
-					reserves?.['_reserve1']?.toString() || 0,
-				)
+				const shareT1 = reserves[1]
 					.multipliedBy(share)
 					.dividedBy(10 ** 18)
 

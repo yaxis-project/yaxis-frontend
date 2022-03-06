@@ -12,7 +12,7 @@ import {
 	TVaults as TVaultsAvalanche,
 	TLiquidityPools as TLiquidityPoolsA,
 } from '../../constants/type/avalanche'
-import { TRewardsContracts } from '../../constants/type'
+import { TLiquidityPools, TRewardsContracts } from '../../constants/type'
 import { numberToFloat } from '../../utils/number'
 import {
 	useSingleContractMultipleMethods,
@@ -27,11 +27,14 @@ import {
 	useCurveAPY,
 	useTraderJoeAPY,
 	useAaveAPY,
+	useLiquidityPool,
 } from '../external/hooks'
 import { usePrices } from '../prices/hooks'
 import { BaseChainInfo } from '../../constants/chains'
 import { TVaults } from '../../constants/type'
 import { useChainInfo } from '../user'
+import { AvalancheContracts, Contracts } from '../../constants/contracts'
+import { LiquidityPoolWithContract } from '../../constants/contracts/avalanche'
 
 const STRATEGY_INTERFACE = new ethers.utils.Interface(abis.StrategyABI)
 
@@ -622,166 +625,53 @@ const useAvalancheRewardAPR = (
 		active ? contracts?.rewards[rewardsContract] : null,
 		'emission',
 	)
-	const balance = useSingleCallResult(
-		active && contracts?.currencies.ERC677.yaxis.contract,
-		'balanceOf',
-		[contracts?.rewards[rewardsContract]?.address],
-	)
 
 	const {
 		prices: { yaxis },
 	} = usePrices()
 
-	// TODO
-	const { tvl: metaVaultTVL } = { tvl: 0 }
-
 	const pool = useMemo(
 		() =>
-			Object.values(contracts?.pools || {}).find(
-				(p) => p.rewards === rewardsContract,
-			)?.lpContract,
+			(
+				Object.entries(contracts?.pools || {}) as [
+					TLiquidityPoolsA,
+					LiquidityPoolWithContract,
+				][]
+			).find(([, p]) => p.rewards === rewardsContract)?.[0],
 		[contracts, rewardsContract],
 	)
 
-	const reserves = useSingleCallResult(pool, 'getReserves')
+	const lp = useLiquidityPool(pool)
 
 	return useMemo(() => {
-		let tvl = new BigNumber(0)
-		if (pool)
-			tvl = new BigNumber(
-				reserves?.result?.['_reserve0']?.toString() || 0,
-			).plus(
-				new BigNumber(
-					reserves?.result?.['_reserve1']?.toString() || 0,
-				).multipliedBy(
-					new BigNumber(
-						reserves?.result?.['_reserve0']?.toString() || 0,
-					).dividedBy(
-						new BigNumber(
-							reserves?.result?.['_reserve1']?.toString(),
-						) || 0,
-					),
-				),
-			)
-		// else if (rewardsContract === 'Yaxis' || rewardsContract === 'MetaVault')
-		// 	tvl = new BigNumber(totalSupply.toString() || 0)
-		// else if (metaVaultTVL && yaxis)
-		// 	tvl = new BigNumber(metaVaultTVL)
-		// 		.dividedBy(yaxis)
-		// 		.multipliedBy(10 ** 18)
+		const tvl = lp.tvl
 
-		// const balanceBN = new BigNumber(balance?.result?.toString() || 0)
-		let funding = new BigNumber(0)
-		if (rewardsContract === 'Yaxis') funding = new BigNumber(0)
-		else if (rewardsContract === 'MetaVault') funding = new BigNumber(0)
-		// else funding = balanceBN
-		// const period = new BigNumber(duration.toString() || 0).dividedBy(86400)
-		// const AVERAGE_BLOCKS_PER_DAY = 6450
-		const rewardsPerBlock =
-			// funding.isZero()
-			// ?
-			new BigNumber(0)
-		// : funding
-		// 		.dividedBy(period)
-		// 		.dividedBy(AVERAGE_BLOCKS_PER_DAY)
-		// 		.dividedBy(10 ** 18)
-
-		const rewardPerToken =
-			// tvl.isZero()
-			// ?
-			new BigNumber(0)
-		// : funding.dividedBy(tvl)
-
-		const apr = rewardPerToken
-		// .dividedBy(period)
-		// .multipliedBy(365)
-		// .multipliedBy(100)
-		return {
-			rewardsPerBlock: new BigNumber(rewardsPerBlock.toString() || 0),
-			apr: new BigNumber(apr.toString() || 0),
-		}
-	}, [
-		yaxis,
-		emission,
-		pool,
-		balance,
-		metaVaultTVL,
-		reserves.result,
-		rewardsContract,
-	])
-}
-
-export function useLiquidityPool(name: TLiquidityPoolsE) {
-	const { contracts } = useContracts()
-
-	const { prices } = usePrices()
-
-	const LP = useMemo(() => contracts?.pools[name], [contracts, name])
-
-	const data = useSingleContractMultipleMethods(LP?.lpContract, [
-		['getReserves'],
-		['totalSupply'],
-		['balanceOf', [contracts?.rewards?.['Uniswap YAXIS/ETH']?.address]],
-	])
-
-	return useMemo(() => {
-		const [reserves, totalSupply, balance] = data.map(
-			({ result, loading }, i) => {
-				if (loading) return ethers.BigNumber.from(0)
-				if (!result) return ethers.BigNumber.from(0)
-				return result
-			},
+		const yaxisPerYear = new BigNumber(
+			(emission && emission[0].toString()) || 0,
 		)
-
-		const _reserve0 = reserves[0]?.toString() || 0
-		const _reserve1 = reserves[1]?.toString() || 0
-
-		const reserve = [
-			numberToFloat(_reserve0, LP?.lpTokens[0].decimals),
-			numberToFloat(_reserve1, LP?.lpTokens[1].decimals),
-		]
-
-		const totalSupplyBN = numberToFloat(totalSupply.toString())
-
-		const tokenPrices = [
-			prices[LP?.lpTokens[0].tokenId.toLowerCase()],
-			prices[LP?.lpTokens[1].tokenId.toLowerCase()],
-		]
-
-		if (tokenPrices[1]) {
-			tokenPrices[0] = (tokenPrices[1] * reserve[1]) / reserve[0]
-		} else if (tokenPrices[0]) {
-			tokenPrices[1] = (tokenPrices[0] * reserve[0]) / reserve[1]
-		}
-
-		const totalLpValue =
-			reserve[0] * tokenPrices[0] + reserve[1] * tokenPrices[1]
-		const lpPrice = new BigNumber(totalLpValue)
-			.div(totalSupplyBN)
-			.toNumber()
-		const tvl = new BigNumber(balance.toString())
 			.dividedBy(10 ** 18)
-			.multipliedBy(lpPrice)
+			.multipliedBy(31_536_000)
+
+		const usdEmissionsPerYear = yaxisPerYear.multipliedBy(yaxis)
+
+		const apr = usdEmissionsPerYear.dividedBy(tvl)
+		apr.multipliedBy(100)
 
 		return {
-			...contracts?.pools[name],
-			totalSupply: totalSupplyBN,
-			reserve,
-			reserves,
-			lpPrice,
-			tvl,
+			rewardsPerBlock: new BigNumber(0),
+			apr,
 		}
-	}, [prices, data, LP?.lpTokens, contracts?.pools, name])
+	}, [emission, lp])
 }
 
 export function useLiquidityPools(): Record<
 	TLiquidityPoolsE | TLiquidityPoolsA,
-	any
+	ReturnType<typeof useLiquidityPool>
 > {
 	const linkswapYaxEth = useLiquidityPool('Linkswap YAX/ETH')
 	const uniswapYaxEth = useLiquidityPool('Uniswap YAX/ETH')
 	const uniswapYaxisEth = useLiquidityPool('Uniswap YAXIS/ETH')
-	const traderjoeJoeAvax = {} // TODO
+	const traderjoeJoeAvax = useLiquidityPool('TraderJoe YAXIS/WAVAX')
 
 	return {
 		'Uniswap YAX/ETH': uniswapYaxEth,
@@ -898,26 +788,36 @@ export function useAPY(
 	rewardsContract: TRewardsContracts,
 	strategyPercentage = 1,
 ) {
-	const curveRewardsAPRs = useCurvePoolRewards('3pool')
+	const { blockchain } = useChainInfo()
+	const curveRewardsAPRs = useCurvePoolRewards(
+		'3pool',
+		blockchain === 'ethereum',
+	)
 	const curveBaseAPR = useFetchCurvePoolBaseAPR()
 	const {
 		rewardsPerBlock: rewardsPerBlockEthereum,
 		apr: rewardsAPREthereum,
-	} = useRewardAPR(rewardsContract, false)
+	} = useRewardAPR(rewardsContract, blockchain === 'ethereum')
 
 	const {
 		rewardsPerBlock: rewardsPerBlockAvalanche,
 		apr: rewardsAPRAvalanche,
-	} = useAvalancheRewardAPR(rewardsContract, false)
+	} = useAvalancheRewardAPR(rewardsContract, blockchain === 'avalanche')
 
 	const rewardsAPR = useMemo(
-		() => rewardsAPREthereum || rewardsAPRAvalanche,
-		[rewardsPerBlockEthereum, rewardsPerBlockAvalanche],
+		() =>
+			blockchain === 'ethereum'
+				? rewardsAPREthereum
+				: rewardsAPRAvalanche,
+		[blockchain, rewardsPerBlockEthereum, rewardsPerBlockAvalanche],
 	)
 
 	const rewardsPerBlock = useMemo(
-		() => rewardsPerBlockEthereum || rewardsPerBlockAvalanche,
-		[rewardsPerBlockEthereum, rewardsPerBlockAvalanche],
+		() =>
+			blockchain === 'ethereum'
+				? rewardsPerBlockEthereum
+				: rewardsPerBlockAvalanche,
+		[blockchain, rewardsPerBlockEthereum, rewardsPerBlockAvalanche],
 	)
 
 	return useMemo(() => {

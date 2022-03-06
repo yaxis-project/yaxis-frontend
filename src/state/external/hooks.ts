@@ -1,12 +1,8 @@
 import { useMemo, useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useContracts } from '../../contexts/Contracts'
+import { TCurveLPContracts as TCurveLPContractsE } from '../../constants/type/ethereum'
 import {
-	TLiquidityPools as TLiquidityPoolsE,
-	TCurveLPContracts as TCurveLPContractsE,
-} from '../../constants/type/ethereum'
-import {
-	TLiquidityPools as TLiquidityPoolsA,
 	TCurveLPContracts as TCurveLPContractsA,
 	TTraderJoeLPContracts as TTraderJoeLPContractsA,
 	TAaveLPContracts as TAaveLPContractsA,
@@ -23,7 +19,8 @@ import {
 	AvalancheLiquidityPoolC,
 	EthereumLiquidityPoolC,
 } from '../../constants/contracts'
-import { useBlockNumber } from '../application'
+import { TLiquidityPools } from '../../constants/type'
+import { numberToFloat } from '../../utils/number'
 
 const REWARD_INTERFACE = new ethers.utils.Interface(abis.RewardsABI)
 
@@ -55,11 +52,7 @@ export function useFetchCurvePoolBaseAPR() {
 	return curveApy
 }
 
-const emptyReserves = {
-	_reserves0: ethers.BigNumber.from(0),
-	_reserves1: ethers.BigNumber.from(0),
-}
-export function useLP(name: TLiquidityPoolsE | TLiquidityPoolsA) {
+export function useLiquidityPool(name: TLiquidityPools) {
 	const { contracts } = useContracts()
 
 	const contract: AvalancheLiquidityPoolC | EthereumLiquidityPoolC = useMemo(
@@ -68,8 +61,14 @@ export function useLP(name: TLiquidityPoolsE | TLiquidityPoolsA) {
 	)
 
 	const { prices } = usePrices()
-	const t0p: number = prices[contract?.lpTokens?.[0]?.tokenId]
-	const t1p: number = prices[contract?.lpTokens?.[1]?.tokenId]
+	const t0p = useMemo(
+		() => prices[contract?.lpTokens?.[0]?.tokenId],
+		[prices, contract],
+	)
+	const t1p = useMemo(
+		() => prices[contract?.lpTokens?.[1]?.tokenId],
+		[prices, contract],
+	)
 
 	const data = useSingleContractMultipleMethods(contract?.lpContract, [
 		['getReserves'],
@@ -77,71 +76,73 @@ export function useLP(name: TLiquidityPoolsE | TLiquidityPoolsA) {
 	])
 
 	return useMemo(() => {
-		const [reserves, totalSupply] = data.map(({ result, loading }, i) => {
-			if (i === 0) {
-				if (loading) return emptyReserves
-				if (!result) return emptyReserves
-				return {
-					_reserve0: new BigNumber(
-						result?.['_reserve0']?.toString() || 0,
-					).dividedBy(10 ** (contract?.lpTokens[0].decimals || 1)),
-					_reserve1: new BigNumber(
-						result?.['_reserve1']?.toString() || 0,
-					).dividedBy(10 ** (contract?.lpTokens[1].decimals || 1)),
-				}
-			}
+		const [reserves, totalSupply] = data.map(({ result, loading }) => {
 			if (loading) return ethers.BigNumber.from(0)
 			if (!result) return ethers.BigNumber.from(0)
 			return result
 		})
 
-		const reservesUSD = {
-			_token0: new BigNumber(
-				reserves?.['_reserve0']?.toString() || 0,
-			).multipliedBy(t0p),
-			_token1: new BigNumber(
-				reserves?.['_reserve1']?.toString() || 0,
-			).multipliedBy(t1p),
-		}
-		const tvl = reservesUSD['_token0'].plus(reservesUSD['_token1'])
+		const _reserve0 = reserves[0]?.toString() || 0
+		const _reserve1 = reserves[1]?.toString() || 0
+
+		const reservesBN = [
+			new BigNumber(
+				numberToFloat(_reserve0, contract?.lpTokens[0].decimals),
+			),
+			new BigNumber(
+				numberToFloat(_reserve1, contract?.lpTokens[1].decimals),
+			),
+		]
+
+		const reservesUSD = [
+			reservesBN[0].multipliedBy(t0p),
+			reservesBN[1].multipliedBy(t1p),
+		]
+		const tvl = reservesUSD[0].plus(reservesUSD[1])
+
+		const totalSupplyBN = new BigNumber(
+			numberToFloat(totalSupply.toString()),
+		)
+
+		const tokenPrice = tvl.dividedBy(totalSupplyBN)
+
 		return {
 			...contract,
-			reserves,
-			totalSupply: new BigNumber(totalSupply?.toString() || 0).dividedBy(
-				10 ** 18,
-				// TODO: use LP token decimals
-			),
+			reserves: reservesBN,
+			totalSupply: totalSupplyBN,
 			reservesUSD,
+			tokenPrice,
 			tvl,
 		}
-	}, [contract, data, t0p, t1p])
+	}, [contract, t0p, t1p])
 }
 
 export function useCurvePoolRewards(
 	name: TCurveLPContractsE | TCurveLPContractsA,
+	active: boolean,
 ) {
 	const { contracts } = useContracts()
 
 	const rate = useSingleCallResult(
-		contracts?.currencies.ERC20.crv.contract,
+		active && contracts?.currencies.ERC20.crv.contract,
 		'rate',
 	)
 
 	const { prices } = usePrices()
 
 	const relativeWeight = useSingleCallResult(
-		contracts?.external?.gaugeController,
+		active && contracts?.external?.gaugeController,
 		'gauge_relative_weight(address)',
 		[contracts?.externalLP[name]?.gauge?.address],
 	)
 
 	const virtualPrice = useSingleCallResult(
-		contracts?.externalLP[name]?.pool,
+		active && contracts?.externalLP[name]?.pool,
 		'get_virtual_price()',
 	)
 
 	const balance = useSingleCallResult(
-		contracts?.externalLP[name]?.gauge,
+		active && contracts?.externalLP[name]?.gauge,
 		'working_supply',
 	)
 

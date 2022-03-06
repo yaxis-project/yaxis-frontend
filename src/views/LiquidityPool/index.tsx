@@ -13,7 +13,7 @@ import Stake from './components/Stake'
 import LegacyStake from './components/LegacyStake'
 import { red } from '../../theme/colors'
 import BigNumber from 'bignumber.js'
-import { useLP } from '../../state/external/hooks'
+import { useLiquidityPool } from '../../state/external/hooks'
 import { formatBN } from '../../utils/number'
 import useTranslation from '../../hooks/useTranslation'
 
@@ -31,7 +31,7 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 	const translate = useTranslation()
 
 	const { stakedBalance, walletBalance } = useWalletLP(pool.name)
-	const { reserves, totalSupply } = useLP(pool.name)
+	const { reserves, totalSupply } = useLiquidityPool(pool.name)
 
 	const {
 		prices: { yaxis, eth },
@@ -43,12 +43,8 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 		const share = totalSupply.isZero()
 			? new BigNumber(0)
 			: stakedBalance.value.plus(walletBalance.value).div(totalSupply)
-		const shareT0 = new BigNumber(reserves?.['_reserve0']?.toString() || 0)
-			.multipliedBy(share)
-			.dividedBy(10 ** 18)
-		const shareT1 = new BigNumber(reserves?.['_reserve1']?.toString() || 0)
-			.multipliedBy(share)
-			.dividedBy(10 ** 18)
+		const shareT0 = reserves[0].multipliedBy(share).dividedBy(10 ** 18)
+		const shareT1 = reserves[1].multipliedBy(share).dividedBy(10 ** 18)
 		return shareT0.multipliedBy(yaxis).plus(shareT1.multipliedBy(eth))
 	}, [yaxis, eth, reserves, totalSupply, stakedBalance, walletBalance])
 

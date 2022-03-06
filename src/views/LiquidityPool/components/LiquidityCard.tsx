@@ -10,7 +10,7 @@ import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
 import { Currencies } from '../../../constants/currencies'
 import { getFullDisplayBalance } from '../../../utils/formatBalance'
 import { useWalletLP } from '../../../state/wallet/hooks'
-import { useLP } from '../../../state/external/hooks'
+import { useLiquidityPool } from '../../../state/external/hooks'
 import useTranslation from '../../../hooks/useTranslation'
 
 const { Text } = Typography
@@ -70,7 +70,7 @@ type Props = {
 const LiquidityCard: React.FC<Props> = ({ pool }) => {
 	const translate = useTranslation()
 
-	const { lpUrl, reserves } = useLP(pool.name)
+	const { lpUrl, reserves } = useLiquidityPool(pool.name)
 	const { walletBalance, poolShare, stakedBalance } = useWalletLP(pool.name)
 
 	const accountBalances = useMemo(
