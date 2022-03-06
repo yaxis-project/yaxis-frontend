@@ -101,7 +101,7 @@ export default function LPAccountOverview() {
 
 	const { chainId } = useWeb3Provider()
 
-	// const balances = useLPsBalance()
+	const balances = useLPsBalance()
 
 	const currentPools = Object.values(currentConfig(chainId).pools).filter(
 		(pool) => pool.active && !pool.legacy,
@@ -146,7 +146,7 @@ export default function LPAccountOverview() {
 						<Col xs={24} sm={6}>
 							<Row justify={xs ? 'center' : 'start'}>
 								<Title level={4} style={{ margin: 0 }}>
-									{/* {'$' + formatBN(balances.total.usd)} */}
+									{'$' + formatBN(balances.total.usd)}
 								</Title>
 							</Row>
 						</Col>
@@ -154,14 +154,14 @@ export default function LPAccountOverview() {
 				}
 				key="1"
 			>
-				{/* {currentPools.map((pool) => (
+				{currentPools.map((pool) => (
 					<AdvancedNavigationRow
 						key={pool.name}
 						balance={balances[pool.name].usd}
 						data={pool}
 						to={`/liquidity/${pool.lpAddress}`}
 					/>
-				))} */}
+				))}
 			</Panel>
 		</StyledCollapse>
 	) : null
