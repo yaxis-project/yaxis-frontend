@@ -21,6 +21,7 @@ import {
 } from '../../constants/contracts'
 import { TLiquidityPools } from '../../constants/type'
 import { numberToFloat } from '../../utils/number'
+import { useBlockNumber } from '../application'
 
 const REWARD_INTERFACE = new ethers.utils.Interface(abis.RewardsABI)
 
@@ -375,14 +376,46 @@ export function useConvexAPY(name: TCurveLPContractsE, curvePoolv2 = false) {
 
 export function useCurveAPYAvalanche(name: TCurveLPContractsA) {
 	const { contracts } = useContracts()
+	const externalLP = useMemo(
+		() => contracts?.externalLP[name],
+		[contracts, name],
+	)
+
+	// const DAY_BLOCKS = 43000
+	// const block = useBlockNumber()
+
+	// const [volume, setVolume] = useState(0)
+
+	// useEffect(() => {
+	// 	const getEvents = async () => {
+	// 		const events = await externalLP?.pool.queryFilter(
+	// 			externalLP?.pool.filters.TokenExchange(),
+	// 			block - DAY_BLOCKS,
+	// 			block,
+	// 		)
+	// 		let volume
+
+	// 		events.map(async (trade) => {
+	// 			const t = trade.returnValues['tokens_bought'] / 10 ** 18
+	// 			// decimals[trade.returnValues['bought_id']]
+	// 			volume += t
+
+	// 			// if (t > 1000000) {
+	// 			//   console.log('$',t, trade.transactionHash)
+	// 			// }
+	// 		})
+	// 		setVolume(volume)
+	// 	}
+	// 	getEvents()
+	// }, [block, setVolume, externalLP])
 
 	const { result: rewardCount } = useSingleCallResult(
-		contracts?.externalLP[name]?.rewards,
+		externalLP?.rewards,
 		'reward_count',
 	)
 
 	const { result: totalSupply } = useSingleCallResult(
-		contracts?.externalLP[name]?.gauge,
+		externalLP?.gauge,
 		'totalSupply()',
 	)
 
@@ -392,7 +425,7 @@ export function useCurveAPYAvalanche(name: TCurveLPContractsA) {
 	)
 
 	const rewardTokens = useSingleContractMultipleMethods(
-		contracts?.externalLP[name]?.rewards,
+		externalLP?.rewards,
 		Array(Number(rewardCountData))
 			.fill('')
 			.map((_, i) => ['reward_tokens', [i]]),
@@ -404,7 +437,7 @@ export function useCurveAPYAvalanche(name: TCurveLPContractsA) {
 	)
 
 	const rewardData = useSingleContractMultipleMethods(
-		contracts?.externalLP[name]?.rewards,
+		externalLP?.rewards,
 		rewardTokensData.every((address) => address)
 			? rewardTokensData.map((address, i) => {
 					return ['reward_data', [address]]
@@ -441,16 +474,17 @@ export function useCurveAPYAvalanche(name: TCurveLPContractsA) {
 				)
 					wavaxAPR = tokenPerYear
 						.multipliedBy(prices?.wavax)
-						.dividedBy(virtualSupply.multipliedBy(prices.av3crv))
+						.dividedBy(virtualSupply.multipliedBy(prices[name]))
 				else if (
 					contracts.currencies.ERC20.crv.contract.address ===
 					rewardTokensData[i]
 				)
 					crvAPR = tokenPerYear
 						.multipliedBy(prices?.crv)
-						.dividedBy(virtualSupply.multipliedBy(prices.av3crv))
+						.dividedBy(virtualSupply.multipliedBy(prices[name]))
 			}
 		})
+
 		const totalAPR = new BigNumber(0)
 			.plus(crvAPR)
 			.plus(wavaxAPR)
@@ -462,7 +496,7 @@ export function useCurveAPYAvalanche(name: TCurveLPContractsA) {
 			wavaxAPR,
 			totalAPR,
 		}
-	}, [contracts, prices, rewardTokensData, rewardData, totalSupply])
+	}, [name, contracts, prices, rewardTokensData, rewardData, totalSupply])
 }
 
 export function useAaveAPYAvalanche(name: TAaveLPContractsA) {
@@ -538,6 +572,8 @@ export function useTraderJoeAPYAvalanche(name: TTraderJoeLPContractsA) {
 	const { prices } = usePrices()
 
 	return useMemo(() => {
+		// TODO: trading fees APR
+
 		const extraAPR = new BigNumber(0)
 		let joeAPR = new BigNumber(0)
 
