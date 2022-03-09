@@ -17,6 +17,7 @@ import { ethers } from 'ethers'
 import useTranslation from '../../../hooks/useTranslation'
 import { useSingleCallResultByName } from '../../../state/onchain'
 import { LiquidityPool } from '../../../constants/type'
+import { useChainInfo } from '../../../state/user'
 const { Text } = Typography
 
 type Props = {
@@ -33,6 +34,7 @@ const TableHeader = (props: any) => (
 
 const Stake: React.FC<Props> = ({ pool }) => {
 	const translate = useTranslation()
+	const { blockchain } = useChainInfo()
 
 	const currency = useMemo(
 		() => currencies[`${pool.type.toUpperCase()}_LP`],
@@ -41,7 +43,7 @@ const Stake: React.FC<Props> = ({ pool }) => {
 
 	const { call: handleStake, loading: loadingStake } = useContractWrite({
 		contractName: `rewards.${pool.rewards}`,
-		method: 'stake',
+		method: blockchain === 'ethereum' ? 'stake' : 'deposit',
 		description: `stake ${pool.name}`,
 	})
 	const { call: handleUnstake, loading: loadingUnstake } = useContractWrite({
