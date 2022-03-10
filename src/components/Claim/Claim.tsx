@@ -22,7 +22,7 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract, last }) => {
 	const translate = useTranslation()
 
 	const { account } = useWeb3Provider()
-	const chainInfo = useChainInfo()
+	const { blockchain } = useChainInfo()
 
 	if (!vault && !rewardsContract)
 		throw new Error(
@@ -34,7 +34,7 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract, last }) => {
 	const { call: handleRewardsClaim, loading: loadingRewardsClaim } =
 		useContractWrite({
 			contractName: rewardsContract ? `rewards.${rewardsContract}` : '',
-			method: 'getReward',
+			method: blockchain === 'ethereum' ? 'getReward' : 'claim',
 			description: translate(`claim YAXIS`),
 		})
 
@@ -50,9 +50,9 @@ const Claim: React.FC<Props> = ({ vault, rewardsContract, last }) => {
 			vault ? `vaults.${vault}.gauge` : `rewards.${rewardsContract}`,
 			vault
 				? 'claimable_tokens'
-				: chainInfo.blockchain === 'avalanche'
-				? 'pending(address)'
-				: 'earned',
+				: blockchain === 'ethereum'
+				? 'earned'
+				: 'pending(address)',
 			[account],
 		)
 
