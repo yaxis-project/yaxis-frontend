@@ -540,6 +540,7 @@ export const TRADERJOE_LP = {
 	name: 'TraderJoe LP token',
 	tokenId: 'YAXIS_WAVAX_TRADERJOE_LP',
 	icon: joe,
+	decimals: 18,
 }
 
 export const Currencies = {

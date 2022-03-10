@@ -42,6 +42,7 @@ import {
 	VaultAPR,
 } from '../internal/hooks'
 import { BaseChainInfo } from '../../constants/chains'
+import { useChainInfo } from '../user'
 
 const ERC20_INTERFACE = new Interface(ERC20Abi)
 const GAUGE_INTERFACE = new Interface(GaugeAbi)
@@ -236,6 +237,7 @@ const defaultStakedBalancesState = Object.fromEntries(
 export function useStakedBalances(): StakedBalanceReturn {
 	const { account } = useWeb3Provider()
 	const { contracts } = useContracts()
+	const { blockchain } = useChainInfo()
 
 	const rewardsContracts = useMemo(
 		() => Object.entries(contracts?.rewards || {}),
@@ -244,10 +246,10 @@ export function useStakedBalances(): StakedBalanceReturn {
 
 	const balances = useMultipleContractSingleData(
 		rewardsContracts.map(([, contract]) => contract.address),
-		contracts?.rewards && 'MetaVault' in contracts.rewards
-			? contracts?.rewards.MetaVault.interface
+		contracts?.rewards
+			? Object.values(contracts?.rewards || {})[0]?.interface
 			: null,
-		'balanceOf',
+		blockchain === 'ethereum' ? 'balanceOf' : 'userStaked',
 		[account],
 	)
 
