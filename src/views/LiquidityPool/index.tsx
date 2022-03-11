@@ -33,20 +33,23 @@ const Liquidity: React.FC<Props> = ({ pool }) => {
 	const { stakedBalance, walletBalance } = useWalletLP(pool.name)
 	const { reserves, totalSupply } = useLiquidityPool(pool.name)
 
-	const {
-		prices: { yaxis, eth },
-	} = usePrices()
+	const { prices } = usePrices()
 
 	const balanceUSD = useMemo(() => {
-		if (!reserves || !eth || !yaxis || !totalSupply || !stakedBalance)
+		if (!reserves || !prices || !totalSupply || !stakedBalance)
 			return new BigNumber(0)
-		const share = totalSupply.isZero()
+
+		const userShare = totalSupply.isZero()
 			? new BigNumber(0)
 			: stakedBalance.value.plus(walletBalance.value).div(totalSupply)
-		const shareT0 = reserves[0].multipliedBy(share).dividedBy(10 ** 18)
-		const shareT1 = reserves[1].multipliedBy(share).dividedBy(10 ** 18)
-		return shareT0.multipliedBy(yaxis).plus(shareT1.multipliedBy(eth))
-	}, [yaxis, eth, reserves, totalSupply, stakedBalance, walletBalance])
+		const shareT0 = reserves[0].multipliedBy(userShare).dividedBy(10 ** 18)
+		const priceT0 = prices[pool?.lpTokens?.[0]?.tokenId]
+		const valueT0 = shareT0.multipliedBy(priceT0 || 0)
+		const shareT1 = reserves[1].multipliedBy(userShare).dividedBy(10 ** 18)
+		const priceT1 = prices[pool?.lpTokens?.[1]?.tokenId]
+		const valueT1 = shareT1.multipliedBy(priceT1 || 0)
+		return valueT0.plus(valueT1)
+	}, [pool, prices, reserves, totalSupply, stakedBalance, walletBalance])
 
 	return (
 		<div className="liquidity-view">
