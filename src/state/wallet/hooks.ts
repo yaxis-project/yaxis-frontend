@@ -236,7 +236,7 @@ const defaultStakedBalancesState = Object.fromEntries(
 ) as StakedBalanceReturn
 export function useStakedBalances(): StakedBalanceReturn {
 	const { account } = useWeb3Provider()
-	const { contracts } = useContracts()
+	const { loading, contracts } = useContracts()
 	const { blockchain } = useChainInfo()
 
 	const rewardsContracts = useMemo(
@@ -245,7 +245,7 @@ export function useStakedBalances(): StakedBalanceReturn {
 	)
 
 	const balances = useMultipleContractSingleData(
-		rewardsContracts.map(([, contract]) => contract.address),
+		!loading && rewardsContracts.map(([, contract]) => contract.address),
 		contracts?.rewards
 			? Object.values(contracts?.rewards || {})[0]?.interface
 			: null,
@@ -912,41 +912,33 @@ export function useLPsBalance(): LPsBalance {
 	const pools = useLiquidityPools()
 	const poolAccounts = useWalletLPs()
 
-	const {
-		prices: { yaxis, eth },
-	} = usePrices()
+	const { prices } = usePrices()
 
 	return useMemo(() => {
 		return Object.keys(pools).reduce(
 			(previous, current) => {
 				const { walletBalance, stakedBalance } = poolAccounts[current]
-				const { reserves, totalSupply } = pools[current]
+				const { reserves, totalSupply, lpTokens } = pools[current]
 
-				if (
-					!reserves ||
-					!eth ||
-					!yaxis ||
-					!totalSupply ||
-					!stakedBalance
-				)
+				if (!reserves || !prices || !totalSupply || !stakedBalance)
 					return previous
 
-				const share = new BigNumber(totalSupply).isZero()
+				const userShare = totalSupply.isZero()
 					? new BigNumber(0)
-					: new BigNumber(stakedBalance?.value || 0)
-							.plus(new BigNumber(walletBalance?.value || 0))
-							.div(totalSupply.toString())
-
+					: stakedBalance.value
+							.plus(walletBalance.value)
+							.div(totalSupply)
 				const shareT0 = reserves[0]
-					.multipliedBy(share)
+					.multipliedBy(userShare)
 					.dividedBy(10 ** 18)
+				const priceT0 = prices[lpTokens?.[0]?.tokenId]
+				const valueT0 = shareT0.multipliedBy(priceT0 || 0)
 				const shareT1 = reserves[1]
-					.multipliedBy(share)
+					.multipliedBy(userShare)
 					.dividedBy(10 ** 18)
-
-				const balanceUSD = shareT0
-					.multipliedBy(yaxis)
-					.plus(shareT1.multipliedBy(eth))
+				const priceT1 = prices[lpTokens?.[1]?.tokenId]
+				const valueT1 = shareT1.multipliedBy(priceT1 || 0)
+				const balanceUSD = valueT0.plus(valueT1)
 
 				previous[current].usd = balanceUSD
 				previous[current].token = balanceUSD
@@ -972,7 +964,7 @@ export function useLPsBalance(): LPsBalance {
 				},
 			},
 		)
-	}, [eth, poolAccounts, pools, yaxis])
+	}, [prices, poolAccounts, pools])
 }
 
 export function useVotingPower() {
