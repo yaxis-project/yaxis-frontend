@@ -171,7 +171,7 @@ export const CHAIN_INFO: ChainInfoMap = {
 			rpcUrl: NETWORK_URLS[ChainId.AVALANCHE_MAINNET],
 		},
 		yaxisUrl:
-			'https://traderjoexyz.com/trade?inputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7&outputCurrency=0x55853edc67aa68ec2e3903ac00f2bc5bf2ca8db0#/',
+			'https://traderjoexyz.com/trade?inputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7&outputCurrency=0x91A1700835230B8b3B06B5B3DD1Fe70D48ACbd91#/',
 	},
 	[ChainId.AVALANCHE_FUJI]: {
 		chainId: ChainId.AVALANCHE_FUJI,
