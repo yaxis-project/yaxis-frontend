@@ -144,7 +144,7 @@ const mainnet: AvalancheConfig = {
 			legacy: false,
 			type: 'traderjoe',
 			liquidId: `${currencies.ERC677.yaxis}/WAVAX`,
-			lpAddress: '0x12b6298a70e2ae1b1352e051237703a3acbef8b4',
+			lpAddress: '0xa3268e6D1aEF5DFB3Eb345d35d925cd2A64c5E87',
 			lpUrl: `https://traderjoexyz.com/pool/${currencies.ERC677.yaxis}/AVAX`,
 			lpTokens: [
 				{
