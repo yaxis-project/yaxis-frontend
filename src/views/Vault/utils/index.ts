@@ -44,7 +44,6 @@ export const computeInsufficientBalance = (
 		([tokenId, v]) => {
 			const value = new BigNumber(v || 0)
 			const currency = currenciesData[tokenId]
-			if (!currency) throw new Error(`Currency not found: ${tokenId}`)
 			return !currency || value.gt(currency?.amount || 0)
 		},
 	)

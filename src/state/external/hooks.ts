@@ -387,23 +387,23 @@ export function useCurveAPYAvalanche(name: TCurveLPContractsA) {
 	// const [volume, setVolume] = useState(0)
 
 	// useEffect(() => {
-	// 	const getEvents = async () => {
-	// 		const events = await externalLP?.pool.queryFilter(
-	// 			externalLP?.pool.filters.TokenExchange(),
-	// 			block - DAY_BLOCKS,
-	// 			block,
-	// 		)
-	// 		let volume
+	// const getEvents = async () => {
+	// 	const events = await externalLP?.pool.queryFilter(
+	// 		externalLP?.pool.filters.TokenExchange(),
+	// 		block - DAY_BLOCKS,
+	// 		block,
+	// 	)
+	// 	let volume
 
-	// 		events.map(async (trade) => {
-	// 			const t = trade.returnValues['tokens_bought'] / 10 ** 18
-	// 			// decimals[trade.returnValues['bought_id']]
-	// 			volume += t
+	// 	events.map(async (trade) => {
+	// 		const t = trade.returnValues['tokens_bought'] / 10 ** 18
+	// decimals[trade.returnValues['bought_id']]
+	// volume += t
 
-	// 			// if (t > 1000000) {
-	// 			//   console.log('$',t, trade.transactionHash)
-	// 			// }
-	// 		})
+	// if (t > 1000000) {
+	//   console.log('$',t, trade.transactionHash)
+	// }
+	// })
 	// 		setVolume(volume)
 	// 	}
 	// 	getEvents()

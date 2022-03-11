@@ -462,7 +462,8 @@ const StakeTable: React.FC<StakeTableProps> = ({ fees, vaults }) => {
 				const lpToken = lpTokenCurrency.tokenId
 				const vaultToken = contracts.vaultToken.name.toLowerCase()
 				const currency = Currencies[vaultToken.toUpperCase()]
-				const balance = balances[vaultToken]?.amount || new BigNumber(0)
+				const balance =
+					balances[vault].vaultToken?.amount || new BigNumber(0)
 				return {
 					...currency,
 					vault,
