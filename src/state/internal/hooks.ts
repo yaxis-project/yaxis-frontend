@@ -639,7 +639,6 @@ const useAvalancheRewardAPR = (
 
 	return useMemo(() => {
 		const tvl = lp.tvl
-
 		const yaxisPerYear = new BigNumber(
 			(emission && emission[0].toString()) || 0,
 		)
@@ -649,13 +648,12 @@ const useAvalancheRewardAPR = (
 		const usdEmissionsPerYear = yaxisPerYear.multipliedBy(yaxis)
 
 		const apr = usdEmissionsPerYear.dividedBy(tvl)
-		apr.multipliedBy(100)
 
 		return {
 			rewardsPerBlock: new BigNumber(0),
-			apr,
+			apr: apr.multipliedBy(100),
 		}
-	}, [emission, lp])
+	}, [yaxis, emission, lp])
 }
 
 export function useLiquidityPools(): Record<
