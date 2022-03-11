@@ -244,12 +244,30 @@ export function useStakedBalances(): StakedBalanceReturn {
 		[contracts],
 	)
 
+	const contractInterface = useMemo(
+		() =>
+			!loading && contracts?.rewards
+				? Object.values(contracts?.rewards || {})[0]?.interface
+				: null,
+		[loading, contracts],
+	)
+
+	const functionName = useMemo(() => {
+		const ethereumName = 'balanceOf',
+			avalancheName = 'userStaked'
+		try {
+			if (contractInterface?.getFunction(ethereumName))
+				return ethereumName
+		} catch {
+			return avalancheName
+		}
+	}, [contractInterface, blockchain])
+
 	const balances = useMultipleContractSingleData(
-		!loading && rewardsContracts.map(([, contract]) => contract.address),
-		contracts?.rewards
-			? Object.values(contracts?.rewards || {})[0]?.interface
-			: null,
-		blockchain === 'ethereum' ? 'balanceOf' : 'userStaked',
+		functionName &&
+			rewardsContracts.map(([, contract]) => contract.address),
+		contractInterface,
+		functionName ?? '',
 		[account],
 	)
 
