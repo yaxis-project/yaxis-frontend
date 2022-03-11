@@ -14,6 +14,7 @@ import {
 	FRIENDLY_NETWORK_NAMES,
 } from '../../../connectors'
 import ThemeToggle from '../../ThemeToggle'
+import NetworkSelect from '../components/NetworkSelect'
 import { useWeb3React } from '@web3-react/core'
 import useTranslation from '../../../hooks/useTranslation'
 import Menu from '../../Menu'
@@ -64,8 +65,14 @@ const NavTablet: React.FC = () => {
 					align="middle"
 					justify="center"
 					style={{ margin: '10px 0' }}
+					gutter={10}
 				>
-					<ThemeToggle />
+					<Col>
+						<NetworkSelect />
+					</Col>
+					<Col>
+						<ThemeToggle />
+					</Col>
 				</Row>
 
 				{!account ? (
