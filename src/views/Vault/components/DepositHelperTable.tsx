@@ -461,7 +461,7 @@ const DepositHelperTable: React.FC<DepositHelperTableProps> = ({
 					// Native currency
 					if (isPayable)
 						return handlePayableDeposit({
-							args: [args[0], false],
+							args: [args[0], true],
 							amount: args[1],
 							descriptionExtra: totalDepositing,
 						})
