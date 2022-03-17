@@ -32,25 +32,43 @@ const CurvePool: React.FC<Props> = ({ vault }) => {
 	return (
 		<Card style={{ padding: '8px', fontSize: '16px' }}>
 			<Row justify="center">
-				<Text>
-					This Vault accepts {vaultData.token.toUpperCase()} deposits,
-					a Curve.fi Liquidity Pool token.
-				</Text>
+				{(() => {
+					if (vaultData.token.toUpperCase() != 'WAVAX') {
+						return (
+							<Text>
+								This Vault accepts {vaultData.token.toUpperCase()} deposits,
+								a {vaultData.token.toUpperCase() == "JOEWAVAX" ? "TraderJoe" : "Curve.fi"} Liquidity Pool token.
+							</Text>
+						)
+					} else {
+						return (
+							<Text>
+								This Vault accepts {vaultData.token.toUpperCase()} deposits.
+							</Text>
+						)
+					}
+				})()}
 			</Row>
 			<Row justify="center">
-				<Text>
-					Get some by
-					<TextLink
-						style={{ marginLeft: '4px' }}
-						href={vaultData.url}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						depositing your{' '}
-						{vault === 'usd' ? 'USD coins' : vault.toUpperCase()}
-					</TextLink>
-					.
-				</Text>
+				{(() => {
+					if (vaultData.token.toUpperCase() != 'WAVAX'){
+						return (
+							<Text>
+								Get some by
+								<TextLink
+									style={{ marginLeft: '4px' }}
+									href={vaultData.url}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									depositing your{' '}
+									{vault === 'usd' ? 'USD coins' : vault.toUpperCase()}
+								</TextLink>
+								.
+							</Text>
+						)
+					}
+				})()}
 			</Row>
 		</Card>
 	)
