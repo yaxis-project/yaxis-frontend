@@ -43,12 +43,12 @@ const PairStatsCard: React.FC<Props> = ({ pool }) => {
 				secondary={
 					<>
 						<Value
-							value={reserves[0].toFixed(2)}
+							value={reserves[0].toNumber()}
 							decimals={0}
 							numberSuffix={` ${lpTokens?.[0]?.name}`}
 						/>
 						<Value
-							value={reserves[1].toFixed(2)}
+							value={reserves[1].toNumber()}
 							decimals={0}
 							numberSuffix={` ${lpTokens?.[1]?.name}`}
 						/>

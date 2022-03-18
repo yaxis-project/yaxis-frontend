@@ -146,7 +146,6 @@ const Stake: React.FC<Props> = ({ pool }) => {
 							})
 						}
 						loading={loadingStake}
-						style={{ width: '100%' }}
 					>
 						{translate('Stake')}
 					</Button>
@@ -177,7 +176,6 @@ const Stake: React.FC<Props> = ({ pool }) => {
 							})
 						}
 						loading={loadingUnstake}
-						style={{ width: '100%' }}
 					>
 						{translate('Unstake')}
 					</Button>
@@ -247,7 +245,6 @@ const ApprovalWrapper: React.FC<Props> = ({ pool }) => {
 					<Row justify="center" style={{ paddingBottom: '20px' }}>
 						<Col span={4}>
 							<Button
-								style={{ width: '100%' }}
 								onClick={() =>
 									onApprove({
 										args: [
