@@ -211,80 +211,80 @@ export default function Updater(): void {
 		supplyOfCrvcvx,
 	])
 
-	const tricryptoLP = useMemo(
-		() => contracts?.vaults['tricrypto'],
-		[contracts],
-	)
+	// const tricryptoLP = useMemo(
+	// 	() => contracts?.vaults['tricrypto'],
+	// 	[contracts],
+	// )
 
-	const tricryptoResult = useSingleContractMultipleMethods(
-		tricryptoLP?.tokenPool,
-		[
-			['get_virtual_price()'],
-			['balances', [0]],
-			['balances', [1]],
-			['balances', [2]],
-		],
-	)
+	// const tricryptoResult = useSingleContractMultipleMethods(
+	// 	tricryptoLP?.tokenPool,
+	// 	[
+	// 		['get_virtual_price()'],
+	// 		['balances', [0]],
+	// 		['balances', [1]],
+	// 		['balances', [2]],
+	// 	],
+	// )
 
-	const [
-		tricryptoVP,
-		tricryptoBalance0,
-		tricryptoBalance1,
-		tricryptoBalance2,
-	] = useMemo(
-		() =>
-			tricryptoResult.map(({ result, loading }) => {
-				if (loading) return new BigNumber(0)
-				if (!result) return new BigNumber(0)
-				return result.toString()
-			}),
-		[tricryptoResult],
-	)
+	// const [
+	// 	tricryptoVP,
+	// 	tricryptoBalance0,
+	// 	tricryptoBalance1,
+	// 	tricryptoBalance2,
+	// ] = useMemo(
+	// 	() =>
+	// 		tricryptoResult.map(({ result, loading }) => {
+	// 			if (loading) return new BigNumber(0)
+	// 			if (!result) return new BigNumber(0)
+	// 			return result.toString()
+	// 		}),
+	// 	[tricryptoResult],
+	// )
 
-	const { result: supplyOfTriCrypto } = useSingleCallResult(
-		tricryptoLP?.token.contract,
-		'totalSupply',
-	)
+	// const { result: supplyOfTriCrypto } = useSingleCallResult(
+	// 	tricryptoLP?.token.contract,
+	// 	'totalSupply',
+	// )
 
-	useEffect(() => {
-		// Fill curve LP token prices from Curve Liqudiity Pools
-		const supply = new BigNumber(supplyOfTriCrypto?.toString() || 0)
+	// useEffect(() => {
+	// 	// Fill curve LP token prices from Curve Liqudiity Pools
+	// 	const supply = new BigNumber(supplyOfTriCrypto?.toString() || 0)
 
-		const tether = new BigNumber(tricryptoBalance0)
-			.dividedBy(10 ** 6)
-			.multipliedBy(state.prices.usdt)
-		const wbtc = new BigNumber(tricryptoBalance1)
-			.dividedBy(10 ** 8)
-			.multipliedBy(state.prices.wbtc)
-		const weth = new BigNumber(tricryptoBalance2)
-			.dividedBy(10 ** 18)
-			.multipliedBy(state.prices.weth)
-		const total = tether.plus(wbtc).plus(weth)
+	// 	const tether = new BigNumber(tricryptoBalance0)
+	// 		.dividedBy(10 ** 6)
+	// 		.multipliedBy(state.prices.usdt)
+	// 	const wbtc = new BigNumber(tricryptoBalance1)
+	// 		.dividedBy(10 ** 8)
+	// 		.multipliedBy(state.prices.wbtc)
+	// 	const weth = new BigNumber(tricryptoBalance2)
+	// 		.dividedBy(10 ** 18)
+	// 		.multipliedBy(state.prices.weth)
+	// 	const total = tether.plus(wbtc).plus(weth)
 
-		if (new BigNumber(tricryptoVP).gt(0))
-			dispatch(
-				updatePrices({
-					prices: {
-						crv3crypto: total
-							.dividedBy(supply.dividedBy(10 ** 18))
-							.multipliedBy(
-								new BigNumber(tricryptoVP).dividedBy(10 ** 18),
-							)
-							.toNumber(),
-					},
-				}),
-			)
-	}, [
-		dispatch,
-		supplyOfTriCrypto,
-		tricryptoVP,
-		tricryptoBalance0,
-		tricryptoBalance1,
-		tricryptoBalance2,
-		state.prices.usdt,
-		state.prices.wbtc,
-		state.prices.weth,
-	])
+	// 	if (new BigNumber(tricryptoVP).gt(0))
+	// 		dispatch(
+	// 			updatePrices({
+	// 				prices: {
+	// 					crv3crypto: total
+	// 						.dividedBy(supply.dividedBy(10 ** 18))
+	// 						.multipliedBy(
+	// 							new BigNumber(tricryptoVP).dividedBy(10 ** 18),
+	// 						)
+	// 						.toNumber(),
+	// 				},
+	// 			}),
+	// 		)
+	// }, [
+	// 	dispatch,
+	// 	supplyOfTriCrypto,
+	// 	tricryptoVP,
+	// 	tricryptoBalance0,
+	// 	tricryptoBalance1,
+	// 	tricryptoBalance2,
+	// 	state.prices.usdt,
+	// 	state.prices.wbtc,
+	// 	state.prices.weth,
+	// ])
 
 	const fraxLP = useMemo(() => contracts?.vaults['frax'], [contracts])
 
