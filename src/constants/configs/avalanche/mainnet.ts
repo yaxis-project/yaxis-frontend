@@ -157,7 +157,7 @@ const mainnet: AvalancheConfig = {
 			tokenAddress: currencies.ERC677.yaxis,
 			name: 'TraderJoe YAXIS/WAVAX',
 			symbol: 'TraderJoe YAXIS-WAVAX',
-			tokenSymbol: 'YAXIS_ETH_UNISWAP_LP',
+			tokenSymbol: 'TRADERJOE_LP',
 			icon: '',
 			rewards: 'TraderJoe YAXIS/WAVAX',
 		},
