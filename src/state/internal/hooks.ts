@@ -615,9 +615,9 @@ const useAvalancheRewardAPR = (
 ) => {
 	const { contracts } = useContracts()
 
-	const { result: emission } = useSingleCallResult(
+	const results = useSingleContractMultipleMethods(
 		active ? contracts?.rewards[rewardsContract] : null,
-		'emission',
+		[['emission'], ['totalStaked']],
 	)
 
 	const {
@@ -638,7 +638,20 @@ const useAvalancheRewardAPR = (
 	const lp = useLiquidityPool(pool)
 
 	return useMemo(() => {
-		const tvl = lp.tvl
+		const [emission, totalSupply] = results.map(({ result, loading }) => {
+			if (loading) return null
+			if (!result) return null
+			return result
+		})
+		const lpTvl = lp.tvl
+		const lpTotalSupply = lp.totalSupply
+
+		const percentageStaked = new BigNumber(
+			(totalSupply && totalSupply[0]?.toString()) || 0,
+		)
+			.dividedBy(10 ** 18)
+			.dividedBy(lpTotalSupply.isZero() ? 1 : lpTotalSupply)
+		const tvl = lpTvl.multipliedBy(percentageStaked)
 		const yaxisPerYear = new BigNumber(
 			(emission && emission[0].toString()) || 0,
 		)
@@ -653,7 +666,7 @@ const useAvalancheRewardAPR = (
 			rewardsPerBlock: new BigNumber(0),
 			apr: apr.multipliedBy(100),
 		}
-	}, [yaxis, emission, lp])
+	}, [yaxis, results, lp])
 }
 
 export function useLiquidityPools(): Record<
