@@ -13,6 +13,7 @@ import Claim from '../../../components/Claim'
 import { TVaults } from '../../../constants/type'
 import APYCalculator from '../../../components/APYCalculator'
 import BigNumber from 'bignumber.js'
+import { useChainInfo } from '../../../state/user'
 
 const { Text } = Typography
 
@@ -30,7 +31,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 	const t = useTranslation()
 
 	const apr = useVaultsAPRWithBoost()
-
+	const { blockchain } = useChainInfo()
 	const { boost } = useUserBoost(vault)
 
 	return (
@@ -77,7 +78,7 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 						</Row>
 						<Row>
 							<Value
-								value={apr[vault]?.yaxisAPR
+								value={apr[blockchain]?.[vault]?.yaxisAPR
 									.multipliedBy(100)
 									.toNumber()}
 								numberSuffix={'%'}
