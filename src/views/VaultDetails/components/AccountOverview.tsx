@@ -91,7 +91,9 @@ const InvestmentDetailOverview: React.FC<Props> = ({
 			<Claim vault={vault} last />
 
 			<APYCalculator
-				APR={0}
+				APR={apr[blockchain]?.[vault]?.yaxisAPR
+					.multipliedBy(100)
+					.toNumber()}
 				balance={new BigNumber(totalUSDBalance)}
 				loading={balanceLoading}
 				page={'metavault'}
