@@ -71,7 +71,9 @@ function useCallsData(
 	calls: (Call | undefined)[],
 	options?: ListenerOptions,
 ): CallResult[] {
-	const { chainId } = useWeb3Provider()
+	const { contracts } = useContracts()
+	const chainId = useMemo(() => contracts?.chainInfo.chainId, [contracts])
+
 	const callResults = useSelector<
 		AppState,
 		AppState['onchain']['callResults']

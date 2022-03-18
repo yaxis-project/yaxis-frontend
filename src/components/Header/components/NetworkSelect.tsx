@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
-import { useChain, useSetChain } from '../../../state/user/hooks'
+import { useChain } from '../../../state/user/hooks'
 import { CHAIN_INFO, ALL_SUPPORTED_CHAIN_IDS } from '../../../constants/chains'
 // import useTranslation from '../../../hooks/useTranslation'
 import { switchToNetwork } from '../../../utils/switchToNetwork'
@@ -17,7 +17,6 @@ const NetworkSelect: React.FC = () => {
 	const { activate } = useWeb3React('fallback')
 	const { library } = useWeb3React()
 	const chainId = useChain()
-	const setChainId = useSetChain()
 	// const translate = useTranslation()
 	const blockchain = useMemo(() => CHAIN_INFO[chainId], [chainId])
 
@@ -68,13 +67,11 @@ const NetworkSelect: React.FC = () => {
 								})
 								const connector = networkConnectorFactory(id)
 								await activate(connector)
-								setChainId(id)
 							} catch {
 								if (!library) {
 									const connector =
 										networkConnectorFactory(id)
 									await activate(connector)
-									setChainId(id)
 								}
 							}
 						}}

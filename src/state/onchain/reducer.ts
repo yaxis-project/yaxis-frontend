@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
+import { ChainId } from '../../constants/chains'
 import {
 	addMulticallListeners,
 	errorFetchingMulticallResults,
@@ -11,7 +12,7 @@ import {
 export interface MulticallState {
 	callListeners?: {
 		// on a per-chain basis
-		[chainId: number]: {
+		[chainId in ChainId]?: {
 			// stores for each call key the listeners' preferences
 			[callKey: string]: {
 				// stores how many listeners there are per each blocks per fetch preference
@@ -21,7 +22,7 @@ export interface MulticallState {
 	}
 
 	callResults: {
-		[chainId: number]: {
+		[chainId in ChainId]: {
 			[callKey: string]: {
 				data?: string | null
 				blockNumber?: number
@@ -32,7 +33,12 @@ export interface MulticallState {
 }
 
 const initialState: MulticallState = {
-	callResults: {},
+	callResults: {
+		1: {},
+		42: {},
+		43113: {},
+		43114: {},
+	},
 }
 
 export default createReducer(initialState, (builder) =>

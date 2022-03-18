@@ -129,8 +129,8 @@ export default function Updater(): null {
 	// wait for listeners to settle before triggering updates
 	const debouncedListeners = useDebounce(state.callListeners, 100)
 	const latestBlockNumber = useBlockNumber()
-	const { chainId } = useWeb3Provider()
 	const { contracts } = useContracts()
+	const chainId = useMemo(() => contracts?.chainInfo.chainId, [contracts])
 	const multicallContract = useMemo(
 		() => contracts?.external.multicall,
 		[contracts],
@@ -143,7 +143,6 @@ export default function Updater(): null {
 	const listeningKeys: { [callKey: string]: number } = useMemo(() => {
 		return activeListeningKeys(debouncedListeners, chainId)
 	}, [debouncedListeners, chainId])
-
 	const unserializedOutdatedCallKeys = useMemo(() => {
 		return outdatedListeningKeys(
 			state.callResults,
@@ -260,6 +259,7 @@ export default function Updater(): null {
 			}),
 		}
 	}, [
+		contracts,
 		chainId,
 		multicallContract,
 		dispatch,
