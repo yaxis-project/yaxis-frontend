@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import Page from '../../components/Page/Page'
 import { Row, Col } from 'antd'
-import useTranslation from '../../hooks/useTranslation'
 import {
 	Deposit,
 	Borrow,
@@ -11,16 +9,20 @@ import {
 	CollateralOverview,
 	LoanOverview,
 } from './components'
+import Page from '../../components/Page/Page'
+import useTranslation from '../../hooks/useTranslation'
+import { useAlchemist } from '../../state/wallet/hooks'
 
 const Alchemix: React.FC = () => {
 	const translate = useTranslation()
+	const { toBorrow } = useAlchemist()
 
 	return (
 		<Page
 			loading={false}
 			mainTitle={translate('Borrow')}
 			secondaryText="Future Yield Loans"
-			value={'0.00'}
+			value={`${toBorrow?.toNumber()}`}
 			valueInfo="Availalbe To Borrow"
 		>
 			<Row gutter={16}>

@@ -38,6 +38,7 @@ const tokenCgkIdMap: { [key in Ticker]: CoinGeckoID } = {
 	atricrypto: '',
 	avwavax: '',
 	joewavax: '',
+	usdy: '',
 }
 
 export async function getCoinGeckoPrices() {

@@ -15,7 +15,7 @@ const { Text } = Typography
 
 const Withdraw: React.FC = () => {
 	const translate = useTranslation()
-	const alchemist = useAlchemist()
+	const { free } = useAlchemist()
 	const { call, loading } = useContractWrite({
 		contractName: 'internal.alchemist',
 		method: 'withdraw',
@@ -51,15 +51,9 @@ const Withdraw: React.FC = () => {
 								value={amount}
 								min={'0'}
 								placeholder="0"
-								disabled={
-									alchemist.deposited
-										? alchemist.deposited.isZero()
-										: true
-								}
+								disabled={free?.isZero()}
 								suffix={'MIM'}
-								onClickMax={() =>
-									setAmount(alchemist.deposited.toString())
-								}
+								onClickMax={() => setAmount(free?.toString())}
 							/>
 						</Row>
 					</Col>
@@ -68,8 +62,7 @@ const Withdraw: React.FC = () => {
 				<Button
 					style={{ width: '100%', marginTop: '14px' }}
 					disabled={
-						alchemist.loading ||
-						alchemist.deposited?.isZero() ||
+						free?.isZero() ||
 						new BigNumber(amount).isZero() ||
 						new BigNumber(amount).isNaN()
 					}

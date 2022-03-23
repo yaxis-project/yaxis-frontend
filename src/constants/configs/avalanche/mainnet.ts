@@ -91,6 +91,7 @@ const mainnet: AvalancheConfig = {
 		votingEscrow: '0x9D71b871C5E5d192B48F983c4e52761c99DD9298',
 		gaugeController: '0x11107B773e51A1030A8c7D27DACBED655992E384',
 		feeDistributor: '0x53D26Dd410e7d6D54548903633e269444740c32a',
+		alchemist: '',
 	},
 	rewards: {
 		'TraderJoe YAXIS/WAVAX': '0x261835a2933781063e15152B50b36B16378B1e61',

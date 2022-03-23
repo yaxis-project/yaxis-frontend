@@ -91,6 +91,7 @@ const fuji: AvalancheConfig = {
 		votingEscrow: '',
 		gaugeController: '',
 		feeDistributor: '',
+		alchemist: '',
 	},
 	rewards: {
 		'TraderJoe YAXIS/WAVAX': '',

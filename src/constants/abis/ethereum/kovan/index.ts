@@ -1,4 +1,5 @@
 import { JsonFragment } from '@ethersproject/abi'
+import AlchemistAbi from './Alchemist.json'
 import BalancerAbi from './balancer.json'
 import ControllerABI from './Controller.json'
 import ConvexRewardPoolABI from './ConvexRewardPool.json'
@@ -32,6 +33,7 @@ import YaxisChefABI from './yaxis_chef.json'
 import YAxisMetaVaultABI from './yAxisMetaVault.json'
 
 export const abis = {
+	AlchemistABI: AlchemistAbi as JsonFragment[],
 	BalancerAbi: BalancerAbi as JsonFragment[],
 	ControllerABI: ControllerABI as JsonFragment[],
 	ConvexRewardPoolABI: ConvexRewardPoolABI as JsonFragment[],

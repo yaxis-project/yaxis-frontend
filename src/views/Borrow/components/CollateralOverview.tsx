@@ -1,11 +1,10 @@
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
-import { useContracts } from '../../../contexts/Contracts'
 import Value from '../../../components/Value'
 import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
 import CardRow from '../../../components/CardRow'
-import Divider from '../../../components/Divider'
 import Typography from '../../../components/Typography'
+import { useAllTokenBalances, useAlchemist } from '../../../state/wallet/hooks'
 
 const { SecondaryText } = Typography
 
@@ -13,6 +12,9 @@ const { SecondaryText } = Typography
  * Generates an expandable side panel that shows basic overview data for the home page.
  */
 export function CollateralOverview() {
+	const [balances] = useAllTokenBalances()
+	const { deposited, debt, free } = useAlchemist()
+
 	return (
 		<ExpandableSidePanel header="Collateral" icon="lineup">
 			<CardRow
@@ -20,7 +22,23 @@ export function CollateralOverview() {
 				secondary={
 					<Row gutter={3}>
 						<Col>
-							<Value value="0.000 MIM" />
+							<Value
+								value={`${
+									balances?.mim3crv?.amount
+										? balances?.mim3crv?.amount.toNumber()
+										: '0'
+								} MIM`}
+							/>
+						</Col>
+					</Row>
+				}
+			/>
+			<CardRow
+				main={<SecondaryText>Your collateral balance</SecondaryText>}
+				secondary={
+					<Row gutter={3}>
+						<Col>
+							<Value value={`${deposited?.toNumber()} MIM`} />
 						</Col>
 					</Row>
 				}
@@ -30,7 +48,7 @@ export function CollateralOverview() {
 				secondary={
 					<Row gutter={3}>
 						<Col>
-							<Value value="0.000 MIM" />
+							<Value value={`${debt?.toNumber()} MIM`} />
 						</Col>
 					</Row>
 				}
@@ -40,7 +58,7 @@ export function CollateralOverview() {
 				secondary={
 					<Row gutter={3}>
 						<Col>
-							<Value value="0.000 MIM" />
+							<Value value={`${free?.toNumber()} MIM`} />
 						</Col>
 					</Row>
 				}

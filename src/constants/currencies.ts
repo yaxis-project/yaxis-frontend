@@ -507,6 +507,13 @@ export const FRAX3CRV: Currency = {
 	decimals: 18,
 }
 
+export const USDY: Currency = {
+	name: 'USDY',
+	tokenId: 'usdy',
+	icon: usdc,
+	decimals: 18,
+}
+
 export const UNISWAP_LP: Currency = {
 	name: 'Uniswap LP token',
 	tokenId: 'uni-v2',
@@ -607,4 +614,5 @@ export const Currencies = {
 	LINKSWAP_LP,
 	YAX_ETH_LINKSWAP_LP,
 	TRADERJOE_LP,
+	USDY,
 }

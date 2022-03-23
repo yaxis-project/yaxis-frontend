@@ -43,7 +43,7 @@ const Deposit: React.FC = () => {
 			<Divider style={{ margin: 0, padding: 0 }} />
 
 			<ApprovalCover
-				contractName={`currencies.ERC20.mim.contract`}
+				contractName={`currencies.ERC20.mim3crv.contract`}
 				approvee={contracts?.internal.alchemist.address}
 			>
 				<StyledDiv>
@@ -57,8 +57,8 @@ const Deposit: React.FC = () => {
 									{translate('Wallet Balance')}
 									{': '}
 									<span style={{ fontWeight: 600 }}>
-										{balances?.mim?.amount
-											? balances?.mim?.amount.toNumber()
+										{balances?.mim3crv?.amount
+											? balances?.mim3crv?.amount.toNumber()
 											: '-'}{' '}
 										MIM
 									</span>
@@ -74,14 +74,14 @@ const Deposit: React.FC = () => {
 									min={'0'}
 									placeholder="0"
 									disabled={
-										balances?.mim?.amount
-											? balances?.mim?.amount.isZero()
+										balances?.mim3crv?.amount
+											? balances?.mim3crv?.amount.isZero()
 											: true
 									}
 									suffix={'MIM'}
 									onClickMax={() =>
 										setAmount(
-											balances?.mim?.amount.toString(),
+											balances?.mim3crv?.amount.toString(),
 										)
 									}
 								/>
@@ -93,7 +93,7 @@ const Deposit: React.FC = () => {
 						style={{ width: '100%', marginTop: '14px' }}
 						disabled={
 							loadingBalances ||
-							balances?.mim?.amount?.isZero() ||
+							balances?.mim3crv?.amount?.isZero() ||
 							new BigNumber(amount).isZero() ||
 							new BigNumber(amount).isNaN()
 						}

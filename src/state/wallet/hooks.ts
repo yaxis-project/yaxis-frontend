@@ -1057,6 +1057,7 @@ export function useAlchemist() {
 	const results = useSingleContractMultipleMethods(
 		contracts?.internal.alchemist,
 		[
+			['collateralizationLimit()', []],
 			['getCdpTotalDeposited(address)', [account]],
 			['getCdpTotalDebt(address)', [account]],
 			['getCdpTotalCredit(address)', [account]],
@@ -1069,27 +1070,35 @@ export function useAlchemist() {
 	}, [results])
 
 	return useMemo(() => {
-		const [getCdpTotalDeposited, getCdpTotalDebt, getCdpTotalCredit] =
-			results.map(({ result, loading }, i) => {
-				if (loading) return ethers.BigNumber.from(0)
-				if (!result) return ethers.BigNumber.from(0)
-				return result
-			})
-
-		console.log(
-			account,
+		const [
+			collateralizationLimit,
 			getCdpTotalDeposited,
 			getCdpTotalDebt,
 			getCdpTotalCredit,
+		] = results.map(({ result, loading }, i) => {
+			if (loading) return ethers.BigNumber.from(0)
+			if (!result) return ethers.BigNumber.from(0)
+			return result
+		})
+
+		const collateralLimit = new BigNumber(
+			collateralizationLimit.toString(),
+		).div(10 ** 18)
+		const deposited = new BigNumber(getCdpTotalDeposited.toString()).div(
+			10 ** 18,
 		)
+		const debt = new BigNumber(getCdpTotalDebt.toString()).div(10 ** 18)
+		const credit = new BigNumber(getCdpTotalCredit.toString()).div(10 ** 18)
+		const free = deposited.minus(debt.times(collateralLimit)).plus(credit)
+		const toBorrow = free.div(collateralLimit)
 
 		return {
 			loading,
-			deposited: new BigNumber(getCdpTotalDeposited.toString()).div(
-				10 ** 18,
-			),
-			debt: new BigNumber(getCdpTotalDebt.toString()).div(10 ** 18),
-			credit: new BigNumber(getCdpTotalCredit.toString()).div(10 ** 18),
+			deposited,
+			debt,
+			credit,
+			free,
+			toBorrow,
 		}
 	}, [results, loading])
 }

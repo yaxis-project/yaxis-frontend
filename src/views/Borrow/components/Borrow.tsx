@@ -15,7 +15,7 @@ const { Text } = Typography
 
 const Borrow: React.FC = () => {
 	const translate = useTranslation()
-	const alchemist = useAlchemist()
+	const { toBorrow } = useAlchemist()
 	const { call, loading } = useContractWrite({
 		contractName: 'internal.alchemist',
 		method: 'mint',
@@ -54,14 +54,10 @@ const Borrow: React.FC = () => {
 								value={amount}
 								min={'0'}
 								placeholder="0"
-								disabled={
-									alchemist.deposited
-										? alchemist.deposited.isZero()
-										: true
-								}
-								suffix={'YUSD'}
+								disabled={toBorrow?.isZero()}
+								suffix={'USDY'}
 								onClickMax={() =>
-									setAmount(alchemist.deposited.toString())
+									setAmount(toBorrow?.toString())
 								}
 							/>
 						</Row>
@@ -71,8 +67,7 @@ const Borrow: React.FC = () => {
 				<Button
 					style={{ width: '100%', marginTop: '14px' }}
 					disabled={
-						alchemist.loading ||
-						alchemist.deposited?.isZero() ||
+						toBorrow?.isZero() ||
 						new BigNumber(amount).isZero() ||
 						new BigNumber(amount).isNaN()
 					}
