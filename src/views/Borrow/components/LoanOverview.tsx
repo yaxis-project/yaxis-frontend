@@ -1,11 +1,10 @@
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
-import { useContracts } from '../../../contexts/Contracts'
 import Value from '../../../components/Value'
 import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
 import CardRow from '../../../components/CardRow'
-import Divider from '../../../components/Divider'
 import Typography from '../../../components/Typography'
+import { useAllTokenBalances, useAlchemist } from '../../../state/wallet/hooks'
 
 const { SecondaryText } = Typography
 
@@ -13,6 +12,10 @@ const { SecondaryText } = Typography
  * Generates an expandable side panel that shows basic overview data for the home page.
  */
 export function LoanOverview() {
+	const [balances] = useAllTokenBalances()
+	const { debt, deposited } = useAlchemist()
+	console.log(balances)
+
 	return (
 		<ExpandableSidePanel header="Loans" icon="lineup">
 			<CardRow
@@ -20,7 +23,7 @@ export function LoanOverview() {
 				secondary={
 					<Row gutter={3}>
 						<Col>
-							<Value value="0.000 MIM" />
+							<Value value={`${debt?.toNumber()} USDY`} />
 						</Col>
 					</Row>
 				}
@@ -30,17 +33,28 @@ export function LoanOverview() {
 				secondary={
 					<Row gutter={3}>
 						<Col>
-							<Value value="0%" />
+							<Value
+								value={`${debt
+									?.div(deposited)
+									.times(100)
+									.toFixed(3)} %`}
+							/>
 						</Col>
 					</Row>
 				}
 			/>
 			<CardRow
-				main={<SecondaryText>Your XAXIS wallet balance</SecondaryText>}
+				main={<SecondaryText>Your USDY wallet balance</SecondaryText>}
 				secondary={
 					<Row gutter={3}>
 						<Col>
-							<Value value="0.000 XAXIS" />
+							<Value
+								value={`${
+									balances?.usdy?.amount
+										? balances?.usdy?.amount.toNumber()
+										: '0'
+								} USDY`}
+							/>
 						</Col>
 					</Row>
 				}
