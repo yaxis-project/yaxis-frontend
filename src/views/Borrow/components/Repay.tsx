@@ -49,7 +49,9 @@ const Repay: React.FC = () => {
 				<StyledDiv>
 					<Row style={{ marginBottom: '20px' }}>
 						<Col span={8}>
-							<StyledText>MIM {translate('Amount')}</StyledText>
+							<StyledText>
+								MIMcrv {translate('Amount')}
+							</StyledText>
 						</Col>
 						<Col span={16}>
 							<Row>

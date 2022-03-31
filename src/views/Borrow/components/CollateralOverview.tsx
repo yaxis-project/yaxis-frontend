@@ -13,7 +13,7 @@ const { SecondaryText } = Typography
  */
 export function CollateralOverview() {
 	const [balances] = useAllTokenBalances()
-	const { deposited, debt, free } = useAlchemist()
+	const { deposited, debt, free, totalAPR } = useAlchemist()
 
 	return (
 		<ExpandableSidePanel header="Collateral" icon="lineup">
@@ -27,7 +27,7 @@ export function CollateralOverview() {
 									balances?.mim3crv?.amount
 										? balances?.mim3crv?.amount.toNumber()
 										: '0'
-								} MIM`}
+								} MIMcrv`}
 							/>
 						</Col>
 					</Row>
@@ -38,7 +38,7 @@ export function CollateralOverview() {
 				secondary={
 					<Row gutter={3}>
 						<Col>
-							<Value value={`${deposited?.toNumber()} MIM`} />
+							<Value value={`${deposited?.toNumber()} MIMcrv`} />
 						</Col>
 					</Row>
 				}
@@ -48,7 +48,7 @@ export function CollateralOverview() {
 				secondary={
 					<Row gutter={3}>
 						<Col>
-							<Value value={`${debt?.toNumber()} MIM`} />
+							<Value value={`${debt?.toNumber()} MIMcrv`} />
 						</Col>
 					</Row>
 				}
@@ -58,17 +58,23 @@ export function CollateralOverview() {
 				secondary={
 					<Row gutter={3}>
 						<Col>
-							<Value value={`${free?.toNumber()} MIM`} />
+							<Value value={`${free?.toNumber()} MIMcrv`} />
 						</Col>
 					</Row>
 				}
 			/>
 			<CardRow
-				main={<SecondaryText>MIM APY</SecondaryText>}
+				main={<SecondaryText>MIMcrv APY</SecondaryText>}
 				secondary={
 					<Row gutter={3}>
 						<Col>
-							<Value value="0.000 %" />
+							<Value
+								value={`${
+									totalAPR.isNaN()
+										? 0
+										: totalAPR.multipliedBy(100).toFormat(2)
+								} %`}
+							/>
 						</Col>
 					</Row>
 				}
