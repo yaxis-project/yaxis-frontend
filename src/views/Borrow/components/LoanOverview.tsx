@@ -1,10 +1,16 @@
 import styled from 'styled-components'
+import { BigNumber } from 'bignumber.js'
+import moment from 'moment'
 import { Row, Col } from 'antd'
 import Value from '../../../components/Value'
 import { ExpandableSidePanel } from '../../../components/ExpandableSidePanel'
 import CardRow from '../../../components/CardRow'
 import Typography from '../../../components/Typography'
-import { useAllTokenBalances, useAlchemist } from '../../../state/wallet/hooks'
+import {
+	useAllTokenBalances,
+	useAlchemist,
+	useVaultsAPRWithBoost,
+} from '../../../state/wallet/hooks'
 
 const { SecondaryText } = Typography
 
@@ -13,8 +19,14 @@ const { SecondaryText } = Typography
  */
 export function LoanOverview() {
 	const [balances] = useAllTokenBalances()
-	const { debt, deposited } = useAlchemist()
-	console.log(balances)
+	const { debt, deposited, totalAPR } = useAlchemist()
+	let maturityDate = 'N/A'
+
+	if (!totalAPR.isNaN()) {
+		maturityDate = moment()
+			.add(new BigNumber(1).div(totalAPR), 'years')
+			.format('YYYY/MM/DD')
+	}
 
 	return (
 		<ExpandableSidePanel header="Loans" icon="lineup">
@@ -64,7 +76,7 @@ export function LoanOverview() {
 				secondary={
 					<Row gutter={3}>
 						<Col>
-							<Value value="2/22/2023" />
+							<Value value={maturityDate} />
 						</Col>
 					</Row>
 				}

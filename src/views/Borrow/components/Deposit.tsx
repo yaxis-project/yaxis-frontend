@@ -32,9 +32,9 @@ const Deposit: React.FC = () => {
 			<div style={{ margin: '20px' }}>
 				<Row>
 					<StyledText>
-						Deposit 3CRV in order to lock your collateral. You
-						collateral earns yield for the duration of the lock
-						period, allowing you to borrow XYAXIS against future
+						Deposit MIMcrv in order to lock your collateral. Your
+						collateral earns yield that pays down your loan,
+						allowing you to borrow USDY stablecoins against future
 						yield.
 					</StyledText>
 				</Row>
@@ -60,7 +60,7 @@ const Deposit: React.FC = () => {
 										{balances?.mim3crv?.amount
 											? balances?.mim3crv?.amount.toNumber()
 											: '-'}{' '}
-										MIM
+										MIMcrv
 									</span>
 								</StyledSmallText>
 							</Row>
@@ -78,7 +78,7 @@ const Deposit: React.FC = () => {
 											? balances?.mim3crv?.amount.isZero()
 											: true
 									}
-									suffix={'MIM'}
+									suffix={'MIMcrv'}
 									onClickMax={() =>
 										setAmount(
 											balances?.mim3crv?.amount.toString(),

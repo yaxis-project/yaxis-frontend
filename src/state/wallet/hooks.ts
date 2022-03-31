@@ -1051,6 +1051,8 @@ export function useLock() {
 export function useAlchemist() {
 	const { account } = useWeb3Provider()
 	const { contracts } = useContracts()
+	const apr = useVaultsAPRWithBoost()
+	const { blockchain } = useChainInfo()
 
 	const [loading, setLoading] = useState(true)
 
@@ -1091,6 +1093,7 @@ export function useAlchemist() {
 		const credit = new BigNumber(getCdpTotalCredit.toString()).div(10 ** 18)
 		const free = deposited.minus(debt.times(collateralLimit)).plus(credit)
 		const toBorrow = free.div(collateralLimit)
+		const totalAPR = apr[blockchain].usd.totalAPR
 
 		return {
 			loading,
@@ -1099,6 +1102,7 @@ export function useAlchemist() {
 			credit,
 			free,
 			toBorrow,
+			totalAPR,
 		}
 	}, [results, loading])
 }

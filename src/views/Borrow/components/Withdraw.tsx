@@ -52,7 +52,7 @@ const Withdraw: React.FC = () => {
 								min={'0'}
 								placeholder="0"
 								disabled={free?.isZero()}
-								suffix={'MIM'}
+								suffix={'MIMcrv'}
 								onClickMax={() => setAmount(free?.toString())}
 							/>
 						</Row>
