@@ -581,7 +581,7 @@ export function useTraderJoeAPYAvalanche(name: TTraderJoeLPContractsA) {
 			.dividedBy(10 ** 18)
 			.multipliedBy(prices?.joewavax)
 
-		const allocPoint = new BigNumber(poolInfo?.result?.[3]?.toString() ?? 0)
+		const allocPoint = new BigNumber(poolInfo?.result?.[1]?.toString() ?? 0)
 		const totalJoePerSec = new BigNumber(joePerSec?.result?.toString() ?? 0)
 		const totalAlloc = new BigNumber(
 			totalAllocPoint?.result?.toString() ?? 0,
