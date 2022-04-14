@@ -747,15 +747,19 @@ export function useLegacyReturns(pid: number) {
 export function useWalletLP(name: TLiquidityPools) {
 	const { contracts, loading } = useContracts()
 
-	const liquidityPool = useMemo(() => contracts?.pools[name], [name])
+	const liquidityPool = useMemo(
+		() => contracts?.pools[name],
+		[name, contracts?.pools],
+	)
 
 	const { totalSupply } = useLiquidityPool(liquidityPool?.name)
 
 	const [tokenBalances] = useAllTokenBalances()
 	const walletBalance = useMemo(
 		() =>
-			tokenBalances[liquidityPool?.tokenSymbol] ?? DEFAULT_TOKEN_BALANCE,
-		[tokenBalances, liquidityPool?.tokenSymbol],
+			tokenBalances[liquidityPool?.tokenContract?.tokenId] ??
+			DEFAULT_TOKEN_BALANCE,
+		[tokenBalances, liquidityPool?.tokenContract?.tokenId],
 	)
 
 	const stakedBalances = useStakedBalances()
