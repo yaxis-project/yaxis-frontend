@@ -148,7 +148,7 @@ const mainnet: EthereumConfig = {
 			tokenPoolContract: externalPools.curve.rencrv.pool,
 			token: 'RENCRV',
 			tokenContract: externalPools.curve.rencrv.token,
-			vault: '0x0b42B20280216D604bB2B6a8944Fb9027b43dF8d',
+			vault: '0xFB3292cc870292D588B3DD7e03805986451CB1d2',
 			vaultToken: 'CV:BTC',
 			vaultTokenContract: '0x0C44393DA03216E934b3A5503DECF7f78174b2f3',
 			gauge: '0x9AA02011a90736176f9CdC38FF4d1Ed7C90309b6',
