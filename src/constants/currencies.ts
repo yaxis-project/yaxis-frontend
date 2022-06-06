@@ -309,6 +309,27 @@ export const CVJOEWAVAXgauge: Currency = {
 	decimals: 18,
 }
 
+export const WETHAVAX: Currency = {
+	name: 'WETHAVAX',
+	tokenId: 'wethavax',
+	icon: cvx,
+	decimals: 18,
+}
+
+export const CVWETHAVAX: Currency = {
+	name: 'CV:WETHAVAX',
+	tokenId: 'cv:wethavax',
+	icon: cvx,
+	decimals: 18,
+}
+
+export const CVWETHAVAXgauge: Currency = {
+	name: 'CV:WETHAVAX-GAUGE',
+	tokenId: 'cv:wethavax-gauge',
+	icon: cvx,
+	decimals: 18,
+}
+
 // External
 
 export const DAI: Currency = {
@@ -580,6 +601,9 @@ export const Currencies = {
 	JOEWAVAX,
 	'CV:JOEWAVAX': CVJOEWAVAX,
 	'CV:JOEWAVAX-GAUGE': CVJOEWAVAXgauge,
+	WETHAVAX,
+	'CV:WETHAVAX': CVWETHAVAX,
+	'CV:WETHAVAX-GAUGE': CVWETHAVAXgauge,
 	FRAX,
 	TRICRYPTO,
 	MIM,

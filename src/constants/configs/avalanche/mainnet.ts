@@ -77,6 +77,13 @@ const externalPools: AvalancheExternalPoolsConfig = {
 			gauge: '',
 			rewards: '',
 		},
+		wethavax: {
+			currency: '',
+			pool: '',
+			token: '0xFE15c2695F1F920da45C30AAE47d11dE51007AF9',
+			gauge: '',
+			rewards: '',
+		},
 	},
 }
 
@@ -137,6 +144,16 @@ const mainnet: AvalancheConfig = {
 			vaultTokenContract: '0xdD88A3B3051B72C5d32C4A94AFe494dfb75f7839',
 			gauge: '0x2D89a857a76b00C2A0E9EFb016DF49F9CB049755',
 		},
+		wethavax: {
+			url: 'https://traderjoexyz.com/pool/0x6e84a6216ea6dacc71ee8e6b0a5b7322eebc0fdd/AVAX#/',
+			tokenPoolContract: externalPools.traderjoe.wethavax.pool,
+			token: 'WETHAVAX',
+			tokenContract: externalPools.traderjoe.wethavax.token,
+			vault: '0x715840DAB41CcCfB8f591A7c4DAaD78398049220',
+			vaultToken: 'CV:WETHAVAX',
+			vaultTokenContract: '0x5c0911b8C8C85Da266565a11137d6E6818D5d8B9',
+			gauge: '0xb6526eA37479b0287cb9cF19C49ec87A324BC7De',
+		}
 	},
 	pools: {
 		'TraderJoe YAXIS/WAVAX': {

@@ -255,11 +255,13 @@ export function useVaultsAPR() {
 	const atricryptoAvalanche = useVaultRewards('atricrypto', 'avalanche')
 	const avaxAvalanche = useVaultRewards('avax', 'avalanche')
 	const joewavaxAvalanche = useVaultRewards('joewavax', 'avalanche')
+	const wethavaxAvalanche = useVaultRewards('wethavax', 'avalanche')
 
 	const av3crv = useCurveAPYAvalanche('av3crv')
 	const atricrypto = useCurveAPYAvalanche('atricrypto')
 	const avax = useAaveAPYAvalanche('avax')
 	const joewavax = useTraderJoeAPYAvalanche('joewavax')
+	const wethavax = useTraderJoeAPYAvalanche('wethavax')
 
 	return useMemo(() => {
 		const output: ReturnVaultsAPR = {
@@ -292,6 +294,13 @@ export function useVaultsAPR() {
 					},
 					strategy: joewavax,
 				},
+				wethavax: {
+					yaxisAPR: {
+						min: wethavaxAvalanche.minAPR,
+						max: wethavaxAvalanche.maxAPR,
+					},
+					strategy: wethavax,
+				}
 			},
 			ethereum: {
 				usd: {
@@ -392,6 +401,7 @@ export function useVaults(): useVaultsReturn {
 	const atricrypto = useVault('atricrypto')
 	const avax = useVault('avax')
 	const joewavax = useVault('joewavax')
+	const wethavax = useVault('wethavax')
 
 	return useMemo(() => {
 		return {
@@ -407,6 +417,7 @@ export function useVaults(): useVaultsReturn {
 			atricrypto,
 			avax,
 			joewavax,
+			wethavax
 		}
 	}, [
 		usd,
@@ -421,6 +432,7 @@ export function useVaults(): useVaultsReturn {
 		atricrypto,
 		avax,
 		joewavax,
+		wethavax
 	])
 }
 

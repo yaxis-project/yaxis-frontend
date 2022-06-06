@@ -77,6 +77,13 @@ const externalPools: AvalancheExternalPoolsConfig = {
 			gauge: '',
 			rewards: '',
 		},
+		wethavax: {
+			currency: '',
+			pool: '',
+			token: '0x454e67025631c065d3cfad6d71e6892f74487a15',
+			gauge: '',
+			rewards: '',
+		}
 	},
 }
 
@@ -127,6 +134,16 @@ const fuji: AvalancheConfig = {
 			gauge: '',
 		},
 		joewavax: {
+			url: 'https://app.aave.com/#/deposit',
+			tokenPoolContract: externalPools.aave.avax.pool,
+			token: 'AVWAVAX',
+			tokenContract: externalPools.aave.avax.token,
+			vault: '',
+			vaultToken: 'CV:AVAX',
+			vaultTokenContract: '',
+			gauge: '',
+		},
+		wethavax: {
 			url: 'https://app.aave.com/#/deposit',
 			tokenPoolContract: externalPools.aave.avax.pool,
 			token: 'AVWAVAX',

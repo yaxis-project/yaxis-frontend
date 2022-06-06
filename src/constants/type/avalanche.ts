@@ -55,7 +55,7 @@ export type TCurveLPCurrencies = typeof curveLPCurrencies[number]
 export const aaveLPCurrencies = <const>['avwavax']
 export type TAaveLPCurrencies = typeof aaveLPCurrencies[number]
 
-export const traderjoeLPCurrencies = <const>['joewavax']
+export const traderjoeLPCurrencies = <const>['joewavax', 'wethavax']
 export type TTraderJoeLPCurrencies = typeof traderjoeLPCurrencies[number]
 
 export type Ticker =
@@ -82,7 +82,7 @@ export const CurveLPContracts = <const>['av3crv', 'atricrypto', 'aawbtcrencrv']
 export type TCurveLPContracts = typeof CurveLPContracts[number]
 export const AaveLPContracts = <const>['avax']
 export type TAaveLPContracts = typeof AaveLPContracts[number]
-export const TraderJoeLPContracts = <const>['joewavax']
+export const TraderJoeLPContracts = <const>['joewavax', 'wethavax']
 export type TTraderJoeLPContracts = typeof TraderJoeLPContracts[number]
 
 export interface ExternalLP {
@@ -115,7 +115,7 @@ export const ExternalContracts = <const>[
 
 export type TExternalContracts = typeof ExternalContracts[number]
 
-export const Vaults = <const>['av3crv', 'atricrypto', 'avax', 'joewavax']
+export const Vaults = <const>['av3crv', 'atricrypto', 'avax', 'joewavax', 'wethavax']
 export type TVaults = typeof Vaults[number]
 export interface Vault {
 	url: string

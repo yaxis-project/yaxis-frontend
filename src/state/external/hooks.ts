@@ -555,7 +555,7 @@ export function useAaveAPYAvalanche(name: TAaveLPContractsA) {
 export function useTraderJoeAPYAvalanche(name: TTraderJoeLPContractsA) {
 	const { contracts } = useContracts()
 
-	if (name !== 'joewavax') throw new Error('not supported')
+	if (name !== 'joewavax' && name !== 'wethavax') throw new Error('not supported')
 
 	const [poolInfo, joePerSec, totalAllocPoint] =
 		useSingleContractMultipleMethods(contracts?.external['joeMasterChef'], [

@@ -1247,6 +1247,7 @@ export function useBoosts(): useUserBoostReturn {
 	const avax = useUserBoost('avax')
 	const wavax = useUserBoost('avax')
 	const joewavax = useUserBoost('joewavax')
+	const wethavax = useUserBoost('wethavax')
 
 	return useMemo(() => {
 		return {
@@ -1263,6 +1264,7 @@ export function useBoosts(): useUserBoostReturn {
 			avax,
 			wavax,
 			joewavax,
+			wethavax
 		}
 	}, [
 		usd,
@@ -1276,6 +1278,7 @@ export function useBoosts(): useUserBoostReturn {
 		avax,
 		wavax,
 		joewavax,
+		wethavax
 	])
 }
 
