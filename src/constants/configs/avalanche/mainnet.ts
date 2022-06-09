@@ -145,7 +145,7 @@ const mainnet: AvalancheConfig = {
 			gauge: '0x2D89a857a76b00C2A0E9EFb016DF49F9CB049755',
 		},
 		wethavax: {
-			url: 'https://traderjoexyz.com/pool/0x6e84a6216ea6dacc71ee8e6b0a5b7322eebc0fdd/AVAX#/',
+			url: 'https://traderjoexyz.com/pool/0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab/AVAX',
 			tokenPoolContract: externalPools.traderjoe.wethavax.pool,
 			token: 'WETHAVAX',
 			tokenContract: externalPools.traderjoe.wethavax.token,
