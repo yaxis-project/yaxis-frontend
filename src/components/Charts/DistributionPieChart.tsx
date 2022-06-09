@@ -23,7 +23,16 @@ const Colors: { [vault in TVaults]: [number, number, number] } = {
 	atricrypto: [255, 206, 86],
 	avax: [75, 192, 192],
 	joewavax: [153, 102, 255],
-	wethavax: [255, 0, 0]
+	wethavax: [255, 0, 0],
+	usdcusdc: [0, 0, 0],
+	avaxlink: [0, 0, 0],
+	avaxusdt: [0, 0, 0],
+	avaxptp: [0, 0, 0],
+	avaxgohm: [0, 0, 0],
+	avaxsavax: [0, 0, 0],
+	avaxwbtc: [0, 0, 0],
+	usdcjoe: [0, 0, 0],
+	avaxusdc: [0, 0, 0]
 }
 
 const randomBetween = (min, max) =>

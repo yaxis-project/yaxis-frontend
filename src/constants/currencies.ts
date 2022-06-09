@@ -312,21 +312,210 @@ export const CVJOEWAVAXgauge: Currency = {
 export const WETHAVAX: Currency = {
 	name: 'WETHAVAX',
 	tokenId: 'wethavax',
-	icon: cvx,
+	icon: joe,
 	decimals: 18,
 }
 
 export const CVWETHAVAX: Currency = {
 	name: 'CV:WETHAVAX',
 	tokenId: 'cv:wethavax',
-	icon: cvx,
+	icon: joe,
 	decimals: 18,
 }
 
 export const CVWETHAVAXgauge: Currency = {
 	name: 'CV:WETHAVAX-GAUGE',
 	tokenId: 'cv:wethavax-gauge',
-	icon: cvx,
+	icon: joe,
+	decimals: 18,
+}
+
+export const USDCUSDC: Currency = {
+	name: 'USDCUSDC',
+	tokenId: 'usdcusdc',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVUSDCUSDC: Currency = {
+	name: 'CV:USDCUSDC',
+	tokenId: 'cv:usdcusdc',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVUSDCUSDCgauge: Currency = {
+	name: 'CV:USDCUSDC-GAUGE',
+	tokenId: 'cv:usdcusdc-gauge',
+	icon: joe,
+	decimals: 18,
+}
+
+export const AVAXLINK: Currency = {
+	name: 'AVAXLINK',
+	tokenId: 'avaxlink',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXLINK: Currency = {
+	name: 'CV:AVAXLINK',
+	tokenId: 'cv:avaxlink',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXLINKgauge: Currency = {
+	name: 'CV:AVAXLINK-GAUGE',
+	tokenId: 'cv:avaxlink-gauge',
+	icon: joe,
+	decimals: 18,
+}
+
+export const AVAXUSDT: Currency = {
+	name: 'AVAXUSDT',
+	tokenId: 'avaxusdt',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXUSDT: Currency = {
+	name: 'CV:AVAXUSDT',
+	tokenId: 'cv:avaxusdt',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXUSDTgauge: Currency = {
+	name: 'CV:AVAXUSDT-GAUGE',
+	tokenId: 'cv:avaxusdt-gauge',
+	icon: joe,
+	decimals: 18,
+}
+
+export const AVAXPTP: Currency = {
+	name: 'AVAXPTP',
+	tokenId: 'avaxptp',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXPTP: Currency = {
+	name: 'CV:AVAXPTP',
+	tokenId: 'cv:avaxptp',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXPTPgauge: Currency = {
+	name: 'CV:AVAXPTP-GAUGE',
+	tokenId: 'cv:avaxptp-gauge',
+	icon: joe,
+	decimals: 18,
+}
+
+export const AVAXGOHM: Currency = {
+	name: 'AVAXGOHM',
+	tokenId: 'avaxgohm',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXGOHM: Currency = {
+	name: 'CV:AVAXGOHM',
+	tokenId: 'cv:avaxgohm',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXGOHMgauge: Currency = {
+	name: 'CV:AVAXGOHM-GAUGE',
+	tokenId: 'cv:avaxgohm-gauge',
+	icon: joe,
+	decimals: 18,
+}
+
+export const AVAXSAVAX: Currency = {
+	name: 'AVAXSAVAX',
+	tokenId: 'avaxsavax',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXSAVAX: Currency = {
+	name: 'CV:AVAXSAVAX',
+	tokenId: 'cv:avaxsavax',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXSAVAXgauge: Currency = {
+	name: 'CV:AVAXSAVAX-GAUGE',
+	tokenId: 'cv:avaxsavax-gauge',
+	icon: joe,
+	decimals: 18,
+}
+
+export const AVAXWBTC: Currency = {
+	name: 'AVAXWBTC',
+	tokenId: 'avaxwbtc',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXWBTC: Currency = {
+	name: 'CV:AVAXWBTC',
+	tokenId: 'cv:avaxwbtc',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXWBTCgauge: Currency = {
+	name: 'CV:AVAXWBTC-GAUGE',
+	tokenId: 'cv:avaxwbtc-gauge',
+	icon: joe,
+	decimals: 18,
+}
+
+export const USDCJOE: Currency = {
+	name: 'USDCJOE',
+	tokenId: 'usdcjoe',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVUSDCJOE: Currency = {
+	name: 'CV:USDCJOE',
+	tokenId: 'cv:usdcjoe',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVUSDCJOEgauge: Currency = {
+	name: 'CV:USDCJOE-GAUGE',
+	tokenId: 'cv:usdcjoe-gauge',
+	icon: joe,
+	decimals: 18,
+}
+
+export const AVAXUSDC: Currency = {
+	name: 'AVAXUSDC',
+	tokenId: 'avaxusdc',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXUSDC: Currency = {
+	name: 'CV:AVAXUSDC',
+	tokenId: 'cv:avaxusdc',
+	icon: joe,
+	decimals: 18,
+}
+
+export const CVAVAXUSDCgauge: Currency = {
+	name: 'CV:AVAXUSDC-GAUGE',
+	tokenId: 'cv:avaxusdc-gauge',
+	icon: joe,
 	decimals: 18,
 }
 
@@ -604,6 +793,33 @@ export const Currencies = {
 	WETHAVAX,
 	'CV:WETHAVAX': CVWETHAVAX,
 	'CV:WETHAVAX-GAUGE': CVWETHAVAXgauge,
+	USDCUSDC,
+	'CV:USDCUSDC': CVUSDCUSDC,
+	'CV:USDCUSDC-GAUGE': CVUSDCUSDCgauge,
+	AVAXLINK,
+	'CV:AVAXLINK': CVAVAXLINK,
+	'CV:AVAXLINK-GAUGE': CVAVAXLINKgauge,
+	AVAXUSDT,
+	'CV:AVAXUSDT': CVAVAXUSDT,
+	'CV:AVAXUSDT-GAUGE': CVAVAXUSDTgauge,
+	AVAXPTP,
+	'CV:AVAXPTP': CVAVAXPTP,
+	'CV:AVAXPTP-GAUGE': CVAVAXPTPgauge,
+	AVAXGOHM,
+	'CV:AVAXGOHM': CVAVAXGOHM,
+	'CV:AVAXGOHM-GAUGE': CVAVAXGOHMgauge,
+	AVAXSAVAX,
+	'CV:AVAXSAVAX': CVAVAXSAVAX,
+	'CV:AVAXSAVAX-GAUGE': CVAVAXSAVAXgauge,
+	AVAXWBTC,
+	'CV:AVAXWBTC': CVAVAXWBTC,
+	'CV:AVAXWBTC-GAUGE': CVAVAXWBTCgauge,
+	USDCJOE,
+	'CV:USDCJOE': CVUSDCJOE,
+	'CV:USDCJOE-GAUGE': CVUSDCJOEgauge,
+	AVAXUSDC,
+	'CV:AVAXUSDC': CVAVAXUSDC,
+	'CV:AVAXUSDC-GAUGE': CVAVAXUSDCgauge,
 	FRAX,
 	TRICRYPTO,
 	MIM,
