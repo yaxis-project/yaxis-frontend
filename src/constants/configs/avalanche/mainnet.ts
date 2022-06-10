@@ -101,7 +101,7 @@ const externalPools: AvalancheExternalPoolsConfig = {
 		avaxusdt: {
 			currency: '',
 			pool: '',
-			token: '0xed8cbd9f0ce3c6986b22002f03c6475ceb7a6256',
+			token: '0xbb4646a764358ee93c2a9c4a147d5aDEd527ab73',
 			gauge: '',
 			rewards: '',
 		},
@@ -238,7 +238,7 @@ const mainnet: AvalancheConfig = {
 			gauge: '0x474841675AC91862840149096b897CdE776c42A2',
 		},
 		avaxusdt: {
-			url: 'https://traderjoexyz.com/pool/0xed8cbd9f0ce3c6986b22002f03c6475ceb7a6256/AVAX',
+			url: 'https://traderjoexyz.com/pool/0xbb4646a764358ee93c2a9c4a147d5aDEd527ab73/AVAX',
 			tokenPoolContract: externalPools.traderjoe.avaxusdt.pool,
 			token: 'AVAXUSDT',
 			tokenContract: externalPools.traderjoe.avaxusdt.token,
