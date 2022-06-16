@@ -717,6 +717,22 @@ export const FRAX3CRV: Currency = {
 	decimals: 18,
 }
 
+export const STETHCRV: Currency = {
+	name: 'STETHCRV',
+	tokenId: 'stethcrv',
+	icon: eth,
+	childIcons: [],
+	decimals: 18,
+}
+
+export const STETH: Currency = {
+	name: 'STETH',
+	tokenId: 'steth',
+	icon: eth,
+	childIcons: [],
+	decimals: 18,
+}
+
 export const UNISWAP_LP: Currency = {
 	name: 'Uniswap LP token',
 	tokenId: 'uni-v2',
@@ -847,4 +863,6 @@ export const Currencies = {
 	LINKSWAP_LP,
 	YAX_ETH_LINKSWAP_LP,
 	TRADERJOE_LP,
+	STETHCRV,
+	STETH
 }

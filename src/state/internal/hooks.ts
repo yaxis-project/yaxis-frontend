@@ -241,6 +241,7 @@ export function useVaultsAPR() {
 	const tricrypto = useVaultRewards('tricrypto', 'ethereum')
 	const cvx = useVaultRewards('cvx', 'ethereum')
 	const yaxis = useVaultRewards('yaxis', 'ethereum')
+	const steth = useVaultRewards('steth', 'ethereum')
 
 	const mim3crv = useConvexAPY('mim3crv')
 	const rencrv = useConvexAPY('rencrv')
@@ -249,6 +250,7 @@ export function useVaultsAPR() {
 	const crvcvxeth = useConvexAPY('crvcvxeth', true)
 	const crv3crypto = useConvexAPY('crv3crypto', true)
 	const frax3crv = useConvexAPY('frax3crv')
+	const stethcrv = useConvexAPY('stethcrv')
 
 	/* AVALANCHE */
 	const av3crvAvalanche = useVaultRewards('av3crv', 'avalanche')
@@ -440,6 +442,13 @@ export function useVaultsAPR() {
 					},
 					strategy: null,
 				},
+				steth: {
+					yaxisAPR: {
+						min: steth.minAPR,
+						max: steth.maxAPR,
+					},
+					strategy: null,
+				}
 			},
 		}
 		return output
@@ -459,6 +468,8 @@ export function useVaultsAPR() {
 		crvcvxeth,
 		crv3crypto,
 		frax3crv,
+		steth,
+		stethcrv
 	])
 }
 
@@ -475,6 +486,7 @@ export function useVaults(): useVaultsReturn {
 	const frax = useVault('frax')
 	const tricrypto = useVault('tricrypto')
 	const cvx = useVault('cvx')
+	const steth = useVault('steth')
 	const yaxis = useYaxisGauge()
 
 	/** AVALANCHE  */
@@ -516,7 +528,8 @@ export function useVaults(): useVaultsReturn {
 			avaxsavax,
 			avaxwbtc,
 			usdcjoe,
-			avaxusdc
+			avaxusdc,
+			steth,
 		}
 	}, [
 		usd,

@@ -21,6 +21,7 @@ const currencies: EthereumCurrenciesConfig = {
 		mvlt: '0xBFbEC72F2450eF9Ab742e4A27441Fa06Ca79eA6a',
 		spell: '0x090185f2135308bad17527004364ebcc2d37e5f6',
 		frax: '0x853d955acef822db058eb8505911ed77f175b99e',
+		steth: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84'
 	},
 	ERC677: {
 		yaxis: '0x0adA190c81b814548ddC2F6AdC4a689ce7C1FE73',
@@ -104,6 +105,13 @@ const externalPools: EthereumExternalPoolsConfig = {
 			token: '0xd632f22692FaC7611d2AA1C0D552930D43CAEd3B',
 			gauge: '0x72e158d38dbd50a483501c24f792bdaaa3e7d55c',
 			convexRewards: '0xB900EF131301B307dB5eFcbed9DBb50A3e209B2e',
+		},
+		stethcrv: {
+			currency: 'eth',
+			pool: '0x9518c9063eB0262D791f38d8d6Eb0aca33c63ed0',
+			token: '0x9518c9063eB0262D791f38d8d6Eb0aca33c63ed0',
+			gauge: '0x182B723a58739a9c974cFDB385ceaDb237453c28',
+			convexRewards: '0x0A760466E1B4621579a82a39CB56Dda2F4E70f03',
 		},
 	},
 }
@@ -212,6 +220,16 @@ const mainnet: EthereumConfig = {
 			vaultToken: 'CV:FRAX',
 			vaultTokenContract: '0x5a1cdcAAd1D9BF1e9DA7D6dF6473091B059daFf6',
 			gauge: '0x9947117cA458385E9Ac1b3088F43612846e5251B',
+		},
+		steth: {
+			url: 'https://curve.fi/steth/deposit',
+			tokenPoolContract: externalPools.curve.stethcrv.pool,
+			token: 'STETHCRV',
+			tokenContract: externalPools.curve.stethcrv.token,
+			vault: '0x227cC2cbfEC2e77Bf29F804DAc48d001F74CBA2F',
+			vaultToken: 'CV:STETH',
+			vaultTokenContract: '0xfc68Fc6f84080C60d953e93e5046f013DF687ec0',
+			gauge: '0x1B2C6C5dCC63D17513CD2e71875ff42C12c236B9',
 		},
 	},
 	pools: {

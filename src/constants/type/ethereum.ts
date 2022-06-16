@@ -58,6 +58,7 @@ export const CurrenciesERC20 = <const>[
 	'mvlt',
 	'spell',
 	'frax',
+	'steth'
 ]
 export type TCurrenciesERC20 = typeof CurrenciesERC20[number]
 
@@ -75,6 +76,7 @@ export const crvLPCurrencies = <const>[
 	'crvcvxeth',
 	'crv3crypto',
 	'frax3crv',
+	'stethcrv'
 ]
 export type TCrvLPCurrencies = typeof crvLPCurrencies[number]
 
@@ -111,6 +113,7 @@ export const CurveLPContracts = <const>[
 	'crvcvxeth',
 	'crv3crypto',
 	'frax3crv',
+	'stethcrv'
 ]
 export type TCurveLPContracts = typeof CurveLPContracts[number]
 
@@ -149,6 +152,7 @@ export const Vaults = <const>[
 	'cvx',
 	'tricrypto',
 	'frax',
+	'steth'
 ]
 export type TVaults = typeof Vaults[number]
 export interface Vault {

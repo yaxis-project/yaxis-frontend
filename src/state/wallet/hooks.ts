@@ -1240,6 +1240,7 @@ export function useBoosts(): useUserBoostReturn {
 	const tricrypto = useUserBoost('tricrypto')
 	const frax = useUserBoost('frax')
 	const yaxis = useUserBoost('yaxis')
+	const steth = useUserBoost('steth')
 
 	/** Avalanche */
 	const av3crv = useUserBoost('av3crv')
@@ -1282,7 +1283,8 @@ export function useBoosts(): useUserBoostReturn {
 			avaxsavax,
 			avaxwbtc,
 			usdcjoe,
-			avaxusdc
+			avaxusdc,
+			steth
 		}
 	}, [
 		usd,
@@ -1305,7 +1307,8 @@ export function useBoosts(): useUserBoostReturn {
 		avaxsavax,
 		avaxwbtc,
 		usdcjoe,
-		avaxusdc
+		avaxusdc,
+		steth
 	])
 }
 

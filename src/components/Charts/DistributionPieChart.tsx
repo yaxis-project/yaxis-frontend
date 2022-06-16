@@ -32,7 +32,8 @@ const Colors: { [vault in TVaults]: [number, number, number] } = {
 	avaxsavax: [0, 0, 0],
 	avaxwbtc: [0, 0, 0],
 	usdcjoe: [0, 0, 0],
-	avaxusdc: [0, 0, 0]
+	avaxusdc: [0, 0, 0],
+	steth: [0, 0, 0],
 }
 
 const randomBetween = (min, max) =>
