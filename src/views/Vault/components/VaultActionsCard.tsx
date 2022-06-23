@@ -113,6 +113,9 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 	fees,
 	vaults,
 }) => {
+
+	console.log(vaults);
+
 	const translate = useTranslation()
 
 	const navigate = useNavigate()
@@ -147,11 +150,19 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 		return TABS
 	}, [type, isYaxisDetails, autoStake])
 
+	vaults = useMemo(
+		// NOTE: YAXIS vault deprecated in YIP-14
+		() => vaults.filter(([vault]) => vault === 'av3crv' || vault === 'atricrypto' || vault === 'avax' || vault === 'joewavax' || vault == 'usd' || vault == 'eth' || vault == 'btc' || vault == 'link' || vault == 'cvx' || vault == 'tricrypto' || vault == 'frax' || vault == 'steth'),
+		[vaults],
+	)
+	
 	const vaultsWithoutYAXIS = useMemo(
 		// NOTE: YAXIS vault deprecated in YIP-14
 		() => vaults.filter(([vault]) => vault !== 'yaxis'),
 		[vaults],
 	)
+
+
 
 	if (location.hash && !allowedRoutes[location.hash])
 		return <Navigate to="/vault" />
