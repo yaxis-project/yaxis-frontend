@@ -735,7 +735,7 @@ export const STETH: Currency = {
 
 export const CVSTETHgauge: Currency = {
 	name: 'CV:STETH-GAUGE',
-	tokenId: 'cv:avaxwbtc-gauge',
+	tokenId: 'cv:steth-gauge',
 	icon: eth,
 	decimals: 18,
 }

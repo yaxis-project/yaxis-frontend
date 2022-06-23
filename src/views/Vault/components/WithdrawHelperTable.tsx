@@ -258,7 +258,7 @@ const WithdrawHelperTable: React.FC<WithdrawHelperTableProps> = ({
 					...gaugeToken,
 					vault,
 					vaultCurrency: contracts.token.name,
-					balance: balance?.gaugeToken.amount || new BigNumber(0),
+					balance: balance?.gaugeToken?.amount || new BigNumber(0),
 					balanceUSD: balance?.usd,
 					value: currencyValues
 						? new BigNumber(currencyValues[gaugeToken.tokenId] || 0)
