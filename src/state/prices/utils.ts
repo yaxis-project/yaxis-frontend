@@ -50,6 +50,7 @@ const tokenCgkIdMap: { [key in Ticker]: CoinGeckoID } = {
 	avaxusdc: '',
 	steth: '',
 	stethcrv: '',
+	ldo: 'lido-dao'
 }
 
 export async function getCoinGeckoPrices() {

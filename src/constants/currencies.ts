@@ -733,6 +733,13 @@ export const STETH: Currency = {
 	decimals: 18,
 }
 
+export const CVSTETHgauge: Currency = {
+	name: 'CV:STETH-GAUGE',
+	tokenId: 'cv:avaxwbtc-gauge',
+	icon: eth,
+	decimals: 18,
+}
+
 export const UNISWAP_LP: Currency = {
 	name: 'Uniswap LP token',
 	tokenId: 'uni-v2',
@@ -863,6 +870,8 @@ export const Currencies = {
 	LINKSWAP_LP,
 	YAX_ETH_LINKSWAP_LP,
 	TRADERJOE_LP,
-	STETHCRV,
-	STETH
+	'STETHCRV': STETHCRV,
+	'CV:STETH': STETH,
+	STETH,
+	'CV:STETH-GAUGE': CVSTETHgauge
 }

@@ -236,7 +236,8 @@ const makeColumns = (
 															.toNumber()
 													}
 												/>
-											)}
+											)
+										}
 										<TooltipRow
 											main={'Rewards APR'}
 											value={record.apr?.yaxisAPR

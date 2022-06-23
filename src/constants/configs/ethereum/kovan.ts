@@ -22,6 +22,7 @@ const currencies: EthereumCurrenciesConfig = {
 		spell: '0xc968d40Abc8a0c365769309982D783825510641F', // needs mock
 		frax: '0x64C1d8cd206aF84f54eadb1cbD1E4c3643875Ee8', // needs mock
 		steth: '0x64C1d8cd206aF84f54eadb1cbD1E4c3643875Ee8', // needs mock	
+		ldo: ''
 	},
 	ERC677: {
 		yaxis: '0xDE78295b8a50413f5a6faBd1f4921E8449d2433C',

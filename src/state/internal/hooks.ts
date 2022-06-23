@@ -447,7 +447,7 @@ export function useVaultsAPR() {
 						min: steth.minAPR,
 						max: steth.maxAPR,
 					},
-					strategy: null,
+					strategy: stethcrv,
 				}
 			},
 		}
