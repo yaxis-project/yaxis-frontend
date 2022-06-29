@@ -556,6 +556,7 @@ export function useAaveAPYAvalanche(name: TAaveLPContractsA) {
 export function useSteakhutAPYAvalanche(name: TSteakhutLPContracts) {
 	const { contracts } = useContracts()
 	let poolId;
+	let LPFeesAPR = new BigNumber(0);
 
 	if(name == 'usdcjoe')
 		poolId = 7;
@@ -577,7 +578,7 @@ export function useSteakhutAPYAvalanche(name: TSteakhutLPContracts) {
 
 	const { prices } = usePrices()
 	let price;
-
+	
 	if(name == 'usdcjoe') {
 		const { result: reserve } = useSingleCallResult(contracts?.externalLP[name]?.token, 
 			'getReserves'
@@ -587,8 +588,12 @@ export function useSteakhutAPYAvalanche(name: TSteakhutLPContracts) {
 		
 		const total = token0.multipliedBy(prices?.joe).plus(token1);
 		price = total.div(totalSupply?.toString()).multipliedBy(10 ** 18);
+
+		LPFeesAPR = new BigNumber(0.1259);
 	} else if(name == 'joewavax') {
 		price = prices?.joewavax;
+
+		LPFeesAPR = new BigNumber(0.0409);
 	}
 
 	return useMemo(() => {
@@ -629,7 +634,7 @@ export function useSteakhutAPYAvalanche(name: TSteakhutLPContracts) {
 
 		const extraAPR = factorShare.multipliedBy(totalTokenPrice).multipliedBy(boostedShare).dividedBy(10000).div(totalUserAmount);
 
-		const totalAPR = new BigNumber(0).plus(extraAPR).plus(joeAPR)
+		const totalAPR = new BigNumber(0).plus(extraAPR).plus(joeAPR).plus(LPFeesAPR)
 
 		return {
 			extraAPR,
