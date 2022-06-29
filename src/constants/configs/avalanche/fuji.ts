@@ -34,6 +34,7 @@ const external: AvalancheExternalConfig = {
 	joeRouter: '0x60aE616a2155Ee3d9A68541Ba4544862310933d4',
 	joeMasterChef: '0x188bED1968b795d5c9022F6a0bb5931Ac4c18F00',
 	aaveRewards: '0x01D83Fe6A10D2f2B7AF17034343746188272cAc9',
+	steakhutMasterChef: ''
 }
 
 const externalPools: AvalancheExternalPoolsConfig = {
@@ -70,13 +71,6 @@ const externalPools: AvalancheExternalPoolsConfig = {
 		},
 	},
 	traderjoe: {
-		joewavax: {
-			currency: '',
-			pool: '',
-			token: '0x454e67025631c065d3cfad6d71e6892f74487a15',
-			gauge: '',
-			rewards: '',
-		},
 		wethavax: {
 			currency: '',
 			pool: '',
@@ -133,6 +127,15 @@ const externalPools: AvalancheExternalPoolsConfig = {
 			gauge: '',
 			rewards: '',
 		},
+		avaxusdc: {
+			currency: '',
+			pool: '',
+			token: '0x454e67025631c065d3cfad6d71e6892f74487a15',
+			gauge: '',
+			rewards: '',
+		},
+	},
+	steakhut: {
 		usdcjoe: {
 			currency: '',
 			pool: '',
@@ -140,14 +143,14 @@ const externalPools: AvalancheExternalPoolsConfig = {
 			gauge: '',
 			rewards: '',
 		},
-		avaxusdc: {
+		joewavax: {
 			currency: '',
 			pool: '',
 			token: '0x454e67025631c065d3cfad6d71e6892f74487a15',
 			gauge: '',
 			rewards: '',
-		}
-	},
+		},
+	}
 }
 
 const fuji: AvalancheConfig = {

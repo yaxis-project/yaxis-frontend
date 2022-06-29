@@ -15,6 +15,7 @@ import GaugeABI from './gauge.json'
 import GaugeControllerABI from './GaugeController.json'
 import JoeRouterABI from './JoeRouter.json'
 import JoeMasterChefABI from './JoeMasterChef.json'
+import SteakhutMasterChefABI from './SteakhutMasterChef.json'
 import ManagerABI from './Manager.json'
 import MerkleDistributorABI from './MerkleDistributor.json'
 import MinterABI from './minter.json'
@@ -75,4 +76,5 @@ export const abis = {
 	XYaxStakingABI: XYaxStakingABI as JsonFragment[],
 	YaxisChefABI: YaxisChefABI as JsonFragment[],
 	YAxisMetaVaultABI: YAxisMetaVaultABI as JsonFragment[],
+	SteakhutMasterChefABI: SteakhutMasterChefABI as JsonFragment[]
 }

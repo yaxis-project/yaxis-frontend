@@ -26,6 +26,7 @@ import {
 	useCurveAPYAvalanche,
 	useAaveAPYAvalanche,
 	useTraderJoeAPYAvalanche,
+	useSteakhutAPYAvalanche,
 	useLiquidityPool,
 } from '../external/hooks'
 import { usePrices } from '../prices/hooks'
@@ -271,7 +272,6 @@ export function useVaultsAPR() {
 	const av3crv = useCurveAPYAvalanche('av3crv')
 	const atricrypto = useCurveAPYAvalanche('atricrypto')
 	const avax = useAaveAPYAvalanche('avax')
-	const joewavax = useTraderJoeAPYAvalanche('joewavax')
 	const wethavax = useTraderJoeAPYAvalanche('wethavax')
 	const usdcusdc = useTraderJoeAPYAvalanche('usdcusdc')
 	const avaxlink = useTraderJoeAPYAvalanche('avaxlink')
@@ -280,8 +280,9 @@ export function useVaultsAPR() {
 	const avaxgohm = useTraderJoeAPYAvalanche('avaxgohm')
 	const avaxsavax = useTraderJoeAPYAvalanche('avaxsavax')
 	const avaxwbtc = useTraderJoeAPYAvalanche('avaxwbtc')
-	const usdcjoe = useTraderJoeAPYAvalanche('usdcjoe')
 	const avaxusdc = useTraderJoeAPYAvalanche('avaxusdc')
+	const usdcjoe = useSteakhutAPYAvalanche('usdcjoe')
+	const joewavax = useSteakhutAPYAvalanche('joewavax')
 
 	return useMemo(() => {
 		const output: ReturnVaultsAPR = {

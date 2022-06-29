@@ -58,6 +58,9 @@ export type TAaveLPCurrencies = typeof aaveLPCurrencies[number]
 export const traderjoeLPCurrencies = <const>['joewavax', 'wethavax', 'usdcusdc', 'avaxlink', 'avaxusdt', 'avaxptp', 'avaxgohm', 'avaxsavax', 'avaxwbtc', 'usdcjoe', 'avaxusdc']
 export type TTraderJoeLPCurrencies = typeof traderjoeLPCurrencies[number]
 
+export const steakhutLPCurrencies = <const>['joeusdc']
+export type TSteakhutLPCurrencies = typeof steakhutLPCurrencies[number]
+
 export type Ticker =
 	| TCurrenciesERC20
 	| TCurrenciesERC677
@@ -65,6 +68,7 @@ export type Ticker =
 	| TAaveLPCurrencies
 	| TTraderJoeLPCurrencies
 	| TAdditionalCurrencies
+	| TSteakhutLPCurrencies
 
 export const InternalContracts = <const>[
 	'vaultHelper',
@@ -82,8 +86,10 @@ export const CurveLPContracts = <const>['av3crv', 'atricrypto', 'aawbtcrencrv']
 export type TCurveLPContracts = typeof CurveLPContracts[number]
 export const AaveLPContracts = <const>['avax']
 export type TAaveLPContracts = typeof AaveLPContracts[number]
-export const TraderJoeLPContracts = <const>['joewavax', 'wethavax', 'usdcusdc', 'avaxlink', 'avaxusdt', 'avaxptp', 'avaxgohm', 'avaxsavax', 'avaxwbtc', 'usdcjoe', 'avaxusdc']
+export const TraderJoeLPContracts = <const>['wethavax', 'usdcusdc', 'avaxlink', 'avaxusdt', 'avaxptp', 'avaxgohm', 'avaxsavax', 'avaxwbtc', 'avaxusdc']
 export type TTraderJoeLPContracts = typeof TraderJoeLPContracts[number]
+export const SteakhutLPContracts = <const>['usdcjoe', 'joewavax']
+export type TSteakhutLPContracts = typeof SteakhutLPContracts[number]
 
 export interface ExternalLP {
 	pool: string
@@ -103,6 +109,7 @@ export const ExternalLPContracts = <const>[
 	...CurveLPContracts,
 	...AaveLPContracts,
 	...TraderJoeLPContracts,
+	...SteakhutLPContracts
 ]
 export type TExternalLPContracts = typeof ExternalLPContracts[number]
 
@@ -111,6 +118,7 @@ export const ExternalContracts = <const>[
 	'joeRouter',
 	'joeMasterChef',
 	'aaveRewards',
+	'steakhutMasterChef'
 ]
 
 export type TExternalContracts = typeof ExternalContracts[number]
@@ -146,6 +154,9 @@ export type AvalancheExternalPoolsConfig = {
 	}
 	traderjoe: {
 		[key in TTraderJoeLPContracts]: ExternalLP
+	}
+	steakhut: {
+		[key in TSteakhutLPContracts]: ExternalLP
 	}
 }
 

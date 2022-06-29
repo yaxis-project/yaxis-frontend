@@ -152,7 +152,7 @@ const VaultActionsCard: React.FC<VaultActionsCardProps> = ({
 
 	vaults = useMemo(
 		// NOTE: YAXIS vault deprecated in YIP-14
-		() => vaults.filter(([vault]) => vault === 'av3crv' || vault === 'atricrypto' || vault === 'avax' || vault === 'joewavax' || vault == 'usd' || vault == 'eth' || vault == 'btc' || vault == 'link' || vault == 'cvx' || vault == 'tricrypto' || vault == 'frax' || vault == 'steth'),
+		() => vaults.filter(([vault]) => vault === 'av3crv' || vault === 'atricrypto' || vault === 'avax' || vault === 'joewavax' || vault == 'usd' || vault == 'eth' || vault == 'btc' || vault == 'link' || vault == 'cvx' || vault == 'tricrypto' || vault == 'frax' || vault == 'steth' || vault == 'usdcjoe'),
 		[vaults],
 	)
 	

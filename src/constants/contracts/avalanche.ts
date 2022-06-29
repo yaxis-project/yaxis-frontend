@@ -24,6 +24,7 @@ import {
 	lpToken,
 	Vaults,
 	TVaults,
+	SteakhutLPContracts,
 	// ExternalLP,
 } from '../type/avalanche'
 import {
@@ -176,6 +177,32 @@ export class AvalancheContracts {
 					provider,
 				),
 				currency: traderjoePool.currency,
+			}
+		}
+		for (const title of SteakhutLPContracts) {
+			const steakhutPool = this.config.externalPools.steakhut[title]
+			this.externalLP[title] = {
+				pool: new Contract( // unused
+					steakhutPool.pool,
+					abis[`CurvePoolABI`],
+					provider,
+				),
+				gauge: new Contract( // unused
+					steakhutPool.gauge,
+					abis.GaugeABI,
+					provider,
+				),
+				token: new Contract(
+					steakhutPool.token,
+					abis.TraderJoeTokenABI,
+					provider,
+				),
+				rewards: new Contract( // unused
+					steakhutPool.rewards,
+					abis.ConvexRewardPoolABI,
+					provider,
+				),
+				currency: steakhutPool.currency,
 			}
 		}
 		for (const title of AaveLPContracts) {

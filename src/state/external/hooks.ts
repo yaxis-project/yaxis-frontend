@@ -6,6 +6,7 @@ import {
 	TCurveLPContracts as TCurveLPContractsA,
 	TTraderJoeLPContracts as TTraderJoeLPContractsA,
 	TAaveLPContracts as TAaveLPContractsA,
+	TSteakhutLPContracts,
 } from '../../constants/type/avalanche'
 import { usePrices } from '../prices/hooks'
 import {
@@ -552,16 +553,100 @@ export function useAaveAPYAvalanche(name: TAaveLPContractsA) {
 	}, [contracts, prices, rewardData, totalSupply])
 }
 
+export function useSteakhutAPYAvalanche(name: TSteakhutLPContracts) {
+	const { contracts } = useContracts()
+	let poolId;
+
+	if(name == 'usdcjoe')
+		poolId = 7;
+	else if(name == 'joewavax') 
+		poolId = 6;
+
+	const [poolInfo, joePerSec, totalAllocPoint, userInfo] =
+		useSingleContractMultipleMethods(contracts?.external['joeMasterChef'], [
+			['poolInfo', [poolId]], //TODO add poolID for each vault
+			['joePerSec'],
+			['totalAllocPoint'],
+			['userInfo', [poolId, '0x1aB6B2f60A7e8DA9d521cF8f90b2a5b5d314b3A6']]
+		])
+
+	const { result: totalSupply } = useSingleCallResult(
+		contracts?.externalLP[name]?.token,
+		'totalSupply',
+	)
+
+	const { prices } = usePrices()
+	let price;
+
+	if(name == 'usdcjoe') {
+		const { result: reserve } = useSingleCallResult(contracts?.externalLP[name]?.token, 
+			'getReserves'
+		)
+		const token0 = new BigNumber(reserve?.slice(0, 1)[0]?.toString() || 0).div(10 ** 18);
+		const token1 = new BigNumber(reserve?.slice(0, 2)[1]?.toString() || 0).div(10 ** 6);
+		
+		const total = token0.multipliedBy(prices?.joe).plus(token1);
+		price = total.div(totalSupply?.toString()).multipliedBy(10 ** 18);
+	} else if(name == 'joewavax') {
+		price = prices?.joewavax;
+	}
+
+	return useMemo(() => {
+		// TODO: trading fees APR
+
+		let joeAPR = new BigNumber(0)
+
+		const virtualSupply = new BigNumber(totalSupply?.toString() || 0)
+			.dividedBy(10 ** 18)
+			.multipliedBy(price)
+
+		const allocPoint = new BigNumber(poolInfo?.result?.[1]?.toString() ?? 0)
+		const totalJoePerSec = new BigNumber(joePerSec?.result?.toString() ?? 0)
+		const totalAlloc = new BigNumber(
+			totalAllocPoint?.result?.toString() ?? 0,
+		)
+
+		const percentageShare = allocPoint.dividedBy(totalAlloc)
+		const poolJoePerSec = totalJoePerSec.multipliedBy(percentageShare)
+
+		const tokenPerSecond = poolJoePerSec.dividedBy(10 ** 18)
+
+		const tokenPerYear = tokenPerSecond
+			.multipliedBy(86400)
+			.multipliedBy(365)
+
+		const totalTokenPrice = tokenPerYear.multipliedBy(prices?.joe);
+
+		const boostedShare = new BigNumber(poolInfo?.result?.[6]?.toString() || 0);
+
+		joeAPR = totalTokenPrice.multipliedBy(new BigNumber(10000).minus(boostedShare)).div(10000).dividedBy(virtualSupply)
+
+		const boostedFactor = new BigNumber(userInfo?.result?.[2]?.toString() || 0);
+		const userAmount = new BigNumber(userInfo?.result?.[0]?.toString() || 0).div(10 ** 18);
+		const totalFactor = new BigNumber(poolInfo?.result?.[7]?.toString() || 0);
+		const factorShare = boostedFactor.div(totalFactor);
+		const totalUserAmount = userAmount.multipliedBy(price)
+
+		const extraAPR = factorShare.multipliedBy(totalTokenPrice).multipliedBy(boostedShare).dividedBy(10000).div(totalUserAmount);
+
+		const totalAPR = new BigNumber(0).plus(extraAPR).plus(joeAPR)
+
+		return {
+			extraAPR,
+			joeAPR,
+			totalAPR,
+		}
+	}, [contracts, prices, poolInfo, joePerSec, totalAllocPoint, totalSupply])
+}
+
 export function useTraderJoeAPYAvalanche(name: TTraderJoeLPContractsA) {
 	const { contracts } = useContracts()
 
-	//if (name !== 'joewavax' && name !== 'wethavax') throw new Error('not supported')
-
 	const [poolInfo, joePerSec, totalAllocPoint] =
 		useSingleContractMultipleMethods(contracts?.external['joeMasterChef'], [
-			['poolInfo', [0]],
+			['poolInfo', [6]], //TODO add poolID for each vault
 			['joePerSec'],
-			['totalAllocPoint'],
+			['totalAllocPoint']
 		])
 
 	const { result: totalSupply } = useSingleCallResult(
@@ -579,7 +664,7 @@ export function useTraderJoeAPYAvalanche(name: TTraderJoeLPContractsA) {
 
 		const virtualSupply = new BigNumber(totalSupply?.toString() || 0)
 			.dividedBy(10 ** 18)
-			.multipliedBy(prices?.joewavax)
+			.multipliedBy(prices?.joewavax) //TODO change to name
 
 		const allocPoint = new BigNumber(poolInfo?.result?.[1]?.toString() ?? 0)
 		const totalJoePerSec = new BigNumber(joePerSec?.result?.toString() ?? 0)
@@ -590,9 +675,6 @@ export function useTraderJoeAPYAvalanche(name: TTraderJoeLPContractsA) {
 		const percentageShare = allocPoint.dividedBy(totalAlloc)
 		const poolJoePerSec = totalJoePerSec.multipliedBy(percentageShare)
 
-		// const joeShare = joePerShare.dividedBy(allocPoint)
-		// const poolJoePerSec = totalJoePerSec.multipliedBy(percentageShare)
-
 		const tokenPerSecond = poolJoePerSec.dividedBy(10 ** 18)
 
 		const tokenPerYear = tokenPerSecond
@@ -601,7 +683,8 @@ export function useTraderJoeAPYAvalanche(name: TTraderJoeLPContractsA) {
 
 		joeAPR = tokenPerYear.multipliedBy(prices?.joe).dividedBy(virtualSupply)
 
-		const totalAPR = new BigNumber(0).plus(joeAPR).plus(extraAPR)
+		const boostedShare = new BigNumber(poolInfo?.result?.[6]?.toString() || 0);
+		const totalAPR = new BigNumber(0).plus(joeAPR).plus(extraAPR).multipliedBy(new BigNumber(10000).minus(boostedShare)).div(10000);
 
 		return {
 			extraAPR,

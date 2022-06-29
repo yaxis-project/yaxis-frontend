@@ -32,7 +32,8 @@ const currencies: AvalancheCurrenciesConfig = {
 const external: AvalancheExternalConfig = {
 	multicall: '0x98e2060F672FD1656a07bc12D7253b5e41bF3876',
 	joeRouter: '0x60aE616a2155Ee3d9A68541Ba4544862310933d4',
-	joeMasterChef: '0xd6a4f121ca35509af06a0be99093d08462f53052',
+	joeMasterChef: '0x4483f0b6e2f5486d06958c20f8c39a7abe87bf8f',
+	steakhutMasterChef: '0xddbfbd5dc3ba0feb96cb513b689966b2176d4c09', 
 	aaveRewards: '0x01D83Fe6A10D2f2B7AF17034343746188272cAc9',
 }
 
@@ -70,13 +71,6 @@ const externalPools: AvalancheExternalPoolsConfig = {
 		},
 	},
 	traderjoe: {
-		joewavax: {
-			currency: '',
-			pool: '',
-			token: '0x454e67025631c065d3cfad6d71e6892f74487a15',
-			gauge: '',
-			rewards: '',
-		},
 		wethavax: {
 			currency: '',
 			pool: '',
@@ -133,13 +127,6 @@ const externalPools: AvalancheExternalPoolsConfig = {
 			gauge: '',
 			rewards: '',
 		},
-		usdcjoe: {
-			currency: '',
-			pool: '',
-			token: '0x3bc40d4307cd946157447cd55d70ee7495ba6140',
-			gauge: '',
-			rewards: '',
-		},
 		avaxusdc: {
 			currency: '',
 			pool: '',
@@ -148,6 +135,22 @@ const externalPools: AvalancheExternalPoolsConfig = {
 			rewards: '',
 		}
 	},
+	steakhut: {
+		usdcjoe: {
+			currency: '',
+			pool: '',
+			token: '0x3bc40d4307cd946157447cd55d70ee7495ba6140',
+			gauge: '',
+			rewards: '',
+		},
+		joewavax: {
+			currency: '',
+			pool: '',
+			token: '0x454e67025631c065d3cfad6d71e6892f74487a15',
+			gauge: '',
+			rewards: '',
+		},
+	}
 }
 
 const mainnet: AvalancheConfig = {
@@ -199,9 +202,9 @@ const mainnet: AvalancheConfig = {
 		},
 		joewavax: {
 			url: 'https://traderjoexyz.com/pool/0x6e84a6216ea6dacc71ee8e6b0a5b7322eebc0fdd/AVAX#/',
-			tokenPoolContract: externalPools.traderjoe.joewavax.pool,
+			tokenPoolContract: externalPools.steakhut.joewavax.pool,
 			token: 'JOEWAVAX',
-			tokenContract: externalPools.traderjoe.joewavax.token,
+			tokenContract: externalPools.steakhut.joewavax.token,
 			vault: '0xaa6e94eb94246f8E4656a34c05C164a1A853172a',
 			vaultToken: 'CV:JOEWAVAX',
 			vaultTokenContract: '0xdD88A3B3051B72C5d32C4A94AFe494dfb75f7839',
@@ -289,9 +292,9 @@ const mainnet: AvalancheConfig = {
 		},
 		usdcjoe: {
 			url: 'https://traderjoexyz.com/pool/0x3bc40d4307cd946157447cd55d70ee7495ba6140/AVAX',
-			tokenPoolContract: externalPools.traderjoe.usdcjoe.pool,
+			tokenPoolContract: externalPools.steakhut.usdcjoe.pool,
 			token: 'USDCJOE',
-			tokenContract: externalPools.traderjoe.usdcjoe.token,
+			tokenContract: externalPools.steakhut.usdcjoe.token,
 			vault: '0x25D03Ed23017D0c60B7dA75E36622E5dB2890045',
 			vaultToken: 'CV:USDCJOE',
 			vaultTokenContract: '0xcF5ea89d154df7f6AAB78aC315CD863e04c99a69',
